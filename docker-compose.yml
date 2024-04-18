@@ -1,0 +1,29 @@
+version: "3.8"
+services:
+  db:
+    build: ./mariaDB
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+    restart: unless-stopped
+    networks:
+      - mirador-multi-user
+    volumes:
+      - ./mariaDB/data:/var/lib/mysql
+  backend:
+    build: ./backend
+    depends_on:
+      - db
+    restart: unless-stopped
+    networks:
+      - mirador-multi-user
+  frontend:
+    build: ./frontend
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - mirador-multi-user
+
+networks:
+  mirador-multi-user:
+    driver: bridge
