@@ -1,4 +1,4 @@
-# Mirador Multi User Backend (2MUB)
+# Mirador Multi User (2MU)
 
 
 
