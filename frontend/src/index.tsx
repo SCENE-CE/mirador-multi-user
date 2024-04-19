@@ -10,6 +10,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <React.StrictMode>
     <App />
+    <h1>Hello ANtho</h1>
   </React.StrictMode>
 );
 

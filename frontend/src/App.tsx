@@ -1,13 +1,14 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Mirador } from "./Mirador";
 
 function App() {
-  return (
-    <div className="App">
-      <p>Hello Tetras !</p>
-    </div>
-  );
+
+
+  return(
+    <Mirador></Mirador>
+  )
+
 }
 
 export default App;
