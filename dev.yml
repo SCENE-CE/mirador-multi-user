@@ -14,5 +14,5 @@ services:
       ports:
         - "4000:4000"
       volumes:
-        - ./frontend/.:/react-docker/
-        - ./frontend/node_modules:/react-docker/node_modules
+        - ./.old.frontend-TS/.:/react-docker/
+        - ./.old.frontend-TS/node_modules:/react-docker/node_modules
