@@ -8,7 +8,8 @@ class Mirador extends Component {
     this.miradorInstance = null;
   }
   componentDidMount() {
-    this.miradorInstance = mirador.viewer(miradorConfig, [annotationPlugins,]);
+    const { config, plugins } = this.props;
+    this.miradorInstance = mirador.viewer(config, plugins);
     // Example of subscribing to state
     this.miradorInstance.store.subscribe(() => {
       let state = this.miradorInstance.store.getState();
@@ -24,7 +25,9 @@ class Mirador extends Component {
     }, 5000);
   }
   render() {
-    return <div id='demo' />;
+    const { config } = this.props;
+
+    return <div id={config.id} />;
   }
 }
 
