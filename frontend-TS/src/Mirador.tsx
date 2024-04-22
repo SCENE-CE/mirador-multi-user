@@ -33,11 +33,6 @@ const MiradorViewer = () => {
         ...annotationPlugins,
       ]);
     }
-
-    // Optional: Cleanup function to run when component unmounts
-    return () => {
-      // Destroy the viewer instance if Mirador provides a method for it
-    };
   }, []);
 
   return <div ref={viewerRef} id="mirador" style={{ width: '100%', height: '100vh' }} />;

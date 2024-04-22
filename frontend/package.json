@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "mirador": "npm:mirador-video@^1.0.5",
-    "mirador-annotation-editor": "^1.0.17",
+    "mirador-annotation-editor": "^1.0.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },

@@ -1,13 +1,50 @@
-import { useState } from 'react'
-import './App.css'
+import React, { Component } from 'react';
+import Mirador from './Mirador.jsx';
+import miradorAnnotationPlugin from 'mirador-annotation-editor'
+class App extends Component {
+  constructor(props) {
+    super(props);
 
-function App() {
-  const [count, setCount] = useState(0)
+    this.state = {
+      manifest:
+        'https://purl.stanford.edu/sn904cj3429/iiif/manifest',
+    };
+  }
 
-  return (
-    <>
-    </>
-  )
+  render() {
+    const { manifest } = this.state;
+
+    return (
+      <div className="container">
+        <Mirador
+          config={{
+            id: 'demo',
+            catalog: [
+              { manifestId: 'https://purl.stanford.edu/sn904cj3429/iiif/manifest' },
+              { manifestId: 'https://files.tetras-libre.fr/dev/Clock/manifest.json'}
+            ],
+            theme: {
+              palette: {
+                primary: {
+                  main: '#6e8678',
+                },
+              },
+            },
+            windows:[
+              { loadedManifest: "https://purl.stanford.edu/sn904cj3429/iiif/manifest" }
+            ],
+            annotation: {
+
+            },
+            workspaceControlPanel: {
+              enabled: false,
+            },
+          }}
+          plugins={[...miradorAnnotationPlugin,]}
+        />
+      </div>
+    );
+  }
 }
 
-export default App
+export default App;
