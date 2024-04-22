@@ -17,7 +17,7 @@ services:
     networks:
       - mirador-multi-user
   frontend:
-    build: .old.frontend-TS
+    build: ./frontend-TS
     depends_on:
       - backend
     restart: unless-stopped
