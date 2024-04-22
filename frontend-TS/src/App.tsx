@@ -1,11 +1,11 @@
 import './App.css'
-import MiradorViewer from "./Mirador.tsx";
 
 function App() {
 
   return (
 <div>
-  <MiradorViewer></MiradorViewer>
+  <p>toto</p>
+  <p>toto</p>
 </div>
   )
 }

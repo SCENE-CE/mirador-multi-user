@@ -7,6 +7,9 @@ export default defineConfig({
   server:{
     host:true,
     port:4000,
+    watch: {
+      usePolling: true,
+    }
   },
   resolve: {
     alias: {
