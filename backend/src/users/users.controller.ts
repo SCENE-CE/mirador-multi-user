@@ -1,7 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  DeleteParams,
+  FindOneParams,
+  UpdateParams,
+} from './validators/validators';
 
 @Controller('users')
 export class UsersController {
@@ -18,17 +33,20 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  findOne(@Param() params: FindOneParams) {
+    return this.usersService.findOne(params.id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  update(@Param() params: UpdateParams, @Body() updateUserDto: UpdateUserDto) {
+    return this.usersService.update(params.id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  remove(@Param() params: DeleteParams) {
+    return this.usersService.remove(params.id);
   }
 }
