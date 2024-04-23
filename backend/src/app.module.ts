@@ -8,11 +8,11 @@ import { UsersModule } from './users/users.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: './config/.env',
+      envFilePath: '.env',
     }),
     TypeOrmModule.forRoot({
-      type: 'mysql',
-      host: process.env.DB_HOST,
+      type: 'mariadb',
+      host: process.env.DOCKER_DB_HOST,
       port: Number(process.env.DB_PORT),
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,

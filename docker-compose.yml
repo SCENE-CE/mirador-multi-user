@@ -1,5 +1,6 @@
 version: "3.8"
 services:
+
   db:
     build: ./mariaDB
     environment:
@@ -9,6 +10,8 @@ services:
       - mirador-multi-user
     volumes:
       - ./mariaDB/data:/var/lib/mysql
+
+
   backend:
     build: ./backend
     depends_on:
@@ -16,6 +19,8 @@ services:
     restart: unless-stopped
     networks:
       - mirador-multi-user
+
+
   frontend:
     build: ./frontend-TS
     depends_on:
