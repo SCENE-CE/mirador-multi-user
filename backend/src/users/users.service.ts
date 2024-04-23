@@ -24,19 +24,19 @@ export class UsersService {
     return this.data.find();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(mail: string): Promise<User> {
     try {
-      return await this.data.findOneBy({ id });
+      return await this.data.findOneBy({ mail });
     } catch (err) {
-      throw new NotFoundException(`User not found :${id}`);
+      throw new NotFoundException(`User not found :${mail}`);
     }
   }
 
-  async update(id: number, dto: UpdateUserDto) {
-    let done = await this.data.update(id, dto);
+  async update(mail: string, dto: UpdateUserDto) {
+    let done = await this.data.update(mail, dto);
     if (done.affected != 1)
-      throw new NotFoundException(id)
-    return this.findOne(id);
+      throw new NotFoundException(mail)
+    return this.findOne(mail);
   }
 
   async remove(id: number) {
