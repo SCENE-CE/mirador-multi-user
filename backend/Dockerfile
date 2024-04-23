@@ -1,10 +1,14 @@
 # Base image
-FROM node:16-alpine as builder
+FROM node:20-alpine3.17 as builder
 WORKDIR /app
 
 # Install dependencies
 COPY package*.json ./
-RUN npm ci
+COPY tsconfig*.json ./
+
+COPY ./src ./src
+
+RUN npm install
 
 # Copy application code (excluding what's defined in .dockerignore)
 COPY . .
