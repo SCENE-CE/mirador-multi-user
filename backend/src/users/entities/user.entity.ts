@@ -1,24 +1,23 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
-  id!:number;
+  id!: number;
 
-  @Index({unique:true})
+  @Index({ unique: true })
   @Column({ length: 300 })
   mail!: string;
 
   @Index()
   @Column({ length: 300 })
-  name:string;
+  name: string;
 
   @Index()
   @Column({ length: 300 })
   password: string;
 
   @Index()
-  @Column({type:'timestamp', default: () => "current_timestamp"})
+  @Column({ type: 'timestamp', default: () => 'current_timestamp' })
   createdAt!: Date;
-
 }
