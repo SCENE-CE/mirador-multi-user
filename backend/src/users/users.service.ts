@@ -18,23 +18,12 @@ export class UsersService {
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
-      console.log('DTO received:', dto);
       const userToSave = dto as User;
-      console.log('User password:', dto.password);
-
       const hashPassword = await bcrypt.hash(dto.password, 10);
-      console.log('Password hashed successfully');
-
-      console.log('--------------------- Separator -------------------------');
-
       userToSave.password = hashPassword;
-      console.log('User:', userToSave);
-
       const savedUser = await this.data.save(userToSave);
-      console.log('User saved successfully');
       return savedUser;
     } catch (error) {
-      console.log('Error occurred:', error);
       if (error instanceof QueryFailedError) {
         throw new ConflictException('This user already exists');
       } else {

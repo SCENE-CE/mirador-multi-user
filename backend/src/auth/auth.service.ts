@@ -17,7 +17,7 @@ export class AuthService {
     const isMatch = await bcrypt.compare(pass, user.password);
     console.log(isMatch)
 
-    if (user?.password !== pass) {
+    if (!isMatch) {
       throw new UnauthorizedException();
     }
     const payload = { sub: user.id, user: user.name };
