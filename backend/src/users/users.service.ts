@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -8,6 +9,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -16,10 +18,29 @@ export class UsersService {
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
-      return await this.data.save(dto);
+      console.log('DTO received:', dto);
+      const userToSave = dto as User;
+      console.log('User password:', dto.password);
+
+      const hashPassword = await bcrypt.hash(dto.password, 10);
+      console.log('Password hashed successfully');
+
+      console.log('--------------------- Separator -------------------------');
+
+      userToSave.password = hashPassword;
+      console.log('User:', userToSave);
+
+      const savedUser = await this.data.save(userToSave);
+      console.log('User saved successfully');
+      return savedUser;
     } catch (error) {
+      console.log('Error occurred:', error);
       if (error instanceof QueryFailedError) {
-        throw new ConflictException('this user already exists');
+        throw new ConflictException('This user already exists');
+      } else {
+        throw new InternalServerErrorException(
+          'An error occurred while creating the user',
+        );
       }
     }
   }
