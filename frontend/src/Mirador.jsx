@@ -9,7 +9,7 @@ class Mirador extends Component {
 
   componentDidMount() {
     const { config, plugins } = this.props;
-
+    console.log('plugins',plugins)
     this.miradorInstance = mirador.viewer(config, plugins);
     this.miradorInstance.store.subscribe(() => {
       const state = this.miradorInstance.store.getState();

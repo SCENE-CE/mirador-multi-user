@@ -9,7 +9,7 @@ declare module 'mirador-annotation-editor' {
   export default annotationPlugins;
 }
 
-declare module 'mirador-annotation-editor/annotationAdapter/LocalStorageAdapter' {
+declare module 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js' {
   const LocalStorageAdapter: any;
   export default LocalStorageAdapter;
 }

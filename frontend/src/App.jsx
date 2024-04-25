@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import Mirador from './Mirador.jsx';
-import miradorAnnotationPlugin from 'mirador-annotation-editor'
+import LocalStorageAdapter from 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js';
+import miradorAnnotationPlugin from 'mirador-annotation-editor/'
 class App extends Component {
   constructor(props) {
     super(props);
@@ -12,8 +13,6 @@ class App extends Component {
   }
 
   render() {
-    const { manifest } = this.state;
-
     return (
       <div className="container">
         <Mirador
@@ -23,21 +22,16 @@ class App extends Component {
               { manifestId: 'https://purl.stanford.edu/sn904cj3429/iiif/manifest' },
               { manifestId: 'https://files.tetras-libre.fr/dev/Clock/manifest.json'}
             ],
-            theme: {
-              palette: {
-                primary: {
-                  main: '#6e8678',
-                },
-              },
-            },
             windows:[
               { loadedManifest: "https://purl.stanford.edu/sn904cj3429/iiif/manifest" }
             ],
             annotation: {
-
+              adapter: (canvasId) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+              // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
+              exportLocalStorageAnnotations: false, // display annotation JSON export button
             },
             workspaceControlPanel: {
-              enabled: false,
+              enabled:true,
             },
           }}
           plugins={[...miradorAnnotationPlugin,]}

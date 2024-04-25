@@ -1,8 +1,7 @@
-// @ts-ignore
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import Mirador from 'mirador';
 import annotationPlugins from 'mirador-annotation-editor';
-import LocalStorageAdapter from 'mirador-annotation-editor';
+import LocalStorageAdapter from 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js'
 
 const MiradorViewer = () => {
 
