@@ -13,3 +13,8 @@ declare module 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdap
   const LocalStorageAdapter: any;
   export default LocalStorageAdapter;
 }
+
+declare module 'mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin'{
+  const miradorAnnotationEditorVideo: any;
+  export default miradorAnnotationEditorVideo;
+}

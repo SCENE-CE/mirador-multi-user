@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import Mirador from 'mirador';
-import annotationPlugins from 'mirador-annotation-editor';
+import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 import LocalStorageAdapter from 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js'
 
 const MiradorViewer = () => {
@@ -29,7 +29,7 @@ const MiradorViewer = () => {
       };
 
       Mirador.viewer(config, [
-        ...annotationPlugins,
+        ...miradorAnnotationEditorVideo,
       ]);
     }
   }, []);
