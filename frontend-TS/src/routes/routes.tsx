@@ -1,28 +1,26 @@
-import { useState, useTransition } from "react";
+
 import { Landing } from "../features/miscellaneous/Landing.tsx";
-import { useRoutes } from "react-router-dom";
+import { useNavigate, useRoutes } from "react-router-dom";
 import { useUser } from "../utils/auth.tsx";
+import { protectedRoutes } from "./protectedRoutes.tsx";
+import { publicRoutes } from "./publicRoutes.tsx";
 
 
 export function AppRoutes(){
-  const [url, setUrl] = useState("/");
-  const [isPending, startTransition] = useTransition();
-
-  function navigateTo(url: string) {
-    startTransition(()=>{
-      setUrl(url);
-    })
-  }
   const auth = useUser();
-  const commonRoutes = [{path:"/", content:Landing}]
+  const commonRoutes = [{
+    path: "/",
+    element: <Landing navigateTo={useNavigate} /> // Pass navigate directly to the Landing component
+  }];
+  const routes = auth.data ? protectedRoutes: publicRoutes;
 
-  const routes = auth.data ? protectedRoutes: PublicRoutes
+  const allRoutes = [...routes, ...commonRoutes];
 
-  const content = useRoutes([...routes, ...commonRoutes]);
+  const content = useRoutes(allRoutes);
 
   return(
     <>
-      {isPending ? <div>Loading...</div> : content}
+      {content}
     </>
   )
 }
