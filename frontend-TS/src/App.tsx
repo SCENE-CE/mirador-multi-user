@@ -1,12 +1,13 @@
 import './App.css'
-import MiradorViewer from "./Mirador.tsx";
+import { AppProvider } from "providers/app-provider.tsx";
+import { AppRoutes } from "routes/routes.tsx";
 
 function App() {
 
   return (
-<div>
-  <MiradorViewer></MiradorViewer>
-</div>
+  <AppProvider>
+    <AppRoutes />
+  </AppProvider>
   )
 }
 
