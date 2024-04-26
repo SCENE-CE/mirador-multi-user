@@ -1,6 +1,6 @@
 
 import { Landing } from "../features/miscellaneous/Landing.tsx";
-import { useNavigate, useRoutes } from "react-router-dom";
+import { useRoutes } from "react-router-dom";
 import { useUser } from "../utils/auth.tsx";
 import { protectedRoutes } from "./protectedRoutes.tsx";
 import { publicRoutes } from "./publicRoutes.tsx";
@@ -10,7 +10,7 @@ export function AppRoutes(){
   const auth = useUser();
   const commonRoutes = [{
     path: "/",
-    element: <Landing navigateTo={useNavigate} /> // Pass navigate directly to the Landing component
+    element: <Landing /> // Pass navigate directly to the Landing component
   }];
   const routes = auth.data ? protectedRoutes: publicRoutes;
 
