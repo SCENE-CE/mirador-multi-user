@@ -1,5 +1,6 @@
 import { useState, useTransition } from "react";
 import { Landing } from "../features/miscellaneous/Landing.tsx";
+import { useRoutes } from "react-router-dom";
 
 
 export function AppRoutes(){
@@ -11,16 +12,13 @@ export function AppRoutes(){
       setUrl(url);
     })
   }
+  const auth = useAuth();
+  const commonRoutes = [{path:"/", content:Landing}]
 
-  let content;
+  const routes = auth.user ? protectedRoutes: PublicRoutes
 
-  if(url === '/'){
-    content = <Landing navigateTo={navigateTo}/>
-    ;
-  }else if (url === '/login'){
-    content = <div>Other Content for URL: {url}</div>;
+  const content = useRoutes([...routes, ...commonRoutes]);
 
-  }
   return(
     <>
       {isPending ? <div>Loading...</div> : content}

@@ -9,7 +9,7 @@ services:
     networks:
       - mirador-multi-user
     volumes:
-      - ./mariaDB/data:/var/lib/mysql
+      - ./mariaDB/data:/var/utils/mysql
 
 
   backend:
