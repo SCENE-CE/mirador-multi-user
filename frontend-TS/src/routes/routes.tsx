@@ -1,6 +1,7 @@
 import { useState, useTransition } from "react";
 import { Landing } from "../features/miscellaneous/Landing.tsx";
 import { useRoutes } from "react-router-dom";
+import { useUser } from "../utils/auth.tsx";
 
 
 export function AppRoutes(){
@@ -12,10 +13,10 @@ export function AppRoutes(){
       setUrl(url);
     })
   }
-  const auth = useAuth();
+  const auth = useUser();
   const commonRoutes = [{path:"/", content:Landing}]
 
-  const routes = auth.user ? protectedRoutes: PublicRoutes
+  const routes = auth.data ? protectedRoutes: PublicRoutes
 
   const content = useRoutes([...routes, ...commonRoutes]);
 

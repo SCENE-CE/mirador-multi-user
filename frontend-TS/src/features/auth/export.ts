@@ -4,4 +4,4 @@ export * from './api/register';
 
 export * from './routes';
 
-export * from './types';
+export * from './types/types';

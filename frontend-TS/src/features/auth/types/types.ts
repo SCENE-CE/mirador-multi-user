@@ -10,5 +10,7 @@ export type UserResponse = {
   sub:number;
   name:string;
   iat:number;
+  access_token: string;
   exp:number;
+  user:User;
 }
