@@ -19,8 +19,8 @@ export function AppRoutes(){
   const content = useRoutes(allRoutes);
 
   return(
-    <div className="App">
+    <>
       {content}
-    </div>
+    </>
   )
 }

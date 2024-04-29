@@ -4,14 +4,12 @@ export type RegisterCredentialsDTO = {
   name:string;
   mail:string;
   password:string;
-  id:number;
-  createdAt:Date;
 }
 
 export const register = async (data: RegisterCredentialsDTO): Promise<UserResponse> => {
   try {
-    const domain = process.env.DOMAIN;
-    const port = process.env.PORT;
+    const domain = import.meta.env.VITE_DOMAIN;
+    const port = import.meta.env.VITE_PORT;
     const response = await fetch(`http://${domain}:${port}/users`, {
       method: "POST",
       headers: {

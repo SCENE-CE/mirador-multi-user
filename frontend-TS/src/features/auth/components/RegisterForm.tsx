@@ -3,6 +3,8 @@ import { Button, Grid, Typography } from "@mui/material";
 import FormField from "components/elements/FormField.tsx";
 import { RegisterFormData, UserSchema } from "../types/types.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useRegister } from "../../../utils/auth.tsx";
+import { RegisterCredentialsDTO } from "../api/register.ts";
 
 type RegisterFormProps = {
   onSuccess: () => void;
@@ -10,7 +12,8 @@ type RegisterFormProps = {
 
 
 export const RegisterForm = ({ onSuccess }: RegisterFormProps)=>{
-
+  //this is a hook from React-Query that allow us to use createUser(data) bellow
+  const { mutateAsync:createUser } = useRegister()
   const {
     register,
     handleSubmit,
@@ -19,25 +22,10 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps)=>{
     resolver: zodResolver(UserSchema), // Apply the zodResolver
   });
 
-  const onSubmit = async (data: RegisterFormData) => {
-    console.log('data',data);
-    let domain= import.meta.env.VITE_DOMAIN;
-    console.log(domain)
-    let port = import.meta.env.VITE_PORT;
-    console.log(port)
+  const onSubmit = async (data: RegisterCredentialsDTO) => {
     try{
-      const response = await fetch(`http://${domain}:${port}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-
-      const responseData = await response.json();
-      console.log('responseData',responseData)
+      await createUser(data)
       onSuccess();
-
     }catch(error){
       console.log("error:", error);
     }

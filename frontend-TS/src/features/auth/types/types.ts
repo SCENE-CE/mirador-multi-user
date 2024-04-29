@@ -27,6 +27,11 @@ export type RegisterFormData = {
   confirmPassword: string;
 };
 
+export type LoginFormData = {
+  mail: string;
+  password: string;
+};
+
 export type FormFieldProps = {
   type: string;
   placeholder: string;
@@ -57,11 +62,22 @@ export const UserSchema: ZodType<RegisterFormData> = z
     }),
     password: z
       .string()
-      .min(8, { message: "Password is too short" })
-      .max(20, { message: "Password is too long" }),
+      .min(8, { message: "Password is too short" }),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"], // path of error
+  });
+
+export const LoginSchema: ZodType<LoginFormData> = z
+  .object({
+    mail: z.string({
+      required_error:"email is required",
+      invalid_type_error:"Email must be a string"
+
+    }).email(),
+    password: z
+      .string()
+      .min(8, { message: "Password is too short" })
   });
