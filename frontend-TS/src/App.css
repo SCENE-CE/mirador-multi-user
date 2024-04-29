@@ -1,0 +1,15 @@
+html{
+    background-color: #dcdcdc;
+}
+
+body, .root{
+    min-height: 100vh;
+}
+
+.App{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+
+}
