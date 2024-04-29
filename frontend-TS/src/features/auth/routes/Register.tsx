@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { RegisterForm } from "../components/RegisterForm.tsx";
 import { Layout } from "../components/layout.tsx";
 
-export const Signin = ()=>{
+export const Register = ()=>{
     const navigate = useNavigate();
     return(
       <Layout title="Create your account">

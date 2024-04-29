@@ -1,4 +1,6 @@
 import { FieldError, UseFormRegister } from "react-hook-form";
+import { ZodType } from "zod";
+import { z } from "zod";
 
 export type User = {
   id:number;
@@ -20,7 +22,7 @@ export type UserResponse = {
 
 export type RegisterFormData = {
   name: string;
-  email: string;
+  mail: string;
   password: string;
   confirmPassword: string;
 };
@@ -36,7 +38,30 @@ export type FormFieldProps = {
 
 
 export type ValidFieldNames =
-  | "email"
+  | "mail"
   | "name"
   | "password"
   | "confirmPassword";
+
+
+export const UserSchema: ZodType<RegisterFormData> = z
+  .object({
+    mail: z.string({
+      required_error:"email is required",
+      invalid_type_error:"Email must be a string"
+
+    }).email(),
+    name: z.string({
+      required_error:"Name is required",
+      invalid_type_error:"Name must be a string"
+    }),
+    password: z
+      .string()
+      .min(8, { message: "Password is too short" })
+      .max(20, { message: "Password is too long" }),
+    confirmPassword: z.string(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"], // path of error
+  });
