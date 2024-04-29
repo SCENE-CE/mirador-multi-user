@@ -18,7 +18,7 @@ export class UsersService {
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
-      console.log(dto)
+      console.log(dto);
       const userToSave = dto as User;
       const hashPassword = await bcrypt.hash(dto.password, 10);
       userToSave.password = hashPassword;
@@ -39,18 +39,18 @@ export class UsersService {
     return this.data.find();
   }
 
-  async findOne(id: number): Promise<User> {
+  async findOne(mail: string): Promise<User> {
     try {
-      return await this.data.findOneBy({ id });
+      return await this.data.findOneBy({ mail });
     } catch (err) {
-      throw new NotFoundException(`User not found :${id}`);
+      throw new NotFoundException(`User not found :${mail}`);
     }
   }
 
   async update(id: number, dto: UpdateUserDto) {
     const done = await this.data.update(id, dto);
     if (done.affected != 1) throw new NotFoundException(id);
-    return this.findOne(id);
+    return this.findOne(dto.mail);
   }
 
   async remove(id: number) {

@@ -36,7 +36,7 @@ export class UsersController {
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   findOne(@Param() params: FindOneParams) {
-    return this.usersService.findOne(params.id);
+    return this.usersService.findOne(params.mail);
   }
 
   @Patch(':id')

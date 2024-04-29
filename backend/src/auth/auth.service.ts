@@ -10,12 +10,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(id: number, pass: string): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOne(id);
-    console.log('user',user)
-    console.log('pass',pass)
+  async signIn(mail: string, pass: string): Promise<{ access_token: string }> {
+    const user = await this.usersService.findOne(mail);
+    console.log('user', user);
+    console.log('pass', pass);
     const isMatch = await bcrypt.compare(pass, user.password);
-    console.log(isMatch)
+    console.log(isMatch);
 
     if (!isMatch) {
       throw new UnauthorizedException();

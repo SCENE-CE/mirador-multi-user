@@ -1,4 +1,3 @@
-import { FieldError, UseFormRegister } from "react-hook-form";
 import { ZodType } from "zod";
 import { z } from "zod";
 
@@ -19,7 +18,6 @@ export type UserResponse = {
   user:User;
 }
 
-
 export type RegisterFormData = {
   name: string;
   mail: string;
@@ -31,23 +29,6 @@ export type LoginFormData = {
   mail: string;
   password: string;
 };
-
-export type FormFieldProps = {
-  type: string;
-  placeholder: string;
-  name: ValidFieldNames;
-  register: UseFormRegister<RegisterFormData>;
-  error: FieldError | undefined;
-  valueAsNumber?: boolean;
-};
-
-
-export type ValidFieldNames =
-  | "mail"
-  | "name"
-  | "password"
-  | "confirmPassword";
-
 
 export const UserSchema: ZodType<RegisterFormData> = z
   .object({
@@ -75,7 +56,6 @@ export const LoginSchema: ZodType<LoginFormData> = z
     mail: z.string({
       required_error:"email is required",
       invalid_type_error:"Email must be a string"
-
     }).email(),
     password: z
       .string()

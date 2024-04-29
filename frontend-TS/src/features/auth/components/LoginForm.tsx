@@ -3,6 +3,8 @@ import FormField from "components/elements/FormField.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "../types/types.ts";
+import { useLogin } from "../../../utils/auth.tsx";
+import { LoginCredentialsDTO } from "../api/login.ts";
 
 type LoginFormProps = {
   onSuccess: () => void;
@@ -10,6 +12,9 @@ type LoginFormProps = {
 
 export const LoginForm = (
   {onSuccess}: LoginFormProps)=>{
+
+  const { mutateAsync: loginUser } = useLogin();
+
   const {
     register,
     handleSubmit,
@@ -18,6 +23,19 @@ export const LoginForm = (
     resolver: zodResolver(LoginSchema), // Apply the zodResolver
   });
 
+  const onSubmit = async (data: LoginCredentialsDTO) => {
+    try {
+      console.log(data)
+      // Using mutateAsync to await the mutation's promise
+      const user = await loginUser(data);
+      console.log('Login successful', user);
+      onSuccess();
+      // Perform any actions after successful login
+    } catch (error) {
+      console.error('Login error:', error);
+      // Handle login errors here, possibly update UI to show the error
+    }
+  };
   return(
     <form>
       <Grid
@@ -40,7 +58,7 @@ export const LoginForm = (
             name="mail"
             required={true}
             register={register}
-            error={errors.name}
+            error={errors.mail}
           />
         </Grid>
         <Grid item>
@@ -50,7 +68,7 @@ export const LoginForm = (
             name={"password"}
             register={register}
             required={true}
-            error={errors.name}
+            error={errors.password}
           />
         </Grid>
         <Grid item>

@@ -9,6 +9,7 @@ export const login= async (data: LoginCredentialsDTO): Promise<UserResponse> => 
   try{
   const domain = import.meta.env.VITE_DOMAIN
   const port = import.meta.env.VITE_PORT
+    console.log('data LOGIN',data)
   const response = await fetch(`http://${domain}:${port}/auth/login`, {
     method: "POST",
     headers:{
