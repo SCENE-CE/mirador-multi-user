@@ -3,6 +3,7 @@ import storage from "./storage.ts";
 import { getUser } from "../features/auth/api/getUser.ts";
 import { login, LoginCredentialsDTO, register, RegisterCredentialsDTO, User } from "../features/auth/export.ts";
 import { configureAuth } from "react-query-auth";
+import { CircularProgress, Grid } from "@mui/material";
 
 async function handleTokenResponse(data:UserResponse){
   const {access_token, user } = data;
@@ -42,11 +43,10 @@ const authConfig= {
   registerFn,
   logoutFn,
   LoaderComponent(){
-    //TODO: there it should be a MUI spinner
     return(
-      <div>
-        <p>HERE SHOULD BE A WONDERFUL SPINNER MAIS TKT CA ARRIVE !</p>
-      </div>
+      <Grid>
+        <CircularProgress/>
+      </Grid>
     )
   },
 };

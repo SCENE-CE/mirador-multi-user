@@ -5,16 +5,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "../types/types.ts";
 import { useLogin } from "../../../utils/auth.tsx";
 import { LoginCredentialsDTO } from "../api/login.ts";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
-type LoginFormProps = {
-  onSuccess: () => void;
-};
 
-export const LoginForm = (
-  {onSuccess}: LoginFormProps)=>{
+export const LoginForm = ()=>{
+  const navigate = useNavigate(); // Use hooks at the top level
 
-  const { mutateAsync: loginUser } = useLogin();
+  const { mutateAsync:loginUser } = useLogin();
 
   const {
     register,
@@ -27,14 +24,12 @@ export const LoginForm = (
   const onSubmit = async (data: LoginCredentialsDTO) => {
     try {
       console.log(data)
-      // Using mutateAsync to await the mutation's promise
-      const user = await loginUser(data);
+      const user = loginUser(data,{
+        onSuccess: ()=>navigate('/')
+      });
       console.log('Login successful', user);
-      onSuccess();
-      // Perform any actions after successful login
     } catch (error) {
       console.error('Login error:', error);
-      // Handle login errors here, possibly update UI to show the error
     }
   };
   return(

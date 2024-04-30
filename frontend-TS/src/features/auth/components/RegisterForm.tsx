@@ -5,14 +5,11 @@ import { RegisterFormData, UserSchema } from "../types/types.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegister } from "../../../utils/auth.tsx";
 import { RegisterCredentialsDTO } from "../api/register.ts";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 
-type RegisterFormProps = {
-  onSuccess: () => void;
-};
+export const RegisterForm = ()=>{
+  const navigate = useNavigate(); // Use hooks at the top level
 
-
-export const RegisterForm = ({ onSuccess }: RegisterFormProps)=>{
   //this is a hook from React-Query that allow us to use createUser(data) bellow
   const { mutateAsync:createUser } = useRegister()
   const {
@@ -25,8 +22,9 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps)=>{
 
   const onSubmit = async (data: RegisterCredentialsDTO) => {
     try{
-      await createUser(data)
-      onSuccess();
+      await createUser(data,{
+        onSuccess: () => navigate('/')
+      })
     }catch(error){
       console.log("error:", error);
     }
