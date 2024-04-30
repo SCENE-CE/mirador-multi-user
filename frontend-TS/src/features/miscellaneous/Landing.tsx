@@ -2,15 +2,8 @@ import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
 
 export const Landing = () => {
-  // let user:string;
   const navigate = useNavigate();
-  // const HandleStart = () => {
-  //   if (user) {
-  //     navigate('/app');
-  //   } else {
-  //     navigate('/auth/login');
-  //   }
-  // };
+
 
   const HandleSignIn= ()=>{
     navigate('/auth/signin');
@@ -18,7 +11,6 @@ export const Landing = () => {
   const HandleLogin= ()=>{
     navigate( '/auth/login');
   }
-
   return(
     <Grid
     container

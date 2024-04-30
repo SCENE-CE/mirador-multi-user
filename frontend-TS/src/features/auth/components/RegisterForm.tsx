@@ -20,7 +20,7 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps)=>{
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormData>({
-    resolver: zodResolver(UserSchema), // Apply the zodResolver
+    resolver: zodResolver(UserSchema),
   });
 
   const onSubmit = async (data: RegisterCredentialsDTO) => {
