@@ -1,10 +1,11 @@
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import FormField from "components/elements/FormField.tsx";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "../types/types.ts";
 import { useLogin } from "../../../utils/auth.tsx";
 import { LoginCredentialsDTO } from "../api/login.ts";
+import { NavLink } from "react-router-dom";
 
 type LoginFormProps = {
   onSuccess: () => void;
@@ -39,18 +40,11 @@ export const LoginForm = (
   return(
     <form>
       <Grid
+        item
         container
         direction="column"
         spacing={2}
       >
-        <Grid>
-          <Typography
-            variant="h2"
-            component="h1"
-          >
-            Register Form
-          </Typography>
-        </Grid>
         <Grid item>
           <FormField
             type="mail"
@@ -71,7 +65,10 @@ export const LoginForm = (
             error={errors.password}
           />
         </Grid>
-        <Grid item>
+        <Grid
+          item
+          container
+        >
           <Button
             type="submit"
             variant="contained"
@@ -80,6 +77,11 @@ export const LoginForm = (
           >
             Submit
           </Button>
+          <NavLink to="/auth/signin">
+            <Button
+            variant="contained"
+            >SIGN IN</Button>
+          </NavLink>
         </Grid>
       </Grid>
     </form>

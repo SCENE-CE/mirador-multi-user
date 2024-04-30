@@ -5,6 +5,7 @@ import { RegisterFormData, UserSchema } from "../types/types.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegister } from "../../../utils/auth.tsx";
 import { RegisterCredentialsDTO } from "../api/register.ts";
+import { NavLink } from "react-router-dom";
 
 type RegisterFormProps = {
   onSuccess: () => void;
@@ -95,6 +96,11 @@ export const RegisterForm = ({ onSuccess }: RegisterFormProps)=>{
             >
               Submit
             </Button>
+            <NavLink to="/auth/login">
+              <Button
+                variant="contained"
+              >LOGIN</Button>
+            </NavLink>
           </Grid>
         </Grid>
       </form>
