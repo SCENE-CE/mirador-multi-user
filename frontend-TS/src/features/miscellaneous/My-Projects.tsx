@@ -6,7 +6,7 @@ export const MyProjects= () =>{
   return(
     <Grid container direction="column" justifyContent="center" alignItems="center">
       <Grid item>
-        <Typography variant="h1">{user?.data?.name}'s projects</Typography>
+        <Typography variant="h1">{user?.data?.id}'s projects</Typography>
       </Grid>
 
     </Grid>

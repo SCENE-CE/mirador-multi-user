@@ -10,7 +10,7 @@ import { getUser } from "../features/auth/api/getUser.ts";
 
 export function AppRoutes(){
   const auth = useUser();
-  console.log('auth',auth.data)
+  console.log('auth data',auth.data)
   async function loadUser() {
     const token = storage.getToken();
     console.log('Token from storage:', token);  // Debugging token retrieval
