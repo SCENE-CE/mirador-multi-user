@@ -11,6 +11,7 @@ import {
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
+import { User } from "../users/entities/user.entity";
 
 //TODO: Implement Validators fo Params
 
