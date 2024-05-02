@@ -1,26 +1,70 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { InjectRepository } from "@nestjs/typeorm";
+import { Project } from "./entities/project.entity";
+import { DeleteResult, QueryFailedError, Repository } from "typeorm";
+import { User } from "../users/entities/user.entity";
 
 @Injectable()
 export class ProjectService {
-  create(createProjectDto: CreateProjectDto) {
-    return 'This action adds a new project';
+  constructor(
+    @InjectRepository(Project) private readonly data: Repository<Project>,
+  ) {}
+
+  async create(dto: CreateProjectDto): Promise<Project> {
+    try{
+      console.log(dto)
+      const projectToSave = this.data.create(dto);
+      const project = await this.data.save(dto);
+      return project
+    }catch(error){
+      console.log(error)
+        throw new InternalServerErrorException(
+          'An error occurred while creating the user', error);
+    }
   }
 
-  findAll() {
-    return `This action returns all project`;
+ async findAll(): Promise<Project[]> {
+    try{
+      console.log('FIND ALL SERVICE')
+    const data =  await this.data.find({})
+    console.log(data)
+      return data
+    }catch(error){
+      console.log(error)
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async findOne(projectId: number): Promise<Project> {
+    try {
+      const project = await this.data.findOneBy({ id: projectId })
+      console.log(project)
+      return project
+    }catch(error){
+      throw new InternalServerErrorException(error)
+    }
   }
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(id: number, dto: UpdateProjectDto) {
+    try{
+    const done = await this.data.update(id, dto);
+    if (done.affected != 1)
+      throw new NotFoundException(id);
+    return this.findOne(dto.id)
+    }catch(error){
+    throw new InternalServerErrorException(error)
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} project`;
+  //TODO: Check user authorization for deleting project
+  async remove(id: number) {
+    try{
+      const done: DeleteResult = await this.data.delete(id);
+      if (done.affected != 1)
+        throw new NotFoundException(id);
+    }catch(error){
+      throw new InternalServerErrorException(error)
+    }
   }
 }

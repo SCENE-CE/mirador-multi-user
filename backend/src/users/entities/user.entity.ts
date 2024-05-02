@@ -1,4 +1,5 @@
-import { Column, Entity, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Project } from "../../project/entities/project.entity";
 
 @Entity()
 export class User {
@@ -20,4 +21,7 @@ export class User {
   @Index()
   @Column({ type: 'timestamp', default: () => 'current_timestamp' })
   createdAt!: Date;
+
+  @OneToMany(() => Project, project => project.owner)
+  projects: Project[];
 }

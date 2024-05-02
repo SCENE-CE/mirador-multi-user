@@ -48,13 +48,23 @@ export class UsersService {
   }
 
   async update(id: number, dto: UpdateUserDto) {
+    try{
     const done = await this.data.update(id, dto);
-    if (done.affected != 1) throw new NotFoundException(id);
+    if (done.affected != 1)
+      throw new NotFoundException(id);
     return this.findOne(dto.mail);
+    }catch(error){
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async remove(id: number) {
+    try{
     const done: DeleteResult = await this.data.delete(id);
-    if (done.affected != 1) throw new NotFoundException(id);
+    if (done.affected != 1)
+      throw new NotFoundException(id);
+    }catch(error){
+      throw new InternalServerErrorException(error);
+    }
   }
 }
