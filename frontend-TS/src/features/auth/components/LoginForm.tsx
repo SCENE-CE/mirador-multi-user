@@ -25,7 +25,7 @@ export const LoginForm = ()=>{
     try {
       console.log(data)
       const user = loginUser(data,{
-        onSuccess: ()=>navigate('/')
+        onSuccess: ()=>navigate('/app/my-projects')
       });
       console.log('Login successful', user);
     } catch (error) {

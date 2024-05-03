@@ -18,7 +18,7 @@ async function loadUser(){
   }
   return null
 }
-
+//TODO: Modifier l'appelle au backend et construire une route en back pour retourner le bon objet souhaité par react query auth
 async function loginFn(data: LoginCredentialsDTO){
   const response = await login(data);
   const token = await handleTokenResponse(response)

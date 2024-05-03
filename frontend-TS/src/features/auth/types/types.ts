@@ -9,13 +9,16 @@ export type User = {
   createdAt: string;
 }
 
+export type LoginResponse = {
+  "access_token":string;
+}
 export type UserResponse = {
   sub:number;
+  "access_token":string;
   name:string;
   iat:number;
-  access_token: string;
   exp:number;
-  user:User;
+  user:string
 }
 
 export type RegisterFormData = {

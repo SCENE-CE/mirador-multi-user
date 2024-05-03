@@ -3,8 +3,8 @@ import { ExtractFnReturnType, QueryConfig } from "../../../lib/react-query.ts";
 import { User } from "../../auth/types/types.ts";
 
 export const getUsers = async (): Promise<User[]>=>{
-    const domain = process.env.DOMAIN;
-    const port = process.env.PORT;
+    const domain = import.meta.env.VITE_DOMAIN;
+    const port = import.meta.env.VITE_PORT;
   try{
     const response = await fetch(`${domain}:${port}/users`, {})
     return response.json();

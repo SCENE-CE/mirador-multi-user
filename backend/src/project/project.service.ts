@@ -8,16 +8,11 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { DeleteResult, Repository } from 'typeorm';
-import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
-import { Action } from '../casl/enum/Action';
-import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectRepository(Project) private readonly data: Repository<Project>,
-    private caslAbilityFactory: CaslAbilityFactory,
-  ) {}
+    @InjectRepository(Project) private readonly data: Repository<Project>) {}
 
   async create(dto: CreateProjectDto): Promise<Project> {
     try {

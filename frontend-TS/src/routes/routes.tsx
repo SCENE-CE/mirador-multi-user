@@ -24,7 +24,7 @@ export function AppRoutes(){
   loadUser();
   const commonRoutes = [{
     path: "/",
-    element: <Landing /> // Pass navigate directly to the Landing component
+    element: <Landing /> // Pass navigate directly to the Landing components
   }];
   const routes = auth.data ? protectedRoutes: publicRoutes;
 
