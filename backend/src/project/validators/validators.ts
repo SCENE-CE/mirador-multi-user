@@ -1,5 +1,4 @@
 import { IsNotEmpty, IsNumberString } from 'class-validator';
-import { User } from '../../users/entities/user.entity';
 
 export class FindOneParams {
   @IsNotEmpty()
@@ -8,9 +7,8 @@ export class FindOneParams {
 }
 
 export class FindAllParams {
-  @IsNumberString()
   @IsNotEmpty()
-  owner: User;
+  id: number;
 }
 
 export class PatchParams {

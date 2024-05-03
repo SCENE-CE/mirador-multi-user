@@ -9,16 +9,21 @@ import {
   ValidationPipe,
   UsePipes,
   BadRequestException,
-} from '@nestjs/common';
+  UseGuards, Req
+} from "@nestjs/common";
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import {
-  DeleteParams,
+  DeleteParams, FindAllParams,
   FindOneParams,
-  PatchParams,
-} from './validators/validators';
+  PatchParams
+} from "./validators/validators";
 import { Project } from './entities/project.entity';
+import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
+import { AuthGuard } from '../auth/auth.guard';
+import { Action } from '../casl/enum/Action';
+import { CheckPolicies } from '../casl/decorators/CheckPolicies';
 
 @Controller('project')
 export class ProjectController {
@@ -27,7 +32,6 @@ export class ProjectController {
   @Post()
   async create(@Body() createProjectDto: CreateProjectDto) {
     try {
-      console.log('CREATE PROJECT CONTROLLER');
       const project = new Project();
       Object.assign(project, createProjectDto);
       await this.projectService.create(project);
@@ -37,10 +41,12 @@ export class ProjectController {
     }
   }
 
-  @Get()
-  findAll(): Promise<Project[]> {
+  @Get(':id')
+  @UseGuards(AuthGuard)
+  @CheckPolicies((ability) => ability.can(Action.Read, Project))
+  findAll(@Param() params: FindAllParams): Promise<Project[]> {
     console.log('FIND ALL CONTROLLER');
-    return this.projectService.findAll();
+    return this.projectService.findAll(params.id);
   }
 
   @Get(':id')

@@ -8,12 +8,16 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { DeleteResult, Repository } from 'typeorm';
-import { User } from "../users/entities/user.entity";
+import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
+import { Action } from '../casl/enum/Action';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectRepository(Project) private readonly data: Repository<Project>) {}
+    @InjectRepository(Project) private readonly data: Repository<Project>,
+    private caslAbilityFactory: CaslAbilityFactory,
+  ) {}
 
   async create(dto: CreateProjectDto): Promise<Project> {
     try {
@@ -27,12 +31,15 @@ export class ProjectService {
     }
   }
 
-  async findAll(): Promise<Project[]> {
+  async findAll(userId: number): Promise<Project[]> {
     try {
-      console.log('FIND ALL SERVICE');
-      const data = await this.data.find({});
-      console.log(data);
-      return data;
+      const projects = await this.data.find({
+        relations: {
+          owner: true,
+        },
+        where: { owner: { id: userId } },
+      });
+      return projects;
     } catch (error) {
       console.log(error);
     }
