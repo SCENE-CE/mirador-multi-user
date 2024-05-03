@@ -1,4 +1,10 @@
-import { IsJSON, IsNotEmpty, IsNumber, IsNumberString, IsObject, IsString, ValidateNested } from "class-validator";
+import {
+  IsNotEmpty,
+  IsObject,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+import { User } from '../../users/entities/user.entity';
 
 export class CreateProjectDto {
   @IsNotEmpty()
@@ -9,6 +15,5 @@ export class CreateProjectDto {
   @ValidateNested()
   userWorkspace: any;
 
-  @IsNotEmpty()
-  ownerId: number
+  owner: User;
 }

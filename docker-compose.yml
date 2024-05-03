@@ -2,9 +2,12 @@ version: "3.8"
 services:
 
   db:
-    build: ./mariaDB
+    image: mariadb:latest
     environment:
-      MYSQL_ROOT_PASSWORD: ${DB_PASS}
+      MARIADB_ROOT_PASSWORD: ${DB_PASS}
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_USER: ${DB_USER}
+      MARIADB_PASSWORD: ${DB_PASS}
     restart: unless-stopped
     networks:
       - mirador-multi-user

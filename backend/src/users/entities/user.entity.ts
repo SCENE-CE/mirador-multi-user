@@ -1,5 +1,11 @@
-import { Column, Entity, Index, JoinColumn, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { Project } from "../../project/entities/project.entity";
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Project } from '../../project/entities/project.entity';
 
 @Entity()
 export class User {
@@ -22,6 +28,9 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'current_timestamp' })
   createdAt!: Date;
 
-  @OneToMany(() => Project, project => project.owner)
+  @OneToMany(() => Project, (project) => project.owner, {
+    onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
+  })
   projects: Project[];
 }

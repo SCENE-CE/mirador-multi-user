@@ -12,13 +12,13 @@ import { Action } from '../enum/Action';
 type Subjects = InferSubjects<typeof Project | typeof User> | 'all';
 export type AppAbility = PureAbility<[Action, Subjects]>;
 
-@Injectable()
-export class CaslAbilityFactory {
-  defineAbilityForUser(user: User) {
-    const { can } = new AbilityBuilder<PureAbility<[Action, Subjects]>>(
-      PureAbility as AbilityClass<AppAbility>,
-    );
-
-    can(Action.Manage, Project, { ownerId: user.id });
-  }
-}
+// @Injectable()
+// export class CaslAbilityFactory {
+//   defineAbilityForUser(user: User) {
+//     const { can } = new AbilityBuilder<PureAbility<[Action, Subjects]>>(
+//       PureAbility as AbilityClass<AppAbility>,
+//     );
+//
+//     can(Action.Manage, Project, { ownerId: user.id });
+//   }
+// }

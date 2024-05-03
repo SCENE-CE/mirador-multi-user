@@ -1,6 +1,6 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { User } from "../../users/entities/user.entity";
-import { IsNotEmpty, IsNumberString } from "class-validator";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { User } from '../../users/entities/user.entity';
+import { IsNumberString } from 'class-validator';
 
 @Entity()
 export class Project {
@@ -11,8 +11,10 @@ export class Project {
   @Column({ length: 100 })
   name: string;
 
-  @ManyToOne(() => User, user => user.projects)
-  @JoinColumn({ name: "userId" })
+  @ManyToOne(() => User, (user) => user.projects, {
+    nullable: false,
+    cascade: true,
+  })
   owner: User;
 
   @Column({ type: 'json' })

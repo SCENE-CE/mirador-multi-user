@@ -19,7 +19,7 @@ export class UsersService {
   async create(dto: CreateUserDto): Promise<User> {
     try {
       console.log(dto);
-      const userToSave = dto as User;
+      const userToSave = dto;
       const hashPassword = await bcrypt.hash(dto.password, 10);
       userToSave.password = hashPassword;
       const savedUser = await this.data.save(userToSave);
@@ -48,22 +48,20 @@ export class UsersService {
   }
 
   async update(id: number, dto: UpdateUserDto) {
-    try{
-    const done = await this.data.update(id, dto);
-    if (done.affected != 1)
-      throw new NotFoundException(id);
-    return this.findOne(dto.mail);
-    }catch(error){
+    try {
+      const done = await this.data.update(id, dto);
+      if (done.affected != 1) throw new NotFoundException(id);
+      return this.findOne(dto.mail);
+    } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
 
   async remove(id: number) {
-    try{
-    const done: DeleteResult = await this.data.delete(id);
-    if (done.affected != 1)
-      throw new NotFoundException(id);
-    }catch(error){
+    try {
+      const done: DeleteResult = await this.data.delete(id);
+      if (done.affected != 1) throw new NotFoundException(id);
+    } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }

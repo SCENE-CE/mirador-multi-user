@@ -1,26 +1,26 @@
-import { IsNotEmpty, IsNumberString } from "class-validator";
-import { User } from "../../users/entities/user.entity";
+import { IsNotEmpty, IsNumberString } from 'class-validator';
+import { User } from '../../users/entities/user.entity';
 
-export class FindOneParams{
+export class FindOneParams {
   @IsNotEmpty()
   @IsNumberString()
-  id:number;
+  id: number;
 }
 
-export class FindAllParams{
+export class FindAllParams {
   @IsNumberString()
   @IsNotEmpty()
-  owner:User
+  owner: User;
 }
 
-export class PatchParams{
+export class PatchParams {
   @IsNumberString()
   @IsNotEmpty()
-  id:number;
+  id: number;
 }
 
-export class DeleteParams{
+export class DeleteParams {
   @IsNumberString()
   @IsNotEmpty()
-  id:number
+  id: number;
 }
