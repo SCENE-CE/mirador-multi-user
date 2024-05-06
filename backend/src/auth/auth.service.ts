@@ -11,7 +11,7 @@ export class AuthService {
   ) {}
 
   async signIn(mail: string, pass: string): Promise<{ access_token: string }> {
-    const user = await this.usersService.findOne(mail);
+    const user = await this.usersService.findOneByMail(mail);
     console.log('user', user);
     console.log('pass', pass);
     const isMatch = await bcrypt.compare(pass, user.password);
@@ -27,5 +27,12 @@ export class AuthService {
     };
   }
 
-
+  async findProfile(id: number) {
+    const user = await this.usersService.findOne(id);
+    return {
+      id: user.id,
+      mail: user.mail,
+      name: user.name,
+    };
+  }
 }

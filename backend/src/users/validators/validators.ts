@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsNumberString, IsString } from "class-validator";
+import { IsNotEmpty, IsNumberString } from 'class-validator';
 
 export class FindOneParams {
-  @IsString()
+  @IsNumberString()
   @IsNotEmpty()
-  mail: string;
+  id: string;
 }
 
 export class UpdateParams {

@@ -20,10 +20,23 @@ export const login= async (data: LoginCredentialsDTO): Promise<LoginResponse> =>
   if(!response.ok){
     throw new Error('Failed to log user');
   }
-  console.log('LOGIN RESPONSE',response.body);
-  const token = await response.json()
-  return token;
+   const { access_token } = await response.json()
+   console.log("token LOGIN FUNCTION : ",access_token);
+  const profileResponse = await fetch(`http://${domain}:${port}/auth/profile`, {
+    method: "GET",
+    headers: {
+      "Authorization": `Bearer ${access_token}`,
+    }
+  })
+    const profile = await profileResponse.json();
+
+   return {
+    user:profile,
+     access_token: access_token,
+    }
   }catch(error){
     throw error;
   }
+
+
 }

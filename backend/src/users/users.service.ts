@@ -39,11 +39,18 @@ export class UsersService {
     return this.data.find();
   }
 
-  async findOne(mail: string): Promise<User> {
+  async findOneByMail(mail: string): Promise<User> {
     try {
       return await this.data.findOneBy({ mail });
     } catch (err) {
-      throw new NotFoundException(`User not found :${mail}`);
+      throw new NotFoundException(`User no found ${mail}`);
+    }
+  }
+  async findOne(id: number): Promise<User> {
+    try {
+      return await this.data.findOneBy({ id });
+    } catch (err) {
+      throw new NotFoundException(`User not found :${id}`);
     }
   }
 
@@ -51,7 +58,7 @@ export class UsersService {
     try {
       const done = await this.data.update(id, dto);
       if (done.affected != 1) throw new NotFoundException(id);
-      return this.findOne(dto.mail);
+      return this.findOne(id);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

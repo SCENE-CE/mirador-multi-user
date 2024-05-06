@@ -1,11 +1,17 @@
-import { UserResponse } from "features/auth/types/types.ts";
 import storage from "./storage.ts";
 import { getUser } from "../features/auth/api/getUser.ts";
-import { login, LoginCredentialsDTO, register, RegisterCredentialsDTO, User } from "../features/auth/export.ts";
+import {
+  login,
+  LoginCredentialsDTO,
+  LoginResponse,
+  register,
+  RegisterCredentialsDTO,
+  User
+} from "../features/auth/export.ts";
 import { configureAuth } from "react-query-auth";
 import { CircularProgress, Grid } from "@mui/material";
 
-async function handleTokenResponse(data:UserResponse){
+async function handleTokenResponse(data:LoginResponse){
   const {access_token, user } = data;
   storage.setToken(access_token);
   return user;
