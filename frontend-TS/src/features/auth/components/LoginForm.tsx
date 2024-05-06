@@ -5,7 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { LoginFormData, LoginSchema } from "../types/types.ts";
 import { useLogin } from "../../../utils/auth.tsx";
 import { LoginCredentialsDTO } from "../api/login.ts";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 
 export const LoginForm = ()=>{
@@ -36,11 +36,10 @@ export const LoginForm = ()=>{
     <form>
       <Grid
         container
-        direction="column"
         justifyContent="center"
         alignItems="center"
-        spacing={10}
-        height={'100vh'}
+        flexDirection="column"
+        spacing={2}
       >
         <Grid item>
           <FormField
@@ -74,11 +73,6 @@ export const LoginForm = ()=>{
           >
             Submit
           </Button>
-          <NavLink to="/auth/signin">
-            <Button
-            variant="contained"
-            >SIGN IN</Button>
-          </NavLink>
         </Grid>
       </Grid>
     </form>

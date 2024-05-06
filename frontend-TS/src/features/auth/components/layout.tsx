@@ -6,7 +6,7 @@ type LayoutProps = {
   title: string;
 };
 
-export const Layout = ({ children, title }: LayoutProps) => {
+export const  Layout = ({ children, title }: LayoutProps) => {
   return(
     <Grid
       container
@@ -34,13 +34,28 @@ export const Layout = ({ children, title }: LayoutProps) => {
           {title}
         </Typography>
         </Grid>
-        <Grid>
-        <NavLink to="/auth/login">
-          <Typography variant="button">
-     LOGIN
-          </Typography>
-        </NavLink>
-        </Grid>
+        {
+          title==="Create your account" &&(
+            <Grid>
+              <NavLink to="/auth/login">
+                <Typography variant="button">
+                  LOGIN
+                </Typography>
+              </NavLink>
+            </Grid>
+          )
+        }
+        {
+          title==="Log in to your account"&&(
+            <Grid>
+              <NavLink to="/auth/signin">
+                <Typography variant="button">
+                  REGISTER
+                </Typography>
+              </NavLink>
+            </Grid>
+          )
+        }
       </Grid>
       <Grid item container
             direction="column"
