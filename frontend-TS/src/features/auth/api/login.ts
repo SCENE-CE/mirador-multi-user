@@ -1,11 +1,11 @@
-import { LoginResponse } from "../types/types.ts";
+import { UserResponse } from "../types/types.ts";
 
 export type LoginCredentialsDTO = {
   mail:string;
   password:string;
 };
 
-export const login= async (data: LoginCredentialsDTO): Promise<LoginResponse> => {
+export const login= async (data: LoginCredentialsDTO): Promise<UserResponse> => {
   try{
   const domain = import.meta.env.VITE_DOMAIN
   const port = import.meta.env.VITE_PORT
