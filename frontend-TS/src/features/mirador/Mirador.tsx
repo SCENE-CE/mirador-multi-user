@@ -21,6 +21,11 @@ console.log(workspace)
       const config = {
         ...workspace.config,
         id: viewerRef.current.id,
+        annotation: {
+          adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
+          exportLocalStorageAnnotations: false, // display annotation JSON export button
+        }
       };
 
       Mirador.viewer(config, [
