@@ -38,7 +38,13 @@ const MiradorViewer = () => {
     }
   }, []);
 
-  return <div ref={viewerRef} id="mirador" style={{ width: '100%', height: '100vh' }} />;
+  return(
+  <div>
+    <h1>CECI EST NOTRE PROJET</h1>
+  <div ref={viewerRef} id="mirador" style={{ width: '100%', height: '100vh' }}>
+  </div>;
+  </div>
+    )
 };
 
 export default MiradorViewer;
