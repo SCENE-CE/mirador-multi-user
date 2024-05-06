@@ -7,17 +7,13 @@ export const MyProjects= () =>{
   const userId = user?.data?.id;
 
   if (!user || !user.data) {
-    // Optionally, handle the loading or no user state
     return <Typography>Loading user data...</Typography>;
   }
 
   console.log("ID", user?.data?.id)
   return(
     <Grid container direction="column" justifyContent="center" alignItems="center">
-      <Grid item>
-        <Typography variant="h1">{user.data.name}'s Projects</Typography>
-      </Grid>
-      {userId && <AllProjects userId={userId} />}
+      {userId && <AllProjects user={user.data} />}
     </Grid>
   )
 }

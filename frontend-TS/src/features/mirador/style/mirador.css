@@ -1,0 +1,5 @@
+.fullscreen:first-child{
+    position:relative;
+    height:80vh;
+    width:100%;
+}
