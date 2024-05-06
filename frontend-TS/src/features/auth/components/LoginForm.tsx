@@ -35,10 +35,12 @@ export const LoginForm = ()=>{
   return(
     <form>
       <Grid
-        item
         container
         direction="column"
-        spacing={2}
+        justifyContent="center"
+        alignItems="center"
+        spacing={10}
+        height={'100vh'}
       >
         <Grid item>
           <FormField

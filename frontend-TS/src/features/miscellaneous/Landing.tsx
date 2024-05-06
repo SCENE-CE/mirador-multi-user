@@ -17,16 +17,18 @@ export const Landing = () => {
     direction="column"
     justifyContent="center"
     alignItems="center"
-    spacing={2}
+    spacing={10}
+    height={'100vh'}
     >
       <Grid item>
-      <Typography variant="h2" component="h1">Welcome to SCENE</Typography>
+      <Typography variant="h2" component="h1">Welcome to ARVEST</Typography>
       </Grid>
       <Grid
         item
         container
         justifyContent="center"
-        spacing={2}
+        spacing={5}
+        alignItems="center"
       >
         <Grid item>
           <Button  variant="contained" onClick={HandleSignIn}>Create account</Button>
