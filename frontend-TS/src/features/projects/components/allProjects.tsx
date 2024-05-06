@@ -1,10 +1,11 @@
-import { Button, Card, CardActionArea, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { getUserAllProjects } from "../../miscellaneous/api/getUserAllProjects.ts";
 import { FC, useEffect, useState } from "react";
 import {Project} from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
 import { User } from "../../auth/types/types.ts";
+import { ProjectCard } from "./projectCard.tsx";
 
 interface AllProjectsProps {
   user: User;
@@ -60,26 +61,20 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
       {!mirador && userProjects ? (
         <>
           {userProjects.map((project) => (
-              <Grid item key={project.id}>
-                <Card sx={{ maxWidth: 250 }}>
-                  <CardActionArea>
-                    <Button onClick={() => initializeMirador(project.userWorkspace, project.name)}>
-                      {project.name}
-                    </Button>
-                  </CardActionArea>
-                </Card>
-              </Grid>
+            <ProjectCard
+              projectName={project.name}
+              projectId={project.id}
+              projectWorkspace={project.userWorkspace}
+              initializeMirador={initializeMirador}
+            />
             )
           )}
-          <Grid item>
-            <Card sx={{ maxWidth: 250 }}>
-              <CardActionArea>
-                <Button onClick={() => initializeMirador(emptyWorkspace, "New Project")}>
-                  +
-                </Button>
-              </CardActionArea>
-            </Card>
-          </Grid>
+          <ProjectCard
+            projectName={"New Project"}
+            projectId={0}
+            projectWorkspace={emptyWorkspace}
+            initializeMirador={initializeMirador}
+          />
         </>
       ) : (
         <Grid item xs={12}>
