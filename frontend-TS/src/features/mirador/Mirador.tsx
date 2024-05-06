@@ -8,8 +8,6 @@ import '@fontsource/roboto/700.css';
 import IWorkspace from "./interface/IWorkspace.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
 
-
-
 interface MiradorViewerProps {
   workspace: IWorkspace; // Use the Workspace interface
 }
@@ -31,7 +29,7 @@ console.log(workspace)
         viewers: workspace.viewers,
         windows: workspace.windows,
         annotation: {
-          adapter: (canvasId) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
           // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
           exportLocalStorageAnnotations: false, // display annotation JSON export button
         },

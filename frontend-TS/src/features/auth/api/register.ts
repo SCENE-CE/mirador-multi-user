@@ -1,4 +1,4 @@
-import { UserResponse } from "../types/types.ts";
+import { LoginResponse } from "../export";
 
 export type RegisterCredentialsDTO = {
   name:string;
@@ -6,7 +6,7 @@ export type RegisterCredentialsDTO = {
   password:string;
 }
 
-export const register = async (data: RegisterCredentialsDTO): Promise<UserResponse> => {
+export const register = async (data: RegisterCredentialsDTO): Promise<LoginResponse> => {
   try {
     const domain = import.meta.env.VITE_DOMAIN;
     const port = import.meta.env.VITE_PORT;
