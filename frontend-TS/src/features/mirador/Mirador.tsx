@@ -6,6 +6,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IWorkspace from "./interface/IWorkspace.ts";
+import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
 
 
 
@@ -21,36 +22,19 @@ console.log(workspace)
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
-        catalog:[
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/re_walden_cut.json"
+        catalog:workspace.catalog,
+        companionWindows: workspace.companionWindows,
+        config:workspace.config,
+        elasticsearch: workspace.elasticLayout,
+        layers:workspace.layers,
+        manifests: workspace.manifests,
+        viewers: workspace.viewers,
+        windows: workspace.windows,
+        annotation: {
+          adapter: (canvasId) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
+          exportLocalStorageAnnotations: false, // display annotation JSON export button
         },
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/jf_peyret_re_walden.json"
-        },
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/test_markeas_manifest.json"
-        },
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/installation_fresnoy_manifest.json"
-        },
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/sceno_avignon_manifest.json"
-        },
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/walden_nouvel_manifest.json"
-        },
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/walden_nouvel2_manifest.json"
-        },
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/score_manifest.json"
-        },
-        {
-          "manifestId": "https://files.tetras-libre.fr/manifests/program_manifest.json"
-        }
-      ],
-        workspace
       };
 
       Mirador.viewer(config, [
