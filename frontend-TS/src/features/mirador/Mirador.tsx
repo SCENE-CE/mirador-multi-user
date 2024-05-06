@@ -19,20 +19,13 @@ console.log(workspace)
   useEffect(() => {
     if (viewerRef.current) {
       const config = {
+        ...workspace.config,
         id: viewerRef.current.id,
-        catalog:workspace.catalog,
-        companionWindows: workspace.companionWindows,
-        config:workspace.config,
-        elasticsearch: workspace.elasticLayout,
-        layers:workspace.layers,
-        manifests: workspace.manifests,
-        viewers: workspace.viewers,
-        windows: workspace.windows,
         annotation: {
           adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
           // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
           exportLocalStorageAnnotations: false, // display annotation JSON export button
-        },
+        }
       };
 
       Mirador.viewer(config, [
