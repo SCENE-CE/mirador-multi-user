@@ -7,7 +7,7 @@ export type User = {
   name: string;
 }
 
-export type LoginResponse = {
+export type UserResponse = {
   "access_token":string;
   "user": User
 }

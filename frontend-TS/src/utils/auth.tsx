@@ -3,7 +3,7 @@ import { getUser } from "../features/auth/api/getUser.ts";
 import {
   login,
   LoginCredentialsDTO,
-  LoginResponse,
+  UserResponse,
   register,
   RegisterCredentialsDTO,
   User
@@ -11,13 +11,13 @@ import {
 import { configureAuth } from "react-query-auth";
 import { CircularProgress, Grid } from "@mui/material";
 
-async function handleTokenResponse(data:LoginResponse){
+async function handleTokenResponse(data:UserResponse){
   const {access_token, user } = data;
   storage.setToken(access_token);
   return user;
 }
 
-async function loadUser(){
+async function loadUser(): Promise<User|null>{
   if(storage.getToken()){
     const data = await getUser();
     return data;

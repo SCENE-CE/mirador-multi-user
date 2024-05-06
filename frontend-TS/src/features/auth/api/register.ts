@@ -1,4 +1,4 @@
-import { UserResponse } from "../types/types.ts";
+import { UserResponse } from "../export";
 
 export type RegisterCredentialsDTO = {
   name:string;

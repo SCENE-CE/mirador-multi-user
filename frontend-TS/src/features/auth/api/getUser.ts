@@ -1,7 +1,7 @@
   import storage from "../../../utils/storage.ts";
-  import { LoginResponse } from "../types/types.ts";
+  import { User } from "../types/types.ts";
 
-  export const getUser= async ():Promise<LoginResponse> => {
+  export const getUser= async ():Promise<User> => {
     const domain = import.meta.env.VITE_DOMAIN
     const port = import.meta.env.VITE_PORT
     const token = storage.getToken();
@@ -16,7 +16,7 @@
         throw new Error('Failed to fetch user');
       }
       const user= await response.json()
-      return user;
+      return user.user;
     }catch(error){
       throw error
     }
