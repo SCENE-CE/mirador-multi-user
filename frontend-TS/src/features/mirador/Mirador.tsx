@@ -1,35 +1,56 @@
 import { useEffect, useRef } from 'react';
 import Mirador from 'mirador';
 import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
-import LocalStorageAdapter from 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js'
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
+import IWorkspace from "./interface/IWorkspace.ts";
 
-const MiradorViewer = () => {
 
+
+interface MiradorViewerProps {
+  workspace: IWorkspace; // Use the Workspace interface
+}
+
+const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace }) => {
   const viewerRef = useRef<HTMLDivElement>(null);
+console.log(workspace)
 
   useEffect(() => {
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
-        catalog: [
-          { manifestId: 'https://purl.stanford.edu/sn904cj3429/iiif/manifest' },
-          { manifestId: 'https://files.tetras-libre.fr/dev/Clock/manifest.json'}
-        ],
-        theme: {
-          palette: {
-            primary: {
-              main: '#6e8678',
-            },
-          },
+        catalog:[
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/re_walden_cut.json"
         },
-        annotation: {
-          adapter: (canvasId:string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-          exportLocalStorageAnnotations: false,
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/jf_peyret_re_walden.json"
         },
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/test_markeas_manifest.json"
+        },
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/installation_fresnoy_manifest.json"
+        },
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/sceno_avignon_manifest.json"
+        },
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/walden_nouvel_manifest.json"
+        },
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/walden_nouvel2_manifest.json"
+        },
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/score_manifest.json"
+        },
+        {
+          "manifestId": "https://files.tetras-libre.fr/manifests/program_manifest.json"
+        }
+      ],
+        workspace
       };
 
       Mirador.viewer(config, [

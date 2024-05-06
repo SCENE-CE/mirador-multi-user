@@ -3,7 +3,6 @@ import { Suspense } from "react";
 import { BigSpinner } from "../components/elements/spinner.tsx";
 import { Navigate, Outlet } from "react-router-dom";
 import { MyProjects } from "../features/miscellaneous/My-Projects.tsx";
-import MiradorViewer from "../features/mirador/Mirador.tsx";
 
 const App = () => {
   return(
@@ -21,7 +20,6 @@ export const protectedRoutes= [
     element: <App/>,
     children:[
       {path: 'my-projects', element:<MyProjects/>},
-      {path: 'mirador', element:<MiradorViewer/>},
       { path: '*', element: <Navigate to="." /> },
     ]
   }

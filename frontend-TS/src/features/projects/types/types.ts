@@ -1,7 +1,9 @@
+import IWorkspace from "../../mirador/interface/IWorkspace.ts";
+
 export type Project = {
   id:number;
   name: string;
-  userWorkspace:JSON;
+  userWorkspace:IWorkspace;
   owner: Owner;
 }
 
