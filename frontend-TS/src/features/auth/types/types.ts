@@ -2,6 +2,7 @@ import { ZodType } from "zod";
 import { z } from "zod";
 
 export type User = {
+  "access_token":string;
   id:number;
   mail:string;
   name: string;
