@@ -3,7 +3,7 @@
 - Clone this repo
 - `cd backend`
 - `npm install`
-- `cd ../frontend`
+- `cd ../frontend-TS`
 - `npm install`
 - `cd ..`
 - `docker-compose up --build`
