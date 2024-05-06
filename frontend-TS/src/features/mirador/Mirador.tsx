@@ -7,6 +7,7 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IWorkspace from "./interface/IWorkspace.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
+import { Button } from "@mui/material";
 
 interface MiradorViewerProps {
   workspace: IWorkspace; // Use the Workspace interface
@@ -43,8 +44,10 @@ console.log(workspace)
 
   return(
   <div>
-    <h1>CECI EST NOTRE PROJET</h1>
-  <div ref={viewerRef} id="mirador" style={{ width: '100%', height: '100vh' }}>
+    <div>
+    <Button>CECI EST NOTRE PROJET</Button>
+    </div>
+  <div ref={viewerRef} id="mirador" style={{ width: '100%', height: '80%%' }}>
   </div>;
   </div>
     )
