@@ -1,6 +1,7 @@
 ## What you need to do 
 
-- Clone this repo
+- Clone this repo : `git clone git@github.com:SCENE-CE/mirador-multi-user.git`
+- `nvm use`
 - `cd backend`
 - `npm install`
 - `cd ../frontend`
