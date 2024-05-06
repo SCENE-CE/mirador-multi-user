@@ -14,7 +14,6 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import {
   DeleteParams,
-  FindOneParams,
   UpdateParams,
 } from './validators/validators';
 
@@ -32,12 +31,13 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
-
+  //TODO : replace validation Pipe by AuthGuard
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
-  findOne(@Param() params: FindOneParams) {
-    return this.usersService.findOne(params.mail);
+  findOne(@Param('id') id: number) {
+    return this.usersService.findOne(id);
   }
+
 
   @Patch(':id')
   @UsePipes(new ValidationPipe({ transform: true }))

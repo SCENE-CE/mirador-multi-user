@@ -11,7 +11,6 @@ import {
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
-import { User } from "../users/entities/user.entity";
 
 //TODO: Implement Validators fo Params
 
@@ -29,6 +28,6 @@ export class AuthController {
   @UseGuards(AuthGuard)
   @Get('profile')
   getprofile(@Request() req) {
-    return req.user;
+    return this.authService.findProfile(req.user.sub);
   }
 }

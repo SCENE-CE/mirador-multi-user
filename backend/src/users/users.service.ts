@@ -19,7 +19,7 @@ export class UsersService {
   async create(dto: CreateUserDto): Promise<User> {
     try {
       console.log(dto);
-      const userToSave = dto as User;
+      const userToSave = dto;
       const hashPassword = await bcrypt.hash(dto.password, 10);
       userToSave.password = hashPassword;
       const savedUser = await this.data.save(userToSave);
@@ -39,22 +39,37 @@ export class UsersService {
     return this.data.find();
   }
 
-  async findOne(mail: string): Promise<User> {
+  async findOneByMail(mail: string): Promise<User> {
     try {
       return await this.data.findOneBy({ mail });
     } catch (err) {
-      throw new NotFoundException(`User not found :${mail}`);
+      throw new NotFoundException(`User no found ${mail}`);
+    }
+  }
+  async findOne(id: number): Promise<User> {
+    try {
+      return await this.data.findOneBy({ id });
+    } catch (err) {
+      throw new NotFoundException(`User not found :${id}`);
     }
   }
 
   async update(id: number, dto: UpdateUserDto) {
-    const done = await this.data.update(id, dto);
-    if (done.affected != 1) throw new NotFoundException(id);
-    return this.findOne(dto.mail);
+    try {
+      const done = await this.data.update(id, dto);
+      if (done.affected != 1) throw new NotFoundException(id);
+      return this.findOne(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async remove(id: number) {
-    const done: DeleteResult = await this.data.delete(id);
-    if (done.affected != 1) throw new NotFoundException(id);
+    try {
+      const done: DeleteResult = await this.data.delete(id);
+      if (done.affected != 1) throw new NotFoundException(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

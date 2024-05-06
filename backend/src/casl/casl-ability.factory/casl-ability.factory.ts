@@ -3,6 +3,7 @@ import { User } from '../../users/entities/user.entity';
 import {
   AbilityBuilder,
   AbilityClass,
+  ExtractSubjectType,
   InferSubjects,
   PureAbility,
 } from '@casl/ability';
@@ -15,10 +16,15 @@ export type AppAbility = PureAbility<[Action, Subjects]>;
 @Injectable()
 export class CaslAbilityFactory {
   defineAbilityForUser(user: User) {
-    const { can } = new AbilityBuilder<PureAbility<[Action, Subjects]>>(
+    const { can, build } = new AbilityBuilder<PureAbility<[Action, Subjects]>>(
       PureAbility as AbilityClass<AppAbility>,
     );
 
-    can(Action.Manage, Project, { ownerId: user.id });
+    can(Action.Manage, Project, { 'owner.id': user.id });
+
+    return build({
+      detectSubjectType: (item) =>
+        item.constructor as ExtractSubjectType<Subjects>,
+    });
   }
 }

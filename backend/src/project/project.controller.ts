@@ -1,34 +1,71 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  ValidationPipe,
+  UsePipes,
+  BadRequestException,
+  UseGuards, Req
+} from "@nestjs/common";
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import {
+  DeleteParams, FindAllParams,
+  FindOneParams,
+  PatchParams
+} from "./validators/validators";
+import { Project } from './entities/project.entity';
+import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
+import { AuthGuard } from '../auth/auth.guard';
+import { Action } from '../casl/enum/Action';
+import { CheckPolicies } from '../casl/decorators/CheckPolicies';
 
 @Controller('project')
 export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectService.create(createProjectDto);
-  }
-
-  @Get()
-  findAll() {
-    return this.projectService.findAll();
+  async create(@Body() createProjectDto: CreateProjectDto) {
+    try {
+      const project = new Project();
+      Object.assign(project, createProjectDto);
+      await this.projectService.create(project);
+      return { message: 'project created successfully.', id: project.id };
+    } catch (error) {
+      throw new BadRequestException(error);
+    }
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectService.findOne(+id);
+  @UseGuards(AuthGuard)
+  @CheckPolicies((ability) => ability.can(Action.Read, Project))
+  findAll(@Param() params: FindAllParams): Promise<Project[]> {
+    console.log('FIND ALL CONTROLLER');
+    return this.projectService.findAll(params.id);
+  }
+
+  @Get(':id')
+  findOne(@Param() params: FindOneParams) {
+    return this.projectService.findOne(params.id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
-    return this.projectService.update(+id, updateProjectDto);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  update(
+    @Param() params: PatchParams,
+    @Body() updateProjectDto: UpdateProjectDto,
+  ) {
+    return this.projectService.update(params.id, updateProjectDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.projectService.remove(+id);
+  @UsePipes(new ValidationPipe({ transform: true }))
+  remove(@Param() params: DeleteParams) {
+    return this.projectService.remove(params.id);
   }
 }

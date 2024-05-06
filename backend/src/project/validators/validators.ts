@@ -1,12 +1,17 @@
 import { IsNotEmpty, IsNumberString } from 'class-validator';
 
 export class FindOneParams {
-  @IsNumberString()
   @IsNotEmpty()
-  id: string;
+  @IsNumberString()
+  id: number;
 }
 
-export class UpdateParams {
+export class FindAllParams {
+  @IsNotEmpty()
+  id: number;
+}
+
+export class PatchParams {
   @IsNumberString()
   @IsNotEmpty()
   id: number;

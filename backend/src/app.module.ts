@@ -22,6 +22,7 @@ import { CaslModule } from './casl/casl.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       synchronize: true,
+      cache: false,
     }),
     UsersModule,
     AuthModule,

@@ -5,18 +5,20 @@ export type User = {
   id:number;
   mail:string;
   name: string;
-  password: string;
-  createdAt: string;
 }
 
-export type UserResponse = {
-  sub:number;
-  name:string;
-  iat:number;
-  access_token: string;
-  exp:number;
-  user:User;
+export type LoginResponse = {
+  "access_token":string;
+  "user": User
 }
+// export type UserResponse = {
+//   sub:number;
+//   "access_token":string;
+//   name:string;
+//   iat:number;
+//   exp:number;
+//   user:string
+// }
 
 export type RegisterFormData = {
   name: string;
