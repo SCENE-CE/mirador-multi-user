@@ -15,7 +15,6 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [mirador, setMirador] = useState(false)
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>()
-  const [projectTitle, setProjectTitle] = useState('')
   const emptyWorkspace: IWorkspace = {
     catalog:[],
     companionWindows:{},
@@ -47,10 +46,9 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
     setUserProjects(updatedListOfProject)
   }
 
-  const initializeMirador = (workspace:IWorkspace, title:string) => {
+  const initializeMirador = (workspace:IWorkspace) => {
     setMirador(!mirador)
     setMiradorWorkspace(workspace)
-    setProjectTitle(title)
   }
 
   return (
@@ -58,7 +56,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
       {
         !mirador &&(
           <Grid item container justifyContent="center">
-          <Typography variant="h1">{user.name}'s Projects</Typography>
+          <Typography variant="h5" component="h1">{user.name}'s Projects</Typography>
         </Grid>
         )
       }
@@ -87,7 +85,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
         </>
       ) : (
         <Grid item xs={12}>
-          <MiradorViewer workspace={miradorWorkspace!} toggleMirador={()=> setMirador(!mirador)} projectTitle={projectTitle}/>
+          <MiradorViewer workspace={miradorWorkspace!} toggleMirador={()=> setMirador(!mirador)} />
         </Grid>
       )}
       </Grid>
