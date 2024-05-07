@@ -9,25 +9,28 @@ import {
   ValidationPipe,
   UsePipes,
   BadRequestException,
-  UseGuards, Req
-} from "@nestjs/common";
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import {
-  DeleteParams, FindAllParams,
+  DeleteParams,
+  FindAllParams,
   FindOneParams,
-  PatchParams
-} from "./validators/validators";
+  PatchParams,
+} from './validators/validators';
 import { Project } from './entities/project.entity';
-import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
 import { AuthGuard } from '../auth/auth.guard';
-import { Action } from '../casl/enum/Action';
-import { CheckPolicies } from '../casl/decorators/CheckPolicies';
+import { AuthService } from "../auth/auth.service";
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+    private authService: AuthService,
+  ) {}
 
   @Post()
   async create(@Body() createProjectDto: CreateProjectDto) {
@@ -41,32 +44,38 @@ export class ProjectController {
     }
   }
 
-  @Get(':id')
+  @Get('/all/:id')
   @UseGuards(AuthGuard)
-  @CheckPolicies((ability) => ability.can(Action.Read, Project))
   findAll(@Param() params: FindAllParams): Promise<Project[]> {
     console.log('FIND ALL CONTROLLER');
     return this.projectService.findAll(params.id);
   }
 
   @Get(':id')
-  findOne(@Param() params: FindOneParams) {
-    return this.projectService.findOne(params.id);
+  @UseGuards(AuthGuard)
+  async findOne(@Param() params: FindOneParams, @Req() req: any) {
+    const requestUser = await this.authService.findProfile(req.user.sub);
+    return this.projectService.findOne(params.id, requestUser.id);
   }
 
   @Patch(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
-  update(
+  async update(
     @Param() params: PatchParams,
     @Body() updateProjectDto: UpdateProjectDto,
+    @Req() req: any
   ) {
-    return this.projectService.update(params.id, updateProjectDto);
+    const requestUser = await this.authService.findProfile(req.user.sub);
+    return this.projectService.update(
+      params.id,
+      updateProjectDto,
+      requestUser.id,
+    );
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
-  @CheckPolicies((ability) => ability.can(Action.Delete, Project))
   remove(@Param() params: DeleteParams) {
     return this.projectService.remove(params.id);
   }

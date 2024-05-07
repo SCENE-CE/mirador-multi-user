@@ -2,17 +2,20 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { DeleteResult, Repository } from 'typeorm';
+import { User } from '../users/entities/user.entity';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectRepository(Project) private readonly data: Repository<Project>) {}
+    @InjectRepository(Project) private readonly data: Repository<Project>,
+  ) {}
 
   async create(dto: CreateProjectDto): Promise<Project> {
     try {
@@ -40,21 +43,27 @@ export class ProjectService {
     }
   }
 
-  async findOne(projectId: number): Promise<Project> {
+  async findOne(projectId: number, requestUserId: number): Promise<Project> {
     try {
       const project = await this.data.findOneBy({ id: projectId });
       console.log(project);
-      return project;
+      if (project.owner.id === requestUserId) {
+        return project;
+      } else {
+        throw new UnauthorizedException(
+          'You are not allowed to access this project',
+        );
+      }
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
 
-  async update(id: number, dto: UpdateProjectDto) {
+  async update(id: number, dto: UpdateProjectDto, requestUserId: number) {
     try {
       const done = await this.data.update(id, dto);
       if (done.affected != 1) throw new NotFoundException(id);
-      return this.findOne(dto.id);
+      return this.findOne(dto.id, requestUserId);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
