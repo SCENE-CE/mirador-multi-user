@@ -17,7 +17,6 @@ interface MiradorViewerProps {
 
 const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador, projectTitle }) => {
   const viewerRef = useRef<HTMLDivElement>(null);
-console.log(workspace)
 
   useEffect(() => {
     if (viewerRef.current) {

@@ -26,7 +26,6 @@ export const RegisterForm = ()=>{
         onSuccess: () => navigate('/')
       })
     }catch(error){
-      console.log("error:", error);
     }
   }
 

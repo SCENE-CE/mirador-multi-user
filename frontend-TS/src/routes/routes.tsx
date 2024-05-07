@@ -10,13 +10,10 @@ import { getUser } from "../features/auth/api/getUser.ts";
 
 export function AppRoutes(){
   const auth = useUser();
-  console.log('auth data',auth.data)
   async function loadUser() {
     const token = storage.getToken();
-    console.log('Token from storage:', token);  // Debugging token retrieval
     if (token) {
       const data = await getUser();
-      console.log('User data loaded:', data);  // Debugging user data retrieval
       return data;
     }
     return null;
@@ -29,7 +26,6 @@ export function AppRoutes(){
   const routes = auth.data ? protectedRoutes: publicRoutes;
 
   const allRoutes = [...routes, ...commonRoutes];
-  console.log('allRoutes',allRoutes)
   const content = useRoutes(allRoutes);
 
   return(

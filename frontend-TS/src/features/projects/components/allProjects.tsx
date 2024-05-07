@@ -33,7 +33,6 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
       try {
         const projects = await getUserAllProjects(user.id);
         setUserProjects(projects);
-        console.log(projects);
       } catch (error) {
         console.error('Failed to fetch projects:', error);
       }
