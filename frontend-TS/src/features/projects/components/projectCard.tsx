@@ -1,13 +1,15 @@
-import React, { FC } from "react";
+import { FC } from "react";
 import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
 import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
-
+import DeleteIcon from '@mui/icons-material/Delete';
 interface CardProps {
   projectName: string,
   projectWorkspace:IWorkspace
-  initializeMirador: (projectWorkspace: IWorkspace, projectName: string, event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void,
+  initializeMirador: (projectWorkspace: IWorkspace, projectName: string) => void,
   NumberOfManifests?:number,
+  deleteProject?:(projectId:number) => void,
+  projectId?:number,
 }
 
 export const ProjectCard: FC<CardProps>= ({
@@ -15,6 +17,8 @@ export const ProjectCard: FC<CardProps>= ({
   projectWorkspace,
   initializeMirador,
   NumberOfManifests,
+  deleteProject,
+  projectId
 }
 ) => {
   return(
@@ -36,17 +40,24 @@ export const ProjectCard: FC<CardProps>= ({
             <CardActions>
               <Tooltip title={"Open project"}>
                 <Button
-                  onMouseDown={event => event.stopPropagation()}
-                  onClick={event => {
-                    event.stopPropagation();
-                    event.preventDefault();
-                    event.stopPropagation();
-                    initializeMirador(projectWorkspace, projectName, event);
+                  onClick={ ()=> {
+                    initializeMirador(projectWorkspace, projectName);
                   }}
                 >
                   <OpenInBrowserIcon/>
                 </Button>
               </Tooltip>
+              {deleteProject && projectId &&(
+              <Tooltip title={"Delete project"}>
+                <Button
+                  onClick={()=> {
+                    deleteProject(projectId);
+                  }}
+                >
+                  <DeleteIcon/>
+                </Button>
+              </Tooltip>
+                )}
             </CardActions>
           </Grid>
         </Grid>

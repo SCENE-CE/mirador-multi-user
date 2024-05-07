@@ -64,7 +64,9 @@ export class ProjectController {
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
+  @CheckPolicies((ability) => ability.can(Action.Delete, Project))
   remove(@Param() params: DeleteParams) {
     return this.projectService.remove(params.id);
   }

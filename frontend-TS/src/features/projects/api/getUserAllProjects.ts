@@ -1,6 +1,6 @@
 import storage from "../../../utils/storage.ts";
 
-export const getUserAllProjects = async (userId:number,) => {
+export const getUserAllProjects = async (userId:number) => {
   const domain = import.meta.env.VITE_DOMAIN
   const port = import.meta.env.VITE_PORT
   const token = storage.getToken();
