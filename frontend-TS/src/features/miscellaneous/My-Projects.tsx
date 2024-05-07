@@ -13,7 +13,7 @@ export const MyProjects= () =>{
   return(
     <Grid container direction="column">
       <Grid item>
-        <Button onClick={() => logout.mutate({})}>Disconnect</Button>
+        <Button variant="contained" onClick={() => logout.mutate({})}>Disconnect</Button>
       </Grid>
       <Grid item>
       {userId && <AllProjects user={user.data} />}

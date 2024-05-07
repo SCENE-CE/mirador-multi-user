@@ -6,7 +6,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 interface CardProps {
   projectName: string,
   projectWorkspace:IWorkspace
-  initializeMirador: (projectWorkspace: IWorkspace, projectName: string) => void,
+  initializeMirador: (projectWorkspace: IWorkspace) => void,
   NumberOfManifests?:number,
   deleteProject?:(projectId:number) => void,
   projectId?:number,
@@ -41,8 +41,9 @@ export const ProjectCard: FC<CardProps>= ({
               <Tooltip title={"Open project"}>
                 <Button
                   onClick={ ()=> {
-                    initializeMirador(projectWorkspace, projectName);
+                    initializeMirador(projectWorkspace);
                   }}
+                  variant="contained"
                 >
                   <OpenInBrowserIcon/>
                 </Button>
@@ -53,6 +54,7 @@ export const ProjectCard: FC<CardProps>= ({
                   onClick={()=> {
                     deleteProject(projectId);
                   }}
+                  variant="contained"
                 >
                   <DeleteIcon/>
                 </Button>
