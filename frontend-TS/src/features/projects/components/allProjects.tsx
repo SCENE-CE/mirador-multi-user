@@ -1,12 +1,12 @@
 import { Grid, Typography } from "@mui/material";
-import { getUserAllProjects } from "../../miscellaneous/api/getUserAllProjects.ts";
 import React, { FC, useEffect, useState } from "react";
 import {Project} from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
 import { User } from "../../auth/types/types.ts";
 import { ProjectCard } from "./projectCard.tsx";
-
+import { deleteProject } from "../api/deleteProject.ts";
+import { getUserAllProjects } from "../api/getUserAllProjects.ts";
 interface AllProjectsProps {
   user: User;
 }
@@ -39,15 +39,20 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
     fetchProjects();
   }, [user]);
 
+  const deleteUserProject=(projectId:number)=>{
+    deleteProject(projectId);
+    const updatedListOfProject = userProjects.filter(function(project){
+      return project.id == projectId
+    })
+    setUserProjects(updatedListOfProject)
+  }
+
   const initializeMirador = (workspace:IWorkspace, title:string) => {
     setMirador(!mirador)
     setMiradorWorkspace(workspace)
     setProjectTitle(title)
   }
-if(userProjects.length > 1){
-  console.log(userProjects[0].userWorkspace.catalog)
-  console.log(userProjects[0].userWorkspace.catalog.length)
-}
+
   return (
     <Grid container spacing={2} justifyContent="center" flexDirection="column">
       {
@@ -68,6 +73,8 @@ if(userProjects.length > 1){
               projectWorkspace={project.userWorkspace}
               initializeMirador={initializeMirador}
               NumberOfManifests={project.userWorkspace.catalog.length}
+              deleteProject={deleteUserProject}
+              projectId={project.id}
             />
             </React.Fragment>
             )
