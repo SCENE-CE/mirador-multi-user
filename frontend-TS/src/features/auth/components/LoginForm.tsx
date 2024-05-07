@@ -23,8 +23,8 @@ export const LoginForm = ()=>{
 
   const onSubmit = async (data: LoginCredentialsDTO) => {
     try {
-      const user = loginUser(data,{
-        onSuccess: ()=>navigate('/app/my-projects')
+      await loginUser(data, {
+        onSuccess: () => navigate('/app/my-projects')
       });
     } catch (error) {
       console.error('Login error:', error);

@@ -11,7 +11,6 @@ interface AllProjectsProps {
   user: User;
 }
 
-
 export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [mirador, setMirador] = useState(false)
@@ -45,7 +44,10 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
     setMiradorWorkspace(workspace)
     setProjectTitle(title)
   }
-
+if(userProjects.length > 1){
+  console.log(userProjects[0].userWorkspace.catalog)
+  console.log(userProjects[0].userWorkspace.catalog.length)
+}
   return (
     <Grid container spacing={2} justifyContent="center" flexDirection="column">
       {
@@ -55,7 +57,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
         </Grid>
         )
       }
-      <Grid item container spacing={4} justifyContent="center">
+      <Grid item container spacing={4} >
 
       {!mirador && userProjects ? (
         <>
@@ -65,6 +67,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
               projectName={project.name}
               projectWorkspace={project.userWorkspace}
               initializeMirador={initializeMirador}
+              NumberOfManifests={project.userWorkspace.catalog.length}
             />
             </React.Fragment>
             )

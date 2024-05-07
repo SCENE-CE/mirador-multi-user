@@ -22,8 +22,10 @@ export default defineConfig({
     tsconfigPaths(),
     react(),
   ],
+  build: {
+    sourcemap: true,
+  },
   optimizeDeps: {
-    force: true,
     esbuildOptions: {
       loader: {
         '.js': 'jsx',
