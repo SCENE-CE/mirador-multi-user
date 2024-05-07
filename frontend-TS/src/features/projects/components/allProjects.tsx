@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { getUserAllProjects } from "../../miscellaneous/api/getUserAllProjects.ts";
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {Project} from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
@@ -42,7 +42,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   }, [user]);
 
   const initializeMirador = (workspace:IWorkspace, title:string) => {
-  setMirador(!mirador)
+    setMirador(!mirador)
     setMiradorWorkspace(workspace)
     setProjectTitle(title)
   }
@@ -61,17 +61,17 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
       {!mirador && userProjects ? (
         <>
           {userProjects.map((project) => (
+            <React.Fragment key={project.id}>
             <ProjectCard
               projectName={project.name}
-              projectId={project.id}
               projectWorkspace={project.userWorkspace}
               initializeMirador={initializeMirador}
             />
+            </React.Fragment>
             )
           )}
           <ProjectCard
             projectName={"New Project"}
-            projectId={0}
             projectWorkspace={emptyWorkspace}
             initializeMirador={initializeMirador}
           />
