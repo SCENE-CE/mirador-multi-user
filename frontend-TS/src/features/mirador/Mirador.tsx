@@ -7,13 +7,15 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IWorkspace from "./interface/IWorkspace.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import { Button } from "@mui/material";
-
+import { Button, Grid, Typography } from "@mui/material";
+import './style/mirador.css'
 interface MiradorViewerProps {
-  workspace: IWorkspace; // Use the Workspace interface
+  workspace: IWorkspace,
+  toggleMirador: () => void,
+  projectTitle: string,
 }
 
-const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace }) => {
+const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador, projectTitle }) => {
   const viewerRef = useRef<HTMLDivElement>(null);
 console.log(workspace)
 
@@ -36,14 +38,21 @@ console.log(workspace)
   }, []);
 
   return(
-  <div>
-    <div>
-    <Button>CECI EST NOTRE PROJET</Button>
-    </div>
-  <div ref={viewerRef} id="mirador" style={{ width: '100%', height: '80%%' }}>
-  </div>;
-  </div>
-    )
-};
+  <Grid container flexDirection='column' spacing={2}>
+    <Grid item container flexDirection='row' justifyContent="space-between">
+      <Grid item>
+        <Typography variant="h2">{projectTitle}</Typography>
+      </Grid>
+      <Grid item alignContent="center">
+        <Button onClick={toggleMirador}>Back To Projects</Button>
+        <Button onClick={()=>console.log('SHOULD SAVE THE PROJECT')}>Save Project</Button>
+      </Grid>
+    </Grid>
+    <Grid item>
+    <div ref={viewerRef} id="mirador"></div>
+    </Grid>
+  </Grid>
+  )
+}
 
 export default MiradorViewer;

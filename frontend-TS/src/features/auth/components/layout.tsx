@@ -6,31 +6,63 @@ type LayoutProps = {
   title: string;
 };
 
-export const Layout = ({ children, title }: LayoutProps) => {
+export const  Layout = ({ children, title }: LayoutProps) => {
   return(
     <Grid
       container
       direction="column"
-      justifyContent="center"
+      justifyContent="space-around"
       alignItems="center"
-      spacing={2}>
+      min-height="100vh"
+    >
       <Grid
         item
         container
         direction="row"
-        justifyContent="center"
+        justifyContent="space-around"
         alignItems="center"
       >
+        <Grid item>
         <NavLink to="/">
         <ArrowBackIcon />
         </NavLink>
+        </Grid>
+        <Grid item>
         <Typography
           variant="h2"
           component="h1">
           {title}
         </Typography>
+        </Grid>
+        {
+          title==="Create your account" &&(
+            <Grid>
+              <NavLink to="/auth/login">
+                <Typography variant="button">
+                  LOGIN
+                </Typography>
+              </NavLink>
+            </Grid>
+          )
+        }
+        {
+          title==="Log in to your account"&&(
+            <Grid>
+              <NavLink to="/auth/signin">
+                <Typography variant="button">
+                  REGISTER
+                </Typography>
+              </NavLink>
+            </Grid>
+          )
+        }
       </Grid>
-      <Grid item>
+      <Grid item container
+            direction="column"
+            justifyContent="center"
+            alignItems="center"
+            minHeight="80vh"
+      >
         {children}
       </Grid>
     </Grid>

@@ -19,7 +19,6 @@ const FormField: React.FC<FormFieldProps> = (
     placeholder,
     name,
     register,
-    required,
     error,
     valueAsNumber,
   }
@@ -27,14 +26,12 @@ const FormField: React.FC<FormFieldProps> = (
   console.log('error:' ,error)
 
   return (
-  <Grid container alignItems="center" spacing={2}>
-    <Grid item>
-    <FormLabel htmlFor={name} required={required}> {name} : </FormLabel>
-    </Grid>
+  <Grid container alignItems="center" spacing={2} justifyContent="space-between" minWidth="300px">
     <Grid item>
     <TextField
           type={type}
-          placeholder={placeholder}
+          label={placeholder}
+          variant="outlined"
           {...register(name, { valueAsNumber })}
           error={!!error}
         />

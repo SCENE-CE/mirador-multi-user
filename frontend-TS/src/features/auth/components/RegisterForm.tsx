@@ -1,11 +1,11 @@
 import {  useForm } from "react-hook-form";
-import { Button, Grid, Typography } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import FormField from "components/elements/FormField.tsx";
 import { RegisterFormData, UserSchema } from "../types/types.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegister } from "../../../utils/auth.tsx";
 import { RegisterCredentialsDTO } from "../api/register.ts";
-import { NavLink, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 export const RegisterForm = ()=>{
   const navigate = useNavigate(); // Use hooks at the top level
@@ -34,17 +34,12 @@ export const RegisterForm = ()=>{
       <form>
         <Grid
           container
-          direction="column"
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
           spacing={2}
+          maxWidth={'600px'}
         >
-          <Grid item >
-          <Typography
-            variant="h2"
-            component="h1"
-          >
-            Register Form
-          </Typography>
-          </Grid>
           <Grid item>
           <FormField
             type="mail"
@@ -85,7 +80,7 @@ export const RegisterForm = ()=>{
               error={errors.confirmPassword}
             />
           </Grid>
-          <Grid item>
+          <Grid item container>
             <Button
               type="submit"
               variant="contained"
@@ -94,11 +89,6 @@ export const RegisterForm = ()=>{
             >
               Submit
             </Button>
-            <NavLink to="/auth/login">
-              <Button
-                variant="contained"
-              >LOGIN</Button>
-            </NavLink>
           </Grid>
         </Grid>
       </form>
