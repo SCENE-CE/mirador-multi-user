@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import { getUserAllProjects } from "../../miscellaneous/api/getUserAllProjects.ts";
-import { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import {Project} from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
@@ -10,7 +10,6 @@ import { ProjectCard } from "./projectCard.tsx";
 interface AllProjectsProps {
   user: User;
 }
-
 
 export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
@@ -33,7 +32,6 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
       try {
         const projects = await getUserAllProjects(user.id);
         setUserProjects(projects);
-        console.log(projects);
       } catch (error) {
         console.error('Failed to fetch projects:', error);
       }
@@ -42,11 +40,14 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   }, [user]);
 
   const initializeMirador = (workspace:IWorkspace, title:string) => {
-  setMirador(!mirador)
+    setMirador(!mirador)
     setMiradorWorkspace(workspace)
     setProjectTitle(title)
   }
-
+if(userProjects.length > 1){
+  console.log(userProjects[0].userWorkspace.catalog)
+  console.log(userProjects[0].userWorkspace.catalog.length)
+}
   return (
     <Grid container spacing={2} justifyContent="center" flexDirection="column">
       {
@@ -56,22 +57,23 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
         </Grid>
         )
       }
-      <Grid item container spacing={4} justifyContent="center">
+      <Grid item container spacing={4} >
 
       {!mirador && userProjects ? (
         <>
           {userProjects.map((project) => (
+            <React.Fragment key={project.id}>
             <ProjectCard
               projectName={project.name}
-              projectId={project.id}
               projectWorkspace={project.userWorkspace}
               initializeMirador={initializeMirador}
+              NumberOfManifests={project.userWorkspace.catalog.length}
             />
+            </React.Fragment>
             )
           )}
           <ProjectCard
             projectName={"New Project"}
-            projectId={0}
             projectWorkspace={emptyWorkspace}
             initializeMirador={initializeMirador}
           />

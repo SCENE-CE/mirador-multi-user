@@ -16,7 +16,6 @@
         throw new Error('Failed to fetch user');
       }
       const user= await response.json()
-      console.log('GET USER USER', user)
       return user;
     }catch(error){
       throw error
