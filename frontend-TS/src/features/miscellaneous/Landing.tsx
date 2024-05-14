@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
+import TextLoader from "../../components/elements/toto.tsx";
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -32,6 +33,9 @@ export const Landing = () => {
       >
         <Grid item>
           <Button  variant="contained" onClick={HandleSignIn}>Create account</Button>
+        </Grid>
+        <Grid item>
+          <TextLoader></TextLoader>
         </Grid>
         <Grid item>
           <Button  variant="contained" onClick={HandleLogin}>Login</Button>

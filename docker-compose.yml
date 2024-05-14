@@ -32,6 +32,18 @@ services:
     networks:
       - mirador-multi-user
 
+  proxy:
+    restart: always
+    build:
+      context: ./proxy
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+      - frontend
+    networks:
+      - mirador-multi-user
+
 networks:
   mirador-multi-user:
     driver: bridge

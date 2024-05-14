@@ -9,14 +9,11 @@ RUN npm ci
 # Copy application code (excluding what's defined in .dockerignore)
 COPY . .
 
-# Build the application if necessary
-RUN npm run build
+RUN chmod +x ./script.sh
 
-# Change ownership (if necessary) and adjust permissions
-RUN chown -R node:node /app && chmod -R 755 /app
-
-# Use non-root user
-USER node
+RUN ls
+# Use the script as the entrypoint
+ENTRYPOINT ["sh","./entrypoint.sh"]
 
 # Command to run the application
 CMD ["npm", "run","dev"]
