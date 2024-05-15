@@ -51,6 +51,10 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
     setMiradorWorkspace(workspace)
   }
 
+  const saveProject = () => {
+    console.log("Save Project")
+  }
+
   return (
     <Grid container spacing={2} justifyContent="center" flexDirection="column">
       {
@@ -85,7 +89,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
         </>
       ) : (
         <Grid item xs={12}>
-          <MiradorViewer workspace={miradorWorkspace!} toggleMirador={()=> setMirador(!mirador)} />
+          <MiradorViewer workspace={miradorWorkspace!} toggleMirador={()=> setMirador(!mirador)} saveState={saveProject} />
         </Grid>
       )}
       </Grid>
