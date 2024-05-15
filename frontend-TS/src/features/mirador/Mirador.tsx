@@ -23,6 +23,9 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador,
     if (viewerRef.current) {
       const config = {
         ...workspace.config,
+        catalog: workspace.catalog,
+        windows: workspace.windows,
+        //workspace: workspace.workspace,
         id: viewerRef.current.id,
         annotation: {
           adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
@@ -34,6 +37,11 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador,
       setViewer(Mirador.viewer(config, [
         ...miradorAnnotationEditorVideo,
       ]));
+
+      Mirador.actions.importMiradorState(config);
+
+      console.log("Mirador viewer initialized");
+
     }
   }, []);
 

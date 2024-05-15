@@ -16,7 +16,7 @@ export const createProject = async (project: { owner: number; userWorkspace: IWo
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(temp)
+      body: JSON.stringify(project)
     });
     return await response.json();
   } catch (error) {
