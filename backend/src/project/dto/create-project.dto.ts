@@ -12,7 +12,6 @@ export class CreateProjectDto {
   name: string;
 
   @IsObject()
-  @ValidateNested()
   userWorkspace: any;
 
   owner: User;

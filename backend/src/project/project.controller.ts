@@ -9,16 +9,18 @@ import {
   ValidationPipe,
   UsePipes,
   BadRequestException,
-  UseGuards, Req
-} from "@nestjs/common";
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { ProjectService } from './project.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import {
-  DeleteParams, FindAllParams,
+  DeleteParams,
+  FindAllParams,
   FindOneParams,
-  PatchParams
-} from "./validators/validators";
+  PatchParams,
+} from './validators/validators';
 import { Project } from './entities/project.entity';
 import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
 import { AuthGuard } from '../auth/auth.guard';
@@ -30,10 +32,14 @@ export class ProjectController {
   constructor(private readonly projectService: ProjectService) {}
 
   @Post()
-  async create(@Body() createProjectDto: CreateProjectDto) {
+  async create(@Body() createProjectDto: any) {
+    console.log('CREATE CONTROLLER');
+    console.log('CREATE CONTROLLER', createProjectDto);
     try {
       const project = new Project();
+      console.log('CREATE CONTROLLER', createProjectDto);
       Object.assign(project, createProjectDto);
+      console.log('CREATE CONTROLLER', project);
       await this.projectService.create(project);
       return { message: 'project created successfully.', id: project.id };
     } catch (error) {

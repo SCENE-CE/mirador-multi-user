@@ -1,4 +1,8 @@
-## What you need to do 
+# Mirador multi user 
+
+Mirador multi user is a project that aims to create a multi-user environment for the Mirador 4 viewer.
+
+## Installation (Docker)
 
 - Clone this repo : `git clone git@github.com:SCENE-CE/mirador-multi-user.git`
 - `nvm use`
@@ -14,6 +18,4 @@ Now you can access :
 - backend to `localhost:3000`
 - DB to `localhost:3306`
 
-## For Production
 
-- you need to remove dev.yml

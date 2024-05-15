@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import Mirador from 'mirador';
 import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 import '@fontsource/roboto/300.css';
@@ -12,15 +12,20 @@ import './style/mirador.css'
 interface MiradorViewerProps {
   workspace: IWorkspace,
   toggleMirador: () => void,
+  saveState: (state:IWorkspace) => void
 }
 
-const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador }) => {
-  const viewerRef = useRef<HTMLDivElement>(null);
+const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador, saveState }) => {
+  const viewerRef = useRef<HTMLDivElement | null>(null);
+  const [viewer, setViewer] = React.useState<any>({ });
 
   useEffect(() => {
     if (viewerRef.current) {
       const config = {
         ...workspace.config,
+        catalog: workspace.catalog,
+        windows: workspace.windows,
+        //workspace: workspace.workspace,
         id: viewerRef.current.id,
         annotation: {
           adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
@@ -29,11 +34,21 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador 
         }
       };
 
-      Mirador.viewer(config, [
+      setViewer(Mirador.viewer(config, [
         ...miradorAnnotationEditorVideo,
-      ]);
+      ]));
+
+      Mirador.actions.importMiradorState(config);
+
+      console.log("Mirador viewer initialized");
+
     }
   }, []);
+
+  const saveMiradorState = () => {
+    saveState(viewer.store.getState());
+  }
+
 
   return(
   <Grid container flexDirection='column' spacing={2}>
@@ -43,7 +58,7 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador 
         <Button variant="contained" onClick={toggleMirador}>Back To Projects</Button>
         </Grid>
         <Grid item>
-        <Button variant="contained" onClick={()=>console.log('SHOULD SAVE THE PROJECT')}>Save Project</Button>
+        <Button variant="contained" onClick={saveMiradorState}>Save Project</Button>
         </Grid>
       </Grid>
     </Grid>
