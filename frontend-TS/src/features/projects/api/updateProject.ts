@@ -9,7 +9,8 @@ export const updateProject = async (project: Project) => {
     const response = await fetch(`http://${domain}:${port}/project/${project.id}`, {
       method: "PATCH",
       headers: {
-        "Authorization": `Bearer ${token}`
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify(project)
     });
