@@ -12,7 +12,7 @@ import './style/mirador.css'
 interface MiradorViewerProps {
   workspace: IWorkspace,
   toggleMirador: () => void,
-  saveState: () => void
+  saveState: (state:object) => void
 }
 
 const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador, saveState }) => {
@@ -37,6 +37,10 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador,
     }
   }, []);
 
+  const saveMiradorState = () => {
+    saveState(viewer.store.getState());
+  }
+
 
   return(
   <Grid container flexDirection='column' spacing={2}>
@@ -46,7 +50,7 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador,
         <Button variant="contained" onClick={toggleMirador}>Back To Projects</Button>
         </Grid>
         <Grid item>
-        <Button variant="contained" onClick={saveState}>Save Project</Button>
+        <Button variant="contained" onClick={saveMiradorState}>Save Project</Button>
         </Grid>
       </Grid>
     </Grid>

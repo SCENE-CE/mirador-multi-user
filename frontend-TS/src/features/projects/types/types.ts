@@ -4,7 +4,7 @@ export type Project = {
   id:number;
   name: string;
   userWorkspace:IWorkspace;
-  owner: Owner;
+  owner: number;
 }
 
 export type Owner = {

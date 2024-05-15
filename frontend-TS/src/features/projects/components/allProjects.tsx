@@ -7,14 +7,17 @@ import { User } from "../../auth/types/types.ts";
 import { ProjectCard } from "./projectCard.tsx";
 import { deleteProject } from "../api/deleteProject.ts";
 import { getUserAllProjects } from "../api/getUserAllProjects.ts";
+import { updateProject } from "../api/updateProject";
+import { createProject } from "../api/createProject";
 interface AllProjectsProps {
   user: User;
 }
 
 export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
-  const [mirador, setMirador] = useState(false)
+  const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false)
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>()
+  const [selectedProjectId, setSelectedProjectId] = useState<number>(null)
   const emptyWorkspace: IWorkspace = {
     catalog:[],
     companionWindows:{},
@@ -41,24 +44,40 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   const deleteUserProject=(projectId:number)=>{
     deleteProject(projectId);
     const updatedListOfProject = userProjects.filter(function(project){
-      return project.id == projectId
+      return project.id == projectId // TODO Probably should use !==
     })
     setUserProjects(updatedListOfProject)
   }
 
-  const initializeMirador = (workspace:IWorkspace) => {
-    setMirador(!mirador)
+  const initializeMirador = (workspace:IWorkspace, projectId:number) => {
+    setIsMiradorViewerVisible(!isMiradorViewerVisible)
     setMiradorWorkspace(workspace)
+    setSelectedProjectId(projectId)
   }
 
-  const saveProject = () => {
-    console.log("Save Project")
+  const saveState = (state:IWorkspace) => {
+
+    if(selectedProjectId){
+      const updatedProject = userProjects.find(project => project.id == selectedProjectId);
+      updatedProject.userWorkspace = state;
+      updateProject(updatedProject).then(r => console.log(r));
+    } else {
+      const project = {
+        name: "New Project",
+        owner: user.id,
+        userWorkspace: state,
+      }
+      createProject(project).then(r => console.log(r));
+    }
+    // let updatedProject = userProjects.find(project => project.id == miradorWorkspace?.project_id)//
+
+    // updateProject()
   }
 
   return (
     <Grid container spacing={2} justifyContent="center" flexDirection="column">
       {
-        !mirador &&(
+        !isMiradorViewerVisible &&(
           <Grid item container justifyContent="center">
           <Typography variant="h5" component="h1">{user.name}'s Projects</Typography>
         </Grid>
@@ -66,7 +85,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
       }
       <Grid item container spacing={4} >
 
-      {!mirador && userProjects ? (
+      {!isMiradorViewerVisible && userProjects ? (
         <>
           {userProjects.map((project) => (
             <React.Fragment key={project.id}>
@@ -85,11 +104,12 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
             projectName={"New Project"}
             projectWorkspace={emptyWorkspace}
             initializeMirador={initializeMirador}
+            projectId={undefined}
           />
         </>
       ) : (
         <Grid item xs={12}>
-          <MiradorViewer workspace={miradorWorkspace!} toggleMirador={()=> setMirador(!mirador)} saveState={saveProject} />
+          <MiradorViewer workspace={miradorWorkspace!} toggleMirador={()=> setIsMiradorViewerVisible(!isMiradorViewerVisible)} saveState={saveState} />
         </Grid>
       )}
       </Grid>
