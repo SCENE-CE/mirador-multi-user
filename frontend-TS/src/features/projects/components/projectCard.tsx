@@ -6,10 +6,10 @@ import DeleteIcon from '@mui/icons-material/Delete';
 interface CardProps {
   projectName: string,
   projectWorkspace:IWorkspace
-  initializeMirador: (projectWorkspace: IWorkspace, projectId: number | undefined) => void,
+  initializeMirador: (projectWorkspace: IWorkspace, projectId: number) => void,
   NumberOfManifests?:number,
   deleteProject?:(projectId:number) => void,
-  projectId?:number,
+  projectId:number,
 }
 
 export const ProjectCard: FC<CardProps>= ({

@@ -1,5 +1,4 @@
 import storage from "../../../utils/storage.ts";
-import { Project } from "../types/types";
 import IWorkspace from "../../mirador/interface/IWorkspace";
 
 export const createProject = async (project: { owner: number; userWorkspace: IWorkspace; name: string }) => {

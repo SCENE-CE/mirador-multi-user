@@ -29,7 +29,7 @@ export const RegisterForm = () => {
       await createUser(data, {
         onSuccess: () => navigate("/")
       });
-    } catch (error) {
+    } catch (error : any) {
       console.log("error", error);
       setOpen(true);
       setMessage(error.toString());

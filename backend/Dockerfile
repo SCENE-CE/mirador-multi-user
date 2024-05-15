@@ -7,7 +7,7 @@ COPY package*.json ./
 COPY tsconfig*.json ./
 COPY ./src ./src
 
-RUN npm install --loglevel verbose
+RUN npm install
 
 # Copy remaining application code (ensure entrypoint.sh is executable)
 COPY . .

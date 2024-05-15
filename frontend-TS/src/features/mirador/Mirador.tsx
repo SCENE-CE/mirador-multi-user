@@ -12,12 +12,12 @@ import './style/mirador.css'
 interface MiradorViewerProps {
   workspace: IWorkspace,
   toggleMirador: () => void,
-  saveState: (state:object) => void
+  saveState: (state:IWorkspace) => void
 }
 
 const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador, saveState }) => {
-  const viewerRef = useRef<HTMLDivElement>(null);
-  const [viewer, setViewer] = React.useState<object>(null);
+  const viewerRef = useRef<HTMLDivElement | null>(null);
+  const [viewer, setViewer] = React.useState<any>({ });
 
   useEffect(() => {
     if (viewerRef.current) {

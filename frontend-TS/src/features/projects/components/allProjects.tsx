@@ -17,7 +17,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false)
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>()
-  const [selectedProjectId, setSelectedProjectId] = useState<number>(null)
+  const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined)
   const emptyWorkspace: IWorkspace = {
     catalog:[],
     companionWindows:{},
@@ -28,6 +28,12 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
     viewers:{},
     windows:{},
     workspace:{},
+  }
+  const emptyProject: Project = {
+    id: 0,
+    name: "",
+    owner: 0,
+    userWorkspace: emptyWorkspace
   }
   useEffect(() => {
     const fetchProjects = async () => {
@@ -58,7 +64,9 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   const saveState = (state:IWorkspace) => {
 
     if(selectedProjectId){
-      const updatedProject = userProjects.find(project => project.id == selectedProjectId);
+      // Use coalesce operator to avoid typescript error "value possibly undefined"
+      // That's non sense to use coalesce operator here, because selectedProjectId is always defined
+      const updatedProject = userProjects.find(project => project.id == selectedProjectId) ?? emptyProject;
       updatedProject.userWorkspace = state;
       updateProject(updatedProject).then(r => console.log(r));
     } else {
@@ -104,7 +112,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
             projectName={"New Project"}
             projectWorkspace={emptyWorkspace}
             initializeMirador={initializeMirador}
-            projectId={undefined}
+            projectId={0}
           />
         </>
       ) : (
