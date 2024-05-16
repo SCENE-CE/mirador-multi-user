@@ -32,7 +32,7 @@ services:
     networks:
       - mirador-multi-user
     volumes:
-      - /usr/src/app/node_modules
+      - /app/node_modules
 
 networks:
   mirador-multi-user:
