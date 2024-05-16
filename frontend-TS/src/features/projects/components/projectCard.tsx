@@ -16,7 +16,7 @@ export const ProjectCard: FC<CardProps>= ({
   projectName,
   projectWorkspace,
   initializeMirador,
-  NumberOfManifests,
+  NumberOfManifests = 0,
   deleteProject,
   projectId
 }
