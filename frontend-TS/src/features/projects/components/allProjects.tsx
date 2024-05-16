@@ -1,4 +1,4 @@
-import { Grid, Snackbar, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import React, { FC, useEffect, useState } from "react";
 import { Project } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";

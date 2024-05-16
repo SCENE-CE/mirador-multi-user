@@ -29,17 +29,21 @@ export const ProjectCard: FC<CardProps>= ({
             <Grid item>
               <Typography variant="subtitle1">{projectName}</Typography>
             </Grid>
-            {NumberOfManifests ==1 &&(
-              <Grid item>
-                {NumberOfManifests} manifest
-              </Grid>
-            )
-            }
-            {NumberOfManifests > 1 &&(
-              <Grid item>
-                {NumberOfManifests} manifests
-              </Grid>
-            )
+            { !NumberOfManifests && (
+              <>
+                {NumberOfManifests ==1 &&(
+                  <Grid item>
+                    {NumberOfManifests} manifest
+                  </Grid>
+                )
+                }
+                {NumberOfManifests > 1 &&(
+                  <Grid item>
+                    {NumberOfManifests} manifests
+                  </Grid>
+                )
+                }
+              </>)
             }
           </Grid>
           <Grid item>

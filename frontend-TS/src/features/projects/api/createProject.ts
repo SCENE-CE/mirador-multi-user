@@ -5,10 +5,6 @@ export const createProject = async (project: { owner: number; userWorkspace: IWo
   const domain = import.meta.env.VITE_DOMAIN;
   const port = import.meta.env.VITE_PORT;
   const token = storage.getToken();
-  const temp = {
-    ...project,
-    userWorkspace: JSON.stringify(project.userWorkspace)
-  }
   try {
     const response = await fetch(`http://${domain}:${port}/project/`, {
       method: "POST",
