@@ -1,5 +1,5 @@
 import { Grid, Typography } from "@mui/material";
-import React, { FC, useCallback, useEffect, useState } from "react";
+import { Fragment, useCallback, useEffect, useState } from "react";
 import { Project } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
@@ -14,7 +14,7 @@ interface AllProjectsProps {
   user: User;
 }
 
-export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
+export const AllProjects = ({ user }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false);
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>();
@@ -93,7 +93,6 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
     }
   };
 
-  console.log('USER PROJECTS AT RENDER',userProjects)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -109,7 +108,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
           {!isMiradorViewerVisible && userProjects ? (
             <>
               {userProjects.map((project) => (
-                  <React.Fragment key={project.id}>
+                  <Fragment key={project.id}>
                     <ProjectCard
                       projectName={project.name}
                       projectWorkspace={project.userWorkspace}
@@ -118,7 +117,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
                       deleteProject={deleteUserProject}
                       projectId={project.id}
                     />
-                  </React.Fragment>
+                  </Fragment>
                 )
               )}
               <ProjectCard

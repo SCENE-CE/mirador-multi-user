@@ -1,4 +1,3 @@
-import { FC } from "react";
 import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
 import OpenInBrowserIcon from "@mui/icons-material/OpenInBrowser";
@@ -13,14 +12,14 @@ interface CardProps {
   projectId: number,
 }
 
-export const ProjectCard: FC<CardProps>= ({
+export const ProjectCard= ({
   projectName,
   projectWorkspace,
   initializeMirador,
   NumberOfManifests = 0,
   deleteProject,
   projectId
-}
+}:CardProps
 ) => {
   return (
     <Grid item>
