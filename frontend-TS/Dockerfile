@@ -13,16 +13,13 @@ COPY . .
 RUN npm install --global serve
 
 # Build the application if necessary
-RUN npm run build --verbose
+RUN npm run build
 
-## Change ownership (if necessary) and adjust permissions
-#RUN chown -R node:node /app && chmod -R 755 /app
-#
-## Use non-root user
-#USER node
+# Change ownership (if necessary) and adjust permissions
+RUN chown -R node:node /app && chmod -R 755 /app
 
-RUN ls
-RUN pwd
+# Use non-root user
+USER node
 
 # Command to run the application
 ENTRYPOINT ["sh","/app/entrypoint.sh"]
