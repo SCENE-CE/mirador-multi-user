@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+    db:
+      ports:
+        - "3306:3306"
+    backend:
+      ports:
+        - "3000:3000"
+        - "9229:9229"
+    frontend:
+      ports:
+        - "4000:4000"
+      environment:
+        - ENV=PROD

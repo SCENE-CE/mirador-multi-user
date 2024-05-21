@@ -9,6 +9,9 @@ RUN npm ci
 # Copy application code (excluding what's defined in .dockerignore)
 COPY . .
 
+# install serve to render index.html in ENV=PROD
+RUN npm install --global serve
+
 # Build the application if necessary
 RUN npm run build
 
@@ -19,4 +22,4 @@ RUN chown -R node:node /app && chmod -R 755 /app
 USER node
 
 # Command to run the application
-CMD ["npm", "run","dev"]
+ENTRYPOINT ["sh","/app/entrypoint.sh"]
