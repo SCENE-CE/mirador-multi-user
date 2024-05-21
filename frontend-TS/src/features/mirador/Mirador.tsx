@@ -7,17 +7,20 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IWorkspace from "./interface/IWorkspace.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import { Button, Grid } from "@mui/material";
+import { Button, Grid, TextField } from "@mui/material";
 import './style/mirador.css'
 interface MiradorViewerProps {
   workspace: IWorkspace,
   toggleMirador: () => void,
-  saveState: (state:IWorkspace) => void
+  saveState: (state:IWorkspace, name:string) => void,
+  projectName:string
 }
 
-const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador, saveState }) => {
+const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador, saveState, projectName }) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [viewer, setViewer] = React.useState<any>({ });
+
+  const [name, setName] = React.useState<string>(projectName);
 
   useEffect(() => {
     if (viewerRef.current) {
@@ -25,7 +28,6 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador,
         ...workspace.config,
         catalog: workspace.catalog,
         windows: workspace.windows,
-        //workspace: workspace.workspace,
         id: viewerRef.current.id,
         annotation: {
           adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
@@ -34,19 +36,19 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador,
         }
       };
 
-      setViewer(Mirador.viewer(config, [
-        ...miradorAnnotationEditorVideo,
-      ]));
+      const viewer = Mirador.viewer(config, [
+        ...miradorAnnotationEditorVideo]);
 
-      Mirador.actions.importMiradorState(config);
+      // TODO import corrclty workspace
 
-      console.log("Mirador viewer initialized");
+      setViewer(viewer);
+
 
     }
   }, []);
 
   const saveMiradorState = () => {
-    saveState(viewer.store.getState());
+    saveState(viewer.store.getState(),name);
   }
 
 
@@ -54,6 +56,14 @@ const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador,
   <Grid container flexDirection='column' spacing={2}>
     <Grid item container flexDirection='row'>
       <Grid item container alignContent="center"justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-40px'}}>
+        <TextField
+          style={{marginTop: '40px'}}
+          label="Project Name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        >
+
+        </TextField>
         <Grid item>
         <Button variant="contained" onClick={toggleMirador}>Back To Projects</Button>
         </Grid>

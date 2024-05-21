@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  dolibarr:
+  frontend:
     networks:
       - default
       - traefik

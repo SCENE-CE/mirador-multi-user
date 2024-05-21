@@ -1,75 +1,85 @@
 import { FC } from "react";
 import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
-import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';
-import DeleteIcon from '@mui/icons-material/Delete';
+import OpenInBrowserIcon from "@mui/icons-material/OpenInBrowser";
+import DeleteIcon from "@mui/icons-material/Delete";
+
 interface CardProps {
   projectName: string,
-  projectWorkspace:IWorkspace
+  projectWorkspace: IWorkspace
   initializeMirador: (projectWorkspace: IWorkspace, projectId: number) => void,
-  NumberOfManifests?:number,
-  deleteProject?:(projectId:number) => void,
-  projectId:number,
+  NumberOfManifests?: number,
+  deleteProject?: (projectId: number) => void,
+  projectId: number,
 }
 
 export const ProjectCard: FC<CardProps>= ({
   projectName,
   projectWorkspace,
   initializeMirador,
-  NumberOfManifests,
+  NumberOfManifests = 0,
   deleteProject,
   projectId
 }
 ) => {
-  return(
+  return (
     <Grid item>
-      <Card sx={{ width: 175, height:125, padding:'1px'}}>
-        <Grid item container flexDirection="column" justifyContent="space-between" sx={{width:'100%', height:'100%'}}>
-          <Grid  item container flexDirection='column' alignItems="center" justifyContent="center" spacing={2}>
+      <Card sx={{ width: 175, height: 125, padding: "1px" }}>
+        <Grid item container flexDirection="column" justifyContent="space-between"
+              sx={{ width: "100%", height: "100%" }}>
+          <Grid item container flexDirection="column" alignItems="center" justifyContent="center" spacing={2}>
             <Grid item>
               <Typography variant="subtitle1">{projectName}</Typography>
             </Grid>
-            {NumberOfManifests ==1 &&(
+            {NumberOfManifests == 0 && (
+              <Grid item>
+                No manifest
+              </Grid>
+            )
+            }
+            {NumberOfManifests == 1 && (
               <Grid item>
                 {NumberOfManifests} manifest
               </Grid>
             )
             }
-            {NumberOfManifests > 1 &&(
+            {NumberOfManifests > 1 && (
               <Grid item>
                 {NumberOfManifests} manifests
               </Grid>
             )
             }
           </Grid>
-          <Grid item>
+          <Grid item
+                alignSelf="center"
+          >
             <CardActions>
               <Tooltip title={"Open project"}>
                 <Button
-                  onClick={ ()=> {
-                    initializeMirador(projectWorkspace,projectId);
+                  onClick={() => {
+                    initializeMirador(projectWorkspace, projectId);
                   }}
                   variant="contained"
                 >
-                  <OpenInBrowserIcon/>
+                  <OpenInBrowserIcon />
                 </Button>
               </Tooltip>
-              {deleteProject && projectId &&(
-              <Tooltip title={"Delete project"}>
-                <Button
-                  onClick={()=> {
-                    deleteProject(projectId);
-                  }}
-                  variant="contained"
-                >
-                  <DeleteIcon/>
-                </Button>
-              </Tooltip>
-                )}
+              {deleteProject && projectId && (
+                <Tooltip title={"Delete project"}>
+                  <Button
+                    onClick={() => {
+                      deleteProject(projectId);
+                    }}
+                    variant="contained"
+                  >
+                    <DeleteIcon />
+                  </Button>
+                </Tooltip>
+              )}
             </CardActions>
           </Grid>
         </Grid>
       </Card>
     </Grid>
-  )
-}
+  );
+};

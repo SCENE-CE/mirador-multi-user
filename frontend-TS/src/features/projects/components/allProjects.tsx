@@ -1,4 +1,4 @@
-import { Grid, Snackbar, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import React, { FC, useEffect, useState } from "react";
 import { Project } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
@@ -51,7 +51,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
   const deleteUserProject = (projectId: number) => {
     deleteProject(projectId);
     const updatedListOfProject = userProjects.filter(function(project) {
-      return project.id == projectId; // TODO Probably should use !==
+      return project.id != projectId;
     });
     setUserProjects(updatedListOfProject);
   };
@@ -62,33 +62,34 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
     setSelectedProjectId(projectId);
   };
 
-  const saveState = (state: IWorkspace) => {
+  const saveState = (state: IWorkspace, name: string) => {
 
+
+    // TODO Fucking spaghetti
     if (selectedProjectId) {
       // Use coalesce operator to avoid typescript error "value possibly undefined"
       // That's non sense to use coalesce operator here, because selectedProjectId is always defined
       const updatedProject = userProjects.find(project => project.id == selectedProjectId) ?? emptyProject;
       updatedProject.userWorkspace = state;
-      updateProject(updatedProject).then(r => console.log(r));
+      updatedProject.name = name;
+      updateProject(updatedProject).then(r => {
+        console.log(r);
+      });
     } else {
       const project = {
-        name: "New Project",
+        name: name,
         owner: user.id,
         userWorkspace: state
       };
       createProject(project).then(r => {
-         setSelectedProjectId(r.id);
+        setSelectedProjectId(r.id);
+        setUserProjects([...userProjects, r]);
       });
     }
-    // let updatedProject = userProjects.find(project => project.id == miradorWorkspace?.project_id)//
-
-    // updateProject()
   };
 
   return (
     <>
-      {/*<Snackbar open={open} message={message} autoHideDuration={10} />*/}
-
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
         {
           !isMiradorViewerVisible && (
@@ -115,7 +116,7 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
                 )
               )}
               <ProjectCard
-                projectName={"New Project"}
+                projectName={"Create new Project"}
                 projectWorkspace={emptyWorkspace}
                 initializeMirador={initializeMirador}
                 projectId={0}
@@ -123,9 +124,12 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
             </>
           ) : (
             <Grid item xs={12}>
-              <MiradorViewer workspace={miradorWorkspace!}
-                             toggleMirador={() => setIsMiradorViewerVisible(!isMiradorViewerVisible)}
-                             saveState={saveState} />
+              <MiradorViewer
+                workspace={miradorWorkspace!}
+                toggleMirador={() => setIsMiradorViewerVisible(!isMiradorViewerVisible)}
+                saveState={saveState}
+                projectName={userProjects.find(project => project.id == selectedProjectId)?.name ?? "Newww project"}
+              />
             </Grid>
           )}
         </Grid>
