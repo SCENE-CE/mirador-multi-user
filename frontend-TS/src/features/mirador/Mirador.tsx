@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from "react";
 import Mirador from 'mirador';
 import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 import '@fontsource/roboto/300.css';
@@ -16,11 +16,11 @@ interface MiradorViewerProps {
   projectName:string
 }
 
-const MiradorViewer: React.FC<MiradorViewerProps> = ({ workspace, toggleMirador, saveState, projectName }) => {
+const MiradorViewer = ({ workspace, toggleMirador, saveState, projectName }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
-  const [viewer, setViewer] = React.useState<any>({ });
+  const [viewer, setViewer] = useState<any>({ });
 
-  const [name, setName] = React.useState<string>(projectName);
+  const [name, setName] = useState<string>(projectName);
 
   useEffect(() => {
     if (viewerRef.current) {
