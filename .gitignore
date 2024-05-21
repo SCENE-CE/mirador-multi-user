@@ -1,2 +1,4 @@
 .env
 .idea/
+dev.yml
+prod.yml
