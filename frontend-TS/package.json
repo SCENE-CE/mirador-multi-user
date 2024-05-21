@@ -1,5 +1,5 @@
 {
-  "name": "untitled2",
+  "name": "mmu-front-end",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -29,7 +29,8 @@
     "react-router-dom": "^6.23.0",
     "styled-components": "^6.1.8",
     "vite-tsconfig-paths": "^4.3.2",
-    "zod": "^3.23.4"
+    "zod": "^3.23.4",
+    "vite": "5.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.66",

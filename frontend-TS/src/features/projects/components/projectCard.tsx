@@ -13,14 +13,14 @@ interface CardProps {
   projectId: number,
 }
 
-export const ProjectCard: FC<CardProps> = ({
-                                             projectName,
-                                             projectWorkspace,
-                                             initializeMirador,
-                                             NumberOfManifests,
-                                             deleteProject,
-                                             projectId
-                                           }
+export const ProjectCard: FC<CardProps>= ({
+  projectName,
+  projectWorkspace,
+  initializeMirador,
+  NumberOfManifests = 0,
+  deleteProject,
+  projectId
+}
 ) => {
   return (
     <Grid item>
