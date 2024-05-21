@@ -1,5 +1,5 @@
 import { Grid, Typography } from "@mui/material";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useCallback, useEffect, useState } from "react";
 import { Project } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
@@ -62,6 +62,11 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
     setSelectedProjectId(projectId);
   };
 
+  const handleSaveProject = useCallback((newProject:Project)=>{
+    setUserProjects(userProjects => [...userProjects, newProject]);
+
+  },[setUserProjects])
+
   const saveState = (state: IWorkspace, name: string) => {
 
 
@@ -83,11 +88,12 @@ export const AllProjects: FC<AllProjectsProps> = ({ user }) => {
       };
       createProject(project).then(r => {
         setSelectedProjectId(r.id);
-        setUserProjects([...userProjects, r]);
+        handleSaveProject( { id: r.id, ...project });
       });
     }
   };
 
+  console.log('USER PROJECTS AT RENDER',userProjects)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
