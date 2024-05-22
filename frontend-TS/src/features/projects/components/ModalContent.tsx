@@ -3,26 +3,28 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { ChangeEvent, useCallback, useState } from "react";
 import { Project } from "../types/types.ts";
 import SaveIcon from '@mui/icons-material/Save';
-import IWorkspace from "../../mirador/interface/IWorkspace.ts";
 interface ModalProjectProps {
   project:Project,
-  saveProject: (state: IWorkspace, name: string) => void,
+  updateUserProject:(project:Project, newProjectName:string)=>void,
 }
-export const ModalProject = ({ project, saveProject }:ModalProjectProps)=>{
+
+export const ModalProject = ({ project, updateUserProject }:ModalProjectProps)=>{
   const [editName, setEditName] = useState(false);
-  const [ newName, setNewName ] = useState('')
+  const [ newProjectName, setNewProjectName] = useState(project!.name);
+
+  const HandleUpdateProject = useCallback(async ()=>{
+    updateUserProject(project,newProjectName);
+    setEditName(!editName)
+  },[editName, newProjectName, project])
+
+
   const handleEditName = useCallback(()=>{
     setEditName(!editName)
   },  [setEditName,editName])
 
-  const handleSaveName = useCallback(()=>{
-    console.log('toto')
-    saveProject(project.userWorkspace, newName)
-    setEditName(!editName);
-  },[saveProject, project, newName, editName])
 
   const handleChangeName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setNewName(e.target.value);
+    setNewProjectName(e.target.value);
   }, []);
   return(
     <Grid container>
@@ -38,8 +40,8 @@ export const ModalProject = ({ project, saveProject }:ModalProjectProps)=>{
           ):
           (
             <Grid item sx={{minHeight:'100px'}} container flexDirection="row" justifyContent="space-between" alignItems="center">
-              <TextField type="text" onChange={handleChangeName}variant="outlined" defaultValue={project.name}/>
-              <Button variant="contained" onClick={handleSaveName}>
+              <TextField type="text" onChange={handleChangeName} variant="outlined" defaultValue={project.name}/>
+              <Button variant="contained" onClick={HandleUpdateProject}>
                 <SaveIcon/>
               </Button>
             </Grid>

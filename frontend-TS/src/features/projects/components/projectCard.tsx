@@ -3,7 +3,7 @@ import IWorkspace from "../../mirador/interface/IWorkspace.ts";
 import OpenInBrowserIcon from "@mui/icons-material/OpenInBrowser";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import { useCallback, useState } from "react";
+import {  useCallback, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalProject } from "./ModalContent.tsx";
 import { Project } from "../types/types.ts";
@@ -16,7 +16,7 @@ interface CardProps {
   deleteProject?: (projectId: number) => void,
   projectId: number,
   project?:Project,
-  saveProject?:(state: IWorkspace, name: string) => void,
+  updateUserProject:(project:Project, newProjectName:string)=>void,
 }
 
 export const ProjectCard= ({
@@ -27,15 +27,15 @@ export const ProjectCard= ({
   deleteProject,
   projectId,
   project,
-saveProject,
+  updateUserProject
 }:CardProps
 ) => {
 
   const [openModal, setOpenMOdal] = useState(false)
-
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
+
 
   return (
     <>
@@ -110,7 +110,7 @@ saveProject,
                 )}
               </Grid>
             </CardActions>
-            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalProject project={project!} saveProject={saveProject!} />}/>
+            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalProject updateUserProject={updateUserProject} project={project!}/>}/>
           </Grid>
         </Grid>
       </Card>

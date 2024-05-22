@@ -63,6 +63,16 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     setUserProjects(updatedListOfProject);
   };
 
+  const updateUserProject = useCallback(async (project:Project, newProjectName:string)=>{
+    const updatedProject = {...project, name:newProjectName}
+    await updateProject({...updatedProject})
+    let updatedListOfProject = userProjects.filter(function(p) {
+      return p.id != project.id;
+    });
+    updatedListOfProject = [...updatedListOfProject,updatedProject]
+    setUserProjects(updatedListOfProject);
+  },[userProjects])
+
   const initializeMirador = useCallback((workspace: IWorkspace, projectId: number) => {
     console.log(userProjects)
 
@@ -146,7 +156,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
                       NumberOfManifests={project.userWorkspace.catalog.length}
                       deleteProject={deleteUserProject}
                       projectId={project.id}
-                      saveProject={saveProject}
+                      updateUserProject={updateUserProject}
                     />
                   </Grid>
                 )
@@ -168,7 +178,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
                 workspace={miradorWorkspace!}
                 toggleMirador={() => setIsMiradorViewerVisible(!isMiradorViewerVisible)}
                 saveState={saveProject}
-                projectName={userProjects.find(project => project.id == selectedProjectId)?.name ?? "Newww project"}
+                projectName={userProjects.find(project => project.id == selectedProjectId)?.name ?? "New project"}
               />
             </Grid>
           )}
