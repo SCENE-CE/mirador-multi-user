@@ -38,7 +38,7 @@ export class ProjectController {
       Object.assign(project, createProjectDto);
       console.log('CREATE CONTROLLER', project);
       const createdProject = await this.projectService.create(project);
-      return { message: 'project created successfully.', project:createdProject };
+      return { ...createdProject };
     } catch (error) {
       throw new BadRequestException(error);
     }

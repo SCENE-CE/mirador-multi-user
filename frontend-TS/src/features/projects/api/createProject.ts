@@ -1,7 +1,7 @@
 import storage from "../../../utils/storage.ts";
-import { CreateProjectDto } from "../types/types.ts";
+import { CreateProjectDto, Project } from "../types/types.ts";
 
-export const createProject = async (project: CreateProjectDto) => {
+export const createProject = async (project: CreateProjectDto):Promise<Project> => {
   const domain = import.meta.env.VITE_DOMAIN;
   const port = import.meta.env.VITE_PORT;
   const token = storage.getToken();
@@ -14,9 +14,7 @@ export const createProject = async (project: CreateProjectDto) => {
       },
       body: JSON.stringify(project)
     });
-    const toto = await response.json()
-    console.log('RESPONSE OF CREATE PROJECT : ',toto)
-    return toto;
+    return await response.json()
   } catch (error) {
     throw error;
   }

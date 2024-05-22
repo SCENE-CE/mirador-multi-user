@@ -55,33 +55,38 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     fetchProjects();
   }, [user]);
 
-  const deleteUserProject = (projectId: number) => {
-    deleteProject(projectId);
+  const deleteUserProject = async (projectId: number) => {
+    await deleteProject(projectId);
     const updatedListOfProject = userProjects.filter(function(project) {
       return project.id != projectId;
     });
     setUserProjects(updatedListOfProject);
   };
 
-  const InitializeProject = useCallback((workspace: IWorkspace, projectName:string)=>{
-    try{
-      const response = createProject({
-          name:projectName,
-          owner:user.id,
-          userWorkspace:workspace
-        }
-      )
-      console.log(response);
-    }catch(error){
-      throw error;
-    }
-  },[user.id])
-
   const initializeMirador = useCallback((workspace: IWorkspace, projectId: number) => {
+    console.log(userProjects)
+
+    setSelectedProjectId(projectId);
     setIsMiradorViewerVisible(!isMiradorViewerVisible);
     setMiradorWorkspace(workspace);
-    setSelectedProjectId(projectId);
   },[isMiradorViewerVisible]);
+
+  const InitializeProject = useCallback(async (workspace: IWorkspace, projectName: string) => {
+    const response = await createProject({
+        name: projectName,
+        owner: user.id,
+        userWorkspace: workspace
+      }
+    )
+
+    setUserProjects((prevState: Project[]) => [...prevState,
+      response]
+    );
+    initializeMirador(emptyWorkspace, response.id)
+    toggleModalProjectCreation()
+  },[initializeMirador, user.id])
+
+
 
   const handleSaveProject = useCallback((newProject:Project)=>{
     setUserProjects(userProjects => [...userProjects, newProject]);
@@ -115,6 +120,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
   const toggleModalProjectCreation = useCallback(()=>{
     setmodalCreateProjectIsOpen(!modalCreateProjectIsOpen);
   },[modalCreateProjectIsOpen,setmodalCreateProjectIsOpen])
+  console.log(userProjects)
 
   return (
     <>
@@ -129,9 +135,9 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
         <Grid item container spacing={1}>
 
           {!isMiradorViewerVisible && userProjects ? (
-            <Grid item container spacing={1} flexDirection="column">
+            <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((project) => (
-                  <Grid item key={project.id}>
+                  <Grid item key={project.id} >
                     <ProjectCard
                       project={project}
                       projectName={project.name}
@@ -154,12 +160,6 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
                     toggleModalProjectCreation={toggleModalProjectCreation}
                     modalCreateProjectIsOpen={modalCreateProjectIsOpen}/>
                 </div>
-                <ProjectCard
-                  projectName={"Create new Project"}
-                  projectWorkspace={emptyWorkspace}
-                  initializeMirador={initializeMirador}
-                  projectId={0}
-                />
               </Grid>
             </Grid>
           ) : (
