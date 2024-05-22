@@ -10,10 +10,8 @@ import {
   UsePipes,
   BadRequestException,
   UseGuards,
-  Req,
 } from '@nestjs/common';
 import { ProjectService } from './project.service';
-import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import {
   DeleteParams,
@@ -22,7 +20,6 @@ import {
   PatchParams,
 } from './validators/validators';
 import { Project } from './entities/project.entity';
-import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.factory';
 import { AuthGuard } from '../auth/auth.guard';
 import { Action } from '../casl/enum/Action';
 import { CheckPolicies } from '../casl/decorators/CheckPolicies';
@@ -40,8 +37,8 @@ export class ProjectController {
       console.log('CREATE CONTROLLER', createProjectDto);
       Object.assign(project, createProjectDto);
       console.log('CREATE CONTROLLER', project);
-      await this.projectService.create(project);
-      return { message: 'project created successfully.', id: project.id };
+      const createdProject = await this.projectService.create(project);
+      return { message: 'project created successfully.', project:createdProject };
     } catch (error) {
       throw new BadRequestException(error);
     }
