@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 interface IFloatingActionButtonProps {
   content:string
   Icon:ReactNode
+  onClick:()=>void
 }
 
 const FabStyle = {
@@ -15,7 +16,7 @@ const FabStyle = {
   position: 'fixed',
 };
 
-export const FloatingActionButton = ({content, Icon}:IFloatingActionButtonProps)=>{
+export const FloatingActionButton = ({content, Icon, onClick}:IFloatingActionButtonProps)=>{
 
   return(
     <>
@@ -23,6 +24,7 @@ export const FloatingActionButton = ({content, Icon}:IFloatingActionButtonProps)
         variant="extended"
         color="primary"
         sx={ FabStyle }
+        onClick={onClick}
       >
         {Icon}
         {content}

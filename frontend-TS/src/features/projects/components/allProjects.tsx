@@ -11,6 +11,7 @@ import { getUserAllProjects } from "../api/getUserAllProjects.ts";
 import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
+import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 
 interface AllProjectsProps {
   user: User;
@@ -40,6 +41,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
   const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false);
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>();
   const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
+  const [modalCreateProjectIsOpen, setmodalCreateProjectIsOpen]= useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -61,11 +63,25 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     setUserProjects(updatedListOfProject);
   };
 
-  const initializeMirador = (workspace: IWorkspace, projectId: number) => {
+  const InitializeProject = useCallback((workspace: IWorkspace, projectName:string)=>{
+    try{
+      const response = createProject({
+          name:projectName,
+          owner:user.id,
+          userWorkspace:workspace
+        }
+      )
+      console.log(response);
+    }catch(error){
+      throw error;
+    }
+  },[user.id])
+
+  const initializeMirador = useCallback((workspace: IWorkspace, projectId: number) => {
     setIsMiradorViewerVisible(!isMiradorViewerVisible);
     setMiradorWorkspace(workspace);
     setSelectedProjectId(projectId);
-  };
+  },[isMiradorViewerVisible]);
 
   const handleSaveProject = useCallback((newProject:Project)=>{
     setUserProjects(userProjects => [...userProjects, newProject]);
@@ -95,6 +111,10 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
       });
     }
   },[handleSaveProject, selectedProjectId, user.id, userProjects])
+
+  const toggleModalProjectCreation = useCallback(()=>{
+    setmodalCreateProjectIsOpen(!modalCreateProjectIsOpen);
+  },[modalCreateProjectIsOpen,setmodalCreateProjectIsOpen])
 
   return (
     <>
@@ -126,7 +146,14 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
                 )
               )}
               <Grid item>
-                <FloatingActionButton content={"New Project"} Icon={<AddIcon/>}/>
+                <FloatingActionButton onClick={toggleModalProjectCreation} content={"New Project"} Icon={<AddIcon />} />
+                <div>
+                  <DrawerCreateProject
+                    InitializeProject={InitializeProject}
+                    projectWorkspace={emptyWorkspace}
+                    toggleModalProjectCreation={toggleModalProjectCreation}
+                    modalCreateProjectIsOpen={modalCreateProjectIsOpen}/>
+                </div>
                 <ProjectCard
                   projectName={"Create new Project"}
                   projectWorkspace={emptyWorkspace}

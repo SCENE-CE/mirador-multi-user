@@ -14,7 +14,9 @@ export const createProject = async (project: CreateProjectDto) => {
       },
       body: JSON.stringify(project)
     });
-    return await response.json();
+    const toto = await response.json()
+    console.log('RESPONSE OF CREATE PROJECT : ',toto)
+    return toto;
   } catch (error) {
     throw error;
   }
