@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 interface OpenModalProps{
   openModal:boolean,
   setOpenModal: () => void,
-  children: ReactNode
+  children: ReactNode,
 }
 
 const style = {

@@ -5,6 +5,8 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { useCallback, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
+import { ModalProject } from "./ModalContent.tsx";
+import { Project } from "../types/types.ts";
 
 interface CardProps {
   projectName: string,
@@ -13,6 +15,8 @@ interface CardProps {
   NumberOfManifests?: number,
   deleteProject?: (projectId: number) => void,
   projectId: number,
+  project?:Project,
+  saveProject?:(state: IWorkspace, name: string) => void,
 }
 
 export const ProjectCard= ({
@@ -21,7 +25,9 @@ export const ProjectCard= ({
   initializeMirador,
   NumberOfManifests = 0,
   deleteProject,
-  projectId
+  projectId,
+  project,
+saveProject,
 }:CardProps
 ) => {
 
@@ -30,6 +36,7 @@ export const ProjectCard= ({
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
+
   return (
     <>
       <Card>
@@ -103,7 +110,7 @@ export const ProjectCard= ({
                 )}
               </Grid>
             </CardActions>
-            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<><p>toto</p></>}/>
+            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalProject project={project!} saveProject={saveProject!} />}/>
           </Grid>
         </Grid>
       </Card>

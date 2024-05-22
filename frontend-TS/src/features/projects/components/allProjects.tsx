@@ -1,6 +1,7 @@
 import { Grid, Typography } from "@mui/material";
+import AddIcon from '@mui/icons-material/Add';
 import { useCallback, useEffect, useState } from "react";
-import { Project } from "../types/types.ts";
+import { CreateProjectDto, Project } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
 import { User } from "../../auth/types/types.ts";
@@ -9,33 +10,37 @@ import { deleteProject } from "../api/deleteProject.ts";
 import { getUserAllProjects } from "../api/getUserAllProjects.ts";
 import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
+import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 
 interface AllProjectsProps {
   user: User;
 }
+
+const emptyWorkspace: IWorkspace = {
+  catalog: [],
+  companionWindows: {},
+  config: {},
+  elasticLayout: {},
+  layers: {},
+  manifests: {},
+  viewers: {},
+  windows: {},
+  workspace: {}
+};
+
+const emptyProject: Project = {
+  id: 0,
+  name: "",
+  owner: 0,
+  userWorkspace: emptyWorkspace
+};
 
 export const AllProjects = ({ user }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false);
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>();
   const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
-  const emptyWorkspace: IWorkspace = {
-    catalog: [],
-    companionWindows: {},
-    config: {},
-    elasticLayout: {},
-    layers: {},
-    manifests: {},
-    viewers: {},
-    windows: {},
-    workspace: {}
-  };
-  const emptyProject: Project = {
-    id: 0,
-    name: "",
-    owner: 0,
-    userWorkspace: emptyWorkspace
-  };
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -67,10 +72,8 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
 
   },[setUserProjects])
 
-  const saveState = (state: IWorkspace, name: string) => {
-
-
-    // TODO Fucking spaghetti
+  const saveProject = useCallback((state: IWorkspace, name: string)=>{
+    console.log('SAVEPROJECT',name)
     if (selectedProjectId) {
       // Use coalesce operator to avoid typescript error "value possibly undefined"
       // That's non sense to use coalesce operator here, because selectedProjectId is always defined
@@ -78,20 +81,20 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
       updatedProject.userWorkspace = state;
       updatedProject.name = name;
       updateProject(updatedProject).then(r => {
-        console.log(r);
+        console.log('updated project: ', r);
       });
     } else {
-      const project = {
+      const project:CreateProjectDto = {
         name: name,
         owner: user.id,
-        userWorkspace: state
+        userWorkspace: state,
       };
       createProject(project).then(r => {
         setSelectedProjectId(r.id);
         handleSaveProject( { id: r.id, ...project });
       });
     }
-  };
+  },[handleSaveProject, selectedProjectId, user.id, userProjects])
 
   return (
     <>
@@ -104,22 +107,26 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
           )
         }
         <Grid item container spacing={1}>
+
           {!isMiradorViewerVisible && userProjects ? (
             <Grid item container spacing={1} flexDirection="column">
               {userProjects.map((project) => (
                   <Grid item key={project.id}>
                     <ProjectCard
+                      project={project}
                       projectName={project.name}
                       projectWorkspace={project.userWorkspace}
                       initializeMirador={initializeMirador}
                       NumberOfManifests={project.userWorkspace.catalog.length}
                       deleteProject={deleteUserProject}
                       projectId={project.id}
+                      saveProject={saveProject}
                     />
                   </Grid>
                 )
               )}
               <Grid item>
+                <FloatingActionButton content={"New Project"} Icon={<AddIcon/>}/>
                 <ProjectCard
                   projectName={"Create new Project"}
                   projectWorkspace={emptyWorkspace}
@@ -133,7 +140,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
               <MiradorViewer
                 workspace={miradorWorkspace!}
                 toggleMirador={() => setIsMiradorViewerVisible(!isMiradorViewerVisible)}
-                saveState={saveState}
+                saveState={saveProject}
                 projectName={userProjects.find(project => project.id == selectedProjectId)?.name ?? "Newww project"}
               />
             </Grid>
