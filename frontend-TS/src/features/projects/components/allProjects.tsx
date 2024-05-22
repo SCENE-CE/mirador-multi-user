@@ -1,5 +1,5 @@
 import { Grid, Typography } from "@mui/material";
-import { Fragment, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Project } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
@@ -103,12 +103,11 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
             </Grid>
           )
         }
-        <Grid item container spacing={4}>
-
+        <Grid item container spacing={1}>
           {!isMiradorViewerVisible && userProjects ? (
-            <>
+            <Grid item container spacing={1} flexDirection="column">
               {userProjects.map((project) => (
-                  <Fragment key={project.id}>
+                  <Grid item key={project.id}>
                     <ProjectCard
                       projectName={project.name}
                       projectWorkspace={project.userWorkspace}
@@ -117,16 +116,18 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
                       deleteProject={deleteUserProject}
                       projectId={project.id}
                     />
-                  </Fragment>
+                  </Grid>
                 )
               )}
-              <ProjectCard
-                projectName={"Create new Project"}
-                projectWorkspace={emptyWorkspace}
-                initializeMirador={initializeMirador}
-                projectId={0}
-              />
-            </>
+              <Grid item>
+                <ProjectCard
+                  projectName={"Create new Project"}
+                  projectWorkspace={emptyWorkspace}
+                  initializeMirador={initializeMirador}
+                  projectId={0}
+                />
+              </Grid>
+            </Grid>
           ) : (
             <Grid item xs={12}>
               <MiradorViewer
