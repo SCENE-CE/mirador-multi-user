@@ -9,8 +9,6 @@ services:
       MARIADB_USER: ${DB_USER}
       MARIADB_PASSWORD: ${DB_PASS}
     restart: unless-stopped
-    networks:
-      - mirador-multi-user
     volumes:
       - ./mariaDB/data:/var/utils/mysql
 
@@ -20,6 +18,8 @@ services:
     depends_on:
       - db
     restart: unless-stopped
+    links:
+      - db
     networks:
       - mirador-multi-user
 
@@ -29,9 +29,3 @@ services:
     depends_on:
       - backend
     restart: unless-stopped
-    networks:
-      - mirador-multi-user
-
-networks:
-  mirador-multi-user:
-    driver: bridge
