@@ -20,8 +20,6 @@ services:
     restart: unless-stopped
     links:
       - db
-    networks:
-      - mirador-multi-user
 
 
   frontend:
