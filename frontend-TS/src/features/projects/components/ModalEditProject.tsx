@@ -8,7 +8,7 @@ import { ModalConfirmDelete } from "./ModalConfirmDelete.tsx";
 interface ModalProjectProps {
   project:Project,
   updateUserProject:(project:Project, newProjectName:string)=>void,
-  deleteProject:(projectId:number)=>void,
+  deleteProject?:(projectId:number)=>void,
 }
 
 export const ModalEditProject = ({ project, updateUserProject, deleteProject }:ModalProjectProps)=>{
@@ -37,10 +37,6 @@ export const ModalEditProject = ({ project, updateUserProject, deleteProject }:M
     },[openModal]
   )
 
-  const deleteDefinitelyProject = (projectId:number)=>{
-    deleteProject(projectId);
-  }
-
   return(
     <Grid container>
 
@@ -61,6 +57,8 @@ export const ModalEditProject = ({ project, updateUserProject, deleteProject }:M
               </Button>
             </Grid>
           )}
+        {deleteProject &&(
+          <>
         <Grid item>
           <Tooltip title={"Delete project"}>
             <Button
@@ -72,7 +70,10 @@ export const ModalEditProject = ({ project, updateUserProject, deleteProject }:M
             </Button>
           </Tooltip>
         </Grid>
-        <MMUModal openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteDefinitelyProject} projectId={project.id} projectName={project.name}/>}/>
+        <MMUModal openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteProject} projectId={project.id} projectName={project.name}/>}/>
+          </>
+          )
+        }
       </Grid>
     </Grid>
   )

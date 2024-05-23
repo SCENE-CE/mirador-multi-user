@@ -178,7 +178,8 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
                 workspace={miradorWorkspace!}
                 toggleMirador={() => setIsMiradorViewerVisible(!isMiradorViewerVisible)}
                 saveState={saveProject}
-                projectName={userProjects.find(project => project.id == selectedProjectId)?.name ?? "New project"}
+                project={userProjects.find(project => project.id == selectedProjectId)!}
+                updateUserProject={updateUserProject}
               />
             </Grid>
           )}
