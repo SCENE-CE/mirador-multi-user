@@ -15,13 +15,12 @@ import { Project } from "../projects/types/types.ts";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 interface MiradorViewerProps {
   workspace: IWorkspace,
-  toggleMirador: () => void,
   saveState: (state:IWorkspace, name:string) => void,
   project:Project
   updateUserProject:(project:Project, newProjectName:string)=>void,
 }
 
-const MiradorViewer = ({ workspace, toggleMirador, saveState ,project,updateUserProject }:MiradorViewerProps) => {
+const MiradorViewer = ({ workspace, saveState ,project,updateUserProject }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [viewer, setViewer] = useState<any>({ });
   const [openModal, setOpenMOdal] = useState(false)
@@ -65,7 +64,7 @@ const MiradorViewer = ({ workspace, toggleMirador, saveState ,project,updateUser
   return(
   <Grid container flexDirection='column' spacing={2}>
     <Grid item container flexDirection='row'>
-      <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-40px'}}>
+      <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
         <Grid item>
           <Typography>
             {project.name}
@@ -82,9 +81,6 @@ const MiradorViewer = ({ workspace, toggleMirador, saveState ,project,updateUser
           </Tooltip>
         </Grid>
         <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject updateUserProject={updateUserProject} project={project}/>}/>
-        <Grid item>
-        <Button variant="contained" onClick={toggleMirador}>Back To Projects</Button>
-        </Grid>
         <Grid item>
         <Button variant="contained" onClick={saveMiradorState}>Save Project</Button>
         </Grid>
