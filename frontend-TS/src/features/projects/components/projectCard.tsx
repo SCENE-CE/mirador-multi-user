@@ -84,18 +84,6 @@ export const ProjectCard= ({
                 {deleteProject && projectId && (
                   <>
                   <Grid item>
-                    <Tooltip title={"Delete project"}>
-                      <Button
-                        onClick={() => {
-                          deleteProject(projectId);
-                        }}
-                        variant="contained"
-                      >
-                        <DeleteIcon />
-                      </Button>
-                    </Tooltip>
-                  </Grid>
-                  <Grid item>
                     <Tooltip title={"Project configuration"}>
                       <Button
                         onClick={HandleOpenModal}
@@ -109,7 +97,7 @@ export const ProjectCard= ({
                 )}
               </Grid>
             </CardActions>
-            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalProject updateUserProject={updateUserProject} project={project!}/>}/>
+            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalProject deleteProject={deleteProject} updateUserProject={updateUserProject} project={project!}/>}/>
           </Grid>
         </Grid>
       </Card>
