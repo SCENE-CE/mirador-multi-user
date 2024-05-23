@@ -1,7 +1,6 @@
 import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
-import OpenInBrowserIcon from "@mui/icons-material/OpenInBrowser";
-import DeleteIcon from "@mui/icons-material/Delete";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';import DeleteIcon from "@mui/icons-material/Delete";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import {  useCallback, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
@@ -78,7 +77,7 @@ export const ProjectCard= ({
                   }}
                   variant="contained"
                 >
-                  <OpenInBrowserIcon />
+                  <OpenInNewIcon />
                 </Button>
               </Tooltip>
                 </Grid>

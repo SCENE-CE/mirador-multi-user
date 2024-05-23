@@ -41,7 +41,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
   const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false);
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>();
   const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
-  const [modalCreateProjectIsOpen, setmodalCreateProjectIsOpen]= useState(false);
+  const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -55,31 +55,36 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     fetchProjects();
   }, [user]);
 
-  const deleteUserProject = async (projectId: number) => {
+  const deleteUserProject = useCallback(async (projectId: number) => {
     await deleteProject(projectId);
     const updatedListOfProject = userProjects.filter(function(project) {
       return project.id != projectId;
     });
     setUserProjects(updatedListOfProject);
-  };
+  },[userProjects]);
 
   const updateUserProject = useCallback(async (project:Project, newProjectName:string)=>{
     const updatedProject = {...project, name:newProjectName}
+    console.log(updatedProject)
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
       return p.id != project.id;
     });
-    updatedListOfProject = [...updatedListOfProject,updatedProject]
+    updatedListOfProject = [updatedProject,...updatedListOfProject]
+    console.log('updatedListOfProject',updatedListOfProject)
+    console.log('userProjects',userProjects)
     setUserProjects(updatedListOfProject);
   },[userProjects])
 
   const initializeMirador = useCallback((workspace: IWorkspace, projectId: number) => {
-    console.log(userProjects)
-
     setSelectedProjectId(projectId);
     setIsMiradorViewerVisible(!isMiradorViewerVisible);
     setMiradorWorkspace(workspace);
   },[isMiradorViewerVisible]);
+
+  const toggleModalProjectCreation = useCallback(()=>{
+    setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
+  },[modalCreateProjectIsOpen,setModalCreateProjectIsOpen])
 
   const InitializeProject = useCallback(async (workspace: IWorkspace, projectName: string) => {
     const response = await createProject({
@@ -88,13 +93,12 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
         userWorkspace: workspace
       }
     )
-
     setUserProjects((prevState: Project[]) => [...prevState,
       response]
     );
     initializeMirador(emptyWorkspace, response.id)
     toggleModalProjectCreation()
-  },[initializeMirador, user.id])
+  },[initializeMirador, toggleModalProjectCreation, user.id])
 
 
 
@@ -127,9 +131,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     }
   },[handleSaveProject, selectedProjectId, user.id, userProjects])
 
-  const toggleModalProjectCreation = useCallback(()=>{
-    setmodalCreateProjectIsOpen(!modalCreateProjectIsOpen);
-  },[modalCreateProjectIsOpen,setmodalCreateProjectIsOpen])
+
   console.log(userProjects)
 
   return (
