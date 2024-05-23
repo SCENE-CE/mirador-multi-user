@@ -1,16 +1,20 @@
-import { Button, Grid, TextField, Typography } from "@mui/material";
+import { Button, Grid, TextField, Tooltip, Typography } from "@mui/material";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { ChangeEvent, useCallback, useState } from "react";
 import { Project } from "../types/types.ts";
 import SaveIcon from '@mui/icons-material/Save';
+import { MMUModal } from "../../../components/elements/modal.tsx";
+import { ModalConfirmDelete } from "./ModalConfirmDelete.tsx";
 interface ModalProjectProps {
   project:Project,
   updateUserProject:(project:Project, newProjectName:string)=>void,
+  deleteProject:(projectId:number)=>void,
 }
 
-export const ModalProject = ({ project, updateUserProject }:ModalProjectProps)=>{
+export const ModalEditProject = ({ project, updateUserProject, deleteProject }:ModalProjectProps)=>{
   const [editName, setEditName] = useState(false);
   const [ newProjectName, setNewProjectName] = useState(project!.name);
+  const [openModal, setOpenMOdal] = useState(false)
 
   const HandleUpdateProject = useCallback(async ()=>{
     updateUserProject(project,newProjectName);
@@ -26,6 +30,17 @@ export const ModalProject = ({ project, updateUserProject }:ModalProjectProps)=>
   const handleChangeName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setNewProjectName(e.target.value);
   }, []);
+
+  const handleConfirmDeleteModal = useCallback(
+    ()=>{
+      setOpenMOdal(!openModal)
+    },[openModal]
+  )
+
+  const deleteDefinitelyProject = (projectId:number)=>{
+    deleteProject(projectId);
+  }
+
   return(
     <Grid container>
 
@@ -46,6 +61,18 @@ export const ModalProject = ({ project, updateUserProject }:ModalProjectProps)=>
               </Button>
             </Grid>
           )}
+        <Grid item>
+          <Tooltip title={"Delete project"}>
+            <Button
+              color='error'
+              onClick={handleConfirmDeleteModal}
+              variant="contained"
+            >
+              DELETE PROJECT
+            </Button>
+          </Tooltip>
+        </Grid>
+        <MMUModal openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteDefinitelyProject} projectId={project.id} projectName={project.name}/>}/>
       </Grid>
     </Grid>
   )

@@ -1,10 +1,10 @@
 import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';import DeleteIcon from "@mui/icons-material/Delete";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import {  useCallback, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
-import { ModalProject } from "./ModalContent.tsx";
+import { ModalEditProject } from "./ModalEditProject.tsx";
 import { Project } from "../types/types.ts";
 
 interface CardProps {
@@ -81,20 +81,8 @@ export const ProjectCard= ({
                 </Button>
               </Tooltip>
                 </Grid>
-                {deleteProject && projectId && (
+                {projectId && (
                   <>
-                  <Grid item>
-                    <Tooltip title={"Delete project"}>
-                      <Button
-                        onClick={() => {
-                          deleteProject(projectId);
-                        }}
-                        variant="contained"
-                      >
-                        <DeleteIcon />
-                      </Button>
-                    </Tooltip>
-                  </Grid>
                   <Grid item>
                     <Tooltip title={"Project configuration"}>
                       <Button
@@ -109,7 +97,7 @@ export const ProjectCard= ({
                 )}
               </Grid>
             </CardActions>
-            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalProject updateUserProject={updateUserProject} project={project!}/>}/>
+            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject deleteProject={deleteProject!} updateUserProject={updateUserProject} project={project!}/>}/>
           </Grid>
         </Grid>
       </Card>
