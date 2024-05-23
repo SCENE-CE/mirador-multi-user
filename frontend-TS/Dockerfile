@@ -21,5 +21,7 @@ RUN chown -R node:node /app && chmod -R 755 /app
 # Use non-root user
 USER node
 
+EXPOSE 4000
+
 # Command to run the application
 ENTRYPOINT ["sh","/app/entrypoint.sh"]
