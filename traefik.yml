@@ -6,7 +6,7 @@ services:
       - default
       - traefik
     expose:
-      - "4000"
+      - 4000
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
@@ -20,7 +20,7 @@ services:
       - default
       - traefik
     expose:
-        - "3000"
+        - 3000
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
