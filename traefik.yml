@@ -5,8 +5,6 @@ services:
     networks:
       - default
       - traefik
-    expose:
-      - 80
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
@@ -14,6 +12,18 @@ services:
       - "traefik.http.routers.${NAME}.tls.certresolver=myresolver"
       - "traefik.http.routers.${NAME}.entrypoints=web,websecure"
       - "traefik.http.routers.${NAME}.middlewares=hardening@docker"
+
+  backend:
+    networks:
+      - default
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik"
+      - "traefik.http.routers.${BACKEND_NAME}.rule=Host(`${BACKEND_HOST}`)"
+      - "traefik.http.routers.${BACKEND_NAME}.tls.certresolver=myresolver"
+      - "traefik.http.routers.${BACKEND_NAME}.entrypoints=web,websecure"
+      - "traefik.http.routers.${BACKEND_NAME}.middlewares=hardening@docker"
 
 
 networks:

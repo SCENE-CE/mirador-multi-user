@@ -15,5 +15,7 @@ COPY . .
 # Build the application if necessary
 RUN npm run build
 
+EXPOSE 3000
+
 # Set the entry point
 ENTRYPOINT ["sh","/app/entrypoint.sh"]
