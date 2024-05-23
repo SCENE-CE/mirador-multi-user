@@ -20,6 +20,7 @@ async function handleTokenResponse(data:UserResponse){
 async function loadUser(): Promise<User|null>{
   if(storage.getToken()){
     const data = await getUser();
+    console.log(data)
     return data;
   }
   console.log('USER DATA IS EMPTY')

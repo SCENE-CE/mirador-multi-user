@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Mirador from 'mirador';
 import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 import '@fontsource/roboto/300.css';
@@ -7,20 +7,25 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IWorkspace from "./interface/IWorkspace.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import { Button, Grid, TextField } from "@mui/material";
+import { Button, Grid, Tooltip, Typography } from "@mui/material";
 import './style/mirador.css'
+import { MMUModal } from "../../components/elements/modal.tsx";
+import { ModalEditProject } from "../projects/components/ModalEditProject.tsx";
+import { Project } from "../projects/types/types.ts";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 interface MiradorViewerProps {
   workspace: IWorkspace,
-  toggleMirador: () => void,
   saveState: (state:IWorkspace, name:string) => void,
-  projectName:string
+  project:Project
+  updateUserProject:(project:Project, newProjectName:string)=>void,
 }
 
-const MiradorViewer = ({ workspace, toggleMirador, saveState, projectName }:MiradorViewerProps) => {
+const MiradorViewer = ({ workspace, saveState ,project,updateUserProject }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [viewer, setViewer] = useState<any>({ });
+  const [openModal, setOpenMOdal] = useState(false)
 
-  const [name, setName] = useState<string>(projectName);
+  const [name, setName] = useState<string>(project.name);
 
   useEffect(() => {
     if (viewerRef.current) {
@@ -51,22 +56,31 @@ const MiradorViewer = ({ workspace, toggleMirador, saveState, projectName }:Mira
     saveState(viewer.store.getState(),name);
   }
 
+  const HandleOpenModal = useCallback(()=>{
+    setOpenMOdal(!openModal)
+  },[setOpenMOdal,openModal])
+
 
   return(
   <Grid container flexDirection='column' spacing={2}>
     <Grid item container flexDirection='row'>
-      <Grid item container alignContent="center"justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-40px'}}>
-        <TextField
-          style={{marginTop: '40px'}}
-          label="Project Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        >
-
-        </TextField>
+      <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
         <Grid item>
-        <Button variant="contained" onClick={toggleMirador}>Back To Projects</Button>
+          <Typography>
+            {project.name}
+          </Typography>
         </Grid>
+        <Grid item>
+          <Tooltip title={"Project configuration"}>
+            <Button
+              onClick={HandleOpenModal}
+              variant="contained"
+            >
+              <ModeEditIcon/>
+            </Button>
+          </Tooltip>
+        </Grid>
+        <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject updateUserProject={updateUserProject} project={project}/>}/>
         <Grid item>
         <Button variant="contained" onClick={saveMiradorState}>Save Project</Button>
         </Grid>

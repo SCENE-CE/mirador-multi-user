@@ -62,9 +62,11 @@ export class ProjectService {
 
   //TODO: Check user authorization for deleting project
   async remove(id: number) {
+    console.log('REMOVE SERVICE');
     try {
       const done: DeleteResult = await this.data.delete(id);
       if (done.affected != 1) throw new NotFoundException(id);
+      return done;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

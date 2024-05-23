@@ -7,8 +7,8 @@ import {
   Param,
   Delete,
   UsePipes,
-  ValidationPipe,
-} from '@nestjs/common';
+  ValidationPipe, HttpCode
+} from "@nestjs/common";
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -42,6 +42,7 @@ export class UsersController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   @UsePipes(new ValidationPipe({ transform: true }))
   remove(@Param() params: DeleteParams) {
     return this.usersService.remove(params.id);

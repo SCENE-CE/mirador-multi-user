@@ -7,6 +7,12 @@ export type Project = {
   owner: number;
 }
 
+export type CreateProjectDto = {
+  name:string;
+  owner:number;
+  userWorkspace:IWorkspace;
+}
+
 export type Owner = {
   id:number;
   mail:string;

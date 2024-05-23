@@ -1,6 +1,7 @@
 import { Grid, Typography } from "@mui/material";
-import { Fragment, useCallback, useEffect, useState } from "react";
-import { Project } from "../types/types.ts";
+import AddIcon from '@mui/icons-material/Add';
+import { useCallback, useEffect, useState } from "react";
+import { CreateProjectDto, Project } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
 import { User } from "../../auth/types/types.ts";
@@ -9,33 +10,39 @@ import { deleteProject } from "../api/deleteProject.ts";
 import { getUserAllProjects } from "../api/getUserAllProjects.ts";
 import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
+import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
+import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 
 interface AllProjectsProps {
   user: User;
 }
+
+const emptyWorkspace: IWorkspace = {
+  catalog: [],
+  companionWindows: {},
+  config: {},
+  elasticLayout: {},
+  layers: {},
+  manifests: {},
+  viewers: {},
+  windows: {},
+  workspace: {}
+};
+
+const emptyProject: Project = {
+  id: 0,
+  name: "",
+  owner: 0,
+  userWorkspace: emptyWorkspace
+};
 
 export const AllProjects = ({ user }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false);
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>();
   const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
-  const emptyWorkspace: IWorkspace = {
-    catalog: [],
-    companionWindows: {},
-    config: {},
-    elasticLayout: {},
-    layers: {},
-    manifests: {},
-    viewers: {},
-    windows: {},
-    workspace: {}
-  };
-  const emptyProject: Project = {
-    id: 0,
-    name: "",
-    owner: 0,
-    userWorkspace: emptyWorkspace
-  };
+  const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
+
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -48,29 +55,58 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     fetchProjects();
   }, [user]);
 
-  const deleteUserProject = (projectId: number) => {
-    deleteProject(projectId);
+  const deleteUserProject = useCallback(async (projectId: number) => {
+    await deleteProject(projectId);
     const updatedListOfProject = userProjects.filter(function(project) {
       return project.id != projectId;
     });
+    console.log(updatedListOfProject);
     setUserProjects(updatedListOfProject);
-  };
+  },[userProjects]);
 
-  const initializeMirador = (workspace: IWorkspace, projectId: number) => {
+  const updateUserProject = useCallback(async (project:Project, newProjectName:string)=>{
+    const updatedProject = {...project, name:newProjectName}
+    console.log(updatedProject)
+    await updateProject({...updatedProject})
+    let updatedListOfProject = userProjects.filter(function(p) {
+      return p.id != project.id;
+    });
+    updatedListOfProject = [updatedProject,...updatedListOfProject]
+    setUserProjects(updatedListOfProject);
+  },[userProjects])
+
+  const initializeMirador = useCallback((workspace: IWorkspace, projectId: number) => {
+    setSelectedProjectId(projectId);
     setIsMiradorViewerVisible(!isMiradorViewerVisible);
     setMiradorWorkspace(workspace);
-    setSelectedProjectId(projectId);
-  };
+  },[isMiradorViewerVisible]);
+
+  const toggleModalProjectCreation = useCallback(()=>{
+    setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
+  },[modalCreateProjectIsOpen,setModalCreateProjectIsOpen])
+
+  const InitializeProject = useCallback(async (workspace: IWorkspace, projectName: string) => {
+    const response = await createProject({
+        name: projectName,
+        owner: user.id,
+        userWorkspace: workspace
+      }
+    )
+    setUserProjects((prevState: Project[]) => [...prevState,
+      response]
+    );
+    initializeMirador(emptyWorkspace, response.id)
+    toggleModalProjectCreation()
+  },[initializeMirador, toggleModalProjectCreation, user.id])
+
+
 
   const handleSaveProject = useCallback((newProject:Project)=>{
     setUserProjects(userProjects => [...userProjects, newProject]);
 
   },[setUserProjects])
 
-  const saveState = (state: IWorkspace, name: string) => {
-
-
-    // TODO Fucking spaghetti
+  const saveProject = useCallback((state: IWorkspace, name: string)=>{
     if (selectedProjectId) {
       // Use coalesce operator to avoid typescript error "value possibly undefined"
       // That's non sense to use coalesce operator here, because selectedProjectId is always defined
@@ -78,20 +114,23 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
       updatedProject.userWorkspace = state;
       updatedProject.name = name;
       updateProject(updatedProject).then(r => {
-        console.log(r);
+        console.log('updated project: ', r);
       });
     } else {
-      const project = {
+      const project:CreateProjectDto = {
         name: name,
         owner: user.id,
-        userWorkspace: state
+        userWorkspace: state,
       };
       createProject(project).then(r => {
         setSelectedProjectId(r.id);
         handleSaveProject( { id: r.id, ...project });
       });
     }
-  };
+  },[handleSaveProject, selectedProjectId, user.id, userProjects])
+
+
+  console.log(userProjects)
 
   return (
     <>
@@ -103,37 +142,43 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
             </Grid>
           )
         }
-        <Grid item container spacing={4}>
+        <Grid item container spacing={1}>
 
           {!isMiradorViewerVisible && userProjects ? (
-            <>
+            <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((project) => (
-                  <Fragment key={project.id}>
+                  <Grid item key={project.id} >
                     <ProjectCard
+                      project={project}
                       projectName={project.name}
                       projectWorkspace={project.userWorkspace}
                       initializeMirador={initializeMirador}
                       NumberOfManifests={project.userWorkspace.catalog.length}
                       deleteProject={deleteUserProject}
                       projectId={project.id}
+                      updateUserProject={updateUserProject}
                     />
-                  </Fragment>
+                  </Grid>
                 )
               )}
-              <ProjectCard
-                projectName={"Create new Project"}
-                projectWorkspace={emptyWorkspace}
-                initializeMirador={initializeMirador}
-                projectId={0}
-              />
-            </>
+              <Grid item>
+                <FloatingActionButton onClick={toggleModalProjectCreation} content={"New Project"} Icon={<AddIcon />} />
+                <div>
+                  <DrawerCreateProject
+                    InitializeProject={InitializeProject}
+                    projectWorkspace={emptyWorkspace}
+                    toggleModalProjectCreation={toggleModalProjectCreation}
+                    modalCreateProjectIsOpen={modalCreateProjectIsOpen}/>
+                </div>
+              </Grid>
+            </Grid>
           ) : (
             <Grid item xs={12}>
               <MiradorViewer
                 workspace={miradorWorkspace!}
-                toggleMirador={() => setIsMiradorViewerVisible(!isMiradorViewerVisible)}
-                saveState={saveState}
-                projectName={userProjects.find(project => project.id == selectedProjectId)?.name ?? "Newww project"}
+                saveState={saveProject}
+                project={userProjects.find(project => project.id == selectedProjectId)!}
+                updateUserProject={updateUserProject}
               />
             </Grid>
           )}
