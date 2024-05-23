@@ -11,7 +11,7 @@ export const deleteProject = async(projectId:number)=>{
         "Authorization":`Bearer ${token}`,
       }
     })
-    return await response.json()
+    return response.json()
   }catch(error){
     throw error
   }

@@ -1,7 +1,11 @@
 import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
 import IWorkspace from "../../mirador/interface/IWorkspace.ts";
-import OpenInBrowserIcon from "@mui/icons-material/OpenInBrowser";
-import DeleteIcon from "@mui/icons-material/Delete";
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';import DeleteIcon from "@mui/icons-material/Delete";
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
+import {  useCallback, useState } from "react";
+import { MMUModal } from "../../../components/elements/modal.tsx";
+import { ModalProject } from "./ModalContent.tsx";
+import { Project } from "../types/types.ts";
 
 interface CardProps {
   projectName: string,
@@ -10,6 +14,8 @@ interface CardProps {
   NumberOfManifests?: number,
   deleteProject?: (projectId: number) => void,
   projectId: number,
+  project?:Project,
+  updateUserProject:(project:Project, newProjectName:string)=>void,
 }
 
 export const ProjectCard= ({
@@ -18,20 +24,28 @@ export const ProjectCard= ({
   initializeMirador,
   NumberOfManifests = 0,
   deleteProject,
-  projectId
+  projectId,
+  project,
+  updateUserProject
 }:CardProps
 ) => {
+
+  const [openModal, setOpenMOdal] = useState(false)
+  const HandleOpenModal = useCallback(()=>{
+    setOpenMOdal(!openModal)
+  },[setOpenMOdal,openModal])
+
+
   return (
-    <Grid item>
-      <Card sx={{ width: 175, height: 125, padding: "1px" }}>
-        <Grid item container flexDirection="column" justifyContent="space-between"
-              sx={{ width: "100%", height: "100%" }}>
-          <Grid item container flexDirection="column" alignItems="center" justifyContent="center" spacing={2}>
-            <Grid item>
+    <>
+      <Card>
+        <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{minHeight:'120px'}}>
+          <Grid item container flexDirection="row"  alignItems="center" justifyContent="space-around" spacing={2}>
+            <Grid item xs={5}>
               <Typography variant="subtitle1">{projectName}</Typography>
             </Grid>
             {NumberOfManifests == 0 && (
-              <Grid item>
+              <Grid item xs={4}>
                 No manifest
               </Grid>
             )
@@ -53,6 +67,9 @@ export const ProjectCard= ({
                 alignSelf="center"
           >
             <CardActions>
+              <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
+                <Grid item>
+
               <Tooltip title={"Open project"}>
                 <Button
                   onClick={() => {
@@ -60,25 +77,42 @@ export const ProjectCard= ({
                   }}
                   variant="contained"
                 >
-                  <OpenInBrowserIcon />
+                  <OpenInNewIcon />
                 </Button>
               </Tooltip>
-              {deleteProject && projectId && (
-                <Tooltip title={"Delete project"}>
-                  <Button
-                    onClick={() => {
-                      deleteProject(projectId);
-                    }}
-                    variant="contained"
-                  >
-                    <DeleteIcon />
-                  </Button>
-                </Tooltip>
-              )}
+                </Grid>
+                {deleteProject && projectId && (
+                  <>
+                  <Grid item>
+                    <Tooltip title={"Delete project"}>
+                      <Button
+                        onClick={() => {
+                          deleteProject(projectId);
+                        }}
+                        variant="contained"
+                      >
+                        <DeleteIcon />
+                      </Button>
+                    </Tooltip>
+                  </Grid>
+                  <Grid item>
+                    <Tooltip title={"Project configuration"}>
+                      <Button
+                        onClick={HandleOpenModal}
+                        variant="contained"
+                      >
+                        <ModeEditIcon/>
+                      </Button>
+                    </Tooltip>
+                  </Grid>
+                  </>
+                )}
+              </Grid>
             </CardActions>
+            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalProject updateUserProject={updateUserProject} project={project!}/>}/>
           </Grid>
         </Grid>
       </Card>
-    </Grid>
+    </>
   );
 };

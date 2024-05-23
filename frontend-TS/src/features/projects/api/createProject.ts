@@ -1,7 +1,7 @@
 import storage from "../../../utils/storage.ts";
-import IWorkspace from "../../mirador/interface/IWorkspace";
+import { CreateProjectDto, Project } from "../types/types.ts";
 
-export const createProject = async (project: { owner: number; userWorkspace: IWorkspace; name: string }) => {
+export const createProject = async (project: CreateProjectDto):Promise<Project> => {
   const domain = import.meta.env.VITE_DOMAIN;
   const port = import.meta.env.VITE_PORT;
   const token = storage.getToken();
@@ -14,7 +14,7 @@ export const createProject = async (project: { owner: number; userWorkspace: IWo
       },
       body: JSON.stringify(project)
     });
-    return await response.json();
+    return await response.json()
   } catch (error) {
     throw error;
   }
