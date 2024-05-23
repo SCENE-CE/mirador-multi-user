@@ -4,13 +4,14 @@ import { ChangeEvent, useCallback, useState } from "react";
 import { Project } from "../types/types.ts";
 import SaveIcon from '@mui/icons-material/Save';
 import { MMUModal } from "../../../components/elements/modal.tsx";
+import { ModalConfirmDelete } from "./ModalConfirmDelete.tsx";
 interface ModalProjectProps {
   project:Project,
   updateUserProject:(project:Project, newProjectName:string)=>void,
   deleteProject:(projectId:number)=>void,
 }
 
-export const ModalProject = ({ project, updateUserProject, deleteProject }:ModalProjectProps)=>{
+export const ModalEditProject = ({ project, updateUserProject, deleteProject }:ModalProjectProps)=>{
   const [editName, setEditName] = useState(false);
   const [ newProjectName, setNewProjectName] = useState(project!.name);
   const [openModal, setOpenMOdal] = useState(false)
@@ -71,7 +72,7 @@ export const ModalProject = ({ project, updateUserProject, deleteProject }:Modal
             </Button>
           </Tooltip>
         </Grid>
-        <MMUModal openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<p>toto</p>}/>
+        <MMUModal openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteDefinitelyProject} projectId={project.id} projectName={project.name}/>}/>
       </Grid>
     </Grid>
   )
