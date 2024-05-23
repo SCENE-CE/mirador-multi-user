@@ -15,7 +15,7 @@ export const ModalConfirmDelete = ({projectName,deleteProject,projectId}:IModalC
       <Grid item container spacing={2}>
 
       <Grid item>
-        <Typography> Are you sure you want to delete <b>{projectName}</b>, this action is <b>irreversible</b>.</Typography>
+        <Typography> Are you sure you want to delete the project <b>{projectName}</b>, this action is <b>irreversible</b>.</Typography>
       </Grid>
       <Grid item>
         <Button

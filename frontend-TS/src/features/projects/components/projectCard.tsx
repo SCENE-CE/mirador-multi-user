@@ -6,6 +6,7 @@ import {  useCallback, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalEditProject } from "./ModalEditProject.tsx";
 import { Project } from "../types/types.ts";
+import placeholder from "../../../assets/Placeholder.svg"
 
 interface CardProps {
   projectName: string,
@@ -41,11 +42,14 @@ export const ProjectCard= ({
       <Card>
         <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{minHeight:'120px'}}>
           <Grid item container flexDirection="row"  alignItems="center" justifyContent="space-around" spacing={2}>
-            <Grid item xs={5}>
+            <Grid item xs={2}>
+              <img src={placeholder} alt="placeholder" style={{height:100, width:200}}/>
+            </Grid>
+            <Grid item xs={4}>
               <Typography variant="subtitle1">{projectName}</Typography>
             </Grid>
             {NumberOfManifests == 0 && (
-              <Grid item xs={4}>
+              <Grid item xs={3}>
                 No manifest
               </Grid>
             )
