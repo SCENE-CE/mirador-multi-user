@@ -1,10 +1,5 @@
 version: "3.8"
 services:
-    backend:
-      ports:
-        - "${PORT}:3000"
     frontend:
-      ports:
-        - "${BACKEND_PORT}:4000"
       environment:
         - ENV=PROD

@@ -5,6 +5,8 @@ services:
     networks:
       - default
       - traefik
+    expose:
+      - "4000"
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
@@ -12,12 +14,13 @@ services:
       - "traefik.http.routers.${NAME}.tls.certresolver=myresolver"
       - "traefik.http.routers.${NAME}.entrypoints=web,websecure"
       - "traefik.http.routers.${NAME}.middlewares=hardening@docker"
-      - "traefik.http.services.${NAME}.loadbalancer.server.port=${PORT}"
 
   backend:
     networks:
       - default
       - traefik
+    expose:
+        - "3000"
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=traefik"
@@ -25,7 +28,6 @@ services:
       - "traefik.http.routers.${BACKEND_NAME}.tls.certresolver=myresolver"
       - "traefik.http.routers.${BACKEND_NAME}.entrypoints=web,websecure"
       - "traefik.http.routers.${BACKEND_NAME}.middlewares=hardening@docker"
-      - "traefik.http.services.${BACKEND_NAME}.loadbalancer.server.port=${BACKEND_PORT}"
 
 
 networks:
