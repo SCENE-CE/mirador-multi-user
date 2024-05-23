@@ -71,6 +71,7 @@ export class ProjectController {
   @UsePipes(new ValidationPipe({ transform: true }))
   @CheckPolicies((ability) => ability.can(Action.Delete, Project))
   remove(@Param() params: DeleteParams) {
+    console.log('DELETE CONTROLLER');
     return this.projectService.remove(params.id);
   }
 }

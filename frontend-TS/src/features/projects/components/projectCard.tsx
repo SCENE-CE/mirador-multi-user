@@ -40,12 +40,12 @@ export const ProjectCard= ({
     <>
       <Card>
         <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{minHeight:'120px'}}>
-          <Grid item container flexDirection="column"  alignItems="center" justifyContent="center" spacing={2}>
-            <Grid item>
+          <Grid item container flexDirection="row"  alignItems="center" justifyContent="space-around" spacing={2}>
+            <Grid item xs={5}>
               <Typography variant="subtitle1">{projectName}</Typography>
             </Grid>
             {NumberOfManifests == 0 && (
-              <Grid item>
+              <Grid item xs={4}>
                 No manifest
               </Grid>
             )
@@ -67,7 +67,7 @@ export const ProjectCard= ({
                 alignSelf="center"
           >
             <CardActions>
-              <Grid item container flexDirection="column" spacing={2}>
+              <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
                 <Grid item>
 
               <Tooltip title={"Open project"}>

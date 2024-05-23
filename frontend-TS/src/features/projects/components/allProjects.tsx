@@ -60,6 +60,8 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     const updatedListOfProject = userProjects.filter(function(project) {
       return project.id != projectId;
     });
+    console.log('userProjects',userProjects)
+    console.log(updatedListOfProject);
     setUserProjects(updatedListOfProject);
   },[userProjects]);
 
