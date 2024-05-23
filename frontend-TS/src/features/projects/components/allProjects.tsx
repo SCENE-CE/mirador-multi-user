@@ -60,7 +60,6 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     const updatedListOfProject = userProjects.filter(function(project) {
       return project.id != projectId;
     });
-    console.log('userProjects',userProjects)
     console.log(updatedListOfProject);
     setUserProjects(updatedListOfProject);
   },[userProjects]);
@@ -73,8 +72,6 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
       return p.id != project.id;
     });
     updatedListOfProject = [updatedProject,...updatedListOfProject]
-    console.log('updatedListOfProject',updatedListOfProject)
-    console.log('userProjects',userProjects)
     setUserProjects(updatedListOfProject);
   },[userProjects])
 
@@ -110,7 +107,6 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
   },[setUserProjects])
 
   const saveProject = useCallback((state: IWorkspace, name: string)=>{
-    console.log('SAVEPROJECT',name)
     if (selectedProjectId) {
       // Use coalesce operator to avoid typescript error "value possibly undefined"
       // That's non sense to use coalesce operator here, because selectedProjectId is always defined
