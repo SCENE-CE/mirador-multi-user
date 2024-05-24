@@ -12,7 +12,7 @@ export function AppRoutes(){
   const token = storage.getToken();
 
   const commonRoutes = [{
-    path: "/",
+    path: "/*",
     element: <Landing /> // Pass navigate directly to the Landing components
   }];
 
