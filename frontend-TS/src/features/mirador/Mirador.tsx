@@ -25,8 +25,6 @@ const MiradorViewer = ({ workspace, saveState ,project,updateUserProject }:Mirad
   const [viewer, setViewer] = useState<any>({ });
   const [openModal, setOpenMOdal] = useState(false)
 
-  const [name, setName] = useState<string>(project.name);
-
   useEffect(() => {
     if (viewerRef.current) {
       const config = {
@@ -53,7 +51,7 @@ const MiradorViewer = ({ workspace, saveState ,project,updateUserProject }:Mirad
   }, []);
 
   const saveMiradorState = () => {
-    saveState(viewer.store.getState(),name);
+    saveState(viewer.store.getState(),project.name);
   }
 
   const HandleOpenModal = useCallback(()=>{
