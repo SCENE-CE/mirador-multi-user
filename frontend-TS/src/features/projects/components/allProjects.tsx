@@ -16,7 +16,7 @@ import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
-  selectedProjectId: number;
+  selectedProjectId?: number;
 }
 
 const emptyWorkspace: IWorkspace = {
@@ -40,7 +40,6 @@ const emptyProject: Project = {
 
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
-  const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false);
 
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>();
 

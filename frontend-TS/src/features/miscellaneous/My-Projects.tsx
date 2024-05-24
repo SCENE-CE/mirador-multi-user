@@ -1,6 +1,5 @@
 import { useLogout, useUser } from "../../utils/auth.tsx";
 import { Grid, Typography } from "@mui/material";
-import { AllProjects } from "../projects/components/allProjects.tsx";
 import { SideDrawer } from "../../components/elements/SideDrawer.tsx";
 import { useState } from "react";
 

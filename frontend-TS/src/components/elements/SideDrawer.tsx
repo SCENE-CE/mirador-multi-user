@@ -4,7 +4,7 @@ import {
   IconButton, List,
   styled, Theme, Tooltip
 } from "@mui/material";
-import { ReactNode, useState } from "react";
+import { useState } from "react";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MuiDrawer from '@mui/material/Drawer';
@@ -16,7 +16,6 @@ import ConnectWithoutContactIcon from '@mui/icons-material/ConnectWithoutContact
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ItemButton } from "./SideBar/ItemButton.tsx";
-import { useNavigate } from "react-router-dom";
 import { AllProjects } from "../../features/projects/components/allProjects";
 
 const drawerWidth = 240;
@@ -74,7 +73,6 @@ interface ISideDrawerProps{
 }
 export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedProjectId}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
-  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     setOpen(true);
