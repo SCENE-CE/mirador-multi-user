@@ -7,7 +7,7 @@ export type LoginCredentialsDTO = {
 
 export const login = async (data: LoginCredentialsDTO): Promise<UserResponse> => {
   try {
-    const BACKEND_URL = import.meta.env.BACKEND_URL;
+    const BACKEND_URL = 'https://arvest-backend.tetras-libre.fr';
     const response = await fetch(`${BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
