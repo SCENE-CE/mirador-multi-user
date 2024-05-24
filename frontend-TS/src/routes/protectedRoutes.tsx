@@ -7,6 +7,7 @@ import { MyProjects } from "../features/miscellaneous/My-Projects.tsx";
 const App = () => {
   return(
     <MainLayout>
+      <h1>App</h1>
       <Suspense fallback={<BigSpinner/>}>
         <Outlet/>
       </Suspense>
@@ -16,11 +17,9 @@ const App = () => {
 
 export const protectedRoutes= [
   {
-    path: '/app',
-    element: <App/>,
-    children:[
-      {path: 'my-projects', element:<MyProjects/>},
-      { path: '*', element: <Navigate to="my-projects" /> },
-    ]
-  }
+    path: '/app/my-projects',
+    element: <MyProjects/>,
+  },
+  { path: '*', element: <Navigate to="/app/my-projects" /> },
+
 ]

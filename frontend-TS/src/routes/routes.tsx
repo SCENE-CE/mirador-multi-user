@@ -15,10 +15,15 @@ export function AppRoutes(){
     path: "/",
     element: <Landing /> // Pass navigate directly to the Landing components
   }];
-  const routes = token ? protectedRoutes: publicRoutes;
 
-  const allRoutes = [...routes, ...commonRoutes];
-  const content = useRoutes(allRoutes);
+  let routes;
+  if(token){
+    routes = protectedRoutes;;
+  } else {
+    routes = [...publicRoutes, ...commonRoutes];
+  }
+
+  const content = useRoutes(routes);
 
   return(
     <>
