@@ -1,6 +1,6 @@
 import { UserResponse } from "../types/types.ts";
 import { BACKEND_URL } from "../../../config/config.ts";
-import toast, { Toaster } from 'react-hot-toast';
+import toast from 'react-hot-toast';
 
 export type LoginCredentialsDTO = {
   mail: string;
@@ -20,10 +20,8 @@ export const login = async (data: LoginCredentialsDTO): Promise<UserResponse> =>
       toast.error('Failed to log user');
       throw new Error("Failed to log user");
     }
-
-
+    
     const { access_token } = await response.json();
-    console.log("token LOGIN FUNCTION : ", access_token);
     const profileResponse = await fetch(`${BACKEND_URL}/auth/profile`, {
       method: "GET",
       headers: {

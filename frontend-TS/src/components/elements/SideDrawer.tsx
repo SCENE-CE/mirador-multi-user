@@ -83,12 +83,8 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
 
   const handleBackToProject = ()=>{
     //TODO: do correct handling of this reload with something better than a check
-    console.log(location.toString())
-    if(location.toString().includes('/app/my-projects')){
-      location.reload()
-    }else{
+
       navigate('/app/my-projects')
-    }
   }
 
   return(
