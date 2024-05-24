@@ -1,6 +1,6 @@
 import {
   Box, CSSObject,
-  Divider,
+  Divider, Grid,
   IconButton, List,
   styled, Theme, Tooltip
 } from "@mui/material";
@@ -17,6 +17,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ItemButton } from "./SideBar/ItemButton.tsx";
 import { useNavigate } from "react-router-dom";
+import { AllProjects } from "../../features/projects/components/allProjects";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -66,10 +67,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 interface ISideDrawerProps{
-  content: ReactNode
+  user: any,
   handleDisconnect:()=>void
+  selectedProjectId?:number
+  setSelectedProjectId :(id?:number)=>void
 }
-export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
+export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedProjectId}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -82,9 +85,7 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
   };
 
   const handleBackToProject = ()=>{
-    //TODO: do correct handling of this reload with something better than a check
-
-      navigate('/app/my-projects')
+     setSelectedProjectId(undefined);
   }
 
   return(
@@ -110,7 +111,16 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {content}
+        <Grid item container direction="column">
+          <Grid item>
+            {user && user.id && (
+              <AllProjects
+                selectedProjectId={selectedProjectId}
+                setSelectedProjectId={setSelectedProjectId}
+                user={user} />
+            )}
+          </Grid>
+        </Grid>
       </Box>
     </>
   )
