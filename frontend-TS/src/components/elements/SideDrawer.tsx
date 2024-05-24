@@ -2,7 +2,7 @@ import {
   Box, CSSObject,
   Divider,
   IconButton, List,
-  styled, Theme,
+  styled, Theme, Tooltip
 } from "@mui/material";
 import { ReactNode, useState } from "react";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -83,10 +83,11 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
 
   const handleBackToProject = ()=>{
     //TODO: do correct handling of this reload with something better than a check
-    if(location.toString() === 'http://localhost:4000/app/my-projects'){
+    console.log(location.toString())
+    if(location.toString().includes('/app/my-projects')){
       location.reload()
     }else{
-    navigate('/app/my-projects')
+      navigate('/app/my-projects')
     }
   }
 
@@ -100,11 +101,11 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
         </DrawerHeader>
         <Divider />
         <List sx={{minHeight:'70vh'}}>
-          <ItemButton open={open} icon={<WorkIcon />} text="Projects" action={handleBackToProject}/>
-          <ItemButton open={open} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/>
-          <ItemButton open={open} icon={<GroupsIcon />} text="Groups" action={()=>{console.log('Groups')}}/>
-          <ItemButton open={open} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/>
-          <ItemButton open={open} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/>
+          <Tooltip title={"Mes projects"}><ItemButton open={open} icon={<WorkIcon />} text="Projects" action={handleBackToProject} title="Projets"/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} icon={<GroupsIcon />} text="Groups" action={()=>{console.log('Groups')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>
         <Divider />
         <List>
