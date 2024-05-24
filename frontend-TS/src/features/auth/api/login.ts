@@ -1,4 +1,5 @@
 import { UserResponse } from "../types/types.ts";
+import { BACKEND_URL } from "../../../config/config.ts";
 
 export type LoginCredentialsDTO = {
   mail: string;
