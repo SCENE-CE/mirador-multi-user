@@ -1,5 +1,6 @@
 import storage from "../../../utils/storage.ts";
 import { User } from "../types/types.ts";
+import { BACKEND_URL } from "../../../config/config.ts";
 
 export const getUser = async (): Promise<User> => {
   const token = storage.getToken();

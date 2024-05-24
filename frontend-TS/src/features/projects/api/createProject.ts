@@ -1,5 +1,6 @@
 import storage from "../../../utils/storage.ts";
 import { CreateProjectDto, Project } from "../types/types.ts";
+import { BACKEND_URL } from "../../../config/config.ts";
 
 export const createProject = async (project: CreateProjectDto): Promise<Project> => {
   const token = storage.getToken();

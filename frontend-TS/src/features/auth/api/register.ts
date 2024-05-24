@@ -1,4 +1,5 @@
 import { UserResponse } from "../export";
+import { BACKEND_URL } from "../../../config/config.ts";
 
 export type RegisterCredentialsDTO = {
   name: string;

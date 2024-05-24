@@ -1,5 +1,6 @@
 import storage from "../../../utils/storage.ts";
 import { Project } from "../types/types";
+import { BACKEND_URL } from "../../../config/config.ts";
 
 export const updateProject = async (project: Project) => {
   const token = storage.getToken();

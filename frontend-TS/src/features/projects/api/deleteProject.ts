@@ -1,4 +1,5 @@
 import storage from "../../../utils/storage.ts";
+import { BACKEND_URL } from "../../../config/config.ts";
 
 export const deleteProject = async (projectId: number) => {
   const token = storage.getToken();
