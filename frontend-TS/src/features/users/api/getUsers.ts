@@ -1,17 +1,16 @@
 import { useQuery } from "@tanstack/react-query";
 import { ExtractFnReturnType, QueryConfig } from "../../../lib/react-query.ts";
 import { User } from "../../auth/types/types.ts";
+import { BACKEND_URL } from "../../../config/config";
 
-export const getUsers = async (): Promise<User[]>=>{
-    const domain = import.meta.env.VITE_DOMAIN;
-    const port = import.meta.env.VITE_PORT;
-  try{
-    const response = await fetch(`${domain}:${port}/users`, {})
+export const getUsers = async (): Promise<User[]> => {
+  try {
+    const response = await fetch(`${BACKEND_URL}/users`, {});
     return response.json();
-  }catch(error){
+  } catch (error) {
     throw error;
   }
-}
+};
 
 type QueryFnType = typeof getUsers;
 
@@ -22,7 +21,7 @@ type UseUsersOptions = {
 export const useUsers = ({ config }: UseUsersOptions = {}) => {
   return useQuery<ExtractFnReturnType<QueryFnType>>({
     ...config,
-    queryKey: ['users'],
-    queryFn: () => getUsers(),
+    queryKey: ["users"],
+    queryFn: () => getUsers()
   });
 };

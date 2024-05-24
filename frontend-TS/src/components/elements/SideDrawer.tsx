@@ -1,8 +1,8 @@
 import {
   Box, CSSObject,
-  Divider,
+  Divider, Grid,
   IconButton, List,
-  styled, Theme,
+  styled, Theme, Tooltip
 } from "@mui/material";
 import { ReactNode, useState } from "react";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -17,6 +17,7 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ItemButton } from "./SideBar/ItemButton.tsx";
 import { useNavigate } from "react-router-dom";
+import { AllProjects } from "../../features/projects/components/allProjects";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -66,10 +67,12 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 interface ISideDrawerProps{
-  content: ReactNode
+  user: any,
   handleDisconnect:()=>void
+  selectedProjectId?:number
+  setSelectedProjectId :(id?:number)=>void
 }
-export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
+export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedProjectId}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -82,12 +85,7 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
   };
 
   const handleBackToProject = ()=>{
-    //TODO: do correct handling of this reload with something better than a check
-    if(location.toString() === 'http://localhost:4000/app/my-projects'){
-      location.reload()
-    }else{
-    navigate('/app/my-projects')
-    }
+     setSelectedProjectId(undefined);
   }
 
   return(
@@ -100,11 +98,11 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
         </DrawerHeader>
         <Divider />
         <List sx={{minHeight:'70vh'}}>
-          <ItemButton open={open} icon={<WorkIcon />} text="Projects" action={handleBackToProject}/>
-          <ItemButton open={open} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/>
-          <ItemButton open={open} icon={<GroupsIcon />} text="Groups" action={()=>{console.log('Groups')}}/>
-          <ItemButton open={open} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/>
-          <ItemButton open={open} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/>
+          <Tooltip title={"Mes projects"}><ItemButton open={open} icon={<WorkIcon />} text="Projects" action={handleBackToProject}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} icon={<GroupsIcon />} text="Groups" action={()=>{console.log('Groups')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>
         <Divider />
         <List>
@@ -113,7 +111,16 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {content}
+        <Grid item container direction="column">
+          <Grid item>
+            {user && user.id && (
+              <AllProjects
+                selectedProjectId={selectedProjectId}
+                setSelectedProjectId={setSelectedProjectId}
+                user={user} />
+            )}
+          </Grid>
+        </Grid>
       </Box>
     </>
   )

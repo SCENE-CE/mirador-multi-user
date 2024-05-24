@@ -1,4 +1,5 @@
 import { UserResponse } from "../export";
+import { BACKEND_URL } from "../../../config/config.ts";
 
 export type RegisterCredentialsDTO = {
   name: string;
@@ -8,7 +9,6 @@ export type RegisterCredentialsDTO = {
 
 export const register = async (data: RegisterCredentialsDTO): Promise<UserResponse> => {
   try {
-    const BACKEND_URL = import.meta.env.BACKEND_URL;
     const response = await fetch(`${BACKEND_URL}/users`, {
       method: "POST",
       headers: {

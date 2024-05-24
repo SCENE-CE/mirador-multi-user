@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException, UnauthorizedException } from "@nestjs/common";
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
+import { NotFoundError } from "rxjs";
 
 @Injectable()
 export class AuthService {
@@ -12,8 +13,14 @@ export class AuthService {
 
   async signIn(mail: string, pass: string): Promise<{ access_token: string }> {
     const user = await this.usersService.findOneByMail(mail);
-    console.log('user', user);
+    console.log('mail', mail);
     console.log('pass', pass);
+
+    if(!user) {
+      throw new ForbiddenException();
+    }
+
+    // TODO password must be hashed before sending by front !!!
     const isMatch = await bcrypt.compare(pass, user.password);
     console.log(isMatch);
 

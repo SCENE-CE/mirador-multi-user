@@ -1,8 +1,8 @@
 import storage from "../../../utils/storage.ts";
 import { User } from "../types/types.ts";
+import { BACKEND_URL } from "../../../config/config.ts";
 
 export const getUser = async (): Promise<User> => {
-  const BACKEND_URL = import.meta.env.BACKEND_URL;
   const token = storage.getToken();
   try {
     const response = await fetch(`${BACKEND_URL}/auth/profile`, {

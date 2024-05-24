@@ -15,6 +15,8 @@ import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 
 interface AllProjectsProps {
   user: User;
+  setSelectedProjectId: (id: number) => void;
+  selectedProjectId: number;
 }
 
 const emptyWorkspace: IWorkspace = {
@@ -36,11 +38,12 @@ const emptyProject: Project = {
   userWorkspace: emptyWorkspace
 };
 
-export const AllProjects = ({ user }:AllProjectsProps) => {
+export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [isMiradorViewerVisible, setIsMiradorViewerVisible] = useState(false);
+
   const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>();
-  const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
+
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
 
   useEffect(() => {
@@ -77,9 +80,8 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
 
   const initializeMirador = useCallback((workspace: IWorkspace, projectId: number) => {
     setSelectedProjectId(projectId);
-    setIsMiradorViewerVisible(!isMiradorViewerVisible);
     setMiradorWorkspace(workspace);
-  },[isMiradorViewerVisible]);
+  },[selectedProjectId]);
 
   const toggleModalProjectCreation = useCallback(()=>{
     setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
@@ -136,7 +138,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
         {
-          !isMiradorViewerVisible && (
+          !selectedProjectId && (
             <Grid item container justifyContent="center">
               <Typography variant="h5" component="h1">{user.name}'s Projects</Typography>
             </Grid>
@@ -144,7 +146,7 @@ export const AllProjects = ({ user }:AllProjectsProps) => {
         }
         <Grid item container spacing={1}>
 
-          {!isMiradorViewerVisible && userProjects ? (
+          {!selectedProjectId && userProjects ? (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((project) => (
                   <Grid item key={project.id} >
