@@ -101,7 +101,7 @@ export const SideDrawer = ({content,handleDisconnect}:ISideDrawerProps) => {
         </DrawerHeader>
         <Divider />
         <List sx={{minHeight:'70vh'}}>
-          <Tooltip title={"Mes projects"}><ItemButton open={open} icon={<WorkIcon />} text="Projects" action={handleBackToProject} title="Projets"/></Tooltip>
+          <Tooltip title={"Mes projects"}><ItemButton open={open} icon={<WorkIcon />} text="Projects" action={handleBackToProject}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} icon={<GroupsIcon />} text="Groups" action={()=>{console.log('Groups')}}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/></Tooltip>
