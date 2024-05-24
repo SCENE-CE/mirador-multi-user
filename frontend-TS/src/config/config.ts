@@ -1,1 +1,1 @@
-export const BACKEND_URL = 'https://arvest-backend.tetras-libre.fr';
+export const BACKEND_URL = 'localhost:4000';
