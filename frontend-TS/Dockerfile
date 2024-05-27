@@ -16,7 +16,7 @@ RUN npm install --global serve
 RUN npm run build
 
 # Change ownership (if necessary) and adjust permissions
-RUN chown -R node:node /app && chmod -R 755 /app
+RUN chown -R 1000:node /app && chmod -R 770 /app && find /app -type f -exec chmod 660 {} \;
 
 # Use non-root user
 USER node
@@ -24,4 +24,4 @@ USER node
 EXPOSE 4000
 
 # Command to run the application
-ENTRYPOINT ["sh","/app/entrypoint.sh"]
+ENTRYPOINT ["sh","/app/entrypoint2.sh"]
