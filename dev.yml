@@ -1,19 +1,13 @@
 version: "3.8"
 services:
-    db:
-      ports:
-        - "${DB_PORT}:3306"
+
     backend:
-      ports:
-        - "${BACKEND_PORT}:3000"
-        - "9229:9229"
       volumes:
         - ./backend/.:/app
         - ./backend/node_modules:/app/node_modules
       command: npm run start:debug
+
     frontend:
-      ports:
-        - "${PORT}:4000"
       volumes:
         - ./frontend-TS/.:/app/
         - ./frontend-TS/node_modules:/app/node_modules
