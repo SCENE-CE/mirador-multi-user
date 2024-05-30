@@ -5,7 +5,7 @@ import { useState } from "react";
 
 export const MyProjects = () => {
   const user = useUser();
-  const logout = useLogout({});
+  const logout = useLogout();
 
   const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
 

@@ -15,7 +15,7 @@ console.log('token',token)
   let routes;
   if(token){
     console.log('JE SUIS UN TOKEN PERDU', token)
-    routes = protectedRoutes;;
+    routes = protectedRoutes;
   } else {
     routes = [...publicRoutes, ...commonRoutes];
   }

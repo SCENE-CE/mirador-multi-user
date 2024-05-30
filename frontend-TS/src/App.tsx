@@ -4,7 +4,7 @@ import { AppRoutes } from "routes/routes.tsx";
 import { Toaster } from "react-hot-toast";
 
 function App() {
-
+//TODO use getUser here as shown in bulletproof
   return (
     <>
       <AppProvider>
