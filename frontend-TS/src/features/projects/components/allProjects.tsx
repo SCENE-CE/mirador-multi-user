@@ -35,24 +35,6 @@ const emptyWorkspace: IState = {
 };
 
 
-const defaultConfig = {
-  catalog: [],
-  companionWindows: {},
-  config: {
-    theme: {
-      palette: {
-        type: "light"
-      }
-    }
-  },
-  elasticLayout: {},
-  layers: {},
-  manifests: {},
-  viewers: {},
-  windows: {},
-  workspace: {},
-}
-
 const emptyProject: Project = {
   id: 0,
   name: "",
@@ -62,7 +44,7 @@ const emptyProject: Project = {
 
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
- 
+
 
   const [miradorState, setMiradorState] = useState<IState>();
 
@@ -100,7 +82,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     setUserProjects(updatedListOfProject);
   },[userProjects])
 
-  const initializeMirador = useCallback((miradorState: IState, projectId: number) => {
+  const initializeMirador = useCallback((miradorState: IState | undefined, projectId: number) => {
     setSelectedProjectId(projectId);
     setMiradorState(miradorState);
   },[selectedProjectId]);
@@ -119,7 +101,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     setUserProjects((prevState: Project[]) => [...prevState,
       response]
     );
-    initializeMirador(null, response.id)
+    initializeMirador(undefined, response.id)
     toggleModalProjectCreation()
   },[initializeMirador, toggleModalProjectCreation, user.id])
 
@@ -138,6 +120,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
       updatedProject.userWorkspace = state;
       updatedProject.name = name;
       updateProject(updatedProject).then(r => {
+        console.log(r);
         toast.success("Project saved");
       });
     } else {
