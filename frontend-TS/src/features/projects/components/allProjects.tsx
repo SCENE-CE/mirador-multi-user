@@ -3,7 +3,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { useCallback, useEffect, useState } from "react";
 import { CreateProjectDto, Project } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
-import IWorkspace from "../../mirador/interface/IWorkspace.ts";
+import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
 import { ProjectCard } from "./projectCard.tsx";
 import { deleteProject } from "../api/deleteProject.ts";
@@ -12,6 +12,8 @@ import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
+import toast from 'react-hot-toast';
+
 
 interface AllProjectsProps {
   user: User;
@@ -19,7 +21,7 @@ interface AllProjectsProps {
   selectedProjectId?: number;
 }
 
-const emptyWorkspace: IWorkspace = {
+const emptyWorkspace: IState = {
   catalog: [],
   companionWindows: {},
   config: {},
@@ -28,8 +30,28 @@ const emptyWorkspace: IWorkspace = {
   manifests: {},
   viewers: {},
   windows: {},
-  workspace: {}
+  workspace: {},
+
 };
+
+
+const defaultConfig = {
+  catalog: [],
+  companionWindows: {},
+  config: {
+    theme: {
+      palette: {
+        type: "light"
+      }
+    }
+  },
+  elasticLayout: {},
+  layers: {},
+  manifests: {},
+  viewers: {},
+  windows: {},
+  workspace: {},
+}
 
 const emptyProject: Project = {
   id: 0,
@@ -40,8 +62,9 @@ const emptyProject: Project = {
 
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
+ 
 
-  const [miradorWorkspace, setMiradorWorkspace] = useState<IWorkspace>();
+  const [miradorState, setMiradorState] = useState<IState>();
 
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
 
@@ -77,16 +100,16 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     setUserProjects(updatedListOfProject);
   },[userProjects])
 
-  const initializeMirador = useCallback((workspace: IWorkspace, projectId: number) => {
+  const initializeMirador = useCallback((miradorState: IState, projectId: number) => {
     setSelectedProjectId(projectId);
-    setMiradorWorkspace(workspace);
+    setMiradorState(miradorState);
   },[selectedProjectId]);
 
   const toggleModalProjectCreation = useCallback(()=>{
     setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
   },[modalCreateProjectIsOpen,setModalCreateProjectIsOpen])
 
-  const InitializeProject = useCallback(async (workspace: IWorkspace, projectName: string) => {
+  const InitializeProject = useCallback(async (workspace: IState, projectName: string) => {
     const response = await createProject({
         name: projectName,
         owner: user.id,
@@ -96,7 +119,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     setUserProjects((prevState: Project[]) => [...prevState,
       response]
     );
-    initializeMirador(emptyWorkspace, response.id)
+    initializeMirador(null, response.id)
     toggleModalProjectCreation()
   },[initializeMirador, toggleModalProjectCreation, user.id])
 
@@ -107,7 +130,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
 
   },[setUserProjects])
 
-  const saveProject = useCallback((state: IWorkspace, name: string)=>{
+  const saveProject = useCallback((state: IState, name: string)=>{
     if (selectedProjectId) {
       // Use coalesce operator to avoid typescript error "value possibly undefined"
       // That's non sense to use coalesce operator here, because selectedProjectId is always defined
@@ -115,7 +138,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
       updatedProject.userWorkspace = state;
       updatedProject.name = name;
       updateProject(updatedProject).then(r => {
-        console.log('updated project: ', r);
+        toast.success("Project saved");
       });
     } else {
       const project:CreateProjectDto = {
@@ -176,8 +199,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
           ) : (
             <Grid item xs={12}>
               <MiradorViewer
-                workspace={miradorWorkspace!}
-                saveState={saveProject}
+                miradorState={miradorState!}
+                saveMiradorState={saveProject}
                 project={userProjects.find(project => project.id == selectedProjectId)!}
                 updateUserProject={updateUserProject}
               />

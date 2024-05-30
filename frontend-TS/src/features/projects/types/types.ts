@@ -1,16 +1,16 @@
-import IWorkspace from "../../mirador/interface/IWorkspace.ts";
+import IState from "../../mirador/interface/IState.ts";
 
 export type Project = {
   id:number;
   name: string;
-  userWorkspace:IWorkspace;
+  userWorkspace:IState;
   owner: number;
 }
 
 export type CreateProjectDto = {
   name:string;
   owner:number;
-  userWorkspace:IWorkspace;
+  userWorkspace:IState;
 }
 
 export type Owner = {
