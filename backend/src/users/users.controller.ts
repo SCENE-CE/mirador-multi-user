@@ -19,6 +19,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @HttpCode(201)
   create(@Body() createUserDto: CreateUserDto) {
     console.log('CREATE USER');
     return this.usersService.create(createUserDto);
