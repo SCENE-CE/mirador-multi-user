@@ -13,7 +13,7 @@ import { MMUModal } from "../../components/elements/modal.tsx";
 import { ModalEditProject } from "../projects/components/ModalEditProject.tsx";
 import { Project } from "../projects/types/types.ts";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { importMiradorState } from "mirador/dist/es/src/state/actions/index";
+
 interface MiradorViewerProps {
   miradorState: IMiradorState,
   saveMiradorState: (state:IMiradorState, name:string) => void,
@@ -43,14 +43,18 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProje
       if(!viewer){
         loadingMiradorViewer = Mirador.viewer(config, [
           ...miradorAnnotationEditorVideo]);
+        if(!miradorState){
+          saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
+        }
       }
 
+      console.log('miradorState', miradorState)
 
       // Load state only if it is not empty
-      if (loadingMiradorViewer && project.id) {
-        loadingMiradorViewer.store.dispatch(
-          importMiradorState(miradorState)
-        );
+      if (loadingMiradorViewer && !miradorState) {
+       /* loadingMiradorViewer.store.dispatch(
+          Mirador.actions.importMiradorState(miradorState)
+        );*/
       }
 
       setViewer(loadingMiradorViewer);

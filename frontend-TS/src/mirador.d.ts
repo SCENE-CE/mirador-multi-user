@@ -18,7 +18,4 @@ declare module 'mirador-annotation-editor-video/src/plugin/MiradorAnnotationEdit
   const miradorAnnotationEditorVideo: any;
   export default miradorAnnotationEditorVideo;
 }
-declare module 'mirador/dist/es/src/state/actions/config'{
-  const importMiradorState: any;
-  export default importMiradorState;
-}
+
