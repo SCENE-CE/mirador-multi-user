@@ -24,4 +24,4 @@ USER node
 EXPOSE 4000
 
 # Command to run the application
-ENTRYPOINT ["sh","/app/entrypoint2.sh"]
+ENTRYPOINT ["sh","/app/entrypoint.sh"]
