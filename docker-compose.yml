@@ -12,6 +12,15 @@ services:
     volumes:
       - ./mariaDB/data:/var/utils/mysql
 
+  frontend:
+    build:
+      context: ./frontend-TS
+      args:
+        BACKEND_URL: ${BACKEND_URL}
+    depends_on:
+      - backend
+    restart: unless-stopped
+
 
   backend:
     build: ./backend
@@ -20,10 +29,3 @@ services:
     restart: unless-stopped
     links:
       - db
-
-
-  frontend:
-    build: ./frontend-TS
-    depends_on:
-      - backend
-    restart: unless-stopped

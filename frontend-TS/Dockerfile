@@ -9,6 +9,10 @@ RUN npm ci
 # Copy application code (excluding what's defined in .dockerignore)
 COPY . .
 
+RUN rm -f ./src/config/config.ts
+RUN cp ./src/config/config.sample.ts ./src/config/config.ts
+
+
 # install serve to render index.html in ENV=PROD
 RUN npm install --global serve
 
