@@ -8,6 +8,7 @@ export type RegisterCredentialsDTO = {
 }
 
 export const register = async (data: RegisterCredentialsDTO): Promise<UserResponse> => {
+  console.log(`${BACKEND_URL}`);
   try {
     const response = await fetch(`${BACKEND_URL}/users`, {
       method: "POST",
@@ -17,12 +18,13 @@ export const register = async (data: RegisterCredentialsDTO): Promise<UserRespon
       body: JSON.stringify(data)
     });
     if (!response.ok) {
+      console.log(response)
       // How to handle response 409 code ?
       if (response.status === 409) {
         throw new Error("User already exists");
       }
 
-      throw new Error("Failed to log user");
+      throw new Error("Failed to create user");
     }
     const user = await response.json();
     return user;

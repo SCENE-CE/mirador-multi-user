@@ -34,6 +34,7 @@ async function loginFn(data: LoginCredentialsDTO){
 }
 
 async function registerFn(data: RegisterCredentialsDTO){
+  console.log('toto')
   const response = await register(data);
   const user = await handleTokenResponse(response)
   return user;
