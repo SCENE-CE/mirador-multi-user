@@ -1,5 +1,6 @@
 #!/bin/sh
 
+sed -i "s|SED_REPLACEMENT_BACKEND_URL|"${BACKEND_URL}"|g" ./src/config/config.ts
 
 if [ ${ENV} = "PROD" ]; then
     echo "Starting the application in production mode"
