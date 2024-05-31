@@ -18,3 +18,4 @@ declare module 'mirador-annotation-editor-video/src/plugin/MiradorAnnotationEdit
   const miradorAnnotationEditorVideo: any;
   export default miradorAnnotationEditorVideo;
 }
+

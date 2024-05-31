@@ -1,13 +1,13 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
-import IWorkspace from "../../mirador/interface/IWorkspace.ts";
+import IState from "../../mirador/interface/IState.ts";
 import { ChangeEvent, useCallback, useState } from "react";
 
 interface IDrawerCreateProjectProps{
   modalCreateProjectIsOpen: boolean
   toggleModalProjectCreation:()=>void
-  InitializeProject:(workspace: IWorkspace, projectName:string) => void
-  projectWorkspace:IWorkspace
+  InitializeProject:(workspace: IState, projectName:string) => void
+  projectWorkspace:IState
 }
 
 export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCreation,InitializeProject,projectWorkspace}:IDrawerCreateProjectProps)=>{

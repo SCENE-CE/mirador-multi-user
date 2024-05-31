@@ -1,5 +1,5 @@
 import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
-import IWorkspace from "../../mirador/interface/IWorkspace.ts";
+import IState from "../../mirador/interface/IState.ts";
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import {  useCallback, useState } from "react";
@@ -10,8 +10,8 @@ import placeholder from "../../../assets/Placeholder.svg"
 
 interface CardProps {
   projectName: string,
-  projectWorkspace: IWorkspace
-  initializeMirador: (projectWorkspace: IWorkspace, projectId: number) => void,
+  projectWorkspace: IState
+  initializeMirador: (projectWorkspace: IState, projectId: number) => void,
   NumberOfManifests?: number,
   deleteProject?: (projectId: number) => void,
   projectId: number,
