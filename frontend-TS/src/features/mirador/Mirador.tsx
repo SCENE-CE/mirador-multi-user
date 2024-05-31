@@ -5,7 +5,7 @@ import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
-import IWorkspace from "./interface/IWorkspace.ts";
+import IMiradorState from "./interface/IState.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
 import { Button, Grid, Tooltip, Typography } from "@mui/material";
 import './style/mirador.css'
@@ -13,24 +13,22 @@ import { MMUModal } from "../../components/elements/modal.tsx";
 import { ModalEditProject } from "../projects/components/ModalEditProject.tsx";
 import { Project } from "../projects/types/types.ts";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+
 interface MiradorViewerProps {
-  workspace: IWorkspace,
-  saveState: (state:IWorkspace, name:string) => void,
+  miradorState: IMiradorState,
+  saveMiradorState: (state:IMiradorState, name:string) => void,
   project:Project
   updateUserProject:(project:Project, newProjectName:string)=>void,
 }
 
-const MiradorViewer = ({ workspace, saveState ,project,updateUserProject }:MiradorViewerProps) => {
+const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProject }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
-  const [viewer, setViewer] = useState<any>({ });
+  const [viewer, setViewer] = useState<any>(undefined);
   const [openModal, setOpenMOdal] = useState(false)
 
   useEffect(() => {
     if (viewerRef.current) {
       const config = {
-        ...workspace.config,
-        catalog: workspace.catalog,
-        windows: workspace.windows,
         id: viewerRef.current.id,
         annotation: {
           adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
@@ -39,19 +37,32 @@ const MiradorViewer = ({ workspace, saveState ,project,updateUserProject }:Mirad
         }
       };
 
-      const viewer = Mirador.viewer(config, [
-        ...miradorAnnotationEditorVideo]);
 
-      // TODO import corrclty workspace
+      let loadingMiradorViewer;
+      // First displaying of the viewer
+      if(!viewer){
+        loadingMiradorViewer = Mirador.viewer(config, [
+          ...miradorAnnotationEditorVideo]);
+      }
+      if(!miradorState){
+        saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
+      }
 
-      setViewer(viewer);
+      console.log('miradorState', miradorState)
 
+      // Load state only if it is not empty
+      if (loadingMiradorViewer && project.id && miradorState) {
+        loadingMiradorViewer.store.dispatch(
+          Mirador.actions.importMiradorState(miradorState)
+        );
+      }
 
+      setViewer(loadingMiradorViewer);
     }
   }, []);
 
-  const saveMiradorState = () => {
-    saveState(viewer.store.getState(),project.name);
+  const saveProject = () => {
+    saveMiradorState(viewer.store.getState(),project.name);
   }
 
   const HandleOpenModal = useCallback(()=>{
@@ -80,7 +91,7 @@ const MiradorViewer = ({ workspace, saveState ,project,updateUserProject }:Mirad
         </Grid>
         <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject updateUserProject={updateUserProject} project={project}/>}/>
         <Grid item>
-        <Button variant="contained" onClick={saveMiradorState}>Save Project</Button>
+        <Button variant="contained" onClick={saveProject}>Save Project</Button>
         </Grid>
       </Grid>
     </Grid>
