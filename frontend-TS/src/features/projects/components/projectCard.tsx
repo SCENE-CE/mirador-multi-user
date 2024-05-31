@@ -41,31 +41,18 @@ export const ProjectCard= ({
     <>
       <Card>
         <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{minHeight:'120px'}}>
-          <Grid item container flexDirection="row"  alignItems="center" justifyContent="space-around" spacing={2}>
-            <Grid item xs={2}>
+          <Grid item container flexDirection="row"  alignItems="center" justifyContent="flex-start" spacing={2}>
+            <Grid item xs={12} sm={4}>
               <img src={placeholder} alt="placeholder" style={{height:100, width:200}}/>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={12} sm={4}>
               <Typography variant="subtitle1">{projectName}</Typography>
             </Grid>
-            {NumberOfManifests == 0 && (
-              <Grid item xs={3}>
-                No manifest
-              </Grid>
-            )
-            }
-            {NumberOfManifests == 1 && (
-              <Grid item>
-                {NumberOfManifests} manifest
-              </Grid>
-            )
-            }
-            {NumberOfManifests > 1 && (
-              <Grid item>
-                {NumberOfManifests} manifests
-              </Grid>
-            )
-            }
+            <Grid item xs={12} sm={3}>
+              {NumberOfManifests === 0 && "No manifest"}
+              {NumberOfManifests === 1 && `${NumberOfManifests} manifest`}
+              {NumberOfManifests > 1 && `${NumberOfManifests} manifests`}
+            </Grid>
           </Grid>
           <Grid item
                 alignSelf="center"

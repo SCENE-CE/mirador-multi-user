@@ -5,6 +5,9 @@ const storage = {
     return JSON.parse(localStorage.getItem(`${storagePrefix}token`) as string);
   },
   setToken: (token: string) => {
+    if(token == undefined){
+      return
+    }
     window.localStorage.setItem(`${storagePrefix}token`, JSON.stringify(token));
   },
   clearToken:() => {
