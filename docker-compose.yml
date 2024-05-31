@@ -17,6 +17,8 @@ services:
       context: ./frontend-TS
       args:
         BACKEND_URL: ${BACKEND_URL}
+    environment:
+      BACKEND_URL: ${BACKEND_URL}
     depends_on:
       - backend
     restart: unless-stopped
