@@ -19,8 +19,8 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post()
+  @HttpCode(201)
   create(@Body() createUserDto: CreateUserDto) {
-    console.log('CREATE USER');
     return this.usersService.create(createUserDto);
   }
 
@@ -28,7 +28,6 @@ export class UsersController {
   findAll() {
     return this.usersService.findAll();
   }
-  //TODO : replace validation Pipe by AuthGuard
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   findOne(@Param('id') id: number) {
