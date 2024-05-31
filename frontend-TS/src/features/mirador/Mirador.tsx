@@ -43,18 +43,18 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProje
       if(!viewer){
         loadingMiradorViewer = Mirador.viewer(config, [
           ...miradorAnnotationEditorVideo]);
-        if(!miradorState){
-          saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
-        }
+      }
+      if(!miradorState){
+        saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
       }
 
       console.log('miradorState', miradorState)
 
       // Load state only if it is not empty
-      if (loadingMiradorViewer && !miradorState) {
-       /* loadingMiradorViewer.store.dispatch(
+      if (loadingMiradorViewer && project.id && miradorState) {
+        loadingMiradorViewer.store.dispatch(
           Mirador.actions.importMiradorState(miradorState)
-        );*/
+        );
       }
 
       setViewer(loadingMiradorViewer);
