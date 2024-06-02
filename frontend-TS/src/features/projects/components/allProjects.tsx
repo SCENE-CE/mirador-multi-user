@@ -150,7 +150,14 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
           )
         }
         <Grid item container spacing={1}>
-
+          {!userProjects.length && (
+            <Grid
+              container
+              justifyContent={"center"}
+            >
+              <Typography variant="h6" component="h2">No projects yet, start to work when clicking on "New project" button.</Typography>
+            </Grid>
+          )}
           {!selectedProjectId && userProjects ? (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((project) => (
