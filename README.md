@@ -14,7 +14,7 @@ Mirador multi user is a project that aims to create a multi-user environment for
 - `npm install`
 - `cd ..`
 - `docker-compose up --build`
-- 
+
 - ## Installation PROD (Docker)
 
 - Clone this repo : `git clone git@github.com:SCENE-CE/mirador-multi-user.git`
@@ -22,6 +22,7 @@ Mirador multi user is a project that aims to create a multi-user environment for
 - `cp .env.prod.sample .env`. Change password stuff
 - `cp frontend/src/config/config.sample.ts frontend/src/config/config.ts`
 - `docker-compose up --build`
+- change db password and JWT secret into .env file.
 
 Now you can access :
 - frontend to `localhost:4000`
