@@ -1,33 +1,35 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule } from '@nestjs/config';
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ProjectModule } from './project/project.module';
 import { CaslModule } from './casl/casl.module';
+import { MediaModule } from './media/media.module';
+import { UserGroupModule } from './user-group/user-group.module';
+import dbConfiguration from './config/db.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
+      isGlobal: true,
       envFilePath: './src/config/.env.dev',
+      load: [dbConfiguration],
     }),
-    TypeOrmModule.forRoot({
-      type: 'mariadb',
-      host: process.env.DB_HOST,
-      port: Number(process.env.DB_PORT),
-      username: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_DATABASE,
-      autoLoadEntities: true,
-      synchronize: true,
-      cache: false,
+    TypeOrmModule.forRootAsync({
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        ...configService.get('database'),
+      }),
     }),
     UsersModule,
     AuthModule,
     ProjectModule,
     CaslModule,
+    MediaModule,
+    UserGroupModule,
   ],
   controllers: [AppController],
   providers: [AppService],
