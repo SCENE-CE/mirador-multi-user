@@ -2,10 +2,12 @@ import {
   Column,
   Entity,
   Index,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Project } from '../../project/entities/project.entity';
+import { UserGroup } from '../../user-group/entities/user-group.entity';
 
 @Entity()
 export class User {
@@ -33,4 +35,7 @@ export class User {
     onUpdate: 'CASCADE',
   })
   projects: Project[];
+
+  @ManyToOne(() => UserGroup, (UserGroup) => UserGroup.users)
+  user_groups: UserGroup[];
 }
