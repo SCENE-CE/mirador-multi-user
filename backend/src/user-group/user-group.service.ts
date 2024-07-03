@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -42,11 +46,22 @@ export class UserGroupService {
     }
   }
 
-  update(id: number, updateUserGroupDto: UpdateUserGroupDto) {
-    return `This action updates a #${id} userGroup`;
+  async update(id: number, dto: UpdateUserGroupDto) {
+    try {
+      const updateData = await this.userGroupRepository.update(id, dto);
+      if (updateData.affected != 1) throw new NotFoundException(id);
+      return this.findOne(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} userGroup`;
+  async remove(id: number) {
+    try {
+      const deleteData = await this.userGroupRepository.delete(id);
+      if (deleteData.affected != 1) throw new NotFoundException(id);
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 }

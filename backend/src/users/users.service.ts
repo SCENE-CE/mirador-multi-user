@@ -8,14 +8,14 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { DeleteResult, In, QueryFailedError, Repository } from "typeorm";
+import { DeleteResult, In, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectRepository(User) private readonly data: Repository<User>,
+    @InjectRepository(User) private readonly userRepository: Repository<User>,
 
     @InjectRepository(UserGroup)
     private readonly userGroupRepository: Repository<UserGroup>,
@@ -33,7 +33,7 @@ export class UsersService {
         });
       }
       userToSave = { ...userToSave, user_groups: userGroups };
-      const savedUser = await this.data.save(userToSave);
+      const savedUser = await this.userRepository.save(userToSave);
       return savedUser;
     } catch (error) {
       if (error instanceof QueryFailedError) {
@@ -47,19 +47,19 @@ export class UsersService {
   }
 
   findAll(): Promise<User[]> {
-    return this.data.find();
+    return this.userRepository.find();
   }
 
   async findOneByMail(mail: string): Promise<User> {
     try {
-      return await this.data.findOneBy({ mail });
+      return await this.userRepository.findOneBy({ mail });
     } catch (err) {
       throw new NotFoundException(`User no found ${mail}`);
     }
   }
   async findOne(id: number): Promise<User> {
     try {
-      return await this.data.findOneBy({ id });
+      return await this.userRepository.findOneBy({ id });
     } catch (err) {
       throw new NotFoundException(`User not found :${id}`);
     }
@@ -67,7 +67,7 @@ export class UsersService {
 
   async update(id: number, dto: UpdateUserDto) {
     try {
-      const done = await this.data.update(id, dto);
+      const done = await this.userRepository.update(id, dto);
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {
@@ -77,7 +77,7 @@ export class UsersService {
 
   async remove(id: number) {
     try {
-      const done: DeleteResult = await this.data.delete(id);
+      const done: DeleteResult = await this.userRepository.delete(id);
       if (done.affected != 1) throw new NotFoundException(id);
     } catch (error) {
       throw new InternalServerErrorException(error);
