@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpCode } from "@nestjs/common";
 import { UserGroupService } from './user-group.service';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
@@ -23,11 +23,15 @@ export class UserGroupController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserGroupDto: UpdateUserGroupDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserGroupDto: UpdateUserGroupDto,
+  ) {
     return this.userGroupService.update(+id, updateUserGroupDto);
   }
 
   @Delete(':id')
+  @HttpCode(204)
   remove(@Param('id') id: string) {
     return this.userGroupService.remove(+id);
   }

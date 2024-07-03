@@ -1,6 +1,14 @@
-import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsEmail, IsInt,
+  IsNotEmpty,
+  IsNumberString,
+  IsOptional
+} from "class-validator";
 import { Type } from 'class-transformer';
 import { CreateProjectDto } from '../../project/dto/create-project.dto';
+import { UserGroup } from "../../user-group/entities/user-group.entity";
 
 export class CreateUserDto {
   @IsEmail()
@@ -15,4 +23,10 @@ export class CreateUserDto {
   @Type(() => CreateProjectDto)
   @IsOptional()
   Projects: CreateProjectDto[];
+
+  @IsArray()
+  @IsInt({ each: true })
+  readonly userGroupIds: number[];
+
+  user_groups: UserGroup[];
 }

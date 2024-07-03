@@ -20,7 +20,7 @@ export class ProjectService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        'An error occurred while creating the user',
+        'An error occurred while creating the project',
         error,
       );
     }
