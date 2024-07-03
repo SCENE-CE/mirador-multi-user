@@ -8,20 +8,31 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import { DeleteResult, In, QueryFailedError, Repository } from "typeorm";
 import * as bcrypt from 'bcrypt';
+import { UserGroup } from '../user-group/entities/user-group.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly data: Repository<User>,
+
+    @InjectRepository(UserGroup)
+    private readonly userGroupRepository: Repository<UserGroup>,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
       console.log(dto);
-      const userToSave = dto;
+      let userToSave = dto;
       const hashPassword = await bcrypt.hash(dto.password, 10);
       userToSave.password = hashPassword;
+      let userGroups: UserGroup[] = [];
+      if (dto.userGroupIds && dto.userGroupIds.length > 0) {
+        userGroups = await this.userGroupRepository.find({
+          where: { id: In(dto.userGroupIds) },
+        });
+      }
+      userToSave = { ...userToSave, user_groups: userGroups };
       const savedUser = await this.data.save(userToSave);
       return savedUser;
     } catch (error) {

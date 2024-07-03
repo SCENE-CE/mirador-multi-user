@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -8,18 +8,38 @@ import { Repository } from 'typeorm';
 @Injectable()
 export class UserGroupService {
   constructor(
-    @InjectRepository(UserGroup) private readonly data: Repository<UserGroup>,
+    @InjectRepository(UserGroup)
+    private readonly userGroupRepository: Repository<UserGroup>,
   ) {}
   create(createUserGroupDto: CreateUserGroupDto) {
-    return 'This action adds a new userGroup';
+    try {
+      return this.userGroupRepository.save(createUserGroupDto);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'An error occured while creating userGroup',
+        error,
+      );
+    }
   }
 
   findAll() {
-    return `This action returns all userGroup`;
+    try {
+      return this.userGroupRepository.find();
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} userGroup`;
+    try {
+      return this.userGroupRepository.findOne({
+        where: { id },
+        relations: ['users'],
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   update(id: number, updateUserGroupDto: UpdateUserGroupDto) {
