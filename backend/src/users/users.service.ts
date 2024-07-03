@@ -11,6 +11,7 @@ import { User } from './entities/user.entity';
 import { DeleteResult, In, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroup } from '../user-group/entities/user-group.entity';
+import { UserGroupService } from '../user-group/user-group.service';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,7 @@ export class UsersService {
 
     @InjectRepository(UserGroup)
     private readonly userGroupRepository: Repository<UserGroup>,
+    private readonly userGroupService: UserGroupService,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
@@ -32,6 +34,12 @@ export class UsersService {
           where: { id: In(dto.userGroupIds) },
         });
       }
+      const privateUserGroup = await this.userGroupService.create({
+        name: dto.name,
+      });
+
+      userGroups.push(privateUserGroup);
+
       userToSave = { ...userToSave, user_groups: userGroups };
       const savedUser = await this.userRepository.save(userToSave);
       return savedUser;

@@ -25,7 +25,6 @@ export class CreateUserDto {
   Projects: CreateProjectDto[];
 
   @IsArray()
-  @ArrayNotEmpty()
   @IsInt({ each: true })
   readonly userGroupIds: number[];
 
