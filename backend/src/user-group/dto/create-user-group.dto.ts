@@ -1,1 +1,3 @@
-export class CreateUserGroupDto {}
+export class CreateUserGroupDto {
+
+}

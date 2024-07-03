@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional } from "class-validator";
+import { IsEmail, IsNotEmpty, IsNumberString, IsOptional } from "class-validator";
 import { Type } from 'class-transformer';
 import { CreateProjectDto } from '../../project/dto/create-project.dto';
 
@@ -15,4 +15,7 @@ export class CreateUserDto {
   @Type(() => CreateProjectDto)
   @IsOptional()
   Projects: CreateProjectDto[];
+
+  @IsNumberString()
+  userGroupsIds: number[];
 }

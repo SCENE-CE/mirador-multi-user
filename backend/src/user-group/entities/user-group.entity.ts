@@ -1,4 +1,4 @@
-import { Entity, ManyToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { IsNumberString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 
@@ -8,6 +8,7 @@ export class UserGroup {
   @IsNumberString()
   id: number;
 
-  @ManyToMany(() => User, (user) => user.user_groups)
+  @ManyToMany(() => User, (user) => user.user_groups, { eager: true })
+  @JoinTable({ name: 'link_user_group' })
   users: User[];
 }

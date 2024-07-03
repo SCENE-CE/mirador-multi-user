@@ -2,7 +2,7 @@ import {
   Column,
   Entity,
   Index,
-  ManyToOne,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -36,6 +36,6 @@ export class User {
   })
   projects: Project[];
 
-  @ManyToOne(() => UserGroup, (UserGroup) => UserGroup.users)
+  @ManyToMany(() => UserGroup, (UserGroup) => UserGroup.users)
   user_groups: UserGroup[];
 }

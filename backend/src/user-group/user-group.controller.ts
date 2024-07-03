@@ -23,7 +23,10 @@ export class UserGroupController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserGroupDto: UpdateUserGroupDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateUserGroupDto: UpdateUserGroupDto,
+  ) {
     return this.userGroupService.update(+id, updateUserGroupDto);
   }
 

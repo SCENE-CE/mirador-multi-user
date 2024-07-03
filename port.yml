@@ -2,7 +2,7 @@ version: "3.8"
 services:
   db:
     ports:
-      - "${DB_PORT}:3306"
+      - "${DB_EXPOSE_PORT}:3306"
   backend:
     ports:
       - "${BACKEND_PORT}:3000"
