@@ -31,7 +31,7 @@ services:
       DB_PASS: ${DB_PASS}
       DB_DATABASE: ${DB_DATABASE}
       DB_USER: ${DB_USER}
-      DB_PORT: ${DB_EXPOSE_PORT}
+      DB_PORT: ${DB_PORT}
       JWT_SECRET: ${JWT_SECRET}
       SALT: ${SALT}
     depends_on:
