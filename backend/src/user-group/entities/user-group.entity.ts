@@ -3,10 +3,12 @@ import {
   Entity,
   JoinTable,
   ManyToMany,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
+import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
 
 @Entity()
 export class UserGroup {
@@ -25,4 +27,7 @@ export class UserGroup {
   @ManyToMany(() => User, (user) => user.user_groups, { eager: true })
   @JoinTable({ name: 'link_user_group' })
   users: User[];
+
+  @ManyToOne(() => LinkGroupProject, (linkGroup) => linkGroup.groups, {})
+  linkGroupProjects: LinkGroupProject[];
 }

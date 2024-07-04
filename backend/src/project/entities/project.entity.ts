@@ -8,6 +8,8 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { IsNumberString } from 'class-validator';
+import { LinkGroupProject } from "../../link-group-project/entities/link-group-project.entity";
+import { UserGroup } from "../../user-group/entities/user-group.entity";
 
 @Entity()
 export class Project {
@@ -34,4 +36,7 @@ export class Project {
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at: Date;
+
+  @ManyToOne(() => LinkGroupProject, (linkGroup) => linkGroup.groups, {})
+  linkGroupProjects: LinkGroupProject[];
 }

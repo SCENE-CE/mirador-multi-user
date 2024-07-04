@@ -5,7 +5,9 @@ import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
 
 @Controller('link-group-project')
 export class LinkGroupProjectController {
-  constructor(private readonly linkGroupProjectService: LinkGroupProjectService) {}
+  constructor(
+    private readonly linkGroupProjectService: LinkGroupProjectService,
+  ) {}
 
   @Post()
   create(@Body() createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
