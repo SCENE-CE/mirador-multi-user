@@ -33,7 +33,7 @@ export class UsersService {
       const privateUserGroup = await this.userGroupService.create({
         name: savedUser.name,
         ownerId: savedUser.id,
-        users: [savedUser.id],
+        users: [savedUser],
       });
 
       return savedUser;

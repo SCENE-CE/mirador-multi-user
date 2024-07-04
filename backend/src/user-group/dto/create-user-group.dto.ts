@@ -1,4 +1,5 @@
 import { IsNumberString, IsString } from 'class-validator';
+import { User } from '../../users/entities/user.entity';
 
 export class CreateUserGroupDto {
   @IsString()
@@ -8,5 +9,5 @@ export class CreateUserGroupDto {
   ownerId: number;
 
   @IsNumberString()
-  users: number[];
+  users: User[];
 }

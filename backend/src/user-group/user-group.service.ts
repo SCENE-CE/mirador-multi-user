@@ -15,9 +15,9 @@ export class UserGroupService {
     @InjectRepository(UserGroup)
     private readonly userGroupRepository: Repository<UserGroup>,
   ) {}
-  create(createUserGroupDto: CreateUserGroupDto) {
+  async create(createUserGroupDto: CreateUserGroupDto): Promise<UserGroup> {
     try {
-      return this.userGroupRepository.save(createUserGroupDto);
+      return await this.userGroupRepository.save(createUserGroupDto);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
