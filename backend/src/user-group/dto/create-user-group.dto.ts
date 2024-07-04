@@ -6,4 +6,7 @@ export class CreateUserGroupDto {
 
   @IsNumberString()
   ownerId: number;
+
+  @IsNumberString()
+  users: number[];
 }

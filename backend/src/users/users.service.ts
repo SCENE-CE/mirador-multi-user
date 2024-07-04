@@ -30,22 +30,13 @@ export class UsersService {
       userToSave.password = hashPassword;
 
       const savedUser = await this.userRepository.save(userToSave);
-      const userGroups: UserGroup[] = [];
       const privateUserGroup = await this.userGroupService.create({
         name: savedUser.name,
         ownerId: savedUser.id,
+        users: [savedUser.id],
       });
 
-      userGroups.push(privateUserGroup);
-      console.log('before update creation');
-      console.log('saved user id :', savedUser.id);
-      console.log('userGroupsArray', userGroups);
-      const userUpdated = await this.userRepository.save({
-        ...savedUser,
-        user_groups: userGroups,
-      });
-
-      return userUpdated;
+      return savedUser;
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new ConflictException('This user already exists');
