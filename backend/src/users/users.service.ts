@@ -25,28 +25,32 @@ export class UsersService {
   async create(dto: CreateUserDto): Promise<User> {
     try {
       console.log(dto);
-      let userToSave = dto;
+      const userToSave = dto;
       const hashPassword = await bcrypt.hash(dto.password, 10);
       userToSave.password = hashPassword;
-      let userGroups: UserGroup[] = [];
-      if (dto.userGroupIds && dto.userGroupIds.length > 0) {
-        userGroups = await this.userGroupRepository.find({
-          where: { id: In(dto.userGroupIds) },
-        });
-      }
+
+      const savedUser = await this.userRepository.save(userToSave);
+      const userGroups: UserGroup[] = [];
       const privateUserGroup = await this.userGroupService.create({
-        name: dto.name,
+        name: savedUser.name,
+        ownerId: savedUser.id,
       });
 
       userGroups.push(privateUserGroup);
+      console.log('before update creation');
+      console.log('saved user id :', savedUser.id);
+      console.log('userGroupsArray', userGroups);
+      const userUpdated = await this.userRepository.save({
+        ...savedUser,
+        user_groups: userGroups,
+      });
 
-      userToSave = { ...userToSave, user_groups: userGroups };
-      const savedUser = await this.userRepository.save(userToSave);
-      return savedUser;
+      return userUpdated;
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new ConflictException('This user already exists');
       } else {
+        console.log(error);
         throw new InternalServerErrorException(
           'An error occurred while creating the user',
         );

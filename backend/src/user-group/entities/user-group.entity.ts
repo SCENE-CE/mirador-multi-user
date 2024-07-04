@@ -18,6 +18,10 @@ export class UserGroup {
   @IsString()
   name: string;
 
+  @Column()
+  @IsNumberString()
+  ownerId: number;
+
   @ManyToMany(() => User, (user) => user.user_groups, { eager: true })
   @JoinTable({ name: 'link_user_group' })
   users: User[];

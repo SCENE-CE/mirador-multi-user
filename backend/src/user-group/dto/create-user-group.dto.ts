@@ -1,6 +1,9 @@
-import { IsString } from 'class-validator';
+import { IsNumberString, IsString } from 'class-validator';
 
 export class CreateUserGroupDto {
   @IsString()
   name: string;
+
+  @IsNumberString()
+  ownerId: number;
 }
