@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { DeleteResult, In, QueryFailedError, Repository } from 'typeorm';
+import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 import { UserGroupService } from '../user-group/user-group.service';
@@ -25,28 +25,23 @@ export class UsersService {
   async create(dto: CreateUserDto): Promise<User> {
     try {
       console.log(dto);
-      let userToSave = dto;
+      const userToSave = dto;
       const hashPassword = await bcrypt.hash(dto.password, 10);
       userToSave.password = hashPassword;
-      let userGroups: UserGroup[] = [];
-      if (dto.userGroupIds && dto.userGroupIds.length > 0) {
-        userGroups = await this.userGroupRepository.find({
-          where: { id: In(dto.userGroupIds) },
-        });
-      }
+
+      const savedUser = await this.userRepository.save(userToSave);
       const privateUserGroup = await this.userGroupService.create({
-        name: dto.name,
+        name: savedUser.name,
+        ownerId: savedUser.id,
+        users: [savedUser],
       });
 
-      userGroups.push(privateUserGroup);
-
-      userToSave = { ...userToSave, user_groups: userGroups };
-      const savedUser = await this.userRepository.save(userToSave);
       return savedUser;
     } catch (error) {
       if (error instanceof QueryFailedError) {
         throw new ConflictException('This user already exists');
       } else {
+        console.log(error);
         throw new InternalServerErrorException(
           'An error occurred while creating the user',
         );

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from "@nestjs/config";
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
@@ -9,6 +9,7 @@ import { ProjectModule } from './project/project.module';
 import { CaslModule } from './casl/casl.module';
 import { MediaModule } from './media/media.module';
 import { UserGroupModule } from './user-group/user-group.module';
+import { LinkGroupProjectModule } from './link-group-project/link-group-project.module';
 import dbConfiguration from './config/db.config';
 
 @Module({
@@ -30,6 +31,7 @@ import dbConfiguration from './config/db.config';
     CaslModule,
     MediaModule,
     UserGroupModule,
+    LinkGroupProjectModule,
   ],
   controllers: [AppController],
   providers: [AppService],

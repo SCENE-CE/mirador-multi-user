@@ -4,10 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { IsNumberString } from 'class-validator';
+import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
 
 @Entity()
 export class Project {
@@ -34,4 +36,10 @@ export class Project {
     default: () => 'CURRENT_TIMESTAMP(6)',
   })
   created_at: Date;
+
+  @OneToMany(
+    () => LinkGroupProject,
+    (linkGroupProject) => linkGroupProject.project,
+  )
+  linkGroupProjectsIds: LinkGroupProject;
 }
