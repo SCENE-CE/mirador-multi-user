@@ -1,11 +1,11 @@
 import {
   Column,
-  Entity, JoinColumn,
+  Entity,
   JoinTable,
   ManyToMany,
-  ManyToOne, OneToMany,
-  PrimaryGeneratedColumn
-} from "typeorm";
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
@@ -28,6 +28,6 @@ export class UserGroup {
   @JoinTable({ name: 'link_user_group' })
   users: User[];
 
-  @OneToMany(() => LinkGroupProject, (linkGroup) => linkGroup.userGroupId, {})
+  @OneToMany(() => LinkGroupProject, (linkGroup) => linkGroup.user_group, {})
   linkGroupProjects: LinkGroupProject;
 }

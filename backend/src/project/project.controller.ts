@@ -38,9 +38,6 @@ export class ProjectController {
       const project = new Project();
       Object.assign(project, createProjectDto);
       const createdProject = await this.projectService.create(project);
-      // await this.linkGroupProjectService.create({
-      //   Project: createdProject,
-      // });
       return { ...createdProject };
     } catch (error) {
       throw new BadRequestException(error);

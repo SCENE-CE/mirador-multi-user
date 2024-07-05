@@ -17,9 +17,10 @@ export class LinkGroupProjectService {
   ) {}
   async create(createLinkGroupProjectDto: CreateLinkGroupProjectDto) {
     try {
-      const linkGroupProject = this.linkGroupProjectRepository.create(
-        createLinkGroupProjectDto,
-      );
+      const linkGroupProject: LinkGroupProject =
+        this.linkGroupProjectRepository.create({
+          ...createLinkGroupProjectDto,
+        });
       return await this.linkGroupProjectRepository.save(linkGroupProject);
     } catch (error) {
       console.log(error);
@@ -35,7 +36,29 @@ export class LinkGroupProjectService {
   }
 
   async findOne(id: number) {
-    return await this.linkGroupProjectRepository.findOneBy({ id: id });
+    return await this.linkGroupProjectRepository.findOneBy({ id });
+  }
+
+  async findAllByUserGroupId(id: number) {
+    try {
+      return await this.linkGroupProjectRepository.find({
+        where: { id },
+        relations: ['userGroupId'],
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async findAllByProjectId(id: number) {
+    try {
+      return await this.linkGroupProjectRepository.find({
+        where: { id },
+        relations: ['projectId'],
+      });
+    } catch (error) {
+      throw new InternalServerErrorException(error);
+    }
   }
 
   async update(

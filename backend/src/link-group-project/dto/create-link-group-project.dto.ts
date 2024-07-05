@@ -1,17 +1,14 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
 import { GroupProjectRights } from '../../enum/group-project-rights';
-import { CreateProjectDto } from '../../project/dto/create-project.dto';
-import { Type } from 'class-transformer';
-import { CreateUserGroupDto } from '../../user-group/dto/create-user-group.dto';
+import { Project } from '../../project/entities/project.entity';
+import { UserGroup } from '../../user-group/entities/user-group.entity';
 
 export class CreateLinkGroupProjectDto {
   @IsEnum(GroupProjectRights)
   @IsNotEmpty()
   rights: GroupProjectRights;
 
-  @Type(() => CreateProjectDto)
-  ProjectId: number;
+  project: Project;
 
-  @Type(() => CreateUserGroupDto)
-  UserGroupId: number;
+  user_group: UserGroup;
 }

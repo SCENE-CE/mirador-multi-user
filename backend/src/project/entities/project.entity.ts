@@ -9,7 +9,7 @@ import {
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { IsNumberString } from 'class-validator';
-import { LinkGroupProject } from "../../link-group-project/entities/link-group-project.entity";
+import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
 
 @Entity()
 export class Project {
@@ -39,7 +39,7 @@ export class Project {
 
   @OneToMany(
     () => LinkGroupProject,
-    (linkGroupProject) => linkGroupProject.projectsId,
+    (linkGroupProject) => linkGroupProject.project,
   )
   linkGroupProjectsIds: LinkGroupProject;
 }

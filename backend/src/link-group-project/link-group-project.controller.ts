@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { LinkGroupProjectService } from './link-group-project.service';
 import { CreateLinkGroupProjectDto } from './dto/create-link-group-project.dto';
 import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
@@ -24,8 +32,21 @@ export class LinkGroupProjectController {
     return this.linkGroupProjectService.findOne(+id);
   }
 
+  @Get('/project/:id')
+  async findAllProject(@Param('id') id: number) {
+    return await this.linkGroupProjectService.findAllByProjectId(id);
+  }
+
+  @Get('user-group/:id')
+  async findAllUserGroup(@Param('id') id: number) {
+    return await this.linkGroupProjectService.findAllByUserGroupId(id);
+  }
+
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLinkGroupProjectDto: UpdateLinkGroupProjectDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateLinkGroupProjectDto: UpdateLinkGroupProjectDto,
+  ) {
     return this.linkGroupProjectService.update(+id, updateLinkGroupProjectDto);
   }
 

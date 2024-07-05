@@ -1,4 +1,10 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { GroupProjectRights } from '../../enum/group-project-rights';
 import { Project } from '../../project/entities/project.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
@@ -11,11 +17,15 @@ export class LinkGroupProject {
   @Column({ type: 'enum', enum: GroupProjectRights })
   rights: GroupProjectRights;
 
-  @ManyToOne(() => Project, (project) => project.id)
+  @ManyToOne(() => Project, (project) => project.linkGroupProjectsIds, {
+    eager: true,
+  })
   @JoinColumn({ name: 'project_id' })
-  projectsId: Project[];
+  project: Project;
 
-  @ManyToOne(() => UserGroup, (group) => group.id)
+  @ManyToOne(() => UserGroup, (group) => group.linkGroupProjects, {
+    eager: true,
+  })
   @JoinColumn({ name: 'user_group_id' })
-  userGroupId: UserGroup[];
+  user_group: UserGroup;
 }
