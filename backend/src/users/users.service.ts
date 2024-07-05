@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { DeleteResult, In, QueryFailedError, Repository } from 'typeorm';
+import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 import { UserGroupService } from '../user-group/user-group.service';

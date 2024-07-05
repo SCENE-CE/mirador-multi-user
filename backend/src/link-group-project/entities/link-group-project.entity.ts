@@ -3,13 +3,18 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+  PrimaryGeneratedColumn, Unique
+} from "typeorm";
 import { GroupProjectRights } from '../../enum/group-project-rights';
 import { Project } from '../../project/entities/project.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
 
 @Entity()
+@Unique('constraint_right_project_userGroup', [
+  'rights',
+  'project',
+  'user_group',
+])
 export class LinkGroupProject {
   @PrimaryGeneratedColumn()
   id: number;
@@ -20,12 +25,12 @@ export class LinkGroupProject {
   @ManyToOne(() => Project, (project) => project.linkGroupProjectsIds, {
     eager: true,
   })
-  @JoinColumn({ name: 'project_id' })
+  @JoinColumn({ name: 'project' })
   project: Project;
 
   @ManyToOne(() => UserGroup, (group) => group.linkGroupProjects, {
     eager: true,
   })
-  @JoinColumn({ name: 'user_group_id' })
+  @JoinColumn({ name: 'user_group' })
   user_group: UserGroup;
 }

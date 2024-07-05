@@ -21,7 +21,14 @@ export class LinkGroupProjectService {
         this.linkGroupProjectRepository.create({
           ...createLinkGroupProjectDto,
         });
-      return await this.linkGroupProjectRepository.save(linkGroupProject);
+
+      return await this.linkGroupProjectRepository.upsert(linkGroupProject, {
+        conflictPaths:[
+          "rights",
+        "project",
+        "user_group"
+    ]
+    });
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -39,23 +46,28 @@ export class LinkGroupProjectService {
     return await this.linkGroupProjectRepository.findOneBy({ id });
   }
 
-  async findAllByUserGroupId(id: number) {
+  async findAllProjectByUserGroupId(id: number) {
     try {
-      return await this.linkGroupProjectRepository.find({
-        where: { id },
-        relations: ['userGroupId'],
+      console.log(id);
+      const request = await this.linkGroupProjectRepository.find({
+        where: { user_group: { id } },
+        relations: ['user_group'],
       });
+
+      return request.map((linkGroupProject) => linkGroupProject.project);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
 
-  async findAllByProjectId(id: number) {
+  async findAllGroupByProjectId(id: number) {
     try {
-      return await this.linkGroupProjectRepository.find({
-        where: { id },
-        relations: ['projectId'],
+      const request = await this.linkGroupProjectRepository.find({
+        where: { project: { id } },
+        relations: ['user_group', 'project'],
       });
+
+      return request.map((linkGroupProject) => linkGroupProject.user_group);
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

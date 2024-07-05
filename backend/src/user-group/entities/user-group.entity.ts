@@ -4,8 +4,8 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+  PrimaryGeneratedColumn
+} from "typeorm";
 import { IsNumberString, IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
