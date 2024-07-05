@@ -1,5 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { IsNumberString } from 'class-validator';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { GroupProjectRights } from '../../enum/group-project-rights';
 import { Project } from '../../project/entities/project.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
@@ -7,15 +6,16 @@ import { UserGroup } from '../../user-group/entities/user-group.entity';
 @Entity()
 export class LinkGroupProject {
   @PrimaryGeneratedColumn()
-  @IsNumberString()
-  id: string;
+  id: number;
 
   @Column({ type: 'enum', enum: GroupProjectRights })
-  GroupProjectRights: GroupProjectRights;
+  rights: GroupProjectRights;
 
-  @OneToMany(() => Project, (project) => project.linkGroupProjects, {})
-  projects: Project[];
+  @ManyToOne(() => Project, (project) => project.id)
+  @JoinColumn({ name: 'project_id' })
+  projectsId: Project[];
 
-  @OneToMany(() => UserGroup, (group) => group.linkGroupProjects, {})
-  groups: UserGroup[];
+  @ManyToOne(() => UserGroup, (group) => group.id)
+  @JoinColumn({ name: 'user_group_id' })
+  userGroupId: UserGroup[];
 }

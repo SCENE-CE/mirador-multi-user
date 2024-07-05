@@ -4,12 +4,12 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
 import { IsNumberString } from 'class-validator';
 import { LinkGroupProject } from "../../link-group-project/entities/link-group-project.entity";
-import { UserGroup } from "../../user-group/entities/user-group.entity";
 
 @Entity()
 export class Project {
@@ -37,6 +37,9 @@ export class Project {
   })
   created_at: Date;
 
-  @ManyToOne(() => LinkGroupProject, (linkGroup) => linkGroup.groups, {})
-  linkGroupProjects: LinkGroupProject[];
+  @OneToMany(
+    () => LinkGroupProject,
+    (linkGroupProject) => linkGroupProject.projectsId,
+  )
+  linkGroupProjectsIds: LinkGroupProject;
 }

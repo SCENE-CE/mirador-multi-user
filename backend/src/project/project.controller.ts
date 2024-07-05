@@ -23,21 +23,24 @@ import { Project } from './entities/project.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { Action } from '../casl/enum/Action';
 import { CheckPolicies } from '../casl/decorators/CheckPolicies';
+import { LinkGroupProjectService } from '../link-group-project/link-group-project.service';
 
 @Controller('project')
 export class ProjectController {
-  constructor(private readonly projectService: ProjectService) {}
+  constructor(
+    private readonly projectService: ProjectService,
+    private readonly linkGroupProjectService: LinkGroupProjectService,
+  ) {}
 
   @Post()
   async create(@Body() createProjectDto: any) {
-    console.log('CREATE CONTROLLER');
-    console.log('CREATE CONTROLLER', createProjectDto);
     try {
       const project = new Project();
-      console.log('CREATE CONTROLLER', createProjectDto);
       Object.assign(project, createProjectDto);
-      console.log('CREATE CONTROLLER', project);
       const createdProject = await this.projectService.create(project);
+      // await this.linkGroupProjectService.create({
+      //   Project: createdProject,
+      // });
       return { ...createdProject };
     } catch (error) {
       throw new BadRequestException(error);
