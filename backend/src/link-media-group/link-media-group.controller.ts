@@ -22,6 +22,17 @@ export class LinkMediaGroupController {
     return this.linkMediaGroupService.findOne(+id);
   }
 
+  @Get('user-group/:id')
+  async findAllMediaByUserGroupId(@Param('id') id: number) {
+    return await this.linkMediaGroupService.findAllMediaByUserGroupId(id)
+  }
+
+  @Get('media/:id')
+  async findAllUserGroupByMediaId(@Param('id') id: number) {
+    return await this.linkMediaGroupService.findAllUserGroupByMediaId(id)
+  }
+
+
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateLinkMediaGroupDto: UpdateLinkMediaGroupDto) {
     return this.linkMediaGroupService.update(+id, updateLinkMediaGroupDto);
