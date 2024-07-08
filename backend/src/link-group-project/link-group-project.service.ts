@@ -23,27 +23,39 @@ export class LinkGroupProjectService {
         });
 
       return await this.linkGroupProjectRepository.upsert(linkGroupProject, {
-        conflictPaths:[
-          "rights",
-        "project",
-        "user_group"
-    ]
-    });
+        conflictPaths: ['rights', 'project', 'user_group'],
+      });
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        'An error occurred while creating the project',
+        'An error occurred while creating the linkGroupProject',
         error,
       );
     }
   }
 
   async findAll() {
-    return await this.linkGroupProjectRepository.find();
+    try {
+      return await this.linkGroupProjectRepository.find();
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'An error occurred while finding linkGroupProjects',
+        error,
+      );
+    }
   }
 
   async findOne(id: number) {
-    return await this.linkGroupProjectRepository.findOneBy({ id });
+    try {
+      return await this.linkGroupProjectRepository.findOneBy({ id });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'An error occurred while finding the linkGroupProject',
+        error,
+      );
+    }
   }
 
   async findAllProjectByUserGroupId(id: number) {
@@ -56,7 +68,7 @@ export class LinkGroupProjectService {
 
       return request.map((linkGroupProject) => linkGroupProject.project);
     } catch (error) {
-      throw new InternalServerErrorException(error);
+        throw new InternalServerErrorException(`An error occured while finding Project for this group id : ${id}`,error);
     }
   }
 
@@ -69,7 +81,7 @@ export class LinkGroupProjectService {
 
       return request.map((linkGroupProject) => linkGroupProject.user_group);
     } catch (error) {
-      throw new InternalServerErrorException(error);
+      throw new InternalServerErrorException(`An error occured while finding Group for this project id : ${id}`,error);
     }
   }
 
@@ -86,7 +98,7 @@ export class LinkGroupProjectService {
       return this.findOne(id);
     } catch (error) {
       throw new InternalServerErrorException(
-        'An error occurred while creating the project',
+        'An error occurred while updating the linkGroupProject',
         error,
       );
     }
@@ -99,7 +111,7 @@ export class LinkGroupProjectService {
       return done;
     } catch (error) {
       throw new InternalServerErrorException(
-        'An error occurred while creating the project',
+        'An error occurred while removing the linkGroupProject',
         error,
       );
     }

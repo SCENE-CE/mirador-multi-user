@@ -33,13 +33,13 @@ export class LinkGroupProjectController {
   }
 
   @Get('/project/:id')
-  async findAllProject(@Param('id') id: number) {
+  async findAllUserGroup(@Param('id') id: number) {
     console.log('findAllProject SERVICE');
     return await this.linkGroupProjectService.findAllGroupByProjectId(id);
   }
 
   @Get('user-group/:id')
-  async findAllUserGroup(@Param('id') id: number) {
+  async findAllProject(@Param('id') id: number) {
     console.log('findAllUserGroup SERVICE');
     return await this.linkGroupProjectService.findAllProjectByUserGroupId(id);
   }

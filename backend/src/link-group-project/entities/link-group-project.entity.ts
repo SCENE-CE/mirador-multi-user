@@ -3,8 +3,9 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn, Unique
-} from "typeorm";
+  PrimaryGeneratedColumn,
+  Unique,
+} from 'typeorm';
 import { GroupProjectRights } from '../../enum/group-project-rights';
 import { Project } from '../../project/entities/project.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';

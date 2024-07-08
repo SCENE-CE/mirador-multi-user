@@ -10,6 +10,7 @@ import { CaslModule } from './casl/casl.module';
 import { MediaModule } from './media/media.module';
 import { UserGroupModule } from './user-group/user-group.module';
 import { LinkGroupProjectModule } from './link-group-project/link-group-project.module';
+import { LinkMediaGroupModule } from './link-media-group/link-media-group.module';
 import dbConfiguration from './config/db.config';
 
 @Module({
@@ -32,6 +33,7 @@ import dbConfiguration from './config/db.config';
     MediaModule,
     UserGroupModule,
     LinkGroupProjectModule,
+    LinkMediaGroupModule,
   ],
   controllers: [AppController],
   providers: [AppService],
