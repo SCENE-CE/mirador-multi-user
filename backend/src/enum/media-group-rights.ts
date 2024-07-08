@@ -1,5 +1,5 @@
 export enum MediaGroupRights {
-  admin,
-  reader,
-  writer,
+  ADMIN = 'admin',
+  READER = 'reader',
+  WRITER = 'writer',
 }

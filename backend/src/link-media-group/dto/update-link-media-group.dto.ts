@@ -1,4 +1,16 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateLinkMediaGroupDto } from './create-link-media-group.dto';
+import { IsEnum, IsNotEmpty } from 'class-validator';
+import { MediaGroupRights } from '../../enum/media-group-rights';
+import { Media } from '../../media/entities/media.entity';
+import { UserGroup } from '../../user-group/entities/user-group.entity';
 
-export class UpdateLinkMediaGroupDto extends PartialType(CreateLinkMediaGroupDto) {}
+export class UpdateLinkMediaGroupDto {
+  @IsNotEmpty()
+  @IsEnum(MediaGroupRights)
+  rights: MediaGroupRights;
+
+  @IsNotEmpty()
+  media: Media;
+
+  @IsNotEmpty()
+  user_group: UserGroup;
+}

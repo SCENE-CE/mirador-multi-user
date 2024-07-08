@@ -5,8 +5,8 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
-} from '@nestjs/common';
+  Delete, Put
+} from "@nestjs/common";
 import { LinkGroupProjectService } from './link-group-project.service';
 import { CreateLinkGroupProjectDto } from './dto/create-link-group-project.dto';
 import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
@@ -44,7 +44,7 @@ export class LinkGroupProjectController {
     return await this.linkGroupProjectService.findAllProjectByUserGroupId(id);
   }
 
-  @Patch(':id')
+  @Put(':id')
   update(
     @Param('id') id: string,
     @Body() updateLinkGroupProjectDto: UpdateLinkGroupProjectDto,

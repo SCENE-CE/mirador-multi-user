@@ -97,6 +97,7 @@ export class LinkGroupProjectService {
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(
         'An error occurred while updating the linkGroupProject',
         error,
