@@ -13,7 +13,7 @@ import { MediaGroupRights } from '../../enum/media-group-rights';
 @Entity()
 @Unique('constraint_right_media_userGroup',[
   'rights',
-  'project',
+  'media',
   'user_group'
 ])
 export class LinkMediaGroup {
