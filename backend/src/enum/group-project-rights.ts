@@ -1,5 +1,5 @@
 export enum GroupProjectRights {
-  admin,
-  reader,
-  writer,
+  ADMIN = 'admin',
+  READER = 'reader',
+  WRITER = 'writer',
 }

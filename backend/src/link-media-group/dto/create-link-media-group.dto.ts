@@ -8,7 +8,9 @@ export class CreateLinkMediaGroupDto {
   @IsNotEmpty()
   rights: MediaGroupRights;
 
+  @IsNotEmpty()
   media: Media;
 
+  @IsNotEmpty()
   user_group: UserGroup;
 }

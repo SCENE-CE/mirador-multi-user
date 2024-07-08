@@ -89,11 +89,12 @@ export class LinkMediaGroupService {
 
   async update(id: number, updateLinkMediaGroupDto: UpdateLinkMediaGroupDto) {
     try {
-      const done = await this.linkMediaGroupRepository.update(
-        id,
+      const done = await this.linkMediaGroupRepository.upsert(
         updateLinkMediaGroupDto,
+        {
+          conflictPaths: ['user_group', 'rights', 'media'],
+        },
       );
-      if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {
       console.log(error);

@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { LinkMediaGroupService } from './link-media-group.service';
 import { CreateLinkMediaGroupDto } from './dto/create-link-media-group.dto';
 import { UpdateLinkMediaGroupDto } from './dto/update-link-media-group.dto';
@@ -24,17 +33,19 @@ export class LinkMediaGroupController {
 
   @Get('user-group/:id')
   async findAllMediaByUserGroupId(@Param('id') id: number) {
-    return await this.linkMediaGroupService.findAllMediaByUserGroupId(id)
+    return await this.linkMediaGroupService.findAllMediaByUserGroupId(id);
   }
 
   @Get('media/:id')
   async findAllUserGroupByMediaId(@Param('id') id: number) {
-    return await this.linkMediaGroupService.findAllUserGroupByMediaId(id)
+    return await this.linkMediaGroupService.findAllUserGroupByMediaId(id);
   }
 
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateLinkMediaGroupDto: UpdateLinkMediaGroupDto) {
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateLinkMediaGroupDto: UpdateLinkMediaGroupDto,
+  ) {
     return this.linkMediaGroupService.update(+id, updateLinkMediaGroupDto);
   }
 
