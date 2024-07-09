@@ -24,12 +24,6 @@ export class UserGroupController {
     return this.userGroupService.create(createUserGroupDto);
   }
 
-  @Get()
-  @UseGuards(AuthGuard)
-  findAll() {
-    return this.userGroupService.findAll();
-  }
-
   @Get(':id')
   @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
