@@ -1,8 +1,10 @@
 import {
+  BadRequestException,
+  ForbiddenException,
   Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+  InternalServerErrorException, NotAcceptableException,
+  NotFoundException
+} from "@nestjs/common";
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -48,6 +50,11 @@ export class UserGroupService {
 
   async update(id: number, dto: UpdateUserGroupDto) {
     try {
+      if (dto.users.length < 2) {
+        throw new BadRequestException(
+          "a group of user can't contain less than two user",
+        );
+      }
       const updateData = await this.userGroupRepository.update(id, dto);
       if (updateData.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
