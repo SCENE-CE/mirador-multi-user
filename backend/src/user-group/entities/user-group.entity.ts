@@ -35,7 +35,7 @@ export class UserGroup {
   @OneToMany(
     () => LinkMediaGroup,
     (linkMediaGroup) => linkMediaGroup.user_group,
-    {},
+    { eager: true },
   )
   linkMediaGroup: LinkMediaGroup;
 }

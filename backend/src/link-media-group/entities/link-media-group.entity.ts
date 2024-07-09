@@ -23,11 +23,11 @@ export class LinkMediaGroup {
   @Column({ type: 'enum', enum: MediaGroupRights })
   rights: MediaGroupRights;
 
-  @ManyToOne(() => Media, (media) => media.linkMediaGroup, { eager: true })
+  @ManyToOne(() => Media, (media) => media.linkMediaGroup)
   @JoinColumn({ name: 'media' })
   media: Media;
 
-  @ManyToOne(() => UserGroup, (group) => group.linkMediaGroup, { eager: true })
+  @ManyToOne(() => UserGroup, (group) => group.linkMediaGroup)
   @JoinColumn({ name: 'user_group' })
   user_group: UserGroup;
 }

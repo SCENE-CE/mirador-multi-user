@@ -35,6 +35,8 @@ export class Media {
   })
   public updated_at: Date;
 
-  @OneToMany(() => LinkMediaGroup, (linkMediaGroup) => linkMediaGroup.media, {})
+  @OneToMany(() => LinkMediaGroup, (linkMediaGroup) => linkMediaGroup.media, {
+    eager: true,
+  })
   linkMediaGroup: LinkMediaGroup;
 }

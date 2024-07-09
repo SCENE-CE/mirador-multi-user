@@ -30,6 +30,15 @@ export class UserGroupController {
     return this.userGroupService.findOne(+id);
   }
 
+  @Get()
+  findAll() {
+    return this.userGroupService.findAll();
+  }
+
+  @Get('/medias')
+  @UseGuards(AuthGuard)
+  findAllGroupMedias(@Param('id') id: string) {}
+
   @Patch(':id')
   @UseGuards(AuthGuard)
   update(
