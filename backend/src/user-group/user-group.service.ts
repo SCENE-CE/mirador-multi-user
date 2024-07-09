@@ -1,10 +1,9 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
-  InternalServerErrorException, NotAcceptableException,
-  NotFoundException
-} from "@nestjs/common";
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -26,14 +25,6 @@ export class UserGroupService {
         'An error occured while creating userGroup',
         error,
       );
-    }
-  }
-
-  findAll() {
-    try {
-      return this.userGroupRepository.find();
-    } catch (error) {
-      console.log(error);
     }
   }
 

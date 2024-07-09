@@ -34,19 +34,6 @@ export class MediaService {
   }
 
   @UseGuards(AuthGuard)
-  async findAll() {
-    try {
-      return await this.mediaRepository.find();
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'An error occurred while finding all medias',
-        error,
-      );
-    }
-  }
-
-  @UseGuards(AuthGuard)
   async findOne(id: number) {
     try {
       return await this.mediaRepository.findOneBy({ id });
