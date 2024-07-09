@@ -68,7 +68,10 @@ export class LinkGroupProjectService {
 
       return request.map((linkGroupProject) => linkGroupProject.project);
     } catch (error) {
-        throw new InternalServerErrorException(`An error occured while finding Project for this group id : ${id}`,error);
+      throw new InternalServerErrorException(
+        `An error occurred while finding Project for this group id : ${id}`,
+        error,
+      );
     }
   }
 
@@ -81,7 +84,10 @@ export class LinkGroupProjectService {
 
       return request.map((linkGroupProject) => linkGroupProject.user_group);
     } catch (error) {
-      throw new InternalServerErrorException(`An error occured while finding Group for this project id : ${id}`,error);
+      throw new InternalServerErrorException(
+        `An error occurred while finding Group for this project id : ${id}`,
+        error,
+      );
     }
   }
 
