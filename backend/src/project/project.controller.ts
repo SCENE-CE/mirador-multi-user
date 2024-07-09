@@ -33,6 +33,7 @@ export class ProjectController {
   ) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   async create(@Body() createProjectDto: any) {
     try {
       const project = new Project();
@@ -53,11 +54,13 @@ export class ProjectController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   findOne(@Param() params: FindOneParams) {
     return this.projectService.findOne(params.id);
   }
 
   @Patch(':id')
+  @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
   update(
     @Param() params: PatchParams,

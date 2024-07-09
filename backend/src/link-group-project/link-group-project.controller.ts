@@ -3,10 +3,10 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
-  Delete, Put
-} from "@nestjs/common";
+  Delete,
+  Put,
+} from '@nestjs/common';
 import { LinkGroupProjectService } from './link-group-project.service';
 import { CreateLinkGroupProjectDto } from './dto/create-link-group-project.dto';
 import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';

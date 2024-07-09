@@ -25,10 +25,6 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.usersService.findAll();
-  }
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   findOne(@Param('id') id: number) {
