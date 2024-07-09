@@ -7,7 +7,9 @@ import { LinkMediaGroup } from '../link-media-group/entities/link-media-group.en
 
 @Module({
   exports: [MediaService],
-  imports: [TypeOrmModule.forFeature([Media, LinkMediaGroup])],
+  imports: [
+    TypeOrmModule.forFeature([Media, LinkMediaGroup]),
+  ],
   controllers: [MediaController],
   providers: [MediaService],
 })

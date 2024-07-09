@@ -2,14 +2,12 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from './entities/media.entity';
 import { Repository } from 'typeorm';
-import { AuthGuard } from '../auth/auth.guard';
 
 @Injectable()
 export class MediaService {
@@ -20,9 +18,9 @@ export class MediaService {
 
   async create(createMediaDto: CreateMediaDto) {
     try {
-      this.mediaRepository.create({ ...createMediaDto });
+      const media = this.mediaRepository.create({ ...createMediaDto });
 
-      return await this.mediaRepository.save(createMediaDto);
+      return await this.mediaRepository.save(media);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(

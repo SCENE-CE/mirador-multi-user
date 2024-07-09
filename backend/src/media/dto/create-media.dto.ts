@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsNumberString, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
+import { UserGroup } from '../../user-group/entities/user-group.entity';
 
 export class CreateMediaDto {
   @IsString()
@@ -8,4 +9,7 @@ export class CreateMediaDto {
   @IsNumberString()
   @IsNotEmpty()
   idCreator: number;
+
+  @IsOptional()
+  user_group: UserGroup;
 }

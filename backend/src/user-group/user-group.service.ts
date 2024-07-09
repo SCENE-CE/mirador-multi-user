@@ -36,6 +36,25 @@ export class UserGroupService {
     }
   }
 
+  async findUserPersonalGroup(id: number) {
+    try {
+      const allUserGroups = await this.userGroupRepository
+        .createQueryBuilder('userGroup')
+        .innerJoinAndSelect('userGroup.users', 'user')
+        .where('user.id = :userId', { userId: id })
+        .getMany();
+      return allUserGroups.find(
+        (userPersonalGroup) => userPersonalGroup.users.length < 2,
+      );
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'An error occurred while finding user personal group',
+        error,
+      );
+    }
+  }
+
   findAllGroupMedias() {
     try {
     } catch (error) {
