@@ -3,9 +3,9 @@ import {
   CreateDateColumn,
   Entity,
   OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  PrimaryGeneratedColumn, Relation,
+  UpdateDateColumn
+} from "typeorm";
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkMediaGroup } from '../../link-media-group/entities/link-media-group.entity';
 
@@ -38,5 +38,5 @@ export class Media {
   @OneToMany(() => LinkMediaGroup, (linkMediaGroup) => linkMediaGroup.media, {
     eager: true,
   })
-  linkMediaGroup: LinkMediaGroup;
+  linkMediaGroup: Relation<LinkMediaGroup>;
 }

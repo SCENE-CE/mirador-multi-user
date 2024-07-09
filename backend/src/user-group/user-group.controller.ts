@@ -35,9 +35,11 @@ export class UserGroupController {
     return this.userGroupService.findAll();
   }
 
-  @Get('/medias')
+  @Get('/medias/:userGroupId')
   @UseGuards(AuthGuard)
-  findAllGroupMedias(@Param('id') id: string) {}
+  findAllGroupMedias(@Param('userGroupId') id: number) {
+    return this.userGroupService.findAllGroupMedias(id);
+  }
 
   @Patch(':id')
   @UseGuards(AuthGuard)

@@ -4,8 +4,8 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+  PrimaryGeneratedColumn, Relation
+} from "typeorm";
 import { IsNumberString, IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
@@ -30,12 +30,12 @@ export class UserGroup {
   users: User[];
 
   @OneToMany(() => LinkGroupProject, (linkGroup) => linkGroup.user_group, {})
-  linkGroupProjects: LinkGroupProject;
+  linkGroupProjects: Relation<LinkGroupProject[]>;
 
   @OneToMany(
     () => LinkMediaGroup,
     (linkMediaGroup) => linkMediaGroup.user_group,
     { eager: true },
   )
-  linkMediaGroup: LinkMediaGroup;
+  linkMediaGroup: Relation<LinkMediaGroup[]>;
 }

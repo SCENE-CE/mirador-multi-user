@@ -1,5 +1,5 @@
 import { MediaGroupRights } from '../../enum/media-group-rights';
-import { IsEnum, IsNotEmpty } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsOptional } from 'class-validator';
 import { Media } from '../../media/entities/media.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
 
@@ -11,6 +11,6 @@ export class CreateLinkMediaGroupDto {
   @IsNotEmpty()
   media: Media;
 
-  @IsNotEmpty()
+  @IsOptional()
   user_group: UserGroup;
 }

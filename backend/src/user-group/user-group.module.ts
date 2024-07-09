@@ -1,21 +1,15 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from "@nestjs/common";
 import { UserGroupService } from './user-group.service';
 import { UserGroupController } from './user-group.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserGroup } from './entities/user-group.entity';
-import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
-import { LinkMediaGroup } from '../link-media-group/entities/link-media-group.entity';
-import { Media } from '../media/entities/media.entity';
+import { MediaModule } from '../media/media.module';
 
 @Module({
   exports: [UserGroupService],
   imports: [
-    TypeOrmModule.forFeature([
-      UserGroup,
-      LinkGroupProject,
-      LinkMediaGroup,
-      Media,
-    ]),
+    forwardRef(() => MediaModule),
+    TypeOrmModule.forFeature([UserGroup]),
   ],
   controllers: [UserGroupController],
   providers: [UserGroupService],

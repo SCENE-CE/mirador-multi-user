@@ -3,9 +3,9 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
-  PrimaryGeneratedColumn,
-  Unique,
-} from 'typeorm';
+  PrimaryGeneratedColumn, Relation,
+  Unique
+} from "typeorm";
 import { Media } from '../../media/entities/media.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
 import { MediaGroupRights } from '../../enum/media-group-rights';
@@ -25,9 +25,9 @@ export class LinkMediaGroup {
 
   @ManyToOne(() => Media, (media) => media.linkMediaGroup)
   @JoinColumn({ name: 'media' })
-  media: Media;
+  media: Relation<Media>;
 
   @ManyToOne(() => UserGroup, (group) => group.linkMediaGroup)
   @JoinColumn({ name: 'user_group' })
-  user_group: UserGroup;
+  user_group: Relation<UserGroup>;
 }

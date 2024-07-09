@@ -2,27 +2,35 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from './entities/media.entity';
 import { Repository } from 'typeorm';
-import { AuthGuard } from '../auth/auth.guard';
+import { LinkMediaGroupService } from '../link-media-group/link-media-group.service';
+import { MediaGroupRights } from '../enum/media-group-rights';
 
 @Injectable()
 export class MediaService {
   constructor(
     @InjectRepository(Media)
     private readonly mediaRepository: Repository<Media>,
+    private readonly linkMediaGroupService: LinkMediaGroupService,
   ) {}
 
   async create(createMediaDto: CreateMediaDto) {
     try {
-      this.mediaRepository.create({ ...createMediaDto });
+      const media = this.mediaRepository.create({ ...createMediaDto });
+      console.log(media);
 
-      return await this.mediaRepository.save(createMediaDto);
+      const linkMediaGroup = await this.linkMediaGroupService.create({
+        rights: MediaGroupRights.ADMIN,
+        media: media,
+        user_group: null,
+      });
+
+      return await this.mediaRepository.save(media);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -46,7 +54,10 @@ export class MediaService {
 
   async findOne(id: number) {
     try {
-      return await this.mediaRepository.findOneBy({ id });
+      console.log('id', id);
+      const media = await this.mediaRepository.findOneBy({ id });
+      console.log('media', media);
+      return media;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(

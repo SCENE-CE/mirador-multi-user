@@ -8,15 +8,22 @@ import { UpdateLinkMediaGroupDto } from './dto/update-link-media-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
+import { UserGroupService } from '../user-group/user-group.service';
 
 @Injectable()
 export class LinkMediaGroupService {
   constructor(
     @InjectRepository(LinkMediaGroup)
     private readonly linkMediaGroupRepository: Repository<LinkMediaGroup>,
+    private readonly userGroupService: UserGroupService,
   ) {}
   async create(createLinkMediaGroupDto: CreateLinkMediaGroupDto) {
     try {
+      if (!createLinkMediaGroupDto.user_group) {
+        // const userGroups = await this.userGroupService.findUserPersonalGroup(
+        //   createLinkMediaGroupDto.media.idCreator,
+        // );
+      }
       const linkMediaGroup: LinkMediaGroup =
         this.linkMediaGroupRepository.create({ ...createLinkMediaGroupDto });
       return await this.linkMediaGroupRepository.upsert(linkMediaGroup, {

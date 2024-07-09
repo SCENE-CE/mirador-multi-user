@@ -10,16 +10,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { UserGroup } from '../user-group/entities/user-group.entity';
 import { UserGroupService } from '../user-group/user-group.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-
-    @InjectRepository(UserGroup)
-    private readonly userGroupRepository: Repository<UserGroup>,
     private readonly userGroupService: UserGroupService,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
