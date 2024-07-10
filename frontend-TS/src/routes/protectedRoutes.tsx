@@ -1,10 +1,10 @@
 import { Navigate } from "react-router-dom";
-import { MyProjects } from "../features/miscellaneous/My-Projects.tsx";
+import { MainContent } from "../features/miscellaneous/MainContent.tsx";
 
 export const protectedRoutes= [
   {
     path: '/app/my-projects',
-    element: <MyProjects/>,
+    element: <MainContent/>,
   },
   { path: '*', element: <Navigate to="/app/my-projects" /> },
 

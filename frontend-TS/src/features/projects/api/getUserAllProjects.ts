@@ -9,6 +9,7 @@ export const getUserAllProjects = async (userId: number) => {
         "Authorization": `Bearer ${token}`
       }
     });
+
     return await response.json();
   } catch (error) {
     throw error;

@@ -35,12 +35,6 @@ export class UserGroupController {
     return this.userGroupService.findAll();
   }
 
-  @Get('/groups/:userId')
-  @UseGuards(AuthGuard)
-  findAllUserGroups(@Param('userId') userId: number) {
-    return this.userGroupService.findUserGroups(userId);
-  }
-
   @Patch(':groupId')
   @UseGuards(AuthGuard)
   update(

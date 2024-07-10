@@ -3,7 +3,7 @@ import { Grid, Typography } from "@mui/material";
 import { SideDrawer } from "../../components/elements/SideDrawer.tsx";
 import { useState } from "react";
 
-export const MyProjects = () => {
+export const MainContent = () => {
   const user = useUser();
   const logout = useLogout({});
 
@@ -25,7 +25,6 @@ export const MyProjects = () => {
         selectedProjectId={selectedProjectId}
         setSelectedProjectId={setSelectedProjectId}
       />
-
     </Grid>
   );
 };
