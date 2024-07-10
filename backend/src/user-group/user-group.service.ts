@@ -36,12 +36,12 @@ export class UserGroupService {
     }
   }
 
-  async findUserPersonalGroup(id: number) {
+  async findUserPersonalGroup(userId: number) {
     try {
       const allUserGroups = await this.userGroupRepository
         .createQueryBuilder('userGroup')
         .innerJoinAndSelect('userGroup.users', 'user')
-        .where('user.id = :userId', { userId: id })
+        .where('user.id = :userId', { userId: userId })
         .getMany();
       return allUserGroups.find(
         (userPersonalGroup) => userPersonalGroup.users.length < 2,
@@ -55,12 +55,17 @@ export class UserGroupService {
     }
   }
 
-  findAllGroupMedias() {
+  async findUserGroups(userId: number) {
     try {
+      return await this.userGroupRepository
+        .createQueryBuilder('userGroup')
+        .innerJoinAndSelect('userGroup.users', 'user')
+        .where('user.id = :userId', { userId: userId })
+        .getMany();
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        'an error occurred while finding Medias for this group',
+        'An error occurred while finding user personal group',
         error,
       );
     }
