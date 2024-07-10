@@ -1,0 +1,23 @@
+version: "3.4"
+services:
+  httpd:
+    hostname: files
+    image: caddy:latest
+    restart: $RESTART
+    environment:
+      - CORS_ALLOWED_HOSTS
+      - WEBPACK_MODE=production
+    volumes:
+      - $HTTP_FOLDER:/srv
+      - ./Caddyfile:/etc/caddy/Caddyfile
+
+  filebrowser:
+    hostname: filebrowser
+    image: filebrowser/filebrowser
+    volumes:
+      - ./filebrowser.db:/database.db
+      - ./filebrowser.json:/.filebrowser.json
+      - ./filebrowser_root:/srv
+    environment:
+      - PUID=1000
+      - PGID=1000

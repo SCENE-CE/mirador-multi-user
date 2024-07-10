@@ -1,0 +1,8 @@
+{
+  "port": 80,
+  "baseURL": "https://filebrowser.tetras-libre.fr",
+  "address": "",
+  "log": "stdout",
+  "database": "/database.db",
+  "root": "/srv"
+}
