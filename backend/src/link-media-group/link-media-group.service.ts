@@ -1,25 +1,29 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateLinkMediaGroupDto } from './dto/create-link-media-group.dto';
-import { UpdateLinkMediaGroupDto } from './dto/update-link-media-group.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LinkMediaGroup } from './entities/link-media-group.entity';
-import { Repository } from 'typeorm';
+import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateLinkMediaGroupDto } from "./dto/create-link-media-group.dto";
+import { UpdateLinkMediaGroupDto } from "./dto/update-link-media-group.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { LinkMediaGroup } from "./entities/link-media-group.entity";
+import { Repository } from "typeorm";
+import { UserGroupService } from "../user-group/user-group.service";
+import { MediaService } from "../media/media.service";
 
 @Injectable()
 export class LinkMediaGroupService {
   constructor(
     @InjectRepository(LinkMediaGroup)
     private readonly linkMediaGroupRepository: Repository<LinkMediaGroup>,
+    private readonly userGroupService: UserGroupService,
+    @Inject(forwardRef(() => MediaService))
+    private readonly mediaService: MediaService,
   ) {}
   async create(createLinkMediaGroupDto: CreateLinkMediaGroupDto) {
     try {
       const linkMediaGroup: LinkMediaGroup =
         this.linkMediaGroupRepository.create({ ...createLinkMediaGroupDto });
-      return await this.linkMediaGroupRepository.upsert(linkMediaGroup, {
+
+      return await this.linkMediaGroupRepository.upsert(
+        linkMediaGroup,
+        {
         conflictPaths: ['rights', 'media', 'user_group'],
       });
     } catch (error) {
@@ -45,6 +49,7 @@ export class LinkMediaGroupService {
 
   async findOne(id: number) {
     try {
+      console.log('findOne id:', id);
       return await this.linkMediaGroupRepository.findOneBy({ id });
     } catch (error) {
       console.log(error);
@@ -65,7 +70,7 @@ export class LinkMediaGroupService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        `An error occured while finding all Project for this Group id : ${id}`,
+        `An error occurred while finding all Project for this Group id : ${id}`,
         error,
       );
     }
@@ -81,7 +86,7 @@ export class LinkMediaGroupService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        `An error occured while finding all Group for this media id : ${id}`,
+        `An error occurred while finding all Group for this media id : ${id}`,
         error,
       );
     }

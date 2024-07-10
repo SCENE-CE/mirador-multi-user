@@ -2,14 +2,12 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
-  UseGuards,
 } from '@nestjs/common';
 import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from './entities/media.entity';
 import { Repository } from 'typeorm';
-import { AuthGuard } from '../auth/auth.guard';
 
 @Injectable()
 export class MediaService {
@@ -18,12 +16,11 @@ export class MediaService {
     private readonly mediaRepository: Repository<Media>,
   ) {}
 
-  @UseGuards(AuthGuard)
   async create(createMediaDto: CreateMediaDto) {
     try {
-      this.mediaRepository.create({ ...createMediaDto });
+      const media = this.mediaRepository.create({ ...createMediaDto });
 
-      return await this.mediaRepository.save(createMediaDto);
+      return await this.mediaRepository.save(media);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -33,7 +30,6 @@ export class MediaService {
     }
   }
 
-  @UseGuards(AuthGuard)
   async findAll() {
     try {
       return await this.mediaRepository.find();
@@ -46,7 +42,6 @@ export class MediaService {
     }
   }
 
-  @UseGuards(AuthGuard)
   async findOne(id: number) {
     try {
       return await this.mediaRepository.findOneBy({ id });
@@ -58,7 +53,6 @@ export class MediaService {
       );
     }
   }
-  @UseGuards(AuthGuard)
   async update(id: number, updateMediaDto: UpdateMediaDto) {
     try {
       const done = await this.mediaRepository.update(id, updateMediaDto);
@@ -73,7 +67,6 @@ export class MediaService {
     }
   }
 
-  @UseGuards(AuthGuard)
   async remove(id: number) {
     try {
       const done = await this.mediaRepository.delete(id);

@@ -1,10 +1,9 @@
 import {
   BadRequestException,
-  ForbiddenException,
   Injectable,
-  InternalServerErrorException, NotAcceptableException,
-  NotFoundException
-} from "@nestjs/common";
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,7 +22,7 @@ export class UserGroupService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        'An error occured while creating userGroup',
+        'An error occurred while creating userGroup',
         error,
       );
     }
@@ -34,6 +33,36 @@ export class UserGroupService {
       return this.userGroupRepository.find();
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async findUserPersonalGroup(id: number) {
+    try {
+      const allUserGroups = await this.userGroupRepository
+        .createQueryBuilder('userGroup')
+        .innerJoinAndSelect('userGroup.users', 'user')
+        .where('user.id = :userId', { userId: id })
+        .getMany();
+      return allUserGroups.find(
+        (userPersonalGroup) => userPersonalGroup.users.length < 2,
+      );
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'An error occurred while finding user personal group',
+        error,
+      );
+    }
+  }
+
+  findAllGroupMedias() {
+    try {
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'an error occurred while finding Medias for this group',
+        error,
+      );
     }
   }
 

@@ -24,17 +24,20 @@ export class UserGroupController {
     return this.userGroupService.create(createUserGroupDto);
   }
 
-  @Get()
-  @UseGuards(AuthGuard)
-  findAll() {
-    return this.userGroupService.findAll();
-  }
-
   @Get(':id')
   @UseGuards(AuthGuard)
   findOne(@Param('id') id: string) {
     return this.userGroupService.findOne(+id);
   }
+
+  @Get()
+  findAll() {
+    return this.userGroupService.findAll();
+  }
+
+  @Get('/medias')
+  @UseGuards(AuthGuard)
+  findAllGroupMedias(@Param('id') id: string) {}
 
   @Patch(':id')
   @UseGuards(AuthGuard)
