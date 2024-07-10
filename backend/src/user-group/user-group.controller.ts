@@ -24,9 +24,9 @@ export class UserGroupController {
     return this.userGroupService.create(createUserGroupDto);
   }
 
-  @Get(':id')
+  @Get(':groupId')
   @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
+  findOne(@Param('groupId') id: string) {
     return this.userGroupService.findOne(+id);
   }
 
@@ -35,23 +35,25 @@ export class UserGroupController {
     return this.userGroupService.findAll();
   }
 
-  @Get('/medias')
+  @Get('/groups/:userId')
   @UseGuards(AuthGuard)
-  findAllGroupMedias(@Param('id') id: string) {}
+  findAllUserGroups(@Param('userId') userId: number) {
+    return this.userGroupService.findUserGroups(userId);
+  }
 
-  @Patch(':id')
+  @Patch(':groupId')
   @UseGuards(AuthGuard)
   update(
-    @Param('id') id: string,
+    @Param('groupId') id: string,
     @Body() updateUserGroupDto: UpdateUserGroupDto,
   ) {
     return this.userGroupService.update(+id, updateUserGroupDto);
   }
 
-  @Delete(':id')
+  @Delete(':groupId')
   @UseGuards(AuthGuard)
   @HttpCode(204)
-  remove(@Param('id') id: string) {
+  remove(@Param('groupId') id: string) {
     return this.userGroupService.remove(+id);
   }
 }
