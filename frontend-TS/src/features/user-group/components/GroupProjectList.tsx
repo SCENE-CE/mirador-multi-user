@@ -19,9 +19,10 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
   const [userProjects,setUserProjects]=useState<Project[]>([]);
   const [displayUserProjects, setDisplayUserProjects]=useState(false);
 
-
   const handleRemoveProject= async (projectId:number)=>{
     try{
+      console.log('projectId',projectId)
+      console.log('group.id',group.id)
       await removeProjectToGroup({projectId:projectId, groupId:group.id})
       await fetchAllGroupProjects()
     }catch(error){
@@ -33,6 +34,8 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
     try {
       const groupProjects = await getAllGroupProjects(group.id)
       console.log(groupProjects)
+      const personalProjects = await getAllGroupProjects(personalGroup.id)
+      setUserProjects(personalProjects);
       setProjects(groupProjects);
     } catch (error) {
       throw error
@@ -44,9 +47,7 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
 
 
   const handleDisplayProject= async () => {
-    console.log('personalGroup',personalGroup)
     const userPersonnalProjects = await getAllGroupProjects(personalGroup.id)
-    console.log('userPersonnalProjects',userPersonnalProjects)
     setUserProjects(userPersonnalProjects)
     setDisplayUserProjects(!displayUserProjects)
   }
@@ -55,8 +56,6 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
     try{
 
       const project = userProjects.find((project) => project.name == projectName);
-      console.log('projectID :', project!.id)
-      console.log(group.id)
       await addProjectToGroup({ projectId:project!.id, groupId:group.id });
       fetchAllGroupProjects()
       setDisplayUserProjects(false)

@@ -20,7 +20,8 @@ export class GroupProjectService {
   ) {}
   async getAllGroupProjects(groupId: number) {
     try {
-      const projects = await this.linkGroupProjectService.findAllGroupByProjectId(groupId);
+      const projects =
+        await this.linkGroupProjectService.findAllGroupByProjectId(groupId);
       return projects;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -55,7 +56,11 @@ export class GroupProjectService {
 
   async RemoveProjectToGroup(dto: removeProjectToGroupDto) {
     try {
-      // Fetch all projects linked to the given group
+      console.log(
+        '---------------------------------------------------------------------------',
+      );
+      console.log('projectId : ', dto.projectId);
+      console.log('groupId : ', dto.groupId);
       const linkGroupProjects =
         await this.linkGroupProjectService.findAllProjectByUserGroupId(
           dto.groupId,
@@ -67,13 +72,16 @@ export class GroupProjectService {
         (project) => project.id == projectId,
       );
 
+      const groupToRemove = await this.userGroupService.findOne(dto.groupId);
+
       if (!projectToRemove) {
         throw new NotFoundException(
           `No association between Project with ID ${dto.projectId} and group with ID ${dto.groupId}`,
         );
       }
-      return await this.linkGroupProjectService.removeProject(
+      return await this.linkGroupProjectService.removeProjectGroupRelation(
         projectToRemove.id,
+        groupToRemove,
       );
     } catch (error) {
       throw new InternalServerErrorException(

@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
 import { Project } from "../project/entities/project.entity";
+import { UserGroup } from "../user-group/entities/user-group.entity";
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -113,9 +114,12 @@ export class LinkGroupProjectService {
     }
   }
 
-  async removeProject(projectId: number) {
+  async removeProjectGroupRelation(projectId: number, group: UserGroup) {
     try {
-      const done = await this.linkGroupProjectRepository.delete({ project: { id: projectId } });
+      const done = await this.linkGroupProjectRepository.delete({
+        project: { id: projectId },
+        user_group: group,
+      });
 
       if (done.affected != 1) throw new NotFoundException(projectId);
       return done;
