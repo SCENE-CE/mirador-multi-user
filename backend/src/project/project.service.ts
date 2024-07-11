@@ -8,11 +8,14 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { DeleteResult, Repository } from 'typeorm';
+import { UserGroupService } from '../user-group/user-group.service';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectRepository(Project) private readonly data: Repository<Project>) {}
+    @InjectRepository(Project) private readonly data: Repository<Project>,
+    private readonly userGroupService: UserGroupService,
+  ) {}
 
   async create(dto: CreateProjectDto): Promise<Project> {
     try {

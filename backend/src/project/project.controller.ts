@@ -36,9 +36,7 @@ export class ProjectController {
   @UseGuards(AuthGuard)
   async create(@Body() createProjectDto: any) {
     try {
-      const project = new Project();
-      Object.assign(project, createProjectDto);
-      const createdProject = await this.projectService.create(project);
+      const createdProject = await this.projectService.create(createProjectDto);
       return { ...createdProject };
     } catch (error) {
       throw new BadRequestException(error);

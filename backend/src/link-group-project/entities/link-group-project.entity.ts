@@ -24,13 +24,13 @@ export class LinkGroupProject {
   rights: GroupProjectRights;
 
   @ManyToOne(() => Project, (project) => project.linkGroupProjectsIds, {
-    eager: true,
+    eager: false,
   })
   @JoinColumn({ name: 'project' })
   project: Project;
 
   @ManyToOne(() => UserGroup, (group) => group.linkGroupProjects, {
-    eager: true,
+    eager: false,
   })
   @JoinColumn({ name: 'user_group' })
   user_group: UserGroup;

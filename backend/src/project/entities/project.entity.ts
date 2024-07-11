@@ -39,7 +39,9 @@ export class Project {
 
   @OneToMany(
     () => LinkGroupProject,
-    (linkGroupProject) => linkGroupProject.project,
+    (linkGroupProject) => linkGroupProject.project,{
+      onDelete: 'CASCADE',
+    },
   )
-  linkGroupProjectsIds: LinkGroupProject;
+  linkGroupProjectsIds: LinkGroupProject[];
 }

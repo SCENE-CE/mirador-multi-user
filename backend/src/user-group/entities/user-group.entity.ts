@@ -30,7 +30,7 @@ export class UserGroup {
   users: User[];
 
   @OneToMany(() => LinkGroupProject, (linkGroup) => linkGroup.user_group, {})
-  linkGroupProjects: LinkGroupProject;
+  linkGroupProjects: LinkGroupProject[];
 
   @OneToMany(
     () => LinkMediaGroup,
