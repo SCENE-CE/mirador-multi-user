@@ -7,10 +7,14 @@ import { CaslAbilityFactory } from '../casl/casl-ability.factory/casl-ability.fa
 import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 import { LinkGroupProjectService } from '../link-group-project/link-group-project.service';
+import { UserGroupModule } from '../user-group/user-group.module';
 
 @Module({
   exports: [ProjectService],
-  imports: [TypeOrmModule.forFeature([Project, LinkGroupProject, UserGroup])],
+  imports: [
+    UserGroupModule,
+    TypeOrmModule.forFeature([Project, LinkGroupProject, UserGroup]),
+  ],
   controllers: [ProjectController],
   providers: [ProjectService, CaslAbilityFactory, LinkGroupProjectService],
 })

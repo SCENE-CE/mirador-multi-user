@@ -8,6 +8,7 @@ import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
+import { Project } from "../project/entities/project.entity";
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -58,18 +59,19 @@ export class LinkGroupProjectService {
     }
   }
 
-  async findAllProjectByUserGroupId(id: number) {
+  async findAllProjectByUserGroupId(id: number){
     try {
-      console.log(id);
-      const request = await this.linkGroupProjectRepository.find({
+      const linkGroupProjects = await this.linkGroupProjectRepository.find({
         where: { user_group: { id } },
-        relations: ['user_group'],
+        relations: { project: true },
       });
 
-      return request.map((linkGroupProject) => linkGroupProject.project);
+      return linkGroupProjects.map(
+        (linkGroupProject) => linkGroupProject.project,
+      );
     } catch (error) {
       throw new InternalServerErrorException(
-        `An error occurred while finding Project for this group id : ${id}`,
+        `An error occurred while finding projects for user group ID: ${id}`,
         error,
       );
     }
@@ -78,11 +80,11 @@ export class LinkGroupProjectService {
   async findAllGroupByProjectId(id: number) {
     try {
       const request = await this.linkGroupProjectRepository.find({
-        where: { project: { id } },
-        relations: ['user_group', 'project'],
+        where: { user_group: { id } },
+        relations: ['project'],
       });
-
-      return request.map((linkGroupProject) => linkGroupProject.user_group);
+    console.log(request)
+      return request;
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while finding Group for this project id : ${id}`,
@@ -111,10 +113,11 @@ export class LinkGroupProjectService {
     }
   }
 
-  async remove(id: number) {
+  async removeProject(projectId: number) {
     try {
-      const done = await this.linkGroupProjectRepository.delete(id);
-      if (done.affected != 1) throw new NotFoundException(id);
+      const done = await this.linkGroupProjectRepository.delete({ project: { id: projectId } });
+
+      if (done.affected != 1) throw new NotFoundException(projectId);
       return done;
     } catch (error) {
       throw new InternalServerErrorException(
