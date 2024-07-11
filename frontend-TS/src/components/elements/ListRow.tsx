@@ -2,12 +2,13 @@ import { ListItem, ListItemButton, ListItemText } from "@mui/material";
 
 interface ListRowProps {
   content: string;
-  key:number;
+  index:string;
+  action:(projectName:string)=>void
 }
-export const ListRow = ({content,key}:ListRowProps) =>{
+export const ListRow = ({content,index,action}:ListRowProps) =>{
   return(
-    <ListItem key={key} component="div" disablePadding>
-      <ListItemButton>
+    <ListItem key={index} component="div" disablePadding>
+      <ListItemButton onClick={()=>action(content)}>
         <ListItemText primary={content} />
       </ListItemButton>
     </ListItem>

@@ -34,6 +34,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     return filteredGroups[0];
   }, [groups]);
 
+  console.log('personalGroup all groups:',personalGroup)
   return(
     <Grid container justifyContent='center' flexDirection='column'>
       <Grid item container justifyContent="center">

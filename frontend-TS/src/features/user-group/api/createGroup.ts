@@ -4,6 +4,7 @@ import { BACKEND_URL } from "../../../config/config.ts";
 
 export const createGroup = async(userGroup:CreateGroupDto)=>{
   const token = storage.getToken()
+
   try{
   const response = await fetch(`${BACKEND_URL}/user-group/`,
     {

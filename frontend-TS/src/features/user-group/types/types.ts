@@ -12,3 +12,13 @@ export type CreateGroupDto ={
   ownerId: number;
   users: User[];
 }
+
+export type AddProjectToGroupDto ={
+  projectId:number;
+  groupId:number;
+}
+
+export type RemoveProjectToGroupDto ={
+  projectId:number;
+  groupId:number;
+}

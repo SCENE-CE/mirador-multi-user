@@ -84,7 +84,7 @@ export class LinkGroupProjectService {
         relations: ['project'],
       });
     console.log(request)
-      return request;
+      return request.map((linkGroupProject)=>linkGroupProject.project);
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while finding Group for this project id : ${id}`,

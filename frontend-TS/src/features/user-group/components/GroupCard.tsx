@@ -10,12 +10,14 @@ interface GroupCardProps {
   group: UserGroup;
   personalGroup: UserGroup;
 }
-export const GroupCard = ({ group }:GroupCardProps)=>{
+export const GroupCard = ({ group ,personalGroup}:GroupCardProps)=>{
   const [openModal, setOpenMOdal] = useState(false)
 
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
+
+  console.log('personalGroup GROUP CARD',personalGroup)
   return(
     <Card>
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{minHeight:'120px'}}>
@@ -42,7 +44,7 @@ export const GroupCard = ({ group }:GroupCardProps)=>{
               </Tooltip>
             </Grid>
           </CardActions>
-          <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup group={group}/>}/>
+          <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup group={group} personalGroup={personalGroup}/>}/>
         </Grid>
       </Grid>
     </Card>
