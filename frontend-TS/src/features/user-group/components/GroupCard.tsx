@@ -17,7 +17,6 @@ export const GroupCard = ({ group ,personalGroup}:GroupCardProps)=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
 
-  console.log('personalGroup GROUP CARD',personalGroup)
   return(
     <Card>
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{minHeight:'120px'}}>
