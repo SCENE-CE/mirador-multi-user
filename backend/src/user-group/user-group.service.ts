@@ -55,22 +55,6 @@ export class UserGroupService {
     }
   }
 
-  async findUserGroups(userId: number) {
-    try {
-      return await this.userGroupRepository
-        .createQueryBuilder('userGroup')
-        .innerJoinAndSelect('userGroup.users', 'user')
-        .where('user.id = :userId', { userId: userId })
-        .getMany();
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(
-        'An error occurred while finding user personal group',
-        error,
-      );
-    }
-  }
-
   findOne(id: number) {
     try {
       return this.userGroupRepository.findOne({
