@@ -1,6 +1,6 @@
 import {User} from '../../auth/types/types.ts'
 import { Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { GroupCard } from "./GroupCard.tsx";
@@ -26,6 +26,14 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   },[]
 )
 
+  const personalGroup = useMemo(() => {
+    if (!Array.isArray(groups)) return null;
+
+    const filteredGroups = groups.filter(group => Array.isArray(group.users) && group.users.length < 2);
+
+    return filteredGroups[0];
+  }, [groups]);
+
   return(
     <Grid container justifyContent='center' flexDirection='column'>
       <Grid item container justifyContent="center">
@@ -37,7 +45,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
         {
           groups.map((group)=>(
             <Grid item key={group.id}>
-            <GroupCard userGroup={group}/>
+            <GroupCard group={group} personalGroup={personalGroup!}/>
             </Grid>
           ))
 

@@ -1,33 +1,36 @@
 import { Button, Divider, Grid, List, ListItem, ListItemText, Typography } from "@mui/material";
 import { UserGroup } from "../types/types.ts";
-import { useEffect, useState } from "react";
-import { getUserAllProjects } from "../api/getUserAllProjects.ts";
-import { useUser } from "../../../utils/auth.tsx";
+import { useEffect, useMemo, useState } from "react";
+import { getAllGroupProjects } from "../api/getAllGroupProjects.ts";
 import { Project } from "../../projects/types/types.ts";
 import CloseIcon from '@mui/icons-material/Close';
-import { updateProject } from "../../projects/api/updateProject.ts";
+import AddIcon from '@mui/icons-material/Add';
+import { FixedSizeList } from "../../../components/elements/FixedSizeList.tsx";
+import { useUser } from "../../../utils/auth.tsx";
 
 interface ModalEditGroupProps {
   group:UserGroup
 }
 export const ModalEditGroup = ({ group }:ModalEditGroupProps)=>{
   const [projects, setProjects]=useState<Project[]>([]);
-
-  const user = useUser();
-
+  const [displayProjects, setDisplayProjects]=useState(false);
+  const user = useUser()
   useEffect( () => {
-    //TODO: fetch USER GROUP project and not USER PROJECT
-    const fetchUserProjects = async ()=>{
+    const fetchAllGroupProjects = async ()=>{
       try {
-        const userProjects = await getUserAllProjects(user.data!.id)
+        const userProjects = await getAllGroupProjects(group.id)
         setProjects(userProjects);
       } catch (error) {
         throw error
       }
     }
-    fetchUserProjects()
+    fetchAllGroupProjects();
   },[])
 
+  const handleDisplayProject=()=>{
+    const userPersonnalProject = getAllGroupProjects(user.data!.id)
+    setDisplayProjects(true)
+  }
   //TODO: Update the group to remove project
   const handleRemoveProject= (projectToRemove:Project)=>{
   // const updateGroup = async ()=>{
@@ -41,6 +44,9 @@ export const ModalEditGroup = ({ group }:ModalEditGroupProps)=>{
   //   }
   // }
   }
+
+  const personalProjectsName = useMemo(() => projects.map((project) => project.name), [projects]);
+
   return(
     <Grid item container justifyContent="center" >
       <Typography variant="h5">{group.name}</Typography>
@@ -52,7 +58,7 @@ export const ModalEditGroup = ({ group }:ModalEditGroupProps)=>{
           <List>
             {projects.map((project)=>(
               <>
-                <ListItem>
+                <ListItem key={project.id}>
                   <ListItemText primary={project.name}>
                   </ListItemText>
                   <Button variant="contained" onClick={()=>handleRemoveProject(project)}>
@@ -62,6 +68,21 @@ export const ModalEditGroup = ({ group }:ModalEditGroupProps)=>{
                 <Divider  component="li" />
               </>
             ))}
+            <>
+              <ListItem>
+                <ListItemText primary="Add project">
+                </ListItemText>
+                <Button variant="contained" onClick={handleDisplayProject}>
+                  <AddIcon/>
+                </Button>
+              </ListItem>
+              <Divider  component="li" />
+            </>
+            {
+              displayProjects &&(
+                <FixedSizeList contents={personalProjectsName} />
+              )
+            }
           </List>
         </Grid>
         <Grid item container direction="column"></Grid>

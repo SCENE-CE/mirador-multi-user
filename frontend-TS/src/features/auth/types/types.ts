@@ -1,11 +1,13 @@
 import { ZodType } from "zod";
 import { z } from "zod";
+import { UserGroup } from "../../user-group/types/types.ts";
 
 export type User = {
   "access_token":string;
   id:number;
   mail:string;
   name: string;
+  userGroups:UserGroup[];
 }
 
 export type UserResponse = {

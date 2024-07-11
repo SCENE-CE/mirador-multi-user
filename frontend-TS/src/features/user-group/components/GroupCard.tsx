@@ -7,9 +7,10 @@ import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalEditGroup } from "./ModalEditGroup.tsx";
 
 interface GroupCardProps {
-  userGroup: UserGroup;
+  group: UserGroup;
+  personalGroup: UserGroup;
 }
-export const GroupCard = ({ userGroup }:GroupCardProps)=>{
+export const GroupCard = ({ group }:GroupCardProps)=>{
   const [openModal, setOpenMOdal] = useState(false)
 
   const HandleOpenModal = useCallback(()=>{
@@ -23,7 +24,7 @@ export const GroupCard = ({ userGroup }:GroupCardProps)=>{
             <img src={placeholder} alt="placeholder" style={{height:100, width:200}}/>
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Typography variant="subtitle1">{userGroup.name}</Typography>
+            <Typography variant="subtitle1">{group.name}</Typography>
           </Grid>
         </Grid>
         <Grid item
@@ -41,7 +42,7 @@ export const GroupCard = ({ userGroup }:GroupCardProps)=>{
               </Tooltip>
             </Grid>
           </CardActions>
-          <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup group={userGroup}/>}/>
+          <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup group={group}/>}/>
         </Grid>
       </Grid>
     </Card>
