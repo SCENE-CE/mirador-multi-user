@@ -2,16 +2,15 @@ import { Autocomplete, Button, Grid, TextField, Typography } from "@mui/material
 import { UserGroup } from "../types/types.ts";
 import { useDebounceCallback } from 'usehooks-ts';
 import { lookingForUsers } from "../api/lookingForUsers.ts";
-import {SyntheticEvent, useState } from "react";
-import { updateUsersForUserGroup } from "../api/updateUsersForUserGroup.ts";
+import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 
 interface IUsersSearchBarProps {
-  group: UserGroup;
+  handleAddUser:()=>void
+  setSelectedUser:Dispatch<SetStateAction<UserGroup | null>>
 }
 
-export const UsersSearchBar = ({group}:IUsersSearchBarProps) => {
+export const UsersSearchBar = ({setSelectedUser,handleAddUser}:IUsersSearchBarProps) => {
   const [usersSuggestions, setUsersSuggestions]=useState<UserGroup[]>([]);
-  const [selectedUser, setSelectedUser] = useState<UserGroup | null>(null);
 
   const fetchUsers = async(partialUserName:string)=>{
     try{
@@ -36,14 +35,7 @@ export const UsersSearchBar = ({group}:IUsersSearchBarProps) => {
     setSelectedUser(value);
   };
 
-  const handleAddUser = async () => {
-    if (selectedUser) {
-      const groupUsers = group.users
-      const userToAdd = selectedUser.users[0]
-      groupUsers.push(userToAdd)
-      const addUserToGroup = await updateUsersForUserGroup({ ...group, users: groupUsers });
-    }
-  };
+
 
   return(
     <Grid item container flexDirection="column" spacing={1}>

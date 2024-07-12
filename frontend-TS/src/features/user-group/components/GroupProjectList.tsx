@@ -54,7 +54,6 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
 
   const handleAddProjectToGroup = useCallback(async (projectName: string) => {
     try{
-
       const project = userProjects.find((project) => project.name == projectName);
       await addProjectToGroup({ projectId:project!.id, groupId:group.id });
       fetchAllGroupProjects()

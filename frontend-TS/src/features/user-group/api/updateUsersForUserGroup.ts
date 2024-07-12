@@ -16,7 +16,9 @@ export const updateUsersForUserGroup = async (updateGoup:UserGroup)=>{
       },
       body: JSON.stringify({users: updateGoup.users})
     })
-    return response.json()
+    const toReturn = await response.json()
+    console.log('TO RETURN', toReturn)
+    return toReturn
   }catch(error){
     console.error(error)
   }

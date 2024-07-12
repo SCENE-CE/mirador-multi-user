@@ -16,21 +16,21 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const currentUser = useUser()
 
   useEffect(
-  () =>{
-    const fetchGroups = async () => {
-      try {
-        let groups = await getAllUserGroups(user.id)
-        const users : UserGroup[] = groups.filter((group:UserGroup)=> group.users.length < 2)
-        groups = groups.filter(((group : UserGroup)=>{ return users.indexOf(group) < 0}))
-        setGroups(groups)
-        setUsers(users)
-      } catch (error) {
-        throw error
+    () =>{
+      const fetchGroups = async () => {
+        try {
+          let groups = await getAllUserGroups(user.id)
+          const users : UserGroup[] = groups.filter((group:UserGroup)=> group.users.length < 2)
+          groups = groups.filter(((group : UserGroup)=>{ return users.indexOf(group) < 0}))
+          setGroups(groups)
+          setUsers(users)
+        } catch (error) {
+          throw error
+        }
       }
-    }
       fetchGroups()
-  },[]
-)
+    },[]
+  )
 
   const personalGroup = useMemo(() => {
     if (!Array.isArray(groups)) return null;
@@ -49,25 +49,15 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
         {groups.map((group) => (
-          <Grid item key={group.id}>
-            <GroupCard users={users} group={group} personalGroup={personalGroup!} />
-          </Grid>
-        ))}
-      </Grid>
-      <Grid item>
-        <Divider />
-      </Grid>
-      <Grid item container justifyContent="center" spacing={2} flexDirection="column" alignItems="center">
-        <Typography variant="h5" component="h1">
-          Users List
-        </Typography>
-        <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
-          {users.map((user) => (
-            <Grid item key={user.id}>
-              <GroupCard group={user} personalGroup={personalGroup!} users={users} />
+          <>
+            <Grid item key={group.id}>
+              <GroupCard group={group} personalGroup={personalGroup!} />
             </Grid>
-          ))}
-        </Grid>
+            <Grid item>
+              <Divider />
+            </Grid>
+          </>
+        ))}
       </Grid>
     </Grid>
 
