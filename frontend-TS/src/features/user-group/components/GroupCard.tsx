@@ -9,8 +9,9 @@ import { ModalEditGroup } from "./ModalEditGroup.tsx";
 interface GroupCardProps {
   group: UserGroup;
   personalGroup: UserGroup;
+  users: UserGroup[];
 }
-export const GroupCard = ({ group ,personalGroup}:GroupCardProps)=>{
+export const GroupCard = ({ group ,personalGroup, users}:GroupCardProps)=>{
   const [openModal, setOpenMOdal] = useState(false)
 
   const HandleOpenModal = useCallback(()=>{
