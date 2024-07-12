@@ -88,7 +88,7 @@ export const ProjectCard= ({
                 )}
               </Grid>
             </CardActions>
-            <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject deleteProject={deleteProject!} updateUserProject={updateUserProject} project={project!}/>}/>
+            <MMUModal width={400} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject deleteProject={deleteProject!} updateUserProject={updateUserProject} project={project!}/>}/>
           </Grid>
         </Grid>
       </Card>

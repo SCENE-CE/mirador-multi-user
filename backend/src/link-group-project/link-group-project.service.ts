@@ -8,7 +8,7 @@ import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
-import { Project } from "../project/entities/project.entity";
+import { UserGroup } from "../user-group/entities/user-group.entity";
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -84,7 +84,7 @@ export class LinkGroupProjectService {
         relations: ['project'],
       });
     console.log(request)
-      return request;
+      return request.map((linkGroupProject)=>linkGroupProject.project);
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while finding Group for this project id : ${id}`,
@@ -113,9 +113,12 @@ export class LinkGroupProjectService {
     }
   }
 
-  async removeProject(projectId: number) {
+  async removeProjectGroupRelation(projectId: number, group: UserGroup) {
     try {
-      const done = await this.linkGroupProjectRepository.delete({ project: { id: projectId } });
+      const done = await this.linkGroupProjectRepository.delete({
+        project: { id: projectId },
+        user_group: group,
+      });
 
       if (done.affected != 1) throw new NotFoundException(projectId);
       return done;

@@ -5,7 +5,7 @@ import { BACKEND_URL } from "../../../config/config.ts";
 export const createProject = async (project: CreateProjectDto): Promise<Project> => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${BACKEND_URL}/project/`, {
+    const response = await fetch(`${BACKEND_URL}/group-project/project`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,

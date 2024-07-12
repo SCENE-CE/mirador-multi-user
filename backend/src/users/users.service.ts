@@ -24,7 +24,6 @@ export class UsersService {
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
-      console.log(dto);
       const userToSave = dto;
       const hashPassword = await bcrypt.hash(dto.password, 10);
       userToSave.password = hashPassword;

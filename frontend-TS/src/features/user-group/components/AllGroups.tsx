@@ -1,9 +1,10 @@
 import {User} from '../../auth/types/types.ts'
-import { Grid, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { Divider, Grid, Typography } from "@mui/material";
+import { useEffect, useMemo, useState } from "react";
 import { UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { GroupCard } from "./GroupCard.tsx";
+import { useUser } from "../../../utils/auth.tsx";
 
 
 interface allGroupsProps {
@@ -11,13 +12,18 @@ interface allGroupsProps {
 }
 export const AllGroups= ({user}:allGroupsProps)=>{
   const [groups, setGroups] = useState<UserGroup[]>([]);
+  const [users, setUsers] = useState<UserGroup[]>([]);
+  const currentUser = useUser()
 
   useEffect(
   () =>{
     const fetchGroups = async () => {
       try {
-        const groups = await getAllUserGroups(user.id)
+        let groups = await getAllUserGroups(user.id)
+        const users : UserGroup[] = groups.filter((group:UserGroup)=> group.users.length < 2)
+        groups = groups.filter(((group : UserGroup)=>{ return users.indexOf(group) < 0}))
         setGroups(groups)
+        setUsers(users)
       } catch (error) {
         throw error
       }
@@ -26,23 +32,44 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   },[]
 )
 
+  const personalGroup = useMemo(() => {
+    if (!Array.isArray(groups)) return null;
+
+    const filteredGroups = users.filter(group => Array.isArray(group.users) && group.name === currentUser.data!.name );
+
+    return filteredGroups[0];
+  }, [groups]);
+
   return(
-    <Grid container justifyContent='center' flexDirection='column'>
-      <Grid item container justifyContent="center">
-        <Typography variant="h5" component="h1" >
+    <Grid container justifyContent='center' flexDirection='column' spacing={4}>
+      <Grid item container justifyContent="center" spacing={2}>
+        <Typography variant="h5" component="h1">
           {user.name}'s groups
         </Typography>
       </Grid>
-      <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
-        {
-          groups.map((group)=>(
-            <Grid item key={group.id}>
-            <GroupCard userGroup={group}/>
+      <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
+        {groups.map((group) => (
+          <Grid item key={group.id}>
+            <GroupCard users={users} group={group} personalGroup={personalGroup!} />
+          </Grid>
+        ))}
+      </Grid>
+      <Grid item>
+        <Divider />
+      </Grid>
+      <Grid item container justifyContent="center" spacing={2} flexDirection="column" alignItems="center">
+        <Typography variant="h5" component="h1">
+          Users List
+        </Typography>
+        <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
+          {users.map((user) => (
+            <Grid item key={user.id}>
+              <GroupCard group={user} personalGroup={personalGroup!} users={users} />
             </Grid>
-          ))
-
-        }
+          ))}
+        </Grid>
       </Grid>
     </Grid>
+
   )
 }

@@ -38,7 +38,13 @@ const emptyWorkspace: IState = {
 const emptyProject: Project = {
   id: 0,
   name: "",
-  owner: 0,
+  owner: {
+    access_token:"" ,
+    id: 0,
+    mail: "",
+    name: "",
+    userGroups:[]
+  },
   userWorkspace: emptyWorkspace
 };
 
@@ -94,7 +100,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
   const InitializeProject = useCallback(async (workspace: IState, projectName: string) => {
     const response = await createProject({
         name: projectName,
-        owner: user.id,
+        owner: user,
         userWorkspace: workspace
       }
     )
@@ -126,12 +132,12 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     } else {
       const project:CreateProjectDto = {
         name: name,
-        owner: user.id,
+        owner: user,
         userWorkspace: state,
       };
       createProject(project).then(r => {
         setSelectedProjectId(r.id);
-        handleSaveProject( { id: r.id, ...project });
+        handleSaveProject( { id: r.id,...project });
       });
     }
   },[handleSaveProject, selectedProjectId, user.id, userProjects])

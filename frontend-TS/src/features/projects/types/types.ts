@@ -1,22 +1,16 @@
 import IState from "../../mirador/interface/IState.ts";
+import { User } from "../../auth/types/types.ts";
 
 export type Project = {
   id:number;
   name: string;
   userWorkspace:IState;
-  owner: number;
+  owner:User;
 }
 
 export type CreateProjectDto = {
   name:string;
-  owner:number;
+  owner:User;
   userWorkspace:IState;
 }
 
-export type Owner = {
-  id:number;
-  mail:string;
-  name: string;
-  password: string;
-  createdAt: string;
-}

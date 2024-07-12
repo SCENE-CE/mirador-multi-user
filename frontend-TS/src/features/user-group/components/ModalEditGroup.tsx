@@ -1,70 +1,29 @@
-import { Button, Divider, Grid, List, ListItem, ListItemText, Typography } from "@mui/material";
+import { Divider, Grid, Typography } from "@mui/material";
 import { UserGroup } from "../types/types.ts";
-import { useEffect, useState } from "react";
-import { getUserAllProjects } from "../api/getUserAllProjects.ts";
-import { useUser } from "../../../utils/auth.tsx";
-import { Project } from "../../projects/types/types.ts";
-import CloseIcon from '@mui/icons-material/Close';
-import { updateProject } from "../../projects/api/updateProject.ts";
-
+import { GroupProjectList } from "./GroupProjectList.tsx";
+import { UserProjectList } from "./UserProjectList.tsx";
 interface ModalEditGroupProps {
   group:UserGroup
+  personalGroup:UserGroup
+  users:UserGroup[]
 }
-export const ModalEditGroup = ({ group }:ModalEditGroupProps)=>{
-  const [projects, setProjects]=useState<Project[]>([]);
+export const ModalEditGroup = ({ group,personalGroup, users }:ModalEditGroupProps)=>{
 
-  const user = useUser();
 
-  useEffect( () => {
-    //TODO: fetch USER GROUP project and not USER PROJECT
-    const fetchUserProjects = async ()=>{
-      try {
-        const userProjects = await getUserAllProjects(user.data!.id)
-        setProjects(userProjects);
-      } catch (error) {
-        throw error
-      }
-    }
-    fetchUserProjects()
-  },[])
-
-  //TODO: Update the group to remove project
-  const handleRemoveProject= (projectToRemove:Project)=>{
-  // const updateGroup = async ()=>{
-  //   try{
-  //     const groupWithoutProject = { ...group,
-  //
-  //     }
-  //     const updateRequest = await updateProject(projectToRemove)
-  //   }catch(error){
-  //
-  //   }
-  // }
-  }
   return(
-    <Grid item container justifyContent="center" >
-      <Typography variant="h5">{group.name}</Typography>
-      <Grid item container direction="row">
-        <Grid item container direction="column" spacing={2} >
-          <Grid item container>
-            <Typography> Group's Projects</Typography>
-          </Grid>
-          <List>
-            {projects.map((project)=>(
-              <>
-                <ListItem>
-                  <ListItemText primary={project.name}>
-                  </ListItemText>
-                  <Button variant="contained" onClick={()=>handleRemoveProject(project)}>
-                    <CloseIcon/>
-                  </Button>
-                </ListItem>
-                <Divider  component="li" />
-              </>
-            ))}
-          </List>
+    <Grid item container flexDirection="row" spacing={1}>
+      <Grid item container justifyContent="center" xs={8} >
+        <Typography variant="h5">{group.name}</Typography>
+        <Grid item container direction="column">
+          <GroupProjectList
+            group={group}
+            personalGroup={personalGroup}
+          />
         </Grid>
-        <Grid item container direction="column"></Grid>
+      </Grid>
+      <Divider orientation="vertical" variant="middle" flexItem/>
+      <Grid item container xs={3}>
+        <UserProjectList users={users}/>
       </Grid>
     </Grid>
   )
