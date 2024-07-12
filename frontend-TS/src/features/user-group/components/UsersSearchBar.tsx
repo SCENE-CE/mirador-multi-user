@@ -3,7 +3,7 @@ import { UserGroup } from "../types/types.ts";
 import { useDebounceCallback } from 'usehooks-ts';
 import { lookingForUsers } from "../api/lookingForUsers.ts";
 import {SyntheticEvent, useState } from "react";
-import { updateUserGroup } from "../api/updateUserGroup.ts";
+import { updateUsersForUserGroup } from "../api/updateUsersForUserGroup.ts";
 
 interface IUsersSearchBarProps {
   group: UserGroup;
@@ -41,7 +41,7 @@ export const UsersSearchBar = ({group}:IUsersSearchBarProps) => {
       const groupUsers = group.users
       const userToAdd = selectedUser.users[0]
       groupUsers.push(userToAdd)
-      const addUserToGroup = await updateUserGroup({ ...group, users: groupUsers });
+      const addUserToGroup = await updateUsersForUserGroup({ ...group, users: groupUsers });
     }
   };
 

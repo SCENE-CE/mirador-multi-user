@@ -92,9 +92,7 @@ export class UserGroupService {
     }
   }
 
-  async update(id: number, dto: UpdateUserGroupDto) {
-    console.log('----------------Enter update User Group-----------------------');
-    console.log('dto', dto);
+  async updateUsersForUserGroup(id: number, dto: UpdateUserGroupDto) {
 
     try {
       if (!dto.users || dto.users.length < 2) {
@@ -119,7 +117,10 @@ export class UserGroupService {
         .createQueryBuilder()
         .relation(UserGroup, 'users')
         .of(userGroup)
-        .addAndRemove(newUserIds, userGroup.users.map(user => user.id));
+        .addAndRemove(
+          newUserIds,
+          userGroup.users.map((user) => user.id),
+        );
 
       // Return the updated user group
       const updatedUserGroup = await this.userGroupRepository.findOne({
@@ -128,14 +129,11 @@ export class UserGroupService {
       });
 
       if (!updatedUserGroup) {
-        throw new InternalServerErrorException('Failed to retrieve updated user group');
+        throw new InternalServerErrorException(
+          'Failed to retrieve updated user group',
+        );
       }
-
-      console.log('------------------Updated User Group---------------------');
-      console.log(updatedUserGroup);
-
       return updatedUserGroup;
-
     } catch (error) {
       console.log(error)
       throw new InternalServerErrorException(error);

@@ -40,13 +40,16 @@ export class UserGroupController {
     return this.userGroupService.searchForUser(partialUserName);
   }
 
-  @Patch(':groupId')
+  @Patch('/users/:groupId')
   @UseGuards(AuthGuard)
-  async update(
+  async updateUsersForUserGroup(
     @Param('groupId') id: number,
     @Body() updateUserGroupDto: UpdateUserGroupDto,
   ) {
-    return await this.userGroupService.update(+id, updateUserGroupDto);
+    return await this.userGroupService.updateUsersForUserGroup(
+      +id,
+      updateUserGroupDto,
+    );
   }
 
   @Delete(':groupId')
