@@ -1,7 +1,7 @@
 import { Divider, Grid, Typography } from "@mui/material";
 import { UserGroup } from "../types/types.ts";
 import { GroupProjectList } from "./GroupProjectList.tsx";
-import { UserProjectList } from "./UserProjectList.tsx";
+import { UsersSearchBar } from "./UsersSearchBar.tsx";
 interface ModalEditGroupProps {
   group:UserGroup
   personalGroup:UserGroup
@@ -23,7 +23,7 @@ export const ModalEditGroup = ({ group,personalGroup, users }:ModalEditGroupProp
       </Grid>
       <Divider orientation="vertical" variant="middle" flexItem/>
       <Grid item container xs={3}>
-        <UserProjectList users={users}/>
+        <UsersSearchBar users={users}/>
       </Grid>
     </Grid>
   )

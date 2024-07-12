@@ -1,17 +1,16 @@
 import storage from "../../../utils/storage.ts";
 import { BACKEND_URL } from "../../../config/config.ts";
 
-export const getAllUserGroups = async(userId:number)=>{
+export const lookingForUsers= async (partialUserName:string)=>{
   const token = storage.getToken();
-  console.log('getAllUserGroups')
   try{
-    const response = await fetch(`${BACKEND_URL}/users/groups/${userId}`, {
+    const response = await fetch(`${BACKEND_URL}/user-group/search/${partialUserName}`,{
       method: 'GET',
       headers:{
         authorization: `Bearer ${token}`,
       }})
     const toReturn = await response.json();
-    return toReturn
+    return toReturn;
   }catch(error){
     throw error;
   }
