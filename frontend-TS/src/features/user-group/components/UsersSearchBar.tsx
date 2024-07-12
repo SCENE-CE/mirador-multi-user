@@ -1,11 +1,15 @@
-import { Autocomplete, Grid, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, Grid, TextField, Typography } from "@mui/material";
 import { UserGroup } from "../types/types.ts";
 import { useDebounceCallback } from 'usehooks-ts';
 import { lookingForUsers } from "../api/lookingForUsers.ts";
 import {SyntheticEvent, useState } from "react";
+import { updateUserGroup } from "../api/updateUserGroup.ts";
 
+interface IUsersSearchBarProps {
+  group: UserGroup;
+}
 
-export const UsersSearchBar = () => {
+export const UsersSearchBar = ({group}:IUsersSearchBarProps) => {
   const [usersSuggestions, setUsersSuggestions]=useState<UserGroup[]>([]);
   const [selectedUser, setSelectedUser] = useState<UserGroup | null>(null);
 
@@ -32,36 +36,38 @@ export const UsersSearchBar = () => {
     setSelectedUser(value);
   };
 
-  const handleBlur = () => {
+  const handleAddUser = async () => {
     if (selectedUser) {
-      // Perform the action with the final selected value
-      console.log('Final selected user:', selectedUser);
-      // Add any additional actions here
+      const groupUsers = group.users
+      const userToAdd = selectedUser.users[0]
+      groupUsers.push(userToAdd)
+      const addUserToGroup = await updateUserGroup({ ...group, users: groupUsers });
     }
   };
 
   return(
     <Grid item container flexDirection="column" spacing={1}>
-      <Typography>Adding users to group</Typography>
       <Grid item container spacing={2}>
         <Grid item>
-
           <Typography>Adding user to group :</Typography>
         </Grid>
-        <Grid item>
-
-          <Autocomplete
-            disablePortal
-            onInputChange={handleInputChange}
-            clearOnEscape
-            onChange={handleChange}
-            onBlur={handleBlur}
-            id="combo-box-demo"
-            options={usersSuggestions}
-            getOptionLabel={(option: UserGroup) => option.name}
-            sx={{ width: 300 }}
-            renderInput={(params) => <TextField {...params} label="User" />}
-          />
+        <Grid item container  spacing={2} direction="row" alignItems="center">
+          <Grid item >
+            <Autocomplete
+              disablePortal
+              onInputChange={handleInputChange}
+              clearOnEscape
+              sx={{width:'250px'}}
+              onChange={handleChange}
+              id="combo-box-demo"
+              options={usersSuggestions}
+              getOptionLabel={(option: UserGroup) => option.name}
+              renderInput={(params) => <TextField {...params} label="User" />}
+            />
+          </Grid>
+          <Grid item>
+            <Button variant="contained" onClick={handleAddUser}>ADD</Button>
+          </Grid>
         </Grid>
       </Grid>
     </Grid>

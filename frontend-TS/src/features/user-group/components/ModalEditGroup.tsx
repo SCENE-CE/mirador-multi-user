@@ -12,7 +12,7 @@ export const ModalEditGroup = ({ group,personalGroup, users }:ModalEditGroupProp
 
   return(
     <Grid item container flexDirection="row" spacing={1}>
-      <Grid item container justifyContent="center" xs={8} >
+      <Grid item container justifyContent="center" xs={6} >
         <Typography variant="h5">{group.name}</Typography>
         <Grid item container direction="column">
           <GroupProjectList
@@ -22,8 +22,8 @@ export const ModalEditGroup = ({ group,personalGroup, users }:ModalEditGroupProp
         </Grid>
       </Grid>
       <Divider orientation="vertical" variant="middle" flexItem/>
-      <Grid item container xs={3}>
-        <UsersSearchBar users={users}/>
+      <Grid item container xs={5}>
+        <UsersSearchBar group={group}/>
       </Grid>
     </Grid>
   )

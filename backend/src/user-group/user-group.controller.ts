@@ -42,11 +42,11 @@ export class UserGroupController {
 
   @Patch(':groupId')
   @UseGuards(AuthGuard)
-  update(
-    @Param('groupId') id: string,
+  async update(
+    @Param('groupId') id: number,
     @Body() updateUserGroupDto: UpdateUserGroupDto,
   ) {
-    return this.userGroupService.update(+id, updateUserGroupDto);
+    return await this.userGroupService.update(+id, updateUserGroupDto);
   }
 
   @Delete(':groupId')
