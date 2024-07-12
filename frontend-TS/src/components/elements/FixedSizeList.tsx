@@ -11,8 +11,8 @@ export const FixedSizeList=({contents,action}:FixedSizeListProps)=>{
     >
       <List>
         {
-          contents.map((content)=>(
-            <ListRow content={content} index={content} action={action}/>
+          contents.map((content,index)=>(
+            <ListRow content={content} index={content} action={action} key={index}/>
           ))
         }
       </List>

@@ -70,7 +70,7 @@ export const ModalEditProject = ({ project, updateUserProject, deleteProject }:M
             </Button>
           </Tooltip>
         </Grid>
-        <MMUModal openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteProject} projectId={project.id} projectName={project.name}/>}/>
+        <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteProject} projectId={project.id} projectName={project.name}/>}/>
           </>
           )
         }

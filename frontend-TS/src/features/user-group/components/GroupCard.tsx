@@ -44,7 +44,7 @@ export const GroupCard = ({ group ,personalGroup, users}:GroupCardProps)=>{
               </Tooltip>
             </Grid>
           </CardActions>
-          <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup group={group} personalGroup={personalGroup}/>}/>
+          <MMUModal width={800} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup users={users} group={group} personalGroup={personalGroup}/>}/>
         </Grid>
       </Grid>
     </Card>

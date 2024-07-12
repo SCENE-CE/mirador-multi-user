@@ -2,10 +2,11 @@ import Modal from '@mui/material/Modal';
 import { Box } from "@mui/material";
 import { ReactNode } from "react";
 
-interface OpenModalProps{
+interface IOpenModalProps{
   openModal:boolean,
   setOpenModal: () => void,
   children: ReactNode,
+  width:number
 }
 
 const style = {
@@ -13,7 +14,6 @@ const style = {
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 400,
   bgcolor: 'background.paper',
   boxShadow: 24,
   pt: 2,
@@ -21,7 +21,7 @@ const style = {
   pb: 3,
 };
 
-export const MMUModal= ({ openModal, setOpenModal, children }:OpenModalProps)=>{
+export const MMUModal= ({ openModal, setOpenModal, children, width }:IOpenModalProps)=>{
 
   return(
     <Modal
@@ -30,7 +30,7 @@ export const MMUModal= ({ openModal, setOpenModal, children }:OpenModalProps)=>{
       aria-labelledby="child-modal-title"
       aria-describedby="child-modal-description"
     >
-      <Box sx={{ ...style }}>
+      <Box sx={{ ...style, width:width}}>
         {children}
       </Box>
     </Modal>

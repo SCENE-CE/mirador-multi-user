@@ -89,7 +89,7 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProje
             </Button>
           </Tooltip>
         </Grid>
-        <MMUModal openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject updateUserProject={updateUserProject} project={project}/>}/>
+        <MMUModal width={400} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject updateUserProject={updateUserProject} project={project}/>}/>
         <Grid item>
         <Button variant="contained" onClick={saveProject}>Save Project</Button>
         </Grid>
