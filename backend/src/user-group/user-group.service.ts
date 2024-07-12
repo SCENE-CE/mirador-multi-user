@@ -36,6 +36,31 @@ export class UserGroupService {
     }
   }
 
+  async searchForUser(partialUserName: string) {
+    try {
+      const partialUserNameLength = partialUserName.length;
+      const listOfUserGroup = await this.userGroupRepository.find();
+      const personnalUsersGroups: UserGroup[] = listOfUserGroup.filter(
+        (userPersonalGroup) => userPersonalGroup.users.length < 2,
+      );
+      const filteredListOfUserGroup = personnalUsersGroups.filter(
+        (userGroup: UserGroup) => {
+          const trimedGroupName = userGroup.name.substring(
+            0,
+            partialUserNameLength,
+          );
+          return partialUserName === trimedGroupName;
+        },
+      );
+      return filteredListOfUserGroup.slice(0, 3);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'an error occurred while looking for user',
+      );
+    }
+  }
+
   async findUserPersonalGroup(userId: number) {
     try {
       const allUserGroups = await this.userGroupRepository
