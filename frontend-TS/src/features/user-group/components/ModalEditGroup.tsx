@@ -15,6 +15,7 @@ export const ModalEditGroup = ({ group,personalGroup }:ModalEditGroupProps)=>{
   const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
   const [groupState, setGroupState] = useState(group); // Add state for group
   const [forbiddenModal, setForbiddenModal] = useState<boolean>(false)
+
   const handleAddUser = async () => {
     if (userToAdd) {
       const groupUsers = groupState.users
@@ -24,18 +25,13 @@ export const ModalEditGroup = ({ group,personalGroup }:ModalEditGroupProps)=>{
       setGroupState(updatedGroup);
     }
   };
-  console.log('groupState',groupState)
   const handleRemoveUser = async (userToRemove:User) => {
     if(groupState.users.length > 2){
-      console.log('userToRemove',userToRemove);
       const filteredGroupUsers = groupState.users.filter(user => user.id !== userToRemove.id);
-      console.log('filteredGroupUsers',filteredGroupUsers)
       const updatedGroup = await updateUsersForUserGroup({ ...groupState, users: filteredGroupUsers });
-      console.log('AFTER REQUEST', updatedGroup)
       setGroupState(updatedGroup);
     }
     else {
-      console.log('forbiden')
       return setForbiddenModal(true)
     }
   }

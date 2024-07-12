@@ -1,10 +1,13 @@
 import {User} from '../../auth/types/types.ts'
 import { Divider, Grid, Typography } from "@mui/material";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { GroupCard } from "./GroupCard.tsx";
 import { useUser } from "../../../utils/auth.tsx";
+import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
+import AddIcon from "@mui/icons-material/Add";
+import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
 
 
 interface allGroupsProps {
@@ -13,6 +16,7 @@ interface allGroupsProps {
 export const AllGroups= ({user}:allGroupsProps)=>{
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [users, setUsers] = useState<UserGroup[]>([]);
+  const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
   const currentUser = useUser()
 
   useEffect(
@@ -40,6 +44,10 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     return filteredGroups[0];
   }, [groups]);
 
+  const toggleModalGroupCreation = useCallback(()=>{
+    setModalGroupCreationIsOpen(!modalGroupCreationIsOpen);
+  },[modalGroupCreationIsOpen,setModalGroupCreationIsOpen])
+
   return(
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
       <Grid item container justifyContent="center" spacing={2}>
@@ -59,6 +67,8 @@ export const AllGroups= ({user}:allGroupsProps)=>{
           </>
         ))}
       </Grid>
+      <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />
+      <DrawerCreateGroup InitializeGroup={()=>console.log('toto')} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
     </Grid>
 
   )
