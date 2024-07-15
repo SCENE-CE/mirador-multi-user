@@ -40,6 +40,11 @@ export class UserGroupController {
     return this.userGroupService.searchForUser(partialUserName);
   }
 
+  @Get('/groups/:userId')
+  async getAllUserGroupsForUser(@Param('userId') userId: number) {
+    return this.userGroupService.findAllUserGroupForUser(userId);
+  }
+
   @Patch('/users/:groupId')
   @UseGuards(AuthGuard)
   async updateUsersForUserGroup(

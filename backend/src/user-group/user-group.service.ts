@@ -9,7 +9,7 @@ import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserGroup } from './entities/user-group.entity';
 import { Repository } from 'typeorm';
-import { UsersService } from "../users/users.service";
+import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class UserGroupService {
@@ -81,6 +81,33 @@ export class UserGroupService {
     }
   }
 
+  async findAllUserGroupForUser(userId: number) {
+    try {
+      const allUserGroups = await this.userGroupRepository
+        .createQueryBuilder('userGroup')
+        .innerJoinAndSelect('userGroup.users', 'user')
+        .where((qb) => {
+          const subQuery = qb
+            .subQuery()
+            .select('userGroup.id')
+            .from(UserGroup, 'userGroup')
+            .innerJoin('userGroup.users', 'user')
+            .where('user.id = :userId', { userId: userId })
+            .getQuery();
+          return 'userGroup.id IN ' + subQuery;
+        })
+        .getMany();
+
+      const filteredGroups = allUserGroups.filter(
+        (userGroup) => userGroup.users.length > 1,
+      );
+      return filteredGroups;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   findOne(id: number) {
     try {
       return this.userGroupRepository.findOne({
@@ -93,10 +120,11 @@ export class UserGroupService {
   }
 
   async updateUsersForUserGroup(id: number, dto: UpdateUserGroupDto) {
-
     try {
       if (!dto.users || dto.users.length < 2) {
-        throw new BadRequestException("A group of users can't contain less than two users");
+        throw new BadRequestException(
+          "A group of users can't contain less than two users",
+        );
       }
 
       // Get the existing user group
@@ -110,7 +138,7 @@ export class UserGroupService {
       }
 
       // Extract user IDs from dto
-      const newUserIds = dto.users.map(user => user.id);
+      const newUserIds = dto.users.map((user) => user.id);
 
       // Update the users relation
       await this.userGroupRepository
@@ -135,7 +163,7 @@ export class UserGroupService {
       }
       return updatedUserGroup;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new InternalServerErrorException(error);
     }
   }
