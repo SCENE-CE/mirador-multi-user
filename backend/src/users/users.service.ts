@@ -19,7 +19,6 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
 
     @InjectRepository(UserGroup)
-    private readonly userGroupRepository: Repository<UserGroup>,
     private readonly userGroupService: UserGroupService,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
@@ -76,6 +75,7 @@ export class UsersService {
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException(error);
     }
   }

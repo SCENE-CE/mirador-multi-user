@@ -9,13 +9,15 @@ import { ModalEditGroup } from "./ModalEditGroup.tsx";
 interface GroupCardProps {
   group: UserGroup;
   personalGroup: UserGroup;
-  users: UserGroup[];
+  HandleOpenEditGroupModal:()=>void,
 }
-export const GroupCard = ({ group ,personalGroup, users}:GroupCardProps)=>{
+export const GroupCard = ({ group ,personalGroup, HandleOpenEditGroupModal}:GroupCardProps)=>{
   const [openModal, setOpenMOdal] = useState(false)
 
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
+    //We need
+    HandleOpenEditGroupModal()
   },[setOpenMOdal,openModal])
 
   return(
@@ -44,7 +46,7 @@ export const GroupCard = ({ group ,personalGroup, users}:GroupCardProps)=>{
               </Tooltip>
             </Grid>
           </CardActions>
-          <MMUModal width={800} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup users={users} group={group} personalGroup={personalGroup}/>}/>
+          <MMUModal width={900} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup group={group} personalGroup={personalGroup} HandleOpenModal={HandleOpenModal}/>}/>
         </Grid>
       </Grid>
     </Card>

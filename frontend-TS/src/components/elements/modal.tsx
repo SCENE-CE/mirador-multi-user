@@ -22,7 +22,6 @@ const style = {
 };
 
 export const MMUModal= ({ openModal, setOpenModal, children, width }:IOpenModalProps)=>{
-
   return(
     <Modal
       open={openModal}

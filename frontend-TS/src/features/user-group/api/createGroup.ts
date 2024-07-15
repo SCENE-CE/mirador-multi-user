@@ -13,7 +13,7 @@ export const createGroup = async(userGroup:CreateGroupDto)=>{
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({userGroup})
+      body: JSON.stringify({ ...userGroup })
     });
   return await response.json()
   }catch(error){

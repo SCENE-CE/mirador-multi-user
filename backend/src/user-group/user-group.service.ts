@@ -9,6 +9,7 @@ import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserGroup } from './entities/user-group.entity';
 import { Repository } from 'typeorm';
+import { UsersService } from "../users/users.service";
 
 @Injectable()
 export class UserGroupService {
@@ -91,17 +92,50 @@ export class UserGroupService {
     }
   }
 
-  async update(id: number, dto: UpdateUserGroupDto) {
+  async updateUsersForUserGroup(id: number, dto: UpdateUserGroupDto) {
+
     try {
-      if (dto.users.length < 2) {
-        throw new BadRequestException(
-          "a group of user can't contain less than two user",
+      if (!dto.users || dto.users.length < 2) {
+        throw new BadRequestException("A group of users can't contain less than two users");
+      }
+
+      // Get the existing user group
+      const userGroup = await this.userGroupRepository.findOne({
+        where: { id },
+        relations: ['users'],
+      });
+
+      if (!userGroup) {
+        throw new NotFoundException(`User group with ID ${id} not found`);
+      }
+
+      // Extract user IDs from dto
+      const newUserIds = dto.users.map(user => user.id);
+
+      // Update the users relation
+      await this.userGroupRepository
+        .createQueryBuilder()
+        .relation(UserGroup, 'users')
+        .of(userGroup)
+        .addAndRemove(
+          newUserIds,
+          userGroup.users.map((user) => user.id),
+        );
+
+      // Return the updated user group
+      const updatedUserGroup = await this.userGroupRepository.findOne({
+        where: { id },
+        relations: ['users'],
+      });
+
+      if (!updatedUserGroup) {
+        throw new InternalServerErrorException(
+          'Failed to retrieve updated user group',
         );
       }
-      const updateData = await this.userGroupRepository.update(id, dto);
-      if (updateData.affected != 1) throw new NotFoundException(id);
-      return this.findOne(id);
+      return updatedUserGroup;
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException(error);
     }
   }
