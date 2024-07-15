@@ -11,14 +11,13 @@ interface IUGroupUsersListPros {
 export const GroupUsersList = ({users,handleRemoveUser,ownerId} : IUGroupUsersListPros) => {
   const currentUser= useUser()
 
-
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item>
         <Typography variant="h5">users list</Typography>
       </Grid>
       <Grid item>
-        {
+        { users &&(
           users.map((user)=>(
             <>
               <ListItem key={user.id} component="div" disablePadding>
@@ -33,6 +32,7 @@ export const GroupUsersList = ({users,handleRemoveUser,ownerId} : IUGroupUsersLi
               <Divider/>
             </>
           ))
+        )
         }
       </Grid>
     </Grid>

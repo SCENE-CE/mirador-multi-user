@@ -16,7 +16,7 @@ interface IDrawerCreateGroupProps{
 export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreation,handleCreatGroup: handleCreatGroup,}:IDrawerCreateGroupProps)=>{
   const [usersToAdd, setUsersToAdd] = useState<UserGroup[]>([])
   const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
-  const [userGroupName, setUserGroupName] = useState('');
+  const [userGroupName, setUserGroupName] = useState<string>('');
 
 
   const handleAddUser = ()=>{
@@ -27,7 +27,6 @@ export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreati
 
   const handleRemoveUser=(userToRemove:User)=>{
     const newUsersList = usersToAdd.filter((user)=> user.id == userToRemove.id);
-    console.log('userRemovedArray', newUsersList)
     setUsersToAdd(newUsersList);
   }
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
@@ -38,6 +37,14 @@ export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreati
     return usersToAdd.map(group => group.users).flat();
   }, [usersToAdd]);
 
+const handleUserCreation = useCallback(()=>{
+  toggleModalGroupCreation();
+  handleCreatGroup(userGroupName, users);
+  setUsersToAdd([]);
+  setUserGroupName('');
+},[handleCreatGroup, userGroupName, users, toggleModalGroupCreation])
+
+  console.log('usersToAdd',usersToAdd)
 
   return(
     <>
@@ -86,7 +93,8 @@ export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreati
                   <Button
                     size="large"
                     variant="contained"
-                    onClick={()=>handleCreatGroup(userGroupName, users)}
+                    onClick={handleUserCreation}
+                    disabled={userGroupName.length < 1 || usersToAdd.length < 1}
                   >
                     CREATE GROUP
                   </Button>

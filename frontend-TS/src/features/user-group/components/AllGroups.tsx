@@ -18,37 +18,50 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [users, setUsers] = useState<UserGroup[]>([]);
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
+  const [openEditGroupModal, setOpenEditGroupModal] = useState(false)
+
   const currentUser = useUser();
+
+
+  const fetchGroups = async () => {
+    try {
+      let groups = await getAllUserGroups(user.id)
+      const users : UserGroup[] = groups.filter((group:UserGroup)=> group.users.length < 2)
+      groups = groups.filter(((group : UserGroup)=>{ return users.indexOf(group) < 0}))
+      setGroups(groups)
+      setUsers(users)
+    } catch (error) {
+      throw error
+    }
+  }
 
   useEffect(
     () =>{
-      const fetchGroups = async () => {
-        try {
-          let groups = await getAllUserGroups(user.id)
-          const users : UserGroup[] = groups.filter((group:UserGroup)=> group.users.length < 2)
-          groups = groups.filter(((group : UserGroup)=>{ return users.indexOf(group) < 0}))
-          setGroups(groups)
-          setUsers(users)
-        } catch (error) {
-          throw error
-        }
-      }
       fetchGroups()
-    },[]
+    },[openEditGroupModal]
   )
-
+console.log('ALL GROUPS RERENDER')
   const handleCreateGroup = async (name:string, usersToAdd:User[])=>{
     try{
+      console.log('name', name)
+      console.log('name',typeof name)
       const userGroupToCreate : CreateGroupDto = {
         name: name,
         ownerId: user.id,
         users: [...usersToAdd, user]
       }
+      console.log(userGroupToCreate)
       await createGroup(userGroupToCreate);
+      await fetchGroups()
     }catch(error){
       console.error(error)
     }
   }
+
+  const HandleOpenEditGroupModal = useCallback(()=>{
+    setOpenEditGroupModal(!openEditGroupModal)
+  },[setOpenEditGroupModal,openEditGroupModal])
+
 
   const personalGroup = useMemo(() => {
     if (!Array.isArray(groups)) return null;
@@ -73,7 +86,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
         {groups.map((group) => (
           <>
             <Grid item key={group.id}>
-              <GroupCard group={group} personalGroup={personalGroup!} />
+              <GroupCard group={group} personalGroup={personalGroup!}  HandleOpenEditGroupModal={HandleOpenEditGroupModal}/>
             </Grid>
             <Grid item>
               <Divider />
