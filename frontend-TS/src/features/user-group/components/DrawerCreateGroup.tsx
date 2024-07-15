@@ -1,32 +1,43 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { UserGroup } from "../types/types.ts";
 import { UsersSearchBar } from "./UsersSearchBar.tsx";
 import { User } from "../../auth/types/types.ts";
+import { GroupUsersList } from "./GroupUsersList.tsx";
 
 interface IDrawerCreateGroupProps{
   modalCreateGroup: boolean
   toggleModalGroupCreation:()=>void
-  InitializeGroup:() => void
+  handleCreatGroup:(name:string, usersToAdd:User[]) => void
   ownerId:number
 }
 
-export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreation,InitializeGroup,}:IDrawerCreateGroupProps)=>{
-  const [groupName, setGroupName] = useState('');
+export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreation,handleCreatGroup: handleCreatGroup,}:IDrawerCreateGroupProps)=>{
   const [usersToAdd, setUsersToAdd] = useState<UserGroup[]>([])
   const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
+  const [userGroupName, setUserGroupName] = useState('');
+
 
   const handleAddUser = ()=>{
-//TODO
+    if(usersToAdd !== null) {
+    setUsersToAdd([...usersToAdd, userToAdd!]);
+    }
   }
 
   const handleRemoveUser=(userToRemove:User)=>{
-  //TODO
+    const newUsersList = usersToAdd.filter((user)=> user.id == userToRemove.id);
+    console.log('userRemovedArray', newUsersList)
+    setUsersToAdd(newUsersList);
   }
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
-//TODO
+    setUserGroupName(event.target.value)
   },[])
+
+  const users = useMemo(() => {
+    return usersToAdd.map(group => group.users).flat();
+  }, [usersToAdd]);
+
 
   return(
     <>
@@ -55,28 +66,34 @@ export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreati
                 <Typography>CREATE Group</Typography>
               </Toolbar>
             </AppBar>
-            <form>
-              <Grid container alignItems="center" spacing={2}>
+            <Grid>
+              <Grid item container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>Group's name :</label>
+                  <Typography>Group's name :</Typography>
                 </Grid>
                 <Grid item sx={{ width:'70%'}}>
                   <TextField onChange={handleNameChange} sx={{ width:'100%'}} ></TextField>
                 </Grid>
+              </Grid>
+              <Grid item container flexDirection="column" spacing={1}>
                 <Grid item>
+                  <UsersSearchBar handleAddUser={handleAddUser} setSelectedUser={setUserToAdd}/>
+                </Grid>
+                <Grid item>
+                  <GroupUsersList users={users} handleRemoveUser={handleRemoveUser} ownerId={ownerId} />
+                </Grid>
+                <Grid item>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    onClick={()=>handleCreatGroup(userGroupName, users)}
+                  >
+                    CREATE GROUP
+                  </Button>
                 </Grid>
               </Grid>
-            </form>
-            <UsersSearchBar handleAddUser={handleAddUser} setSelectedUser={setUserToAdd}/>
-            <Button
-              size="large"
-              variant="contained"
-              onClick={()=>InitializeGroup()}
-            >
-              CREATE GROUP
-            </Button>
+            </Grid>
           </Paper>
-
         </Drawer>
       </div>
     </>

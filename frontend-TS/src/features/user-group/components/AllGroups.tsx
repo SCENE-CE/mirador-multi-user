@@ -1,13 +1,14 @@
 import {User} from '../../auth/types/types.ts'
 import { Divider, Grid, Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { UserGroup } from "../types/types.ts";
+import { CreateGroupDto, UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { GroupCard } from "./GroupCard.tsx";
 import { useUser } from "../../../utils/auth.tsx";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
+import { createGroup } from "../api/createGroup.ts";
 
 
 interface allGroupsProps {
@@ -17,7 +18,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [users, setUsers] = useState<UserGroup[]>([]);
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
-  const currentUser = useUser()
+  const currentUser = useUser();
 
   useEffect(
     () =>{
@@ -35,6 +36,19 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       fetchGroups()
     },[]
   )
+
+  const handleCreateGroup = async (name:string, usersToAdd:User[])=>{
+    try{
+      const userGroupToCreate : CreateGroupDto = {
+        name: name,
+        ownerId: user.id,
+        users: [...usersToAdd, user]
+      }
+      await createGroup(userGroupToCreate);
+    }catch(error){
+      console.error(error)
+    }
+  }
 
   const personalGroup = useMemo(() => {
     if (!Array.isArray(groups)) return null;
@@ -68,7 +82,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
         ))}
       </Grid>
       <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />
-      <DrawerCreateGroup InitializeGroup={()=>console.log('toto')} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
+      <DrawerCreateGroup ownerId={currentUser.data!.id} handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
     </Grid>
 
   )
