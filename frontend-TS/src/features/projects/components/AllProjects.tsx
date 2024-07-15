@@ -13,6 +13,7 @@ import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import toast from 'react-hot-toast';
+import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts";
 
 
 interface AllProjectsProps {
@@ -59,7 +60,19 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const projects = await getUserAllProjects(user.id);
+        const userGroups = await getUserAllProjects(user.id);
+        const projects = [];
+        const projectIds = new Set();
+        for (const group of userGroups) {
+          const groupProjects = await getAllGroupProjects(group.id);
+          for (const project of groupProjects) {
+            if (!projectIds.has(project.id)) {
+              projectIds.add(project.id);
+              projects.push(project);
+            }
+          }
+        }
+        console.log(projectIds)
         setUserProjects(projects);
       } catch (error) {
         console.error("Failed to fetch projects:", error);
@@ -173,7 +186,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
                       projectName={project.name}
                       projectWorkspace={project.userWorkspace}
                       initializeMirador={initializeMirador}
-                      NumberOfManifests={project.userWorkspace.catalog.length}
+                      NumberOfManifests={project.userWorkspace ? project.userWorkspace.catalog.length : 0}
                       deleteProject={deleteUserProject}
                       projectId={project.id}
                       updateUserProject={updateUserProject}
