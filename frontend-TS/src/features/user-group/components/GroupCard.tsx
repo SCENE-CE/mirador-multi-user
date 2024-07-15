@@ -16,6 +16,7 @@ export const GroupCard = ({ group ,personalGroup, HandleOpenEditGroupModal}:Grou
 
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
+    //We need
     HandleOpenEditGroupModal()
   },[setOpenMOdal,openModal])
 

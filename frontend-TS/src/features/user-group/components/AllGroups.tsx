@@ -1,5 +1,5 @@
 import {User} from '../../auth/types/types.ts'
-import { Divider, Grid, Typography } from "@mui/material";
+import {  Grid, Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CreateGroupDto, UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
@@ -87,9 +87,6 @@ console.log('ALL GROUPS RERENDER')
           <>
             <Grid item key={group.id}>
               <GroupCard group={group} personalGroup={personalGroup!}  HandleOpenEditGroupModal={HandleOpenEditGroupModal}/>
-            </Grid>
-            <Grid item>
-              <Divider />
             </Grid>
           </>
         ))}

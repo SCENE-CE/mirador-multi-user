@@ -1,4 +1,4 @@
-import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
+import { AppBar, Button, Divider, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { UserGroup } from "../types/types.ts";
@@ -21,7 +21,7 @@ export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreati
 
   const handleAddUser = ()=>{
     if(usersToAdd !== null) {
-    setUsersToAdd([...usersToAdd, userToAdd!]);
+      setUsersToAdd([...usersToAdd, userToAdd!]);
     }
   }
 
@@ -37,19 +37,27 @@ export const DrawerCreateGroup=({ownerId,modalCreateGroup,toggleModalGroupCreati
     return usersToAdd.map(group => group.users).flat();
   }, [usersToAdd]);
 
-const handleUserCreation = useCallback(()=>{
-  toggleModalGroupCreation();
-  handleCreatGroup(userGroupName, users);
-  setUsersToAdd([]);
-  setUserGroupName('');
-},[handleCreatGroup, userGroupName, users, toggleModalGroupCreation])
+  const handleUserCreation = useCallback(()=>{
+    toggleModalGroupCreation();
+    handleCreatGroup(userGroupName, users);
+    setUsersToAdd([]);
+    setUserGroupName('');
+    setUserToAdd(null);
+  },[handleCreatGroup, userGroupName, users, toggleModalGroupCreation])
+
+  const handleToggleModalGroupCreation= useCallback(()=>{
+    toggleModalGroupCreation();
+    setUsersToAdd([]);
+    setUserGroupName('');
+    setUserToAdd(null);
+  },[toggleModalGroupCreation])
 
   console.log('usersToAdd',usersToAdd)
 
   return(
     <>
       <div>
-        <Drawer anchor="bottom" open={modalCreateGroup} onClose={toggleModalGroupCreation}>
+        <Drawer anchor="bottom" open={modalCreateGroup} onClose={handleToggleModalGroupCreation}>
           <Paper
             sx={{
               left: '0',
@@ -82,11 +90,14 @@ const handleUserCreation = useCallback(()=>{
                   <TextField onChange={handleNameChange} sx={{ width:'100%'}} ></TextField>
                 </Grid>
               </Grid>
-              <Grid item container flexDirection="column" spacing={1}>
+              <Grid item container flexDirection="column" spacing={2}>
                 <Grid item>
                   <UsersSearchBar handleAddUser={handleAddUser} setSelectedUser={setUserToAdd}/>
                 </Grid>
                 <Grid item>
+                  <Divider/>
+                </Grid>
+                <Grid item sx={{maxWidth:'30%'}}>
                   <GroupUsersList users={users} handleRemoveUser={handleRemoveUser} ownerId={ownerId} />
                 </Grid>
                 <Grid item>
