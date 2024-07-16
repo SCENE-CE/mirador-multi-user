@@ -15,7 +15,9 @@ import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import toast from 'react-hot-toast';
 import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
+import { lookingForProject } from "../api/lookingForProject.ts";
+import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
+import { UserGroup } from "../../user-group/types/types.ts";
 
 
 interface AllProjectsProps {
@@ -37,52 +39,46 @@ const emptyWorkspace: IState = {
 
 };
 
-
-const emptyProject: Project = {
-  id: 0,
-  name: "",
-  owner: {
-    access_token:"" ,
-    id: 0,
-    mail: "",
-    name: "",
-    userGroups:[]
-  },
-  userWorkspace: emptyWorkspace
-};
-
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
-  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-
+  const [searchedProject, setSearchedProject] = useState<Project|null>(null);
+  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
   const [miradorState, setMiradorState] = useState<IState>();
 
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
 
-  useEffect(() => {
-    const fetchProjects = async () => {
-      try {
-        const userGroups = await getUserAllProjects(user.id);
-        const projects = [];
-        const projectIds = new Set();
-        for (const group of userGroups) {
-          const groupProjects = await getAllGroupProjects(group.id);
-          for (const project of groupProjects) {
-            if (!projectIds.has(project.id)) {
-              projectIds.add(project.id);
-              projects.push(project);
-            }
+  const fetchProjects = async () => {
+    try {
+      const userGroups = await getUserAllProjects(user.id);
+      const projects = [];
+      const projectIds = new Set();
+      for (const group of userGroups) {
+        const groupProjects = await getAllGroupProjects(group.id);
+        for (const project of groupProjects) {
+          if (!projectIds.has(project.id)) {
+            projectIds.add(project.id);
+            projects.push(project);
           }
         }
-        console.log(projectIds)
-        setUserProjects(projects);
-      } catch (error) {
-        console.error("Failed to fetch projects:", error);
       }
-    };
+      console.log(projectIds)
+      setUserProjects(projects);
+    } catch (error) {
+      console.error("Failed to fetch projects:", error);
+    }
+  };
+
+  const fetchUserPersonalGroup = async()=>{
+    const personalGroup = await getUserPersonalGroup(user.id)
+    setUserPersonalGroup(personalGroup)
+  }
+  useEffect(() => {
     fetchProjects();
+    fetchUserPersonalGroup()
   }, [user]);
+
+
 
   const deleteUserProject = useCallback(async (projectId: number) => {
     await deleteProject(projectId);
@@ -136,12 +132,10 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
 
   const saveProject = useCallback((state: IState, name: string)=>{
     if (selectedProjectId) {
-      // Use coalesce operator to avoid typescript error "value possibly undefined"
-      // That's non sense to use coalesce operator here, because selectedProjectId is always defined
-      const updatedProject = userProjects.find(project => project.id == selectedProjectId) ?? emptyProject;
-      updatedProject.userWorkspace = state;
-      updatedProject.name = name;
-      updateProject(updatedProject).then(r => {
+      const updatedProject = userProjects.find(project => project.id == selectedProjectId);
+      updatedProject!.userWorkspace = state;
+      updatedProject!.name = name;
+      updateProject(updatedProject!).then(r => {
         console.log(r);
         toast.success("Project saved");
       });
@@ -163,14 +157,18 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
 
   };
 
-  console.log(userProjects)
+  const handleLookingForProject = async (partialProjectName: string) => {
+    console.log('userPersonalGroup',userPersonalGroup)
+    return lookingForProject(partialProjectName, userPersonalGroup!.id)
+  }
 
+  console.log('searchedProject',searchedProject)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
         <Grid item container direction="row-reverse" spacing={2} alignItems="center">
           <Grid item>
-            <SearchBar fetchFunction={lookingForUserGroups} getOptionLabel={getOptionLabel} setSelectedData={setSelectedProject}/>
+            <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabel} setSelectedData={setSearchedProject}/>
           </Grid>
         </Grid>
         <Grid item container spacing={1}>
@@ -182,7 +180,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
               <Typography variant="h6" component="h2">No projects yet, start to work when clicking on "New project" button.</Typography>
             </Grid>
           )}
-          {!selectedProjectId && userProjects ? (
+          {!selectedProjectId && !searchedProject && userProjects && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((project) => (
                   <Grid item key={project.id} >
@@ -210,7 +208,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
                 </div>
               </Grid>
             </Grid>
-          ) : (
+          ) }
+          {selectedProjectId &&(
             <Grid item xs={12}>
               <MiradorViewer
                 miradorState={miradorState!}
@@ -219,7 +218,26 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
                 updateUserProject={updateUserProject}
               />
             </Grid>
-          )}
+          )
+          }
+          {
+            searchedProject &&(
+              <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+                <Grid item>
+                  <ProjectCard
+                    project={searchedProject}
+                    projectName={searchedProject.name}
+                    projectWorkspace={searchedProject.userWorkspace}
+                    initializeMirador={initializeMirador}
+                    NumberOfManifests={searchedProject.userWorkspace ? searchedProject.userWorkspace.catalog.length : 0}
+                    deleteProject={deleteUserProject}
+                    projectId={searchedProject.id}
+                    updateUserProject={updateUserProject}
+                  />
+                </Grid>
+              </Grid>
+            )
+          }
         </Grid>
       </Grid>
     </>
