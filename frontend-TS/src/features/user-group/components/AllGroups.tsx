@@ -40,15 +40,12 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       fetchGroups()
     },[openEditGroupModal]
   )
-console.log('ALL GROUPS RERENDER')
-  const handleCreateGroup = async (name:string, usersToAdd:User[])=>{
+  const handleCreateGroup = async (name:string)=>{
     try{
-      console.log('name', name)
-      console.log('name',typeof name)
       const userGroupToCreate : CreateGroupDto = {
         name: name,
         ownerId: user.id,
-        users: [...usersToAdd, user]
+        users: [user]
       }
       console.log(userGroupToCreate)
       await createGroup(userGroupToCreate);
@@ -92,7 +89,7 @@ console.log('ALL GROUPS RERENDER')
         ))}
       </Grid>
       <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />
-      <DrawerCreateGroup ownerId={currentUser.data!.id} handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
+      <DrawerCreateGroup handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
     </Grid>
 
   )
