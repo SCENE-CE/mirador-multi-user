@@ -1,7 +1,6 @@
 import { Button, Divider, Grid, Typography } from "@mui/material";
 import { UserGroup } from "../types/types.ts";
 import { GroupProjectList } from "./GroupProjectList.tsx";
-import { UsersSearchBar } from "./UsersSearchBar.tsx";
 import { GroupUsersList } from "./GroupUsersList.tsx";
 import { updateUsersForUserGroup } from "../api/updateUsersForUserGroup.ts";
 import { useCallback, useState } from "react";
@@ -9,6 +8,8 @@ import { User } from "../../auth/types/types.ts";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { deleteGroup } from "../api/deleteGroup.ts";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
+import { lookingForUsers } from "../api/lookingForUsers.ts";
+import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 interface ModalEditGroupProps {
   group:UserGroup
   personalGroup:UserGroup
@@ -18,6 +19,7 @@ export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEdit
   const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
   const [groupState, setGroupState] = useState(group);
   const [deleteModal, setDeleteModal]= useState(false)
+  const [searchInput, setSearchInput] = useState<string>('');
 
   const handleAddUser = async () => {
     if (userToAdd) {
@@ -29,10 +31,10 @@ export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEdit
     }
   };
   const handleRemoveUser = useCallback( async (userToRemove:User)=>{
-        const filteredGroupUsers = groupState.users.filter(user => user.id !== userToRemove.id);
-        const updatedGroup = await updateUsersForUserGroup({ ...groupState, users: filteredGroupUsers });
+    const filteredGroupUsers = groupState.users.filter(user => user.id !== userToRemove.id);
+    const updatedGroup = await updateUsersForUserGroup({ ...groupState, users: filteredGroupUsers });
 
-        setGroupState({ ...updatedGroup, users:filteredGroupUsers });
+    setGroupState({ ...updatedGroup, users:filteredGroupUsers });
   },[groupState])
 
   const handleDeleteModal = useCallback(()=>{
@@ -44,6 +46,17 @@ export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEdit
     handleDeleteModal()
     HandleOpenModal()
   },[HandleOpenModal, group.id, handleDeleteModal])
+
+  const getOptionLabel = (option: UserGroup): string => {
+    const user = option.users[0];
+    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.mail;
+    }
+    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.name;
+    }
+    return user.mail;
+  };
 
   return(
     <Grid item container flexDirection="row" spacing={1}>
@@ -58,9 +71,16 @@ export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEdit
       </Grid>
       <Divider orientation="vertical" variant="middle" flexItem/>
       <Grid item container xs={5} spacing={2}>
-        <UsersSearchBar
-          handleAddUser={handleAddUser}
-          setSelectedUser={setUserToAdd}
+        <Grid item>
+          <Typography>Adding user to group :</Typography>
+        </Grid>
+        <SearchBar
+          handleAdd={handleAddUser}
+          setSelectedData={setUserToAdd}
+          getOptionLabel={getOptionLabel}
+          fetchFunction={lookingForUsers}
+          setSearchInput={setSearchInput}
+          actionButtonLabel={"ADD"}
         />
         <GroupUsersList ownerId={groupState.ownerId} users={groupState.users} handleRemoveUser={handleRemoveUser}/>
       </Grid>

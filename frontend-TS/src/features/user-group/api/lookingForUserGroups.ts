@@ -1,10 +1,10 @@
 import storage from "../../../utils/storage.ts";
 import { BACKEND_URL } from "../../../config/config.ts";
 
-export const lookingForUsers= async (partialUserName:string)=>{
-  const token = storage.getToken();
+export const lookingForUserGroups =async (partialUserGroupName:string)=>{
   try{
-    const response = await fetch(`${BACKEND_URL}/user-group/search/users/${partialUserName}`,{
+    const token = storage.getToken();
+    const response = await fetch(`${BACKEND_URL}/user-group/search/groups/${partialUserGroupName}`,{
       method: 'GET',
       headers:{
         authorization: `Bearer ${token}`,
@@ -12,6 +12,6 @@ export const lookingForUsers= async (partialUserName:string)=>{
     const toReturn = await response.json();
     return toReturn;
   }catch(error){
-    throw error;
+    console.error(error);
   }
 }
