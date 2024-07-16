@@ -9,7 +9,7 @@ import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserGroup } from './entities/user-group.entity';
 import { Repository } from 'typeorm';
-import { UsersService } from '../users/users.service';
+import { UserGroupTypes } from '../enum/user-group-types';
 
 @Injectable()
 export class UserGroupService {
@@ -19,7 +19,29 @@ export class UserGroupService {
   ) {}
   async create(createUserGroupDto: CreateUserGroupDto): Promise<UserGroup> {
     try {
-      return await this.userGroupRepository.save(createUserGroupDto);
+      const groupToCreate = {
+        ...createUserGroupDto,
+        types: UserGroupTypes.MULTI_USER,
+      };
+      return await this.userGroupRepository.save(groupToCreate);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'An error occurred while creating userGroup',
+        error,
+      );
+    }
+  }
+
+  async createUserPersonalGroup(
+    createUserGroupDto: CreateUserGroupDto,
+  ): Promise<UserGroup> {
+    try {
+      const groupToCreate = {
+        ...createUserGroupDto,
+        type: UserGroupTypes.PERSONAL,
+      };
+      return await this.userGroupRepository.save(groupToCreate);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
