@@ -1,16 +1,17 @@
-import { Autocomplete, Button, Grid, TextField, Typography } from "@mui/material";
+import { Autocomplete, Button, Grid, TextField } from "@mui/material";
 import { useDebounceCallback } from 'usehooks-ts';
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 
 interface IUsersSearchBarProps<T>{
-  handleAddUser:()=>void
-  setSelectedData:Dispatch<SetStateAction<T | null>>
+  handleAdd?:()=>void
+  setSelectedData?:Dispatch<SetStateAction<T | null>>
   fetchFunction:(partialString:string)=>Promise<T[]>
   getOptionLabel:(option:T)=>string
-  setSearchInput:(value:string)=>void
+  setSearchInput?:(value:string)=>void
+  actionButtonLabel?:string
 }
 
-export const SearchBar = <T,>({getOptionLabel,setSelectedData,fetchFunction,handleAddUser,setSearchInput}:IUsersSearchBarProps<T>) => {
+export const SearchBar = <T,>({getOptionLabel,setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
   const [Suggestions, setSuggestions]=useState<T[]>([]);
 
   const HandlefetchUsers = async(partialUserName:string)=>{
@@ -27,22 +28,23 @@ export const SearchBar = <T,>({getOptionLabel,setSelectedData,fetchFunction,hand
 
   const handleInputChange= async (_event: SyntheticEvent, value: string) => {
     console.log(value)
-    setSearchInput(value);
+    if(setSearchInput){
+      setSearchInput(value);
+    }
     if (value) {
       await debouncedFetch(value);
     }
   }
 
   const handleChange = (_event: SyntheticEvent, value: T | null) => {
-    setSelectedData(value);
+    if(setSelectedData){
+      setSelectedData(value);
+    }
   };
 
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2}>
-        <Grid item>
-          <Typography>Adding user to group :</Typography>
-        </Grid>
         <Grid item container  spacing={2} direction="row" alignItems="center">
           <Grid item >
             <Autocomplete
@@ -53,12 +55,17 @@ export const SearchBar = <T,>({getOptionLabel,setSelectedData,fetchFunction,hand
               onChange={handleChange}
               id="combo-box-demo"
               options={Suggestions}
-              renderInput={(params) => <TextField {...params} label="User" />}
+              renderInput={(params) => <TextField {...params} label="Search" />}
               getOptionLabel={getOptionLabel}
             />
           </Grid>
           <Grid item>
-            <Button variant="contained" onClick={handleAddUser}>ADD</Button>
+            {actionButtonLabel &&(
+              <>
+                <Button variant="contained" onClick={handleAdd}>{actionButtonLabel}</Button>
+              </>
+            )
+            }
           </Grid>
         </Grid>
       </Grid>

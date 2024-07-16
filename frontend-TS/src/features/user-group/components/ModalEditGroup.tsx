@@ -14,7 +14,6 @@ interface ModalEditGroupProps {
   group:UserGroup
   personalGroup:UserGroup
   HandleOpenModal:()=>void
-  setSearchInput:()=>void
 }
 export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEditGroupProps)=>{
   const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
@@ -32,10 +31,10 @@ export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEdit
     }
   };
   const handleRemoveUser = useCallback( async (userToRemove:User)=>{
-        const filteredGroupUsers = groupState.users.filter(user => user.id !== userToRemove.id);
-        const updatedGroup = await updateUsersForUserGroup({ ...groupState, users: filteredGroupUsers });
+    const filteredGroupUsers = groupState.users.filter(user => user.id !== userToRemove.id);
+    const updatedGroup = await updateUsersForUserGroup({ ...groupState, users: filteredGroupUsers });
 
-        setGroupState({ ...updatedGroup, users:filteredGroupUsers });
+    setGroupState({ ...updatedGroup, users:filteredGroupUsers });
   },[groupState])
 
   const handleDeleteModal = useCallback(()=>{
@@ -72,12 +71,16 @@ export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEdit
       </Grid>
       <Divider orientation="vertical" variant="middle" flexItem/>
       <Grid item container xs={5} spacing={2}>
+        <Grid item>
+          <Typography>Adding user to group :</Typography>
+        </Grid>
         <SearchBar
-          handleAddUser={handleAddUser}
+          handleAdd={handleAddUser}
           setSelectedData={setUserToAdd}
           getOptionLabel={getOptionLabel}
           fetchFunction={lookingForUsers}
           setSearchInput={setSearchInput}
+          actionButtonLabel={"ADD"}
         />
         <GroupUsersList ownerId={groupState.ownerId} users={groupState.users} handleRemoveUser={handleRemoveUser}/>
       </Grid>
