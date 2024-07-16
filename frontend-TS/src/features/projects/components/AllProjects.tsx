@@ -14,6 +14,8 @@ import { FloatingActionButton } from "../../../components/elements/FloatingActio
 import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import toast from 'react-hot-toast';
 import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts";
+import { SearchBar } from "../../../components/elements/SearchBar.tsx";
+import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 
 
 interface AllProjectsProps {
@@ -51,6 +53,7 @@ const emptyProject: Project = {
 
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<Project[]>([]);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
 
   const [miradorState, setMiradorState] = useState<IState>();
@@ -155,19 +158,21 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     }
   },[handleSaveProject, selectedProjectId, user.id, userProjects])
 
+  const getOptionLabel = (option: Project): string => {
+    return option.name;
+
+  };
 
   console.log(userProjects)
 
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
-        {
-          !selectedProjectId && (
-            <Grid item container justifyContent="center">
-              <Typography variant="h5" component="h1">{user.name}'s Projects</Typography>
-            </Grid>
-          )
-        }
+        <Grid item container direction="row-reverse" spacing={2} alignItems="center">
+          <Grid item>
+            <SearchBar fetchFunction={lookingForUserGroups} getOptionLabel={getOptionLabel} setSelectedData={setSelectedProject}/>
+          </Grid>
+        </Grid>
         <Grid item container spacing={1}>
           {!userProjects.length && (
             <Grid

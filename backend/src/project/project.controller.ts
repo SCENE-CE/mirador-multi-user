@@ -67,6 +67,17 @@ export class ProjectController {
     return this.projectService.update(params.id, updateProjectDto);
   }
 
+  @Get('/search/:UserGroupId/:partialProjectName')
+  lookingForProject(
+    @Param('partialProjectName') partialProjectName: string,
+    @Param('UserGroupId') userId: number,
+  ) {
+    return this.projectService.findProjectsByPartialNameAndUserGroup(
+      partialProjectName,
+      userId,
+    );
+  }
+
   @Delete(':id')
   @UseGuards(AuthGuard)
   @UsePipes(new ValidationPipe({ transform: true }))
