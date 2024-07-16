@@ -1,7 +1,7 @@
-import {User} from '../../auth/types/types.ts'
-import {  Grid, Typography } from "@mui/material";
+import { User } from "../../auth/types/types.ts";
+import { Grid, Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CreateGroupDto, UserGroup } from "../types/types.ts";
+import { CreateGroupDto, UserGroup, UserGroupTypes } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { GroupCard } from "./GroupCard.tsx";
 import { useUser } from "../../../utils/auth.tsx";
@@ -26,7 +26,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const fetchGroups = async () => {
     try {
       let groups = await getAllUserGroups(user.id)
-      const users : UserGroup[] = groups.filter((group:UserGroup)=> group.users.length < 2)
+      const users : UserGroup[] = groups.filter((group:UserGroup)=> group.type === UserGroupTypes.PERSONAL)
       groups = groups.filter(((group : UserGroup)=>{ return users.indexOf(group) < 0}))
       setGroups(groups)
       setUsers(users)
@@ -40,15 +40,12 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       fetchGroups()
     },[openEditGroupModal]
   )
-console.log('ALL GROUPS RERENDER')
-  const handleCreateGroup = async (name:string, usersToAdd:User[])=>{
+  const handleCreateGroup = async (name:string)=>{
     try{
-      console.log('name', name)
-      console.log('name',typeof name)
       const userGroupToCreate : CreateGroupDto = {
         name: name,
         ownerId: user.id,
-        users: [...usersToAdd, user]
+        users: [user]
       }
       console.log(userGroupToCreate)
       await createGroup(userGroupToCreate);
@@ -92,7 +89,7 @@ console.log('ALL GROUPS RERENDER')
         ))}
       </Grid>
       <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />
-      <DrawerCreateGroup ownerId={currentUser.data!.id} handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
+      <DrawerCreateGroup handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
     </Grid>
 
   )

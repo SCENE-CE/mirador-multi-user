@@ -26,7 +26,7 @@ export class UserGroup {
   @IsNumberString()
   ownerId: number;
 
-  @Column()
+  @Column({ type: 'enum', enum: UserGroupTypes })
   @IsEnum(UserGroupTypes)
   type: UserGroupTypes;
 

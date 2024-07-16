@@ -45,6 +45,11 @@ export class UserGroupController {
     return this.userGroupService.findAllUserGroupForUser(userId);
   }
 
+  @Get('/groups/user-personnal/:userId')
+  async getUserPersonalGroup(@Param('userId') userId: number) {
+    return this.userGroupService.findUserPersonalGroup(userId);
+  }
+
   @Patch('/users/:groupId')
   @UseGuards(AuthGuard)
   async updateUsersForUserGroup(

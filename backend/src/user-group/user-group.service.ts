@@ -1,15 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateUserGroupDto } from './dto/create-user-group.dto';
-import { UpdateUserGroupDto } from './dto/update-user-group.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserGroup } from './entities/user-group.entity';
-import { Repository } from 'typeorm';
-import { UserGroupTypes } from '../enum/user-group-types';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateUserGroupDto } from "./dto/create-user-group.dto";
+import { UpdateUserGroupDto } from "./dto/update-user-group.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { UserGroup } from "./entities/user-group.entity";
+import { Repository } from "typeorm";
+import { UserGroupTypes } from "../enum/user-group-types";
 
 @Injectable()
 export class UserGroupService {
@@ -21,7 +16,7 @@ export class UserGroupService {
     try {
       const groupToCreate = {
         ...createUserGroupDto,
-        types: UserGroupTypes.MULTI_USER,
+        type: UserGroupTypes.MULTI_USER,
       };
       return await this.userGroupRepository.save(groupToCreate);
     } catch (error) {
@@ -92,7 +87,8 @@ export class UserGroupService {
         .where('user.id = :userId', { userId: userId })
         .getMany();
       return allUserGroups.find(
-        (userPersonalGroup) => userPersonalGroup.users.length < 2,
+        (userPersonalGroup) =>
+          userPersonalGroup.type === UserGroupTypes.PERSONAL,
       );
     } catch (error) {
       console.log(error);
@@ -121,7 +117,7 @@ export class UserGroupService {
         .getMany();
 
       const filteredGroups = allUserGroups.filter(
-        (userGroup) => userGroup.users.length > 1,
+        (userGroup) => (userGroup.type = UserGroupTypes.MULTI_USER),
       );
       return filteredGroups;
     } catch (error) {
@@ -143,9 +139,9 @@ export class UserGroupService {
 
   async updateUsersForUserGroup(id: number, dto: UpdateUserGroupDto) {
     try {
-      if (!dto.users || dto.users.length < 2) {
+      if (!dto.users) {
         throw new BadRequestException(
-          "A group of users can't contain less than two users",
+          "A group of users can't contain less than one user",
         );
       }
 

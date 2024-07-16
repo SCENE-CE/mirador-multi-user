@@ -1,9 +1,15 @@
 import { User } from "../../auth/types/types.ts";
 
+export enum UserGroupTypes {
+  PERSONAL = 'personal',
+  MULTI_USER = 'multi-user',
+}
+
 export type UserGroup = {
   id:number;
   name:string;
   ownerId:number;
+  type:UserGroupTypes;
   users:User[];
 }
 
