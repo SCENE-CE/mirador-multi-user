@@ -1,7 +1,8 @@
 import { useLogout, useUser } from "../../utils/auth.tsx";
-import { Grid, Typography } from "@mui/material";
+import { Grid } from "@mui/material";
 import { SideDrawer } from "../../components/elements/SideDrawer.tsx";
 import { useState } from "react";
+import { Loading } from "../../components/elements/Loading.tsx";
 
 export const MainContent = () => {
   const user = useUser();
@@ -10,7 +11,7 @@ export const MainContent = () => {
   const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
 
   if (!user || !user.data) {
-    return <Typography>Loading user data...</Typography>;
+    return <Loading />;
   }
 
   const handleDiscconnect = () => {
