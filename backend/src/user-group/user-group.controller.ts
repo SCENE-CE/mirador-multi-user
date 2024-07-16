@@ -35,9 +35,14 @@ export class UserGroupController {
     return this.userGroupService.findAll();
   }
 
-  @Get('/search/:partialUserName')
+  @Get('/search/users/:partialUserName')
   lookingForUser(@Param('partialUserName') partialUserName: string) {
     return this.userGroupService.searchForUser(partialUserName);
+  }
+
+  @Get('/search/groups/:partialUserGroupName')
+  lookingForGroup(@Param('partialUserGroupName') partialUserGroupName: string) {
+    return this.userGroupService.searchForUserGroup(partialUserGroupName);
   }
 
   @Get('/groups/:userId')

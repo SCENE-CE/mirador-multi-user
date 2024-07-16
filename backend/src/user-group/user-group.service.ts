@@ -1,10 +1,15 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateUserGroupDto } from "./dto/create-user-group.dto";
-import { UpdateUserGroupDto } from "./dto/update-user-group.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { UserGroup } from "./entities/user-group.entity";
-import { Repository } from "typeorm";
-import { UserGroupTypes } from "../enum/user-group-types";
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateUserGroupDto } from './dto/create-user-group.dto';
+import { UpdateUserGroupDto } from './dto/update-user-group.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserGroup } from './entities/user-group.entity';
+import { Brackets, Repository } from 'typeorm';
+import { UserGroupTypes } from '../enum/user-group-types';
 
 @Injectable()
 export class UserGroupService {
@@ -57,23 +62,24 @@ export class UserGroupService {
   async searchForUser(partialUserName: string) {
     try {
       const partialUserNameLength = partialUserName.length;
-      const listOfUserGroup = await this.userGroupRepository.find();
-      const personalUsersGroups: UserGroup[] = listOfUserGroup.filter(
-        (userPersonalGroup) =>
-          userPersonalGroup.type === UserGroupTypes.PERSONAL,
-      );
-      const filteredListOfUserGroup = personalUsersGroups.filter(
-        (userGroup: UserGroup) => {
-          const user = userGroup.users[0];
-          const trimedUserName = user.name.substring(0, partialUserNameLength);
-          const trimedUserMail = user.mail.substring(0, partialUserNameLength);
-          return (
-            partialUserName === trimedUserName ||
-            partialUserName === trimedUserMail
-          );
-        },
-      );
-      return filteredListOfUserGroup.slice(0, 3);
+
+      return await this.userGroupRepository
+        .createQueryBuilder('userGroup')
+        .innerJoinAndSelect('userGroup.users', 'user')
+        .where('userGroup.type = :type', { type: UserGroupTypes.PERSONAL })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('LEFT(user.name, :length) = :partialUserName', {
+              length: partialUserNameLength,
+              partialUserName,
+            }).orWhere('LEFT(user.mail, :length) = :partialUserName', {
+              length: partialUserNameLength,
+              partialUserName,
+            });
+          }),
+        )
+        .limit(3)
+        .getMany();
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -126,6 +132,32 @@ export class UserGroupService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error);
+    }
+  }
+
+  async searchForUserGroup(partialUserGroupName: string) {
+    try {
+      const partialUserGroupNameLength = partialUserGroupName.length;
+
+      return await this.userGroupRepository
+        .createQueryBuilder('userGroup')
+        .where('userGroup.type = :type', { type: UserGroupTypes.MULTI_USER })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('LEFT(userGroup.name, :length) = :partialUserGroupName', {
+              length: partialUserGroupNameLength,
+              partialUserGroupName,
+            });
+          }),
+        )
+        .limit(3)
+        .getMany();
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'error while searching for userGroup',
+        error,
+      );
     }
   }
 
