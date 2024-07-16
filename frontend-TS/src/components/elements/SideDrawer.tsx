@@ -96,7 +96,8 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
 
   return(
     <>
-      <Drawer variant="permanent" open={open}>
+      <Drawer variant="permanent" open={open}
+      >
         <DrawerHeader>
           <IconButton onClick={open ?  handleDrawerClose : handleDrawerOpen }>
             {!open ? <ChevronRightIcon /> : <ChevronLeftIcon />}

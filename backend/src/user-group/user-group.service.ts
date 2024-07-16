@@ -58,16 +58,19 @@ export class UserGroupService {
     try {
       const partialUserNameLength = partialUserName.length;
       const listOfUserGroup = await this.userGroupRepository.find();
-      const personnalUsersGroups: UserGroup[] = listOfUserGroup.filter(
-        (userPersonalGroup) => userPersonalGroup.users.length < 2,
+      const personalUsersGroups: UserGroup[] = listOfUserGroup.filter(
+        (userPersonalGroup) =>
+          userPersonalGroup.type === UserGroupTypes.PERSONAL,
       );
-      const filteredListOfUserGroup = personnalUsersGroups.filter(
+      const filteredListOfUserGroup = personalUsersGroups.filter(
         (userGroup: UserGroup) => {
-          const trimedGroupName = userGroup.name.substring(
-            0,
-            partialUserNameLength,
+          const user = userGroup.users[0];
+          const trimedUserName = user.name.substring(0, partialUserNameLength);
+          const trimedUserMail = user.mail.substring(0, partialUserNameLength);
+          return (
+            partialUserName === trimedUserName ||
+            partialUserName === trimedUserMail
           );
-          return partialUserName === trimedGroupName;
         },
       );
       return filteredListOfUserGroup.slice(0, 3);

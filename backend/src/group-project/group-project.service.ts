@@ -56,11 +56,6 @@ export class GroupProjectService {
 
   async RemoveProjectToGroup(dto: removeProjectToGroupDto) {
     try {
-      console.log(
-        '---------------------------------------------------------------------------',
-      );
-      console.log('projectId : ', dto.projectId);
-      console.log('groupId : ', dto.groupId);
       const linkGroupProjects =
         await this.linkGroupProjectService.findAllProjectByUserGroupId(
           dto.groupId,

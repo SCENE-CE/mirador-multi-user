@@ -11,10 +11,12 @@ interface IUsersSearchBarProps {
 
 export const UsersSearchBar = ({setSelectedUser,handleAddUser}:IUsersSearchBarProps) => {
   const [usersSuggestions, setUsersSuggestions]=useState<UserGroup[]>([]);
+  const [searchInput, setSearchInput] = useState<string>('');
 
   const fetchUsers = async(partialUserName:string)=>{
     try{
       const users = await lookingForUsers(partialUserName);
+      console.log(users)
       setUsersSuggestions(users);
     } catch (error) {
       console.error('Error fetching address data:', error);
@@ -26,6 +28,7 @@ export const UsersSearchBar = ({setSelectedUser,handleAddUser}:IUsersSearchBarPr
 
   const handleInputChange= (_event:SyntheticEvent,value:string )=>{
     console.log(value)
+    setSearchInput(value);
     if(value){
       debouncedFetch(value);
     }
@@ -35,6 +38,16 @@ export const UsersSearchBar = ({setSelectedUser,handleAddUser}:IUsersSearchBarPr
     setSelectedUser(value);
   };
 
+  const getOptionLabel = (option: UserGroup): string => {
+    const user = option.users[0];
+    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.mail;
+    }
+    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.name;
+    }
+    return user.mail;
+  };
 
 
   return(
@@ -53,8 +66,8 @@ export const UsersSearchBar = ({setSelectedUser,handleAddUser}:IUsersSearchBarPr
               onChange={handleChange}
               id="combo-box-demo"
               options={usersSuggestions}
-              getOptionLabel={(option: UserGroup) => option.name}
               renderInput={(params) => <TextField {...params} label="User" />}
+              getOptionLabel={getOptionLabel}
             />
           </Grid>
           <Grid item>
