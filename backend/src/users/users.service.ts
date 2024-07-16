@@ -28,11 +28,12 @@ export class UsersService {
       userToSave.password = hashPassword;
 
       const savedUser = await this.userRepository.save(userToSave);
-      const privateUserGroup = await this.userGroupService.create({
-        name: savedUser.name,
-        ownerId: savedUser.id,
-        users: [savedUser],
-      });
+      const privateUserGroup =
+        await this.userGroupService.createUserPersonalGroup({
+          name: savedUser.name,
+          ownerId: savedUser.id,
+          users: [savedUser],
+        });
 
       return savedUser;
     } catch (error) {
@@ -75,7 +76,7 @@ export class UsersService {
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new InternalServerErrorException(error);
     }
   }
@@ -92,8 +93,6 @@ export class UsersService {
 
     return user.user_groups;
   }
-
-
 
   async remove(id: number) {
     try {
