@@ -1,54 +1,41 @@
 import { Autocomplete, Button, Grid, TextField, Typography } from "@mui/material";
-import { UserGroup } from "../types/types.ts";
 import { useDebounceCallback } from 'usehooks-ts';
-import { lookingForUsers } from "../api/lookingForUsers.ts";
 import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 
-interface IUsersSearchBarProps {
+interface IUsersSearchBarProps<T>{
   handleAddUser:()=>void
-  setSelectedUser:Dispatch<SetStateAction<UserGroup | null>>
+  setSelectedData:Dispatch<SetStateAction<T | null>>
+  fetchFunction:(partialString:string)=>Promise<T[]>
+  getOptionLabel:(option:T)=>string
+  setSearchInput:(value:string)=>void
 }
 
-export const UsersSearchBar = ({setSelectedUser,handleAddUser}:IUsersSearchBarProps) => {
-  const [usersSuggestions, setUsersSuggestions]=useState<UserGroup[]>([]);
-  const [searchInput, setSearchInput] = useState<string>('');
+export const SearchBar = <T,>({getOptionLabel,setSelectedData,fetchFunction,handleAddUser,setSearchInput}:IUsersSearchBarProps<T>) => {
+  const [Suggestions, setSuggestions]=useState<T[]>([]);
 
-  const fetchUsers = async(partialUserName:string)=>{
+  const HandlefetchUsers = async(partialUserName:string)=>{
     try{
-      const users = await lookingForUsers(partialUserName);
-      console.log(users)
-      setUsersSuggestions(users);
+      const data = await fetchFunction(partialUserName);
+      setSuggestions(data);
     } catch (error) {
       console.error('Error fetching address data:', error);
     }
   }
-  const debouncedFetch = useDebounceCallback((value: string) => {
-    fetchUsers(value)
+  const debouncedFetch = useDebounceCallback(async (value: string) => {
+    await HandlefetchUsers(value)
   }, 500);
 
-  const handleInputChange= (_event:SyntheticEvent,value:string )=>{
+  const handleInputChange= async (_event: SyntheticEvent, value: string) => {
     console.log(value)
     setSearchInput(value);
-    if(value){
-      debouncedFetch(value);
+    if (value) {
+      await debouncedFetch(value);
     }
   }
 
-  const handleChange = (_event: SyntheticEvent, value: UserGroup | null) => {
-    setSelectedUser(value);
+  const handleChange = (_event: SyntheticEvent, value: T | null) => {
+    setSelectedData(value);
   };
-
-  const getOptionLabel = (option: UserGroup): string => {
-    const user = option.users[0];
-    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.mail;
-    }
-    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.name;
-    }
-    return user.mail;
-  };
-
 
   return(
     <Grid item container flexDirection="column" spacing={1}>
@@ -65,7 +52,7 @@ export const UsersSearchBar = ({setSelectedUser,handleAddUser}:IUsersSearchBarPr
               sx={{width:'250px'}}
               onChange={handleChange}
               id="combo-box-demo"
-              options={usersSuggestions}
+              options={Suggestions}
               renderInput={(params) => <TextField {...params} label="User" />}
               getOptionLabel={getOptionLabel}
             />
