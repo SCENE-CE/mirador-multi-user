@@ -17,7 +17,6 @@ interface ModalEditGroupProps {
 export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEditGroupProps)=>{
   const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
   const [groupState, setGroupState] = useState(group);
-  const [forbiddenModal, setForbiddenModal] = useState<boolean>(false)
   const [deleteModal, setDeleteModal]= useState(false)
 
   const handleAddUser = async () => {
@@ -30,20 +29,11 @@ export const ModalEditGroup = ({ group,personalGroup,HandleOpenModal }:ModalEdit
     }
   };
   const handleRemoveUser = useCallback( async (userToRemove:User)=>{
-      if(groupState.users.length > 2){
         const filteredGroupUsers = groupState.users.filter(user => user.id !== userToRemove.id);
         const updatedGroup = await updateUsersForUserGroup({ ...groupState, users: filteredGroupUsers });
 
         setGroupState({ ...updatedGroup, users:filteredGroupUsers });
-      }
-      else {
-        return setForbiddenModal(true)
-      }
   },[groupState])
-console.log('RERENDER MODAL EDIT GROUP users', groupState.users)
-  const handleForbbidenModal = useCallback(()=>{
-    setForbiddenModal(!forbiddenModal);
-  },[setForbiddenModal, forbiddenModal])
 
   const handleDeleteModal = useCallback(()=>{
     setDeleteModal(!deleteModal);
@@ -73,14 +63,6 @@ console.log('RERENDER MODAL EDIT GROUP users', groupState.users)
           setSelectedUser={setUserToAdd}
         />
         <GroupUsersList ownerId={groupState.ownerId} users={groupState.users} handleRemoveUser={handleRemoveUser}/>
-        {forbiddenModal &&(
-          <MMUModal openModal={forbiddenModal} setOpenModal={handleForbbidenModal} width={400} children={
-            <Grid>
-              /!\ A group can't contain less than two users
-            </Grid>
-          }/>
-        )
-        }
       </Grid>
       <Grid item container>
         <Button variant="contained" color="error" onClick={handleDeleteModal}>DELETE GROUP</Button>
