@@ -12,8 +12,6 @@ import { GroupProjectService } from './group-project.service';
 import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../project/dto/create-project.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { PatchParams } from '../project/validators/validators';
-import { UpdateProjectDto } from '../project/dto/update-project.dto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 
 @Controller('group-project')

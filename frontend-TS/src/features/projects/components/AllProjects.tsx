@@ -90,11 +90,14 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
   },[userProjects]);
 
   const updateUserProject = useCallback(async (projectUser:ProjectUser, newProjectName:string)=>{
-    const updatedProject = {...projectUser.project, name:newProjectName}
+    const updatedProject:ProjectUser = {...projectUser, project: {
+      ...projectUser.project,
+      name: newProjectName
+    }}
     console.log(updatedProject)
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
-      return p.id != project.id;
+      return p.project.id != projectUser.project.id;
     });
     updatedListOfProject = [updatedProject,...updatedListOfProject]
     setUserProjects(updatedListOfProject);

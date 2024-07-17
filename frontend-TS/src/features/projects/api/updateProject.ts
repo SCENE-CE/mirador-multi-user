@@ -5,7 +5,7 @@ import { BACKEND_URL } from "../../../config/config.ts";
 export const updateProject = async (project: ProjectUser) => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${BACKEND_URL}/project/${project.id}`, {
+    const response = await fetch(`${BACKEND_URL}/group-project/updateProject`, {
       method: "PATCH",
       headers: {
         "Authorization": `Bearer ${token}`,
