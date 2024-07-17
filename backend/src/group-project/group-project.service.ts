@@ -116,6 +116,31 @@ export class GroupProjectService {
     }
   }
 
+  async searchForUserGroupProjectWithPartialProjectName(
+    partialUserName: string,
+    userGroupId: number,
+  ) {
+    try {
+      const arrayOfProjects =
+        await this.projectService.findProjectsByPartialNameAndUserGroup(
+          partialUserName,
+          userGroupId,
+        );
+      const userProjects = [];
+      for (const projets of arrayOfProjects) {
+        const userPorject = await this.getProjectRightForUser(
+          userGroupId,
+          projets.id,
+        );
+        userProjects.push(userPorject);
+      }
+      return userProjects;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   async createProject(dto: CreateProjectDto) {
     try {
       const userPersonalGroup =
@@ -125,7 +150,10 @@ export class GroupProjectService {
         groupId: userPersonalGroup.id,
         projectId: project.id,
       });
-      return project;
+      return await this.getProjectRightForUser(
+        userPersonalGroup.id,
+        project.id,
+      );
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(

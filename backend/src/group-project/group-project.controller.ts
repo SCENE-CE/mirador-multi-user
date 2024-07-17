@@ -50,6 +50,17 @@ export class GroupProjectController {
     return this.groupProjectService.updateProject(UpdateProjectGroupDto);
   }
 
+  @Get('/search/:UserGroupId/:partialProjectName')
+  lookingForProject(
+    @Param('partialProjectName') partialProjectName: string,
+    @Param('UserGroupId') userId: number,
+  ) {
+    return this.groupProjectService.searchForUserGroupProjectWithPartialProjectName(
+      partialProjectName,
+      userId,
+    );
+  }
+
   @Delete('/project/:projectId/:groupId')
   deleteGroupProjectLink(
     @Param('projectId') projectId: number,

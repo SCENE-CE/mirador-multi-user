@@ -5,37 +5,28 @@ import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import {  useCallback, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalEditProject } from "./ModalEditProject.tsx";
-import { Project } from "../types/types.ts";
+import { ProjectUser } from "../types/types.ts";
 import placeholder from "../../../assets/Placeholder.svg"
 
 interface CardProps {
-  projectName: string,
-  projectWorkspace: IState
   initializeMirador: (projectWorkspace: IState, projectId: number) => void,
-  NumberOfManifests?: number,
-  deleteProject?: (projectId: number) => void,
-  projectId: number,
-  project?:Project,
-  updateUserProject:(project:Project, newProjectName:string)=>void,
+  deleteProject: (projectId: number) => void,
+  ProjectUser:ProjectUser,
+  updateUserProject:(project:ProjectUser, newProjectName:string)=>void,
 }
 
 export const ProjectCard= ({
-  projectName,
-  projectWorkspace,
   initializeMirador,
-  NumberOfManifests = 0,
   deleteProject,
-  projectId,
-  project,
+  ProjectUser,
   updateUserProject
 }:CardProps
 ) => {
-
   const [openModal, setOpenMOdal] = useState(false)
+const project = ProjectUser.project
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
-
 
   return (
     <>
@@ -46,12 +37,12 @@ export const ProjectCard= ({
               <img src={placeholder} alt="placeholder" style={{height:100, width:200}}/>
             </Grid>
             <Grid item xs={12} sm={4}>
-              <Typography variant="subtitle1">{projectName}</Typography>
+              <Typography variant="subtitle1">{project.name}</Typography>
             </Grid>
             <Grid item xs={12} sm={3}>
-              {NumberOfManifests === 0 && "No manifest"}
-              {NumberOfManifests === 1 && `${NumberOfManifests} manifest`}
-              {NumberOfManifests > 1 && `${NumberOfManifests} manifests`}
+              {project.userWorkspace.catalog.length === 0 && "No manifest"}
+              {project.userWorkspace.catalog.length === 1 && `${project.userWorkspace.catalog.length} manifest`}
+              {project.userWorkspace.catalog.length > 1 && `${project.userWorkspace.catalog.length} manifests`}
             </Grid>
           </Grid>
           <Grid item
@@ -64,7 +55,7 @@ export const ProjectCard= ({
               <Tooltip title={"Open project"}>
                 <Button
                   onClick={() => {
-                    initializeMirador(projectWorkspace, projectId);
+                    initializeMirador(project.userWorkspace, project.id);
                   }}
                   variant="contained"
                 >
@@ -72,7 +63,7 @@ export const ProjectCard= ({
                 </Button>
               </Tooltip>
                 </Grid>
-                {projectId && (
+                {project.id && (
                   <>
                   <Grid item>
                     <Tooltip title={"Project configuration"}>
@@ -88,7 +79,7 @@ export const ProjectCard= ({
                 )}
               </Grid>
             </CardActions>
-            <MMUModal width={400} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject deleteProject={deleteProject!} updateUserProject={updateUserProject} project={project!}/>}/>
+            <MMUModal width={400} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject project={project} deleteProject={deleteProject!} updateUserProject={updateUserProject} projectUser={ProjectUser}/>}/>
           </Grid>
         </Grid>
       </Card>

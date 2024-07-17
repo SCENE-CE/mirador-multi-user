@@ -1,23 +1,24 @@
 import { Button, Grid, TextField, Tooltip, Typography } from "@mui/material";
 import ModeEditIcon from '@mui/icons-material/ModeEdit';
 import { ChangeEvent, useCallback, useState } from "react";
-import { Project } from "../types/types.ts";
+import { Project, ProjectUser } from "../types/types.ts";
 import SaveIcon from '@mui/icons-material/Save';
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalConfirmDelete } from "./ModalConfirmDelete.tsx";
 interface ModalProjectProps {
+  projectUser:ProjectUser,
   project:Project,
-  updateUserProject:(project:Project, newProjectName:string)=>void,
+  updateUserProject:(project:ProjectUser, newProjectName:string)=>void,
   deleteProject?:(projectId:number)=>void,
 }
 
-export const ModalEditProject = ({ project, updateUserProject, deleteProject }:ModalProjectProps)=>{
+export const ModalEditProject = ({ projectUser,project, updateUserProject, deleteProject }:ModalProjectProps)=>{
   const [editName, setEditName] = useState(false);
   const [ newProjectName, setNewProjectName] = useState(project!.name);
   const [openModal, setOpenMOdal] = useState(false)
 
   const HandleUpdateProject = useCallback(async ()=>{
-    updateUserProject(project,newProjectName);
+    updateUserProject(projectUser,newProjectName);
     setEditName(!editName)
   },[editName, newProjectName, project])
 

@@ -17,7 +17,7 @@ import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
-import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import {  UserGroup } from "../../user-group/types/types.ts";
 
 
 interface AllProjectsProps {
@@ -41,7 +41,7 @@ const emptyWorkspace: IState = {
 
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
-  const [searchedProject, setSearchedProject] = useState<Project|null>(null);
+  const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
   const [miradorState, setMiradorState] = useState<IState>();
@@ -61,7 +61,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
             projects.push(groupProject);
           }
         }
-      console.log(groupProjects)
+        console.log(groupProjects)
       }
       setUserProjects(projects);
     } catch (error) {
@@ -91,9 +91,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
 
   const updateUserProject = useCallback(async (projectUser:ProjectUser, newProjectName:string)=>{
     const updatedProject:ProjectUser = {...projectUser, project: {
-      ...projectUser.project,
-      name: newProjectName
-    }}
+        ...projectUser.project,
+        name: newProjectName
+      }}
     console.log(updatedProject)
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
@@ -119,7 +119,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
         userWorkspace: workspace
       }
     )
-    setUserProjects((prevState: Project[]) => [...prevState,
+    setUserProjects((prevState) => [...prevState,
       response]
     );
     initializeMirador(undefined, response.id)
@@ -128,7 +128,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
 
 
 
-  const handleSaveProject = useCallback((newProject:Project)=>{
+  const handleSaveProject = useCallback((newProject:ProjectUser)=>{
     setUserProjects(userProjects => [...userProjects, newProject]);
 
   },[setUserProjects])
@@ -136,8 +136,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
   const saveProject = useCallback((state: IState, name: string)=>{
     if (selectedProjectId) {
       const updatedProject = userProjects.find(project => project.id == selectedProjectId);
-      updatedProject!.userWorkspace = state;
-      updatedProject!.name = name;
+      updatedProject!.project.userWorkspace = state;
+      updatedProject!.project.name = name;
       updateProject(updatedProject!).then(r => {
         console.log(r);
         toast.success("Project saved");
@@ -149,30 +149,44 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
         userWorkspace: state,
       };
       createProject(project).then(r => {
-        setSelectedProjectId(r.id);
-        handleSaveProject( { id: r.id,...project });
+        setSelectedProjectId(r.project.id);
+        handleSaveProject( { ...r,
+          project:{...project, id:r.project.id}
+        });
       });
     }
   },[handleSaveProject, selectedProjectId, user.id, userProjects])
 
   const getOptionLabel = (option: Project): string => {
     return option.name;
-
   };
 
   const handleLookingForProject = async (partialProjectName: string) => {
     console.log('userPersonalGroup',userPersonalGroup)
-    return lookingForProject(partialProjectName, userPersonalGroup!.id)
+    const userProjectArray = await lookingForProject(partialProjectName, userPersonalGroup!.id)
+    const projectArray = []
+    for(const projectUser of userProjectArray){
+      projectArray.push(projectUser.project)
+    }
+    return projectArray;
   }
 
+  const handleSetSearchProject = (project:Project)=>{
+    const  searchedProject = userProjects.find(userProject => userProject.project.id === project.id)
+    setSearchedProject(searchedProject!)
+  }
   console.log('searchedProject',searchedProject)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
         <Grid item container direction="row-reverse" spacing={2} alignItems="center">
-          <Grid item>
-            <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabel} setSelectedData={setSearchedProject}/>
-          </Grid>
+          {
+            !selectedProjectId &&(
+              <Grid item>
+                <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabel} setSearchedProject={handleSetSearchProject}/>
+              </Grid>
+            )
+          }
         </Grid>
         <Grid item container spacing={1}>
           {!userProjects.length && (
@@ -185,16 +199,12 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
           )}
           {!selectedProjectId && !searchedProject && userProjects && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
-              {userProjects.map((project) => (
-                  <Grid item key={project.id} >
+              {userProjects.map((projectUser) => (
+                  <Grid item key={projectUser.project.id} >
                     <ProjectCard
-                      project={project}
-                      projectName={project.name}
-                      projectWorkspace={project.userWorkspace}
+                      ProjectUser={projectUser}
                       initializeMirador={initializeMirador}
-                      NumberOfManifests={project.userWorkspace ? project.userWorkspace.catalog.length : 0}
                       deleteProject={deleteUserProject}
-                      projectId={project.id}
                       updateUserProject={updateUserProject}
                     />
                   </Grid>
@@ -217,24 +227,20 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
               <MiradorViewer
                 miradorState={miradorState!}
                 saveMiradorState={saveProject}
-                project={userProjects.find(project => project.id == selectedProjectId)!}
+                ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!}
                 updateUserProject={updateUserProject}
               />
             </Grid>
           )
           }
           {
-            searchedProject &&(
+            searchedProject && !selectedProjectId &&(
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item>
                   <ProjectCard
-                    project={searchedProject}
-                    projectName={searchedProject.name}
-                    projectWorkspace={searchedProject.userWorkspace}
+                    ProjectUser={searchedProject}
                     initializeMirador={initializeMirador}
-                    NumberOfManifests={searchedProject.userWorkspace ? searchedProject.userWorkspace.catalog.length : 0}
                     deleteProject={deleteUserProject}
-                    projectId={searchedProject.id}
                     updateUserProject={updateUserProject}
                   />
                 </Grid>

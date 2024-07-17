@@ -11,20 +11,21 @@ import { Button, Grid, Tooltip, Typography } from "@mui/material";
 import './style/mirador.css'
 import { MMUModal } from "../../components/elements/modal.tsx";
 import { ModalEditProject } from "../projects/components/ModalEditProject.tsx";
-import { Project } from "../projects/types/types.ts";
+import { ProjectUser } from "../projects/types/types.ts";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
 interface MiradorViewerProps {
   miradorState: IMiradorState,
   saveMiradorState: (state:IMiradorState, name:string) => void,
-  project:Project
-  updateUserProject:(project:Project, newProjectName:string)=>void,
+  ProjectUser:ProjectUser,
+  updateUserProject:(project:ProjectUser, newProjectName:string)=>void,
 }
 
-const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProject }:MiradorViewerProps) => {
+const MiradorViewer = ({ miradorState, saveMiradorState ,ProjectUser,updateUserProject }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [viewer, setViewer] = useState<any>(undefined);
   const [openModal, setOpenMOdal] = useState(false)
+  const project = ProjectUser.project;
 
   useEffect(() => {
     if (viewerRef.current) {
@@ -89,7 +90,7 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProje
             </Button>
           </Tooltip>
         </Grid>
-        <MMUModal width={400} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject updateUserProject={updateUserProject} project={project}/>}/>
+        <MMUModal width={400} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject projectUser={ProjectUser} updateUserProject={updateUserProject} project={project}/>}/>
         <Grid item>
         <Button variant="contained" onClick={saveProject}>Save Project</Button>
         </Grid>
