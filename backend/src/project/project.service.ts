@@ -7,19 +7,18 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { DeleteResult, Repository } from 'typeorm';
-import { UserGroupService } from '../user-group/user-group.service';
+import { Brackets, DeleteResult, Repository } from 'typeorm';
 
 @Injectable()
 export class ProjectService {
   constructor(
-    @InjectRepository(Project) private readonly data: Repository<Project>,
-    private readonly userGroupService: UserGroupService,
+    @InjectRepository(Project)
+    private readonly projectRepository: Repository<Project>,
   ) {}
 
   async create(dto: CreateProjectDto): Promise<Project> {
     try {
-      return this.data.save(dto);
+      return this.projectRepository.save(dto);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -31,7 +30,7 @@ export class ProjectService {
 
   async findAll(userId: number): Promise<Project[]> {
     try {
-      const projects = await this.data.find({
+      const projects = await this.projectRepository.find({
         relations: {
           owner: true,
         },
@@ -45,7 +44,7 @@ export class ProjectService {
 
   async findOne(projectId: number): Promise<Project> {
     try {
-      const project = await this.data.findOneBy({ id: projectId });
+      const project = await this.projectRepository.findOneBy({ id: projectId });
       return project;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -54,7 +53,7 @@ export class ProjectService {
 
   async update(id: number, dto: UpdateProjectDto) {
     try {
-      const done = await this.data.update(id, dto);
+      const done = await this.projectRepository.update(id, dto);
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(dto.id);
     } catch (error) {
@@ -62,10 +61,38 @@ export class ProjectService {
     }
   }
 
+  async findProjectsByPartialNameAndUserGroup(
+    partialProjectName: string,
+    userGroupId: number,
+  ): Promise<Project[]> {
+    try {
+      const partialProjectNameLength = partialProjectName.length;
+
+      return await this.projectRepository
+        .createQueryBuilder('project')
+        .innerJoin('project.linkGroupProjectsIds', 'linkGroupProject')
+        .innerJoin('linkGroupProject.user_group', 'userGroup')
+        .where('userGroup.id = :id', { id: userGroupId })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('LEFT(project.name, :length) = :partialProjectName', {
+              length: partialProjectNameLength,
+              partialProjectName,
+            });
+          }),
+        )
+        .distinct(true)
+        .limit(3)
+        .getMany();
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   //TODO: Check user authorization for deleting project
   async remove(id: number) {
     try {
-      const done: DeleteResult = await this.data.delete(id);
+      const done: DeleteResult = await this.projectRepository.delete(id);
       if (done.affected != 1) throw new NotFoundException(id);
       return done;
     } catch (error) {

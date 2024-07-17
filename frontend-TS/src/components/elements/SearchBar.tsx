@@ -17,6 +17,7 @@ export const SearchBar = <T,>({getOptionLabel,setSelectedData,fetchFunction,hand
   const HandlefetchUsers = async(partialUserName:string)=>{
     try{
       const data = await fetchFunction(partialUserName);
+      console.log('data',data)
       setSuggestions(data);
     } catch (error) {
       console.error('Error fetching address data:', error);
