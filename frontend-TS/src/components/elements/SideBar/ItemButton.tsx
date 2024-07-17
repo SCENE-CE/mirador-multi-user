@@ -6,12 +6,19 @@ interface IItemButton {
   action:()=>void
   icon:ReactNode
   text:string
+  selected:boolean
 }
 
-export const ItemButton = ({ open,action,icon,text }:IItemButton)=>{
+export const ItemButton = ({ open,action,icon,text, selected }:IItemButton)=>{
   return(
-    <ListItem key={text} disablePadding sx={{display:"block"}}>
-      <ListItemButton
+    <ListItem
+      key={text}
+      disablePadding
+      sx={{
+        display: "block",
+        backgroundColor: selected ? "#dcdcdc" : "inherit"
+      }}
+    >      <ListItemButton
         sx={{
           minHeight: 48,
           justifyContent: open ? 'initial' : 'center',
