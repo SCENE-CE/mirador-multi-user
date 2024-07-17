@@ -14,7 +14,7 @@ export function AppRoutes(){
 
   let routes;
   if(token){
-    routes = protectedRoutes;;
+    routes = protectedRoutes;
   } else {
     routes = [...publicRoutes, ...commonRoutes];
   }

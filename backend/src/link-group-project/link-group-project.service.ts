@@ -8,7 +8,7 @@ import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
-import { UserGroup } from "../user-group/entities/user-group.entity";
+import { UserGroup } from '../user-group/entities/user-group.entity';
 
 @Injectable()
 export class LinkGroupProjectService {

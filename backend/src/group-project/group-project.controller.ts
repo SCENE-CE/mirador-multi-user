@@ -1,7 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { GroupProjectService } from './group-project.service';
 import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../project/dto/create-project.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { PatchParams } from '../project/validators/validators';
+import { UpdateProjectDto } from '../project/dto/update-project.dto';
+import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 
 @Controller('group-project')
 export class GroupProjectController {
@@ -13,7 +26,10 @@ export class GroupProjectController {
   }
 
   @Get('/project/:projectId/:userGroupId')
-  getProjectForUser(@Param('projectId') projectId: number,@Param('userGroupId') userGroupId: number) {
+  getProjectForUser(
+    @Param('projectId') projectId: number,
+    @Param('userGroupId') userGroupId: number,
+  ) {
     return this.groupProjectService.getProjectRightForUser(
       projectId,
       userGroupId,
@@ -30,9 +46,18 @@ export class GroupProjectController {
     return this.groupProjectService.createProject(createProjectDto);
   }
 
+  @Patch('/updateProject/')
+  @UseGuards(AuthGuard)
+  update(@Body() UpdateProjectGroupDto: UpdateProjectGroupDto) {
+    return this.groupProjectService.updateProject(UpdateProjectGroupDto);
+  }
+
   @Delete('/project/:projectId/:groupId')
-  deleteGroupProjectLink(@Param('projectId') projectId: number, @Param('groupId') groupId: number) {
-    console.log(projectId, groupId)
+  deleteGroupProjectLink(
+    @Param('projectId') projectId: number,
+    @Param('groupId') groupId: number,
+  ) {
+    console.log(projectId, groupId);
     return this.groupProjectService.RemoveProjectToGroup({
       projectId,
       groupId,

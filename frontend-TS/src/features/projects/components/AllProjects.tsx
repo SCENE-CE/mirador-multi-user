@@ -17,7 +17,7 @@ import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
-import { UserGroup } from "../../user-group/types/types.ts";
+import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 
 
 interface AllProjectsProps {
@@ -61,8 +61,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
             projects.push(groupProject);
           }
         }
+      console.log(groupProjects)
       }
-      console.log(projectIds)
       setUserProjects(projects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
@@ -89,8 +89,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     setUserProjects(updatedListOfProject);
   },[userProjects]);
 
-  const updateUserProject = useCallback(async (project:Project, newProjectName:string)=>{
-    const updatedProject = {...project, name:newProjectName}
+  const updateUserProject = useCallback(async (projectUser:ProjectUser, newProjectName:string)=>{
+    const updatedProject = {...projectUser.project, name:newProjectName}
     console.log(updatedProject)
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {

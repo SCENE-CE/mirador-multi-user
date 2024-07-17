@@ -10,6 +10,8 @@ import { GroupProjectRights } from '../enum/group-project-rights';
 import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../project/dto/create-project.dto';
 import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
+import { UpdateProjectDto } from '../project/dto/update-project.dto';
+import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 
 @Injectable()
 export class GroupProjectService {
@@ -30,6 +32,16 @@ export class GroupProjectService {
         `An error occurred while getting all projects for this group id ${groupId}`,
         error,
       );
+    }
+  }
+
+  async updateProject(dto: UpdateProjectGroupDto) {
+    try {
+      const projectToUpdate = dto.project;
+      return this.projectService.update(projectToUpdate.id, projectToUpdate);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -90,13 +102,14 @@ export class GroupProjectService {
 
   async getProjectRightForUser(userGroupId: number, projectId: number) {
     try {
-
       const project =
         await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
-          userGroupId
+          userGroupId,
         );
 
-      return project.find((linkGroupProject) => (linkGroupProject.project.id == projectId));
+      return project.find(
+        (linkGroupProject) => linkGroupProject.project.id == projectId,
+      );
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error);
