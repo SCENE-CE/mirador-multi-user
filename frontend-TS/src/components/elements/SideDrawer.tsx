@@ -105,16 +105,16 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
         </DrawerHeader>
         <Divider />
         <List sx={{minHeight:'70vh'}}>
-          <Tooltip title={"Mes projects"}><ItemButton open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
+          <Tooltip title={"Mes projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} selected={false} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>
         <Divider />
         <List>
-          <ItemButton open={open} icon={<LogoutIcon />} text="Disconnect" action={handleDisconnect}/>
-          <ItemButton open={open} icon={<SettingsIcon />} text="Settings" action={()=>{console.log('settings')}}/>
+          <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleDisconnect}/>
+          <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{console.log('settings')}}/>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
