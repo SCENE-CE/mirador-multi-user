@@ -1,12 +1,13 @@
 import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
 import IState from "../../mirador/interface/IState.ts";
-import OpenInNewIcon from '@mui/icons-material/OpenInNew';
-import ModeEditIcon from '@mui/icons-material/ModeEdit';
-import {  useCallback, useState } from "react";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { useCallback, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalEditProject } from "./ModalEditProject.tsx";
 import { ProjectUser } from "../types/types.ts";
-import placeholder from "../../../assets/Placeholder.svg"
+import placeholder from "../../../assets/Placeholder.svg";
+import { ProjectRights } from "../../user-group/types/types.ts";
 
 interface CardProps {
   initializeMirador: (projectWorkspace: IState, projectId: number) => void,
@@ -27,7 +28,6 @@ const project = ProjectUser.project
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
-
   return (
     <>
       <Card>
@@ -63,7 +63,7 @@ const project = ProjectUser.project
                 </Button>
               </Tooltip>
                 </Grid>
-                {project.id && (
+                {project.id && (ProjectUser.rights == ProjectRights.ADMIN || ProjectUser.rights == ProjectRights.EDITOR) && (
                   <>
                   <Grid item>
                     <Tooltip title={"Project configuration"}>
