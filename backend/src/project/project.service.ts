@@ -45,6 +45,7 @@ export class ProjectService {
   async findOne(projectId: number): Promise<Project> {
     try {
       const project = await this.projectRepository.findOneBy({ id: projectId });
+      console.log(project)
       return project;
     } catch (error) {
       throw new InternalServerErrorException(error);

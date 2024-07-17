@@ -8,7 +8,7 @@ export class FindOneParams {
 
 export class FindAllParams {
   @IsNotEmpty()
-  id: number;
+  userId: number;
 }
 
 export class PatchParams {

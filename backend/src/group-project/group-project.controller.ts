@@ -12,6 +12,14 @@ export class GroupProjectController {
     return this.groupProjectService.getAllGroupProjects(groupId);
   }
 
+  @Get('/project/:projectId/:userGroupId')
+  getProjectForUser(@Param('projectId') projectId: number,@Param('userGroupId') userGroupId: number) {
+    return this.groupProjectService.getProjectRightForUser(
+      projectId,
+      userGroupId,
+    );
+  }
+
   @Post('/project/add')
   addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
     return this.groupProjectService.addProjectToGroup(addProjectToGroupDto);

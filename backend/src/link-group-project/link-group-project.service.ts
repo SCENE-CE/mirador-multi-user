@@ -59,10 +59,10 @@ export class LinkGroupProjectService {
     }
   }
 
-  async findAllProjectByUserGroupId(id: number){
+  async findAllProjectByUserGroupId(userGroupId: number){
     try {
       const linkGroupProjects = await this.linkGroupProjectRepository.find({
-        where: { user_group: { id } },
+        where: { user_group: { id: userGroupId } },
         relations: { project: true },
       });
 
@@ -71,23 +71,23 @@ export class LinkGroupProjectService {
       );
     } catch (error) {
       throw new InternalServerErrorException(
-        `An error occurred while finding projects for user group ID: ${id}`,
+        `An error occurred while finding projects for user group ID: ${userGroupId}`,
         error,
       );
     }
   }
 
-  async findAllGroupByProjectId(id: number) {
+  async findAllGroupProjectByUserGroupId(userId: number) {
     try {
       const request = await this.linkGroupProjectRepository.find({
-        where: { user_group: { id } },
+        where: { user_group: { id: userId } },
         relations: ['project'],
       });
-    console.log(request)
-      return request.map((linkGroupProject)=>linkGroupProject.project);
+      console.log(request)
+      return request;
     } catch (error) {
       throw new InternalServerErrorException(
-        `An error occurred while finding Group for this project id : ${id}`,
+        `An error occurred while finding Group for this project id : ${userId}`,
         error,
       );
     }

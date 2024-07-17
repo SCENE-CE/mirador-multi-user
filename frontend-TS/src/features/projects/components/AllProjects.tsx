@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useCallback, useEffect, useState } from "react";
-import { CreateProjectDto, Project } from "../types/types.ts";
+import { CreateProjectDto, Project, ProjectUser } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
@@ -40,7 +40,7 @@ const emptyWorkspace: IState = {
 };
 
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
-  const [userProjects, setUserProjects] = useState<Project[]>([]);
+  const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
   const [searchedProject, setSearchedProject] = useState<Project|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
@@ -55,10 +55,10 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
       const projectIds = new Set();
       for (const group of userGroups) {
         const groupProjects = await getAllGroupProjects(group.id);
-        for (const project of groupProjects) {
-          if (!projectIds.has(project.id)) {
-            projectIds.add(project.id);
-            projects.push(project);
+        for (const groupProject of groupProjects) {
+          if (!projectIds.has(groupProject.project.id)) {
+            projectIds.add(groupProject.project.id);
+            projects.push(groupProject);
           }
         }
       }

@@ -21,7 +21,9 @@ export class GroupProjectService {
   async getAllGroupProjects(groupId: number) {
     try {
       const projects =
-        await this.linkGroupProjectService.findAllGroupByProjectId(groupId);
+        await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
+          groupId,
+        );
       return projects;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -83,6 +85,21 @@ export class GroupProjectService {
         `an error occurred while removing project id : ${dto.projectId} from group id ${dto.groupId}`,
         error,
       );
+    }
+  }
+
+  async getProjectRightForUser(userGroupId: number, projectId: number) {
+    try {
+
+      const project =
+        await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
+          userGroupId
+        );
+
+      return project.find((linkGroupProject) => (linkGroupProject.project.id == projectId));
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 

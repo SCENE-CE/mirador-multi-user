@@ -95,10 +95,15 @@ export class UserGroupService {
         .innerJoinAndSelect('userGroup.users', 'user')
         .where('user.id = :userId', { userId: userId })
         .getMany();
-      return allUserGroups.find(
+
+  console.log(allUserGroups);
+      const userPersonalGroup = allUserGroups.find(
         (userPersonalGroup) =>
           userPersonalGroup.type === UserGroupTypes.PERSONAL,
       );
+
+      console.log(userPersonalGroup);
+      return userPersonalGroup;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
