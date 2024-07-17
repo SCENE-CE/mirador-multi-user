@@ -59,7 +59,7 @@ export class LinkGroupProjectService {
     }
   }
 
-  async findAllProjectByUserGroupId(userGroupId: number){
+  async findAllProjectByUserGroupId(userGroupId: number) {
     try {
       const linkGroupProjects = await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userGroupId } },
@@ -83,7 +83,7 @@ export class LinkGroupProjectService {
         where: { user_group: { id: userId } },
         relations: ['project'],
       });
-      console.log(request)
+      console.log(request);
       return request;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -94,22 +94,34 @@ export class LinkGroupProjectService {
   }
 
   async update(
-    id: number,
+    linkGroupId: number,
     updateLinkGroupProjectDto: UpdateLinkGroupProjectDto,
   ) {
     try {
       const done = await this.linkGroupProjectRepository.update(
-        id,
+        linkGroupId,
         updateLinkGroupProjectDto,
       );
-      if (done.affected != 1) throw new NotFoundException(id);
-      return this.findOne(id);
+      if (done.affected != 1) throw new NotFoundException(linkGroupId);
+      return this.findOne(linkGroupId);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
         'An error occurred while updating the linkGroupProject',
         error,
       );
+    }
+  }
+
+  async getProjectRelation(projectId: number) {
+    try {
+      return await this.linkGroupProjectRepository.find({
+        where: { project: { id: projectId } },
+        relations: ['user_group'],
+      });
+    } catch(error) {
+      console.log(error)
+      throw new InternalServerErrorException(error);
     }
   }
 

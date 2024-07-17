@@ -162,7 +162,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
   };
 
   const handleLookingForProject = async (partialProjectName: string) => {
-    console.log('userPersonalGroup',userPersonalGroup)
     const userProjectArray = await lookingForProject(partialProjectName, userPersonalGroup!.id)
     const projectArray = []
     for(const projectUser of userProjectArray){
@@ -175,7 +174,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     const  searchedProject = userProjects.find(userProject => userProject.project.id === project.id)
     setSearchedProject(searchedProject!)
   }
-  console.log('searchedProject',searchedProject)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">

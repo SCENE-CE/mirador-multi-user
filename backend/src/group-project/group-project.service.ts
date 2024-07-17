@@ -38,7 +38,25 @@ export class GroupProjectService {
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
       const projectToUpdate = dto.project;
-      return this.projectService.update(projectToUpdate.id, projectToUpdate);
+      const projectRelation =
+        await this.linkGroupProjectService.getProjectRelation(dto.project.id);
+
+      const relationToUpdate = projectRelation.find(
+        (linkGroup) => linkGroup.user_group.id == dto.user_group_id,
+      );
+      await this.linkGroupProjectService.update(relationToUpdate.id, {
+        ...relationToUpdate,
+        rights: dto.rights,
+      });
+      await this.projectService.update(projectToUpdate.id, projectToUpdate);
+    console.log(dto.project.id)
+      console.log(relationToUpdate.id)
+      const projectToReturn = await this.getProjectRightForUser(
+        relationToUpdate.user_group.id,
+        dto.project.id,
+      );
+      console.log(projectToReturn);
+      return projectToReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error);

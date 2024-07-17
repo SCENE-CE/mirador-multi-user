@@ -58,6 +58,7 @@ export class ProjectService {
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(dto.id);
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException(error);
     }
   }
