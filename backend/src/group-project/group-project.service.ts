@@ -22,6 +22,7 @@ export class GroupProjectService {
 
   async getAllGroupProjects(groupId: number) {
     try {
+      console.log('GET ALL GROUP PROJECTS')
       return await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
         groupId,
       );
@@ -33,10 +34,11 @@ export class GroupProjectService {
     }
   }
 
-  async getAllProjectGroups(projectId: number){
-    try{
-      return await this.linkGroupProjectService.getProjectRelation(projectId)
-    }catch(error){
+  async getAllProjectGroups(projectId: number) {
+    console.log('ENTER GET ALL PROJECT GROUPS')
+    try {
+      return await this.linkGroupProjectService.getProjectRelation(projectId);
+    } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while getting all groups for this project id ${projectId}`,
         error,
@@ -72,22 +74,22 @@ export class GroupProjectService {
 
   async addProjectsToGroup(dto: AddProjectToGroupDto) {
     const { groupId, projectsId } = dto;
-    console.log('Adding projects to group', { groupId, projectsId });
 
     try {
       const userGroup = await this.userGroupService.findOne(groupId);
       if (!userGroup) {
-        throw new InternalServerErrorException(`Group with id ${groupId} not found`);
+        throw new InternalServerErrorException(
+          `Group with id ${groupId} not found`,
+        );
       }
 
       const linkProjectsGroup = [];
-      console.log("BEFORE THE LOOP")
       for (const projectId of projectsId) {
-        console.log('Processing projectId', projectId);
-
         const project = await this.projectService.findOne(projectId);
         if (!project) {
-          throw new InternalServerErrorException(`Project with id ${projectId} not found`);
+          throw new InternalServerErrorException(
+            `Project with id ${projectId} not found`,
+          );
         }
 
         const linkProjectGroup = await this.linkGroupProjectService.create({
@@ -96,10 +98,8 @@ export class GroupProjectService {
           project: project,
         });
 
-        console.log('Linked project to group', { projectId, groupId, linkProjectGroup });
         linkProjectsGroup.push(linkProjectGroup);
       }
-      console.log('OUT OF FOR LOOP')
       return linkProjectsGroup;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -143,6 +143,7 @@ export class GroupProjectService {
 
   async getProjectRightForUser(userGroupId: number, projectId: number) {
     try {
+      console.log('getProjectRightForUser')
       const project =
         await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
           userGroupId,

@@ -79,12 +79,13 @@ export class LinkGroupProjectService {
 
   async findAllGroupProjectByUserGroupId(userId: number) {
     try {
-      console.log('userId',userId)
+      console.log("findAllGroupProjectByUserGroupId")
+      console.log('userId', userId);
       const request = await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
         relations: ['project'],
       });
-      console.log('request',request);
+      console.log('request', request);
       return request;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -116,12 +117,15 @@ export class LinkGroupProjectService {
 
   async getProjectRelation(projectId: number) {
     try {
-      return await this.linkGroupProjectRepository.find({
+      console.log('ENTER GET PROJECT RELATION');
+      const dataToReturn = await this.linkGroupProjectRepository.find({
         where: { project: { id: projectId } },
         relations: ['user_group'],
       });
-    } catch(error) {
-      console.log(error)
+      console.log('dataToReturn', dataToReturn);
+      return dataToReturn;
+    } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(error);
     }
   }

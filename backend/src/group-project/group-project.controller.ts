@@ -23,31 +23,35 @@ export class GroupProjectController {
     return await this.groupProjectService.getAllGroupProjects(groupId);
   }
 
+  @Get('/project/relation/:projectId')
+  getProjectRelation(@Param('projectId') projectId: number) {
+    console.log('ON THE ROAD GET ALL PROJECT GROUPS');
+    return this.groupProjectService.getAllProjectGroups(projectId);
+  }
+
   @Get('/project/:projectId/:userGroupId')
   getProjectForUser(
     @Param('projectId') projectId: number,
     @Param('userGroupId') userGroupId: number,
   ) {
+    console.log('on the road get project for user')
     return this.groupProjectService.getProjectRightForUser(
       projectId,
       userGroupId,
     );
   }
 
-  @Get("/project/relation/:projectId")
-  getProjectRelation(@Param('projectId') projectId: number) {
-  return this.groupProjectService.getAllProjectGroups(projectId)
-  }
+
 
   @Post('/project/add')
   addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
-    console.log('ON THE ROAD ADD PROJECT TO GROUP')
+    console.log('ON THE ROAD ADD PROJECT TO GROUP');
     return this.groupProjectService.addProjectsToGroup(addProjectToGroupDto);
   }
 
   @Post('/project/')
   createProject(@Body() createProjectDto: CreateProjectDto) {
-    console.log('create project dto')
+    console.log('create project dto');
     return this.groupProjectService.createProject(createProjectDto);
   }
 

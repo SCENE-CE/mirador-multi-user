@@ -1,15 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateUserGroupDto } from './dto/create-user-group.dto';
-import { UpdateUserGroupDto } from './dto/update-user-group.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserGroup } from './entities/user-group.entity';
-import { Brackets, Repository } from 'typeorm';
-import { UserGroupTypes } from '../enum/user-group-types';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateUserGroupDto } from "./dto/create-user-group.dto";
+import { UpdateUserGroupDto } from "./dto/update-user-group.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { UserGroup } from "./entities/user-group.entity";
+import { Brackets, Repository } from "typeorm";
+import { UserGroupTypes } from "../enum/user-group-types";
 
 @Injectable()
 export class UserGroupService {
@@ -167,14 +162,11 @@ export class UserGroupService {
   }
 
   async findOne(id: number) {
-    console.log("userGroup service find one")
     try {
-      const dataToReturn =  await this.userGroupRepository.findOne({
+      return await this.userGroupRepository.findOne({
         where: { id },
         relations: ['users'],
-      });
-      console.log(dataToReturn)
-      return dataToReturn
+      })
     } catch (error) {
       console.log(error);
     }
