@@ -226,7 +226,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
                 miradorState={miradorState!}
                 saveMiradorState={saveProject}
                 ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!}
-                updateUserProject={updateUserProject}
               />
             </Grid>
           )

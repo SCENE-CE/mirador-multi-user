@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
+import backgroundImage from '../../assets/110719_RdL_0288.jpg';
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -18,7 +19,14 @@ export const Landing = () => {
     justifyContent="center"
     alignItems="center"
     spacing={10}
-    height={'100vh'}
+    minHeight={'100vh'}
+    sx={{
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      marginTop:0
+    }}
     >
       <Grid item>
       <Typography variant="h2" component="h1">Welcome to ARVEST</Typography>

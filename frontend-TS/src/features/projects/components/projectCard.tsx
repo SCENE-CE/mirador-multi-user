@@ -63,11 +63,12 @@ const project = ProjectUser.project
                 </Button>
               </Tooltip>
                 </Grid>
-                {project.id && (ProjectUser.rights == ProjectRights.ADMIN || ProjectUser.rights == ProjectRights.EDITOR) && (
+                {project.id  && (
                   <>
                   <Grid item>
                     <Tooltip title={"Project configuration"}>
                       <Button
+                        disabled={ProjectUser.rights == ProjectRights.READER}
                         onClick={HandleOpenModal}
                         variant="contained"
                       >
