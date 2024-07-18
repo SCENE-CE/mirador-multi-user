@@ -7,7 +7,9 @@ export enum UserGroupTypes {
 
 export enum ProjectRights{
   ADMIN="admin",
-  EDITOR="editor"
+  EDITOR="editor",
+  READER = 'reader',
+
 }
 export type UserGroup = {
   id:number;

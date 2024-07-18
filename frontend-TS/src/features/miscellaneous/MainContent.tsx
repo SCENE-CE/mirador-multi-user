@@ -19,7 +19,8 @@ export const MainContent = () => {
   };
 
   return (
-    <Grid container direction="row">
+    <Grid container direction="row"
+    >
       <SideDrawer
         user={user.data}
         handleDisconnect={handleDiscconnect}
