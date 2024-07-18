@@ -97,7 +97,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     console.log(updatedProject)
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
-      return p.project.id != projectUser.project.id;
+      return p.project.id != updatedProject.project.id;
     });
     updatedListOfProject = [updatedProject,...updatedListOfProject]
     setUserProjects(updatedListOfProject);

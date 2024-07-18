@@ -48,6 +48,7 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
+      console.log('DTO',dto)
       const projectToUpdate = dto.project;
       const projectRelation =
         await this.linkGroupProjectService.getProjectRelation(dto.project.id);
@@ -55,6 +56,7 @@ export class GroupProjectService {
       const relationToUpdate = projectRelation.find(
         (linkGroup) => linkGroup.user_group.id == dto.user_group_id,
       );
+      console.log('relationToUpdate------------------------------------',relationToUpdate)
       await this.linkGroupProjectService.update(relationToUpdate.id, {
         ...relationToUpdate,
         rights: dto.rights,

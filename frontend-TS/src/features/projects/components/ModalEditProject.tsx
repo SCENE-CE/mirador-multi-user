@@ -1,11 +1,6 @@
 import {
   Button,
-  FormControl,
   Grid,
-  InputLabel,
-  MenuItem,
-  Select,
-  SelectChangeEvent,
   TextField,
   Tooltip,
   Typography
@@ -17,6 +12,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalConfirmDelete } from "./ModalConfirmDelete.tsx";
 import { ProjectRights } from "../../user-group/types/types.ts";
+import { ProjectUserGroupList } from "./ProjectUserGroupList.tsx";
 
 interface ModalProjectProps {
   projectUser:ProjectUser,
@@ -27,7 +23,6 @@ interface ModalProjectProps {
 
 export const ModalEditProject = ({ projectUser,project, updateUserProject, deleteProject }:ModalProjectProps)=>{
   const [editName, setEditName] = useState(false);
-  const [ rights, setRights ] = useState<string>(projectUser.rights)
   const [ newProjectName, setNewProjectName] = useState(project!.name);
   const [openModal, setOpenMOdal] = useState(false)
 
@@ -52,9 +47,7 @@ export const ModalEditProject = ({ projectUser,project, updateUserProject, delet
     },[openModal]
   )
 
-  const handleChangeRights = (event: SelectChangeEvent) => {
-    setRights(event.target.value);
-  };
+
 
   return(
     <Grid container>
@@ -78,23 +71,7 @@ export const ModalEditProject = ({ projectUser,project, updateUserProject, delet
           )}
         {projectUser.rights === ProjectRights.ADMIN &&(
           <>
-            <Grid item>
-              <FormControl sx={{ m: 1, width: 300 }}>
-                <InputLabel>Rights</InputLabel>
-                <Select
-                  value={rights}
-                  label="Right"
-                  onChange={handleChangeRights}
-                >
-                  {
-                    (Object.keys(ProjectRights) as Array<keyof typeof ProjectRights>).map((right, index)=>(
-                        <MenuItem key={index} value={right}>{right}</MenuItem>
-                      )
-                    )
-                  }
-                </Select>
-              </FormControl>
-            </Grid>
+            <ProjectUserGroupList projectUser={projectUser}/>
             <Grid item>
               <Tooltip title={"Delete project"}>
                 <Button
