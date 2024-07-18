@@ -19,8 +19,8 @@ export class GroupProjectController {
   constructor(private readonly groupProjectService: GroupProjectService) {}
 
   @Get('/:groupId')
-  getAllGroupProjects(@Param('groupId') groupId: number) {
-    return this.groupProjectService.getAllGroupProjects(groupId);
+  async getAllGroupProjects(@Param('groupId') groupId: number) {
+    return await this.groupProjectService.getAllGroupProjects(groupId);
   }
 
   @Get('/project/:projectId/:userGroupId')
@@ -36,7 +36,7 @@ export class GroupProjectController {
 
   @Post('/project/add')
   addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
-    return this.groupProjectService.addProjectToGroup(addProjectToGroupDto);
+    return this.groupProjectService.addProjectsToGroup(addProjectToGroupDto);
   }
 
   @Post('/project/')

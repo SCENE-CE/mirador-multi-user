@@ -3,7 +3,7 @@ import CloseIcon from "@mui/icons-material/Close";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import AddIcon from "@mui/icons-material/Add";
 import { FixedSizeList } from "../../../components/elements/FixedSizeList.tsx";
-import { Project } from "../../projects/types/types.ts";
+import { ProjectUser } from "../../projects/types/types.ts";
 import { getAllGroupProjects } from "../api/getAllGroupProjects.ts";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { UserGroup } from "../types/types.ts";
@@ -15,14 +15,12 @@ interface IGroupProjectListProps {
   personalGroup:UserGroup
 }
 export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=>{
-  const [projects, setProjects]=useState<Project[]>([]);
-  const [userProjects,setUserProjects]=useState<Project[]>([]);
+  const [projectsUser, setProjectsUser]=useState<ProjectUser[]>([]);
+  const [personalProjectsUser,setPersonalProjectsUser]=useState<ProjectUser[]>([]);
   const [displayUserProjects, setDisplayUserProjects]=useState(false);
 
   const handleRemoveProject= async (projectId:number)=>{
     try{
-      console.log('projectId',projectId)
-      console.log('group.id',group.id)
       await removeProjectToGroup({projectId:projectId, groupId:group.id})
       await fetchAllGroupProjects()
     }catch(error){
@@ -33,10 +31,11 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
   const fetchAllGroupProjects = async ()=>{
     try {
       const groupProjects = await getAllGroupProjects(group.id)
-      console.log(groupProjects)
+      console.log("groupProjects",groupProjects)
       const personalProjects = await getAllGroupProjects(personalGroup.id)
-      setUserProjects(personalProjects);
-      setProjects(groupProjects);
+      //TODO UPDATE THIS TO FIT WITH NEW PROJECT STRUCTURE
+      setPersonalProjectsUser(personalProjects);
+      setProjectsUser(groupProjects);
     } catch (error) {
       throw error
     }
@@ -48,23 +47,24 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
 
   const handleDisplayProject= async () => {
     const userPersonnalProjects = await getAllGroupProjects(personalGroup.id)
-    setUserProjects(userPersonnalProjects)
+    setPersonalProjectsUser(userPersonnalProjects)
     setDisplayUserProjects(!displayUserProjects)
   }
 
   const handleAddProjectToGroup = useCallback(async (projectName: string) => {
     try{
-      const project = userProjects.find((project) => project.name == projectName);
+      const projectUser = personalProjectsUser.find((projectUser) => projectUser.project.name == projectName);
+      const project = projectUser!.project;
       await addProjectToGroup({ projectId:project!.id, groupId:group.id });
       fetchAllGroupProjects()
       setDisplayUserProjects(false)
     }catch(error){
       console.error(error)
     }
-  },[userProjects, personalGroup, addProjectToGroup, setDisplayUserProjects])
+  },[personalProjectsUser, personalGroup, addProjectToGroup, setDisplayUserProjects])
 
 
-  const personalProjectsName = useMemo(() => userProjects.map((project) => project.name), [userProjects]);
+  const personalProjectsName = useMemo(() => personalProjectsUser.map((projectUser) => projectUser.project.name), [personalProjectsUser]);
 
   return(
     <>
@@ -73,12 +73,12 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
           <Typography> Group's Projects</Typography>
         </Grid>
         <List>
-          {projects.map((project)=>(
+          {projectsUser.map((projectUser)=>(
             <>
-              <ListItem key={project.id}>
-                <ListItemText primary={project.name}>
+              <ListItem key={projectUser.project.id}>
+                <ListItemText primary={projectUser.project.name}>
                 </ListItemText>
-                <Button variant="contained" onClick={()=>handleRemoveProject(project.id)}  color="error">
+                <Button variant="contained" onClick={()=>handleRemoveProject(projectUser.project.id)}  color="error">
                   <CloseIcon/>
                 </Button>
               </ListItem>
