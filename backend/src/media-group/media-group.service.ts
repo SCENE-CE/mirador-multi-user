@@ -23,7 +23,7 @@ export class MediaGroupService {
           mediaPayload.idCreator,
         );
 
-      console.log(mediaInformation);
+      console.log('mediaInformation',mediaInformation);
       const media = await this.mediaService.create({
         path: mediaInformation.path,
         idCreator: mediaInformation.idCreator,

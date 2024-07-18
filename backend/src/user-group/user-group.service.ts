@@ -166,12 +166,15 @@ export class UserGroupService {
     }
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
+    console.log("userGroup service find one")
     try {
-      return this.userGroupRepository.findOne({
+      const dataToReturn =  await this.userGroupRepository.findOne({
         where: { id },
         relations: ['users'],
       });
+      console.log(dataToReturn)
+      return dataToReturn
     } catch (error) {
       console.log(error);
     }

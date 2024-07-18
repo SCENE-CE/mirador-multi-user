@@ -79,11 +79,12 @@ export class LinkGroupProjectService {
 
   async findAllGroupProjectByUserGroupId(userId: number) {
     try {
+      console.log('userId',userId)
       const request = await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
         relations: ['project'],
       });
-      console.log(request);
+      console.log('request',request);
       return request;
     } catch (error) {
       throw new InternalServerErrorException(

@@ -34,13 +34,20 @@ export class GroupProjectController {
     );
   }
 
+  @Get("/project/relation/:projectId")
+  getProjectRelation(@Param('projectId') projectId: number) {
+  return this.groupProjectService.getAllProjectGroups(projectId)
+  }
+
   @Post('/project/add')
   addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
+    console.log('ON THE ROAD ADD PROJECT TO GROUP')
     return this.groupProjectService.addProjectsToGroup(addProjectToGroupDto);
   }
 
   @Post('/project/')
   createProject(@Body() createProjectDto: CreateProjectDto) {
+    console.log('create project dto')
     return this.groupProjectService.createProject(createProjectDto);
   }
 
