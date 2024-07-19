@@ -1,12 +1,16 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { LinkGroupProjectService } from "../link-group-project/link-group-project.service";
-import { UserGroupService } from "../user-group/user-group.service";
-import { ProjectService } from "../project/project.service";
-import { GroupProjectRights } from "../enum/group-project-rights";
-import { AddProjectToGroupDto } from "./dto/addProjectToGroupDto";
-import { CreateProjectDto } from "../project/dto/create-project.dto";
-import { removeProjectToGroupDto } from "./dto/removeProjectToGroupDto";
-import { UpdateProjectGroupDto } from "./dto/updateProjectGroupDto";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { LinkGroupProjectService } from '../link-group-project/link-group-project.service';
+import { UserGroupService } from '../user-group/user-group.service';
+import { ProjectService } from '../project/project.service';
+import { GroupProjectRights } from '../enum/group-project-rights';
+import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
+import { CreateProjectDto } from '../project/dto/create-project.dto';
+import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
+import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 
 @Injectable()
 export class GroupProjectService {
@@ -107,6 +111,23 @@ export class GroupProjectService {
         `an error occured while trying to add project id ${dto.projectsId} to group id: ${dto.groupId}`,
         error,
       );
+    }
+  }
+
+  async deleteProject(project_id: number) {
+    try {
+      const projectRelation =
+        await this.linkGroupProjectService.getProjectRelations(project_id);
+      for (const linkGroupProject of projectRelation) {
+        await this.RemoveProjectToGroup({
+          projectId: project_id,
+          groupId: linkGroupProject.user_group.id,
+        });
+      }
+      return await this.projectService.remove(project_id);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
     }
   }
 

@@ -81,9 +81,10 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
 
   const deleteUserProject = useCallback(async (projectId: number) => {
     await deleteProject(projectId);
-    const updatedListOfProject = userProjects.filter(function(project) {
-      return project.id != projectId;
+    const updatedListOfProject = userProjects.filter(function(ProjectUser) {
+      return ProjectUser.project.id != projectId;
     });
+    console.log('updatedListOfProject',updatedListOfProject)
     setUserProjects(updatedListOfProject);
   },[userProjects]);
 
@@ -224,7 +225,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
               <MiradorViewer
                 miradorState={miradorState!}
                 saveMiradorState={saveProject}
-                ProjectUser={userProjects.find(projectUser => projectUser.id == selectedProjectId)!}
+                ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!}
               />
             </Grid>
           )

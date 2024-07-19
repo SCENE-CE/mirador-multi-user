@@ -71,6 +71,15 @@ export class GroupProjectController {
       userId,
     );
   }
+  @Delete('/delete/project/:projectId')
+  deleteProject(
+    @Param('projectId') project_id: number,
+  ){
+    console.log(
+      '-----------------------DELETE PROJECT-------------------------------',
+    );
+    return this.groupProjectService.deleteProject(project_id);
+  }
 
   @Delete('/project/:projectId/:groupId')
   deleteGroupProjectLink(
@@ -83,4 +92,6 @@ export class GroupProjectController {
       groupId,
     });
   }
+
+
 }
