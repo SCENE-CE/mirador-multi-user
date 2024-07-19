@@ -1,6 +1,6 @@
 import { Grid, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-import { useCallback, useEffect, useState } from "react";
+import { Dispatch, useCallback, useEffect, useState } from "react";
 import {  Project, ProjectUser } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IState from "../../mirador/interface/IState.ts";
@@ -23,9 +23,10 @@ interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
   selectedProjectId?: number;
-  saveProjectToDb:(state: IState, name: string, userProjects: ProjectUser[]) => void;
   setUserProjects:(userProjects: ProjectUser[])=>void;
   userProjects:ProjectUser[]
+  viewer:any;
+  setViewer:Dispatch<any>
 }
 
 const emptyWorkspace: IState = {
@@ -40,7 +41,7 @@ const emptyWorkspace: IState = {
   workspace: {},
 };
 
-export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,saveProjectToDb,userProjects,setUserProjects }:AllProjectsProps) => {
+export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects, viewer, setViewer }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
@@ -124,14 +125,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,save
     toggleModalProjectCreation()
   },[initializeMirador, toggleModalProjectCreation, user.id])
 
-
-
-
-
-  const saveProject = useCallback((state: IState, name: string)=>{
-  saveProjectToDb(state,name,userProjects)
-  },[saveProjectToDb, userProjects])
-
   const getOptionLabel = (option: Project): string => {
     return option.name;
   };
@@ -201,8 +194,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,save
             <Grid item xs={12}>
               <MiradorViewer
                 miradorState={miradorState!}
-                saveMiradorState={saveProject}
                 ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!}
+                viewer={viewer}
+                setViewer={setViewer}
               />
             </Grid>
           )

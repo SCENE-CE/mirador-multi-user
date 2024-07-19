@@ -18,8 +18,7 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { ItemButton } from "./SideBar/ItemButton.tsx";
 import { AllProjects } from "../../features/projects/components/AllProjects.tsx";
 import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
-import IState from "../../features/mirador/interface/IState.ts";
-import { updateProject } from "../../features/projects/api/updateProject.ts";
+import SaveIcon from '@mui/icons-material/Save';import { updateProject } from "../../features/projects/api/updateProject.ts";
 import toast from "react-hot-toast";
 import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
@@ -86,6 +85,7 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
   const [open, setOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
+  const [viewer, setViewer] = useState<any>(undefined);
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -108,29 +108,27 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
     setUserProjects(userProjects)
   }
 
-  const saveProject = useCallback(async (state: IState, name: string, userProjects: ProjectUser[]) => {
-    console.log("ENTER saveProject")
+  const saveProject = useCallback(async () => {
+    console.log('saveProject');
     if (selectedProjectId) {
-      console.log('selectedProjectId', selectedProjectId);
+      console.log('selectedProjectId',selectedProjectId);
       const projectToUpdate = userProjects.find(projectUser => projectUser.project.id == selectedProjectId);
+      projectToUpdate!.project.userWorkspace = viewer;
       console.log('projectToUpdate',projectToUpdate)
-      projectToUpdate!.project.userWorkspace = state;
-      projectToUpdate!.project.name = name;
-      console.log(projectToUpdate)
       if(projectToUpdate){
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { rights, ...projectWithoutRights } = projectToUpdate;
-      const updatedProject = await updateProject(projectWithoutRights!)
-      console.log('updatedProject',updatedProject)
+      console.log('projectWithoutRights',projectWithoutRights)
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const updatedProject = await updateProject(projectToUpdate!)
       }
 
       toast.success("Project saved");
     } else {
-      console.log('no selected project Id')
       const project: CreateProjectDto = {
-        name: name,
+        name: 'new project',
         owner: user,
-        userWorkspace: state,
+        userWorkspace: viewer,
       };
       createProject(project).then(r => {
         setSelectedProjectId(r.project.id);
@@ -159,10 +157,14 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>
+        <Divider/>
+        <List>
+          <Tooltip title=""><ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Mirador" action={saveProject}/></Tooltip>
+        </List>
         <Divider />
         <List>
-          <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleDisconnect}/>
           <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{console.log('settings')}}/>
+          <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleDisconnect}/>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -173,9 +175,10 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
                 selectedProjectId={selectedProjectId}
                 setSelectedProjectId={setSelectedProjectId}
                 user={user}
-                saveProjectToDb={saveProject}
                 userProjects={userProjects}
                 setUserProjects={HandleSetUserProjects}
+                viewer={viewer}
+                setViewer={setViewer}
               />
 
             )}
