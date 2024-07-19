@@ -1,8 +1,8 @@
 import storage from "../../../utils/storage.ts";
-import { ProjectUser } from "../types/types";
+import { ProjectGroupUpdateDto } from "../types/types";
 import { BACKEND_URL } from "../../../config/config.ts";
 
-export const updateProject = async (project: ProjectUser) => {
+export const updateProject = async (project: ProjectGroupUpdateDto) => {
   const token = storage.getToken();
   try {
     const response = await fetch(`${BACKEND_URL}/group-project/updateProject`, {

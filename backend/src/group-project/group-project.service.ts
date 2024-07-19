@@ -37,7 +37,7 @@ export class GroupProjectService {
   async getAllProjectGroups(projectId: number) {
     console.log('ENTER GET ALL PROJECT GROUPS');
     try {
-      return await this.linkGroupProjectService.getProjectRelation(projectId);
+      return await this.linkGroupProjectService.getProjectRelations(projectId);
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while getting all groups for this project id ${projectId}`,
@@ -50,31 +50,21 @@ export class GroupProjectService {
     try {
       console.log('DTO', dto);
       const projectToUpdate = dto.project;
-      const projectRelation =
-        await this.linkGroupProjectService.getProjectRelation(dto.project.id);
-      console.log(
-        '---------------------------PROJECT RELATION---------------------------',
-      );
-      console.log(projectRelation);
+
       let projectToReturn;
-      if (dto.user_group_id) {
-        const relationToUpdate = projectRelation.find(
-          (linkGroup) => linkGroup.user_group.id == dto.user_group_id,
-        );
+      if (dto.rights) {
         console.log(
-          'relationToUpdate------------------------------------',
-          relationToUpdate,
+          '---------------------------ENTER THE IF CONDITION-----------------------------',
         );
-        await this.linkGroupProjectService.update(relationToUpdate.id, {
-          ...relationToUpdate,
-          rights: dto.rights,
-        });
-        await this.projectService.update(projectToUpdate.id, projectToUpdate);
-        projectToReturn = await this.getProjectRightForUser(
-          relationToUpdate.user_group.id,
+        this.linkGroupProjectService.UpdateRelation(
           dto.project.id,
+          dto.group.id,
+          dto.rights,
         );
       } else {
+        console.log(
+          '---------------------------ENTER THE ELSEEEEEEEEE-----------------------------',
+        );
         projectToReturn = await this.projectService.update(
           projectToUpdate.id,
           projectToUpdate,

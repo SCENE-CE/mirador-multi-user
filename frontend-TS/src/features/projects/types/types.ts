@@ -20,6 +20,12 @@ export type ProjectUser = {
   project: Project,
 }
 
+export type ProjectGroupUpdateDto = {
+  id:number;
+  rights: ProjectRights
+  project: Project,
+  group?:UserGroup
+}
 export type CreateProjectDto = {
   name:string;
   owner:User;

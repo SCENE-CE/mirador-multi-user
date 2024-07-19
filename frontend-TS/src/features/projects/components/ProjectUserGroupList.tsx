@@ -18,9 +18,10 @@ import { updateProject } from "../api/updateProject.ts";
 interface IProjectUserGroup {
   projectUser: ProjectUser;
 }
-export const ProjectUserGroupList = ({projectUser}:IProjectUserGroup)=>{
+  export const ProjectUserGroupList = ({projectUser}:IProjectUserGroup)=>{
   const [ groupList, setGroupList]=useState<ProjectGroup[]>([]);
   const [project, setProject] = useState(projectUser.project)
+
   const fetchGroupsForProject=async()=>{
     const groups = await getGroupsAccessToProject(project.id)
     setGroupList(groups);
@@ -30,9 +31,8 @@ export const ProjectUserGroupList = ({projectUser}:IProjectUserGroup)=>{
     fetchGroupsForProject()
   },[project])
 
-  const handleChangeRights = (user_group_id: number) => async (event: SelectChangeEvent) => {
-    const updatedProject = await updateProject({ ...projectUser, rights: event.target.value as ProjectRights },user_group_id)
-    console.log(updatedProject);
+  const handleChangeRights = (group:ProjectGroup) => async (event: SelectChangeEvent) => {
+    const updatedProject = await updateProject({id:group.id, project: projectUser.project ,group : group.user_group, rights: event.target.value as ProjectRights })
   };
 
   return(
@@ -54,7 +54,7 @@ export const ProjectUserGroupList = ({projectUser}:IProjectUserGroup)=>{
                     <Select
                       value={projectGroup.rights.toUpperCase()}
                       label="Right"
-                      onChange={handleChangeRights(projectGroup.user_group.id)}
+                      onChange={handleChangeRights(projectGroup)}
                     >
                       {
                         (Object.keys(ProjectRights) as Array<keyof typeof ProjectRights>).map((right, index)=>(

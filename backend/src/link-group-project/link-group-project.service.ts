@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
 import { UserGroup } from '../user-group/entities/user-group.entity';
+import { GroupProjectRights } from '../enum/group-project-rights';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -79,7 +80,7 @@ export class LinkGroupProjectService {
 
   async findAllGroupProjectByUserGroupId(userId: number) {
     try {
-      console.log("findAllGroupProjectByUserGroupId")
+      console.log('findAllGroupProjectByUserGroupId');
       console.log('userId', userId);
       const request = await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
@@ -115,7 +116,7 @@ export class LinkGroupProjectService {
     }
   }
 
-  async getProjectRelation(projectId: number) {
+  async getProjectRelations(projectId: number) {
     try {
       console.log('ENTER GET PROJECT RELATION');
       const dataToReturn = await this.linkGroupProjectRepository.find({
@@ -126,6 +127,46 @@ export class LinkGroupProjectService {
       return dataToReturn;
     } catch (error) {
       console.log(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async UpdateRelation(
+    project_Id: number,
+    user_group_Id: number,
+    updatedRights: GroupProjectRights,
+  ) {
+    try {
+      const linkGroupToUpdate = await this.linkGroupProjectRepository.find({
+        where: {
+          user_group: { id: user_group_Id },
+          project: { id: project_Id },
+        },
+      });
+      return await this.linkGroupProjectRepository.update(
+        linkGroupToUpdate[0].id,
+        { rights: updatedRights },
+      );
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async getUserGroupForProjectIdRelation(
+    projectId: number,
+    linkGroupProjectId,
+  ) {
+    try {
+      const dataToReturn = await this.linkGroupProjectRepository.find({
+        where: {
+          id: linkGroupProjectId,
+          project: { id: projectId },
+        },
+        relations: ['user_group'],
+      });
+      return dataToReturn[0];
+    } catch (error) {
       throw new InternalServerErrorException(error);
     }
   }
