@@ -171,6 +171,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     const  searchedProject = userProjects.find(userProject => userProject.project.id === project.id)
     setSearchedProject(searchedProject!)
   }
+  console.log("userProjects",userProjects)
+  console.log("selectedProjectId",selectedProjectId)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -222,7 +224,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
               <MiradorViewer
                 miradorState={miradorState!}
                 saveMiradorState={saveProject}
-                ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!}
+                ProjectUser={userProjects.find(projectUser => projectUser.id == selectedProjectId)!}
               />
             </Grid>
           )

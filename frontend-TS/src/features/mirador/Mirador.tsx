@@ -23,6 +23,7 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,ProjectUser }:MiradorVi
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [viewer, setViewer] = useState<any>(undefined);
   const [openModal, setOpenMOdal] = useState(false)
+  console.log(ProjectUser)
   const project = ProjectUser.project;
 
   console.log(ProjectUser.rights)

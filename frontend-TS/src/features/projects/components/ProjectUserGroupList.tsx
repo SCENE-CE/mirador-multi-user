@@ -42,7 +42,7 @@ export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: I
       <Grid item container flexDirection="column" spacing={1}>
         {groupList && groupList.map((projectGroup) => (
           projectGroup.user_group ? (
-            <div key={projectGroup.id}>
+            <Grid key={projectGroup.id} item container flexDirection="row">
               <Grid item>
                 <ListItem component="div" disablePadding>
                   <ListItemText primary={projectGroup.user_group.name} />
@@ -65,7 +65,7 @@ export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: I
               <Grid item>
                 <Divider />
               </Grid>
-            </div>
+            </Grid>
           ) : (<p key={projectGroup.id}>LOADING</p>)
         ))}
       </Grid>
