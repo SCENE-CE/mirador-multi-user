@@ -30,11 +30,9 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     // eslint-disable-next-line no-useless-catch
     try {
       let groups = await getAllUserGroups(user.id)
-      console.log("AllUsergroups",groups)
       const users : UserGroup[] = groups.filter((group:UserGroup)=> group.type === UserGroupTypes.PERSONAL)
 
       groups = groups.filter((group : UserGroup)=> group.type == UserGroupTypes.MULTI_USER)
-      console.log("multi", groups)
       setGroups(groups)
       setUsers(users)
     } catch (error) {
@@ -93,11 +91,9 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
         {groups && !selectedUserGroup && groups.map((group) => (
-          <>
             <Grid item key={group.id}>
               <GroupCard group={group} personalGroup={personalGroup!}  HandleOpenEditGroupModal={HandleOpenEditGroupModal}/>
             </Grid>
-          </>
         ))}
         {selectedUserGroup &&(
           <>

@@ -11,6 +11,7 @@ import { Button, Grid, Tooltip, Typography } from "@mui/material";
 import './style/mirador.css'
 import { ProjectUser } from "../projects/types/types.ts";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { ProjectRights } from "../user-group/types/types.ts";
 
 interface MiradorViewerProps {
   miradorState: IMiradorState,
@@ -24,6 +25,7 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,ProjectUser }:MiradorVi
   const [openModal, setOpenMOdal] = useState(false)
   const project = ProjectUser.project;
 
+  console.log(ProjectUser.rights)
   useEffect(() => {
     if (viewerRef.current) {
       const config = {
@@ -69,31 +71,33 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,ProjectUser }:MiradorVi
 
 
   return(
-  <Grid container flexDirection='column' spacing={2}>
-    <Grid item container flexDirection='row'>
-      <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
-        <Grid item>
-          <Typography>
-            {project.name}
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Tooltip title={"Project configuration"}>
-            <Button
-              onClick={HandleOpenModal}
-              variant="contained"
-            >
-              <ModeEditIcon/>
-            </Button>
-          </Tooltip>
-        <Button variant="contained" onClick={saveProject}>Save Project</Button>
+    <Grid container flexDirection='column' spacing={2}>
+      <Grid item container flexDirection='row'>
+        <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
+          <Grid item>
+            <Typography>
+              {project.name}
+            </Typography>
+          </Grid>
+          {ProjectUser.rights !== ProjectRights.READER  &&(
+            <Grid item>
+              <Tooltip title={"Project configuration"}>
+                <Button
+                  onClick={HandleOpenModal}
+                  variant="contained"
+                >
+                  <ModeEditIcon />
+                </Button>
+              </Tooltip>
+              <Button variant="contained" onClick={saveProject}>Save Project</Button>
+            </Grid>
+          )}
         </Grid>
       </Grid>
+      <Grid item>
+        <div ref={viewerRef} id="mirador"></div>
+      </Grid>
     </Grid>
-    <Grid item>
-    <div ref={viewerRef} id="mirador"></div>
-    </Grid>
-  </Grid>
   )
 }
 

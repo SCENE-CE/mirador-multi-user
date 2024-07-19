@@ -1,16 +1,12 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { LinkGroupProjectService } from '../link-group-project/link-group-project.service';
-import { UserGroupService } from '../user-group/user-group.service';
-import { ProjectService } from '../project/project.service';
-import { GroupProjectRights } from '../enum/group-project-rights';
-import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
-import { CreateProjectDto } from '../project/dto/create-project.dto';
-import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
-import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { LinkGroupProjectService } from "../link-group-project/link-group-project.service";
+import { UserGroupService } from "../user-group/user-group.service";
+import { ProjectService } from "../project/project.service";
+import { GroupProjectRights } from "../enum/group-project-rights";
+import { AddProjectToGroupDto } from "./dto/addProjectToGroupDto";
+import { CreateProjectDto } from "../project/dto/create-project.dto";
+import { removeProjectToGroupDto } from "./dto/removeProjectToGroupDto";
+import { UpdateProjectGroupDto } from "./dto/updateProjectGroupDto";
 
 @Injectable()
 export class GroupProjectService {
@@ -48,36 +44,27 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
-      console.log('DTO', dto);
       const projectToUpdate = dto.project;
 
       let projectToReturn;
-      if (dto.rights) {
-        console.log(
-          '---------------------------ENTER THE IF CONDITION-----------------------------',
+      if (dto.rights && dto.rights !== GroupProjectRights.READER) {
+        await this.linkGroupProjectService.UpdateRelation(
+          dto.project.id,
+          dto.group.id,
+          dto.rights,
         );
-        const updateLinkGroup =
-          await this.linkGroupProjectService.UpdateRelation(
-            dto.project.id,
-            dto.group.id,
-            dto.rights,
-          );
 
         projectToReturn =
           await this.linkGroupProjectService.getProjectRelations(
             dto.project.id,
           );
       } else {
-        console.log(
-          '---------------------------ENTER THE ELSEEEEEEEEE-----------------------------',
-        );
         projectToReturn = await this.projectService.update(
           projectToUpdate.id,
           projectToUpdate,
         );
       }
 
-      console.log(projectToReturn);
       return projectToReturn;
     } catch (error) {
       console.log(error);

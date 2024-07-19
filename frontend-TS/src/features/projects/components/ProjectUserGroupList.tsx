@@ -20,7 +20,7 @@ interface IProjectUserGroup {
 }
   export const ProjectUserGroupList = ({projectUser}:IProjectUserGroup)=>{
   const [ groupList, setGroupList]=useState<ProjectGroup[]>([]);
-  const [project, setProject] = useState(projectUser.project)
+  const [project] = useState(projectUser.project)
 
   const fetchGroupsForProject=async()=>{
     const groups = await getGroupsAccessToProject(project.id)

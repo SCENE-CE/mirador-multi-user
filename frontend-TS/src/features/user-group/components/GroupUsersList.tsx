@@ -10,7 +10,6 @@ interface IUGroupUsersListPros {
 }
 export const GroupUsersList = ({users,handleRemoveUser,ownerId} : IUGroupUsersListPros) => {
   const currentUser= useUser()
-  console.log('users',users)
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item>

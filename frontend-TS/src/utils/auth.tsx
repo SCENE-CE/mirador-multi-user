@@ -20,7 +20,6 @@ async function handleTokenResponse(data:UserResponse){
 async function loadUser(): Promise<User|null>{
   if(storage.getToken()){
     const data = await getUser();
-    console.log(data)
     return data;
   }
   console.log('USER DATA IS EMPTY')
@@ -34,7 +33,6 @@ async function loginFn(data: LoginCredentialsDTO){
 }
 
 async function registerFn(data: RegisterCredentialsDTO){
-  console.log('toto')
   const response = await register(data);
   const user = await handleTokenResponse(response)
   return user;

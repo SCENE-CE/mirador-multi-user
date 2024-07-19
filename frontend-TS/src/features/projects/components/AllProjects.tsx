@@ -61,7 +61,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
             projects.push(groupProject);
           }
         }
-        console.log(groupProjects)
       }
       setUserProjects(projects);
     } catch (error) {
@@ -85,7 +84,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
     const updatedListOfProject = userProjects.filter(function(project) {
       return project.id != projectId;
     });
-    console.log(updatedListOfProject);
     setUserProjects(updatedListOfProject);
   },[userProjects]);
 
@@ -94,7 +92,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
         ...projectUser.project,
         name: newProjectName
       }}
-    console.log(updatedProject)
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
       return p.project.id != updatedProject.project.id;

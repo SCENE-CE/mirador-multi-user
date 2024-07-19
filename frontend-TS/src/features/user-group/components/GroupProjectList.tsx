@@ -76,8 +76,8 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
         </Grid>
         <List>
           {projectsUser.map((projectUser)=>(
-            <>
-              <ListItem key={projectUser.project.id}>
+            <Grid key={projectUser.project.id}>
+              <ListItem>
                 <ListItemText primary={projectUser.project.name}>
                 </ListItemText>
                 <Button variant="contained" onClick={()=>handleRemoveProject(projectUser.project.id)}  color="error">
@@ -85,7 +85,7 @@ export const GroupProjectList = ({group, personalGroup}:IGroupProjectListProps)=
                 </Button>
               </ListItem>
               <Divider  component="li" />
-            </>
+            </Grid>
           ))}
           <>
             <ListItem>
