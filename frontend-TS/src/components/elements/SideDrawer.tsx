@@ -4,7 +4,7 @@ import {
   IconButton, List,
   styled, Theme, Tooltip
 } from "@mui/material";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MuiDrawer from '@mui/material/Drawer';
@@ -18,6 +18,11 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import { ItemButton } from "./SideBar/ItemButton.tsx";
 import { AllProjects } from "../../features/projects/components/AllProjects.tsx";
 import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
+import IState from "../../features/mirador/interface/IState.ts";
+import { updateProject } from "../../features/projects/api/updateProject.ts";
+import toast from "react-hot-toast";
+import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
+import { createProject } from "../../features/projects/api/createProject.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -80,10 +85,16 @@ const CONTENT = {
 export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedProjectId}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
+  const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
+  const handleSaveProject = useCallback((newProject:ProjectUser)=>{
+    setUserProjects([...userProjects, newProject]);
+
+  },[setUserProjects])
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -93,6 +104,43 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
     setSelectedContent(content);
   }
 
+  const HandleSetUserProjects=(userProjects:ProjectUser[])=>{
+    setUserProjects(userProjects)
+  }
+
+  const saveProject = useCallback(async (state: IState, name: string, userProjects: ProjectUser[]) => {
+    console.log("ENTER saveProject")
+    if (selectedProjectId) {
+      console.log('selectedProjectId', selectedProjectId);
+      const projectToUpdate = userProjects.find(projectUser => projectUser.project.id == selectedProjectId);
+      console.log('projectToUpdate',projectToUpdate)
+      projectToUpdate!.project.userWorkspace = state;
+      projectToUpdate!.project.name = name;
+      console.log(projectToUpdate)
+      if(projectToUpdate){
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { rights, ...projectWithoutRights } = projectToUpdate;
+      const updatedProject = await updateProject(projectWithoutRights!)
+      console.log('updatedProject',updatedProject)
+      }
+
+      toast.success("Project saved");
+    } else {
+      console.log('no selected project Id')
+      const project: CreateProjectDto = {
+        name: name,
+        owner: user,
+        userWorkspace: state,
+      };
+      createProject(project).then(r => {
+        setSelectedProjectId(r.project.id);
+        handleSaveProject({
+          ...r,
+          project: { ...project, id: r.project.id }
+        });
+      });
+    }
+  },[handleSaveProject, selectedProjectId, user.id, userProjects])
 
   return(
     <>
@@ -124,7 +172,12 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
               <AllProjects
                 selectedProjectId={selectedProjectId}
                 setSelectedProjectId={setSelectedProjectId}
-                user={user} />
+                user={user}
+                saveProjectToDb={saveProject}
+                userProjects={userProjects}
+                setUserProjects={HandleSetUserProjects}
+              />
+
             )}
             {
               user && user.id && selectedContent === CONTENT.GROUPS &&(

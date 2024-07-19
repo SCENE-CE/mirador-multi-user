@@ -22,7 +22,7 @@ export type ProjectUser = {
 
 export type ProjectGroupUpdateDto = {
   id:number;
-  rights: ProjectRights
+  rights?: ProjectRights
   project: Project,
   group?:UserGroup
 }

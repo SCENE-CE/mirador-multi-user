@@ -1,7 +1,7 @@
 import { Grid, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useCallback, useEffect, useState } from "react";
-import { CreateProjectDto, Project, ProjectUser } from "../types/types.ts";
+import {  Project, ProjectUser } from "../types/types.ts";
 import MiradorViewer from "../../mirador/Mirador.tsx";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
@@ -12,7 +12,6 @@ import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
-import toast from 'react-hot-toast';
 import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
@@ -24,6 +23,9 @@ interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
   selectedProjectId?: number;
+  saveProjectToDb:(state: IState, name: string, userProjects: ProjectUser[]) => void;
+  setUserProjects:(userProjects: ProjectUser[])=>void;
+  userProjects:ProjectUser[]
 }
 
 const emptyWorkspace: IState = {
@@ -36,11 +38,9 @@ const emptyWorkspace: IState = {
   viewers: {},
   windows: {},
   workspace: {},
-
 };
 
-export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:AllProjectsProps) => {
-  const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
+export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,saveProjectToDb,userProjects,setUserProjects }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
@@ -117,7 +117,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
         userWorkspace: workspace
       }
     )
-    setUserProjects((prevState) => [...prevState,
+    setUserProjects( [...userProjects,
       response]
     );
     initializeMirador(undefined, response.id)
@@ -126,34 +126,11 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId }:Al
 
 
 
-  const handleSaveProject = useCallback((newProject:ProjectUser)=>{
-    setUserProjects(userProjects => [...userProjects, newProject]);
 
-  },[setUserProjects])
 
   const saveProject = useCallback((state: IState, name: string)=>{
-    if (selectedProjectId) {
-      const updatedProject = userProjects.find(project => project.id == selectedProjectId);
-      updatedProject!.project.userWorkspace = state;
-      updatedProject!.project.name = name;
-      updateProject(updatedProject!).then(r => {
-        console.log(r);
-        toast.success("Project saved");
-      });
-    } else {
-      const project:CreateProjectDto = {
-        name: name,
-        owner: user,
-        userWorkspace: state,
-      };
-      createProject(project).then(r => {
-        setSelectedProjectId(r.project.id);
-        handleSaveProject( { ...r,
-          project:{...project, id:r.project.id}
-        });
-      });
-    }
-  },[handleSaveProject, selectedProjectId, user.id, userProjects])
+  saveProjectToDb(state,name,userProjects)
+  },[saveProjectToDb, userProjects])
 
   const getOptionLabel = (option: Project): string => {
     return option.name;
