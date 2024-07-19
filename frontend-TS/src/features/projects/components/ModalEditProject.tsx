@@ -47,6 +47,7 @@ export const ModalEditProject = ({ projectUser,project, updateUserProject, delet
     },[openModal]
   )
 
+  console.log('RIGHTS', projectUser.rights)
 
   return(
     <Grid container>
@@ -68,7 +69,7 @@ export const ModalEditProject = ({ projectUser,project, updateUserProject, delet
               </Button>
             </Grid>
           )}
-        {projectUser.rights === ProjectRights.ADMIN || projectUser.rights === ProjectRights.EDITOR &&(
+        {projectUser.rights !== ProjectRights.READER  &&(
           <ProjectUserGroupList projectUser={projectUser}/>
         )}
         {projectUser.rights === ProjectRights.ADMIN &&(

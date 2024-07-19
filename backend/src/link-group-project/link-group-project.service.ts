@@ -137,16 +137,26 @@ export class LinkGroupProjectService {
     updatedRights: GroupProjectRights,
   ) {
     try {
+      console.log('---------------------------ENTER UPDATE REALTION ---------------------------')
       const linkGroupToUpdate = await this.linkGroupProjectRepository.find({
         where: {
           user_group: { id: user_group_Id },
           project: { id: project_Id },
         },
       });
-      return await this.linkGroupProjectRepository.update(
+      console.log('linkGroupToUpdate',linkGroupToUpdate)
+      const updatedData = await this.linkGroupProjectRepository.update(
         linkGroupToUpdate[0].id,
         { rights: updatedRights },
       );
+      const dataToReturn = await this.linkGroupProjectRepository.find({
+        where: {
+          user_group: { id: user_group_Id },
+          project: { id: project_Id },
+        },
+      })
+      console.log('dataToReturn',dataToReturn)
+      return dataToReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error);

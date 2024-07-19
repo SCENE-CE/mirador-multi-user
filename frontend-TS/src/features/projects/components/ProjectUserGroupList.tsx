@@ -33,6 +33,7 @@ interface IProjectUserGroup {
 
   const handleChangeRights = (group:ProjectGroup) => async (event: SelectChangeEvent) => {
     const updatedProject = await updateProject({id:group.id, project: projectUser.project ,group : group.user_group, rights: event.target.value as ProjectRights })
+    setGroupList(updatedProject);
   };
 
   return(

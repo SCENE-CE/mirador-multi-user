@@ -56,11 +56,17 @@ export class GroupProjectService {
         console.log(
           '---------------------------ENTER THE IF CONDITION-----------------------------',
         );
-        this.linkGroupProjectService.UpdateRelation(
-          dto.project.id,
-          dto.group.id,
-          dto.rights,
-        );
+        const updateLinkGroup =
+          await this.linkGroupProjectService.UpdateRelation(
+            dto.project.id,
+            dto.group.id,
+            dto.rights,
+          );
+
+        projectToReturn =
+          await this.linkGroupProjectService.getProjectRelations(
+            dto.project.id,
+          );
       } else {
         console.log(
           '---------------------------ENTER THE ELSEEEEEEEEE-----------------------------',
