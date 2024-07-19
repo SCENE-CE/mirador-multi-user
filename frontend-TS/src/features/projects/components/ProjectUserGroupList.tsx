@@ -10,43 +10,41 @@ import {
   Typography
 } from "@mui/material";
 import { ProjectGroup, ProjectUser } from "../types/types.ts";
-import { useEffect, useState } from "react";
-import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
+import { Dispatch, SetStateAction } from "react";
 import { ProjectRights } from "../../user-group/types/types.ts";
 import { updateProject } from "../api/updateProject.ts";
 
 interface IProjectUserGroup {
   projectUser: ProjectUser;
+  groupList: ProjectGroup[];
+  setGroupList: Dispatch<SetStateAction<ProjectGroup[]>>;
 }
-  export const ProjectUserGroupList = ({projectUser}:IProjectUserGroup)=>{
-  const [ groupList, setGroupList]=useState<ProjectGroup[]>([]);
-  const [project] = useState(projectUser.project)
 
-  const fetchGroupsForProject=async()=>{
-    const groups = await getGroupsAccessToProject(project.id)
-    setGroupList(groups);
+export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: IProjectUserGroup) => {
+  const handleChangeRights = (group: ProjectGroup) => async (event: SelectChangeEvent) => {
+    const updatedProjectGroup = await updateProject({
+      id: group.id,
+      project: projectUser.project,
+      group: group.user_group,
+      rights: event.target.value as ProjectRights
+    });
 
-  }
-  useEffect(()=>{
-    fetchGroupsForProject()
-  },[project])
-
-  const handleChangeRights = (group:ProjectGroup) => async (event: SelectChangeEvent) => {
-    const updatedProject = await updateProject({id:group.id, project: projectUser.project ,group : group.user_group, rights: event.target.value as ProjectRights })
-    setGroupList(updatedProject);
+    setGroupList(prevGroupList => prevGroupList.map(g =>
+      g.id === group.id ? { ...g, rights: updatedProjectGroup.rights } : g
+    ));
   };
 
-  return(
+  return (
     <Grid container item>
       <Grid item>
-        <Typography variant="h5">access list</Typography>
+        <Typography variant="h5">Access List</Typography>
       </Grid>
-      <Grid item flexDirection="column" container spacing={1}>
-        { groupList &&(
-          groupList.map((projectGroup)=>(
-            <>
+      <Grid item container flexDirection="column" spacing={1}>
+        {groupList && groupList.map((projectGroup) => (
+          projectGroup.user_group ? (
+            <div key={projectGroup.id}>
               <Grid item>
-                <ListItem key={projectGroup.id} component="div" disablePadding>
+                <ListItem component="div" disablePadding>
                   <ListItemText primary={projectGroup.user_group.name} />
                 </ListItem>
                 <Grid item>
@@ -54,27 +52,23 @@ interface IProjectUserGroup {
                     <InputLabel>Rights</InputLabel>
                     <Select
                       value={projectGroup.rights.toUpperCase()}
-                      label="Right"
+                      label="Rights"
                       onChange={handleChangeRights(projectGroup)}
                     >
-                      {
-                        (Object.keys(ProjectRights) as Array<keyof typeof ProjectRights>).map((right, index)=>(
-                            <MenuItem key={index} value={right}>{right}</MenuItem>
-                          )
-                        )
-                      }
+                      {(Object.keys(ProjectRights) as Array<keyof typeof ProjectRights>).map((right, index) => (
+                        <MenuItem key={index} value={right}>{right}</MenuItem>
+                      ))}
                     </Select>
                   </FormControl>
                 </Grid>
               </Grid>
               <Grid item>
-                <Divider/>
+                <Divider />
               </Grid>
-            </>
-          ))
-        )
-        }
+            </div>
+          ) : (<p key={projectGroup.id}>LOADING</p>)
+        ))}
       </Grid>
     </Grid>
-  )
+  );
 }

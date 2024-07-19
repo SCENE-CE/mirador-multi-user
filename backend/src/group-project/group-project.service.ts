@@ -83,7 +83,7 @@ export class GroupProjectService {
         );
       }
 
-      const linkProjectsGroup = [];
+      const groupsForProject = [];
       for (const projectId of projectsId) {
         const project = await this.projectService.findOne(projectId);
         if (!project) {
@@ -98,9 +98,10 @@ export class GroupProjectService {
           project: project,
         });
 
-        linkProjectsGroup.push(linkProjectGroup);
+        const groups = await this.getAllProjectGroups(projectId);
+        groupsForProject.push(groups);
       }
-      return linkProjectsGroup;
+      return groupsForProject;
     } catch (error) {
       throw new InternalServerErrorException(
         `an error occured while trying to add project id ${dto.projectsId} to group id: ${dto.groupId}`,
