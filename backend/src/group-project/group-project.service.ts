@@ -22,7 +22,7 @@ export class GroupProjectService {
 
   async getAllGroupProjects(groupId: number) {
     try {
-      console.log('GET ALL GROUP PROJECTS')
+      console.log('GET ALL GROUP PROJECTS');
       return await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
         groupId,
       );
@@ -35,7 +35,7 @@ export class GroupProjectService {
   }
 
   async getAllProjectGroups(projectId: number) {
-    console.log('ENTER GET ALL PROJECT GROUPS')
+    console.log('ENTER GET ALL PROJECT GROUPS');
     try {
       return await this.linkGroupProjectService.getProjectRelation(projectId);
     } catch (error) {
@@ -48,24 +48,39 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
-      console.log('DTO',dto)
+      console.log('DTO', dto);
       const projectToUpdate = dto.project;
       const projectRelation =
         await this.linkGroupProjectService.getProjectRelation(dto.project.id);
+      console.log(
+        '---------------------------PROJECT RELATION---------------------------',
+      );
+      console.log(projectRelation);
+      let projectToReturn;
+      if (dto.user_group_id) {
+        const relationToUpdate = projectRelation.find(
+          (linkGroup) => linkGroup.user_group.id == dto.user_group_id,
+        );
+        console.log(
+          'relationToUpdate------------------------------------',
+          relationToUpdate,
+        );
+        await this.linkGroupProjectService.update(relationToUpdate.id, {
+          ...relationToUpdate,
+          rights: dto.rights,
+        });
+        await this.projectService.update(projectToUpdate.id, projectToUpdate);
+        projectToReturn = await this.getProjectRightForUser(
+          relationToUpdate.user_group.id,
+          dto.project.id,
+        );
+      } else {
+        projectToReturn = await this.projectService.update(
+          projectToUpdate.id,
+          projectToUpdate,
+        );
+      }
 
-      const relationToUpdate = projectRelation.find(
-        (linkGroup) => linkGroup.user_group.id == dto.user_group_id,
-      );
-      console.log('relationToUpdate------------------------------------',relationToUpdate)
-      await this.linkGroupProjectService.update(relationToUpdate.id, {
-        ...relationToUpdate,
-        rights: dto.rights,
-      });
-      await this.projectService.update(projectToUpdate.id, projectToUpdate);
-      const projectToReturn = await this.getProjectRightForUser(
-        relationToUpdate.user_group.id,
-        dto.project.id,
-      );
       console.log(projectToReturn);
       return projectToReturn;
     } catch (error) {
@@ -145,7 +160,7 @@ export class GroupProjectService {
 
   async getProjectRightForUser(userGroupId: number, projectId: number) {
     try {
-      console.log('getProjectRightForUser')
+      console.log('getProjectRightForUser');
       const project =
         await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
           userGroupId,
