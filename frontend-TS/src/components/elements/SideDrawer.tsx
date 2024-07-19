@@ -4,7 +4,7 @@ import {
   IconButton, List,
   styled, Theme, Tooltip
 } from "@mui/material";
-import { useCallback, useState } from "react";
+import { createContext, useCallback, useState } from "react";
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MuiDrawer from '@mui/material/Drawer';
@@ -77,6 +77,8 @@ interface ISideDrawerProps{
   setSelectedProjectId :(id?:number)=>void
 }
 
+
+
 const CONTENT = {
   PROJECTS:'PROJECT',
   GROUPS:'GROUPS'
@@ -120,10 +122,10 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
       const { rights, ...projectWithoutRights } = projectToUpdate;
       console.log('projectWithoutRights',projectWithoutRights)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        updateProject(projectWithoutRights!).then(r => {
+        await updateProject(projectWithoutRights!)
           console.log(r);
           toast.success("Project saved");
-        });      }
+    }
 
       toast.success("Project saved");
     } else {
