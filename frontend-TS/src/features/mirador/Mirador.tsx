@@ -25,6 +25,7 @@ const MiradorViewer = ({ miradorState ,ProjectUser, viewer, setViewer }:MiradorV
 
   console.log(ProjectUser.rights)
   useEffect(() => {
+
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
@@ -50,11 +51,10 @@ const MiradorViewer = ({ miradorState ,ProjectUser, viewer, setViewer }:MiradorV
           Mirador.actions.importMiradorState(miradorState)
         );
       }
-
       setViewer(loadingMiradorViewer);
     }
-  }, []);
 
+  }, []);
 
   return(
     <Grid container flexDirection='column' spacing={2}>

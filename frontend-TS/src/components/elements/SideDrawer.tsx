@@ -4,7 +4,8 @@ import {
   IconButton, List,
   styled, Theme, Tooltip
 } from "@mui/material";
-import { createContext, useCallback, useState } from "react";
+import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import Mirador from 'mirador';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import MuiDrawer from '@mui/material/Drawer';
@@ -22,6 +23,9 @@ import SaveIcon from '@mui/icons-material/Save';import { updateProject } from ".
 import toast from "react-hot-toast";
 import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
+import IState from "../../features/mirador/interface/IState.ts";
+import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
+import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -85,9 +89,11 @@ const CONTENT = {
 }
 export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedProjectId}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
+  const viewerRef = useRef<HTMLDivElement | null>(null);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
-  const [viewer, setViewer] = useState<any>(undefined);
+  const [viewer, setViewer] = useState<IState>();
+  const [miradorState, setMiradorState] = useState<IState>();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -110,29 +116,29 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
     setUserProjects(userProjects)
   }
 
-  const saveProject = useCallback(async () => {
+  const saveMiradorState = useCallback(async (state: IState) => {
     console.log('saveProject');
     if (selectedProjectId) {
       console.log('selectedProjectId',selectedProjectId);
-      const projectToUpdate = userProjects.find(projectUser => projectUser.project.id == selectedProjectId);
-      projectToUpdate!.project.userWorkspace = viewer;
+      const projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
+      projectToUpdate.project.userWorkspace = state;
       console.log('projectToUpdate',projectToUpdate)
       if(projectToUpdate){
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { rights, ...projectWithoutRights } = projectToUpdate;
-      console.log('projectWithoutRights',projectWithoutRights)
+        const { rights, ...projectWithoutRights } = projectToUpdate;
+        console.log('projectWithoutRights',projectWithoutRights)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        await updateProject(projectWithoutRights!)
-          console.log(r);
-          toast.success("Project saved");
-    }
+        const projectUpdated =await updateProject(projectWithoutRights!)
+        console.log(projectUpdated);
+        toast.success("Project saved");
+      }
 
       toast.success("Project saved");
     } else {
       const project: CreateProjectDto = {
         name: 'new project',
         owner: user,
-        userWorkspace: viewer,
+        userWorkspace: state,
       };
       createProject(project).then(r => {
         setSelectedProjectId(r.project.id);
@@ -143,6 +149,47 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
       });
     }
   },[handleSaveProject, selectedProjectId, user.id, userProjects])
+
+  useEffect(() => {
+    if (viewerRef.current) {
+      const config = {
+        id: viewerRef.current.id,
+        annotation: {
+          adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
+          exportLocalStorageAnnotations: false, // display annotation JSON export button
+        }
+      };
+
+
+      let loadingMiradorViewer;
+      // First displaying of the viewer
+      if(!viewer){
+        loadingMiradorViewer = Mirador.viewer(config, [
+          ...miradorAnnotationEditorVideo]);
+      }
+      if(!miradorState){
+        saveMiradorState(loadingMiradorViewer.store.getState(),);
+      }
+
+      console.log('miradorState', miradorState)
+
+      // Load state only if it is not empty
+      if (loadingMiradorViewer && miradorState) {
+        loadingMiradorViewer.store.dispatch(
+          Mirador.actions.importMiradorState(miradorState)
+        );
+      }
+
+      setViewer(loadingMiradorViewer);
+    }
+  }, []);
+
+  const saveProject = () => {
+    saveMiradorState(viewer!.store.getState());
+  }
+
+
 
   return(
     <>
