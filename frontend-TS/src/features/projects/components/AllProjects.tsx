@@ -1,8 +1,7 @@
 import { Grid, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-import { Dispatch, useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {  Project, ProjectUser } from "../types/types.ts";
-import MiradorViewer from "../../mirador/Mirador.tsx";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
 import { ProjectCard } from "./projectCard.tsx";
@@ -25,8 +24,7 @@ interface AllProjectsProps {
   selectedProjectId?: number;
   setUserProjects:(userProjects: ProjectUser[])=>void;
   userProjects:ProjectUser[]
-  viewer:any;
-  setViewer:Dispatch<any>
+  handleSetMiradorState:(state:IState | undefined)=>void;
 }
 
 const emptyWorkspace: IState = {
@@ -43,11 +41,10 @@ const emptyWorkspace: IState = {
   workspace: {},
 };
 
-export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects, viewer, setViewer }:AllProjectsProps) => {
+export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
-  const [miradorState, setMiradorState] = useState<IState>();
 
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
 
@@ -106,7 +103,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   const initializeMirador = useCallback((miradorState: IState | undefined, projectId: number) => {
     setSelectedProjectId(projectId);
-    setMiradorState(miradorState);
+    handleSetMiradorState(miradorState);
   },[selectedProjectId]);
 
   const toggleModalProjectCreation = useCallback(()=>{
@@ -148,10 +145,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
       setSearchedProject(null);
     }
   }
-  console.log("userProjects",userProjects)
-  console.log("selectedProjectId",selectedProjectId)
-  console.log('searchedProject : ',searchedProject)
-  console.log('project send to MIrador', userProjects.find(projectUser => projectUser.project.id == selectedProjectId))
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -198,17 +191,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
               </Grid>
             </Grid>
           ) }
-          {selectedProjectId &&(
-            <Grid item xs={12}>
-              <MiradorViewer
-                miradorState={miradorState!}
-                ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId) ?userProjects.find(projectUser => projectUser.project.id == selectedProjectId)! : userProjects.find(projectUser => projectUser.id == selectedProjectId)!  }
-                viewer={viewer}
-                setViewer={setViewer}
-              />
-            </Grid>
-          )
-          }
+
           {
             searchedProject && !selectedProjectId &&(
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>

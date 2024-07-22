@@ -18,9 +18,9 @@ export const GroupUsersList = ({users,handleRemoveUser,ownerId} : IUGroupUsersLi
       <Grid item flexDirection="column" container spacing={1}>
         { users &&(
           users.map((user)=>(
-            <>
+            <Grid item container key={user.id}>
               <Grid item>
-                <ListItem key={user.id} component="div" disablePadding>
+                <ListItem  component="div" disablePadding>
                   <ListItemText primary={user.name} />
                   {currentUser.data!.id === ownerId && currentUser.data!.id !== user.id &&(
                     <Button size="small" variant="contained" onClick={()=>handleRemoveUser(user)}  color="error">
@@ -33,7 +33,7 @@ export const GroupUsersList = ({users,handleRemoveUser,ownerId} : IUGroupUsersLi
               <Grid item>
                 <Divider/>
               </Grid>
-            </>
+            </Grid>
           ))
         )
         }

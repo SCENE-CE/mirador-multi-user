@@ -29,12 +29,11 @@ const project = ProjectUser.project
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
   return (
-    <>
       <Card>
-        <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{minHeight:'120px'}}>
+        <Grid item container flexDirection="row" wrap="nowrap" sx={{minHeight:'120px'}}>
           <Grid item container flexDirection="row"  alignItems="center" justifyContent="flex-start" spacing={2}>
             <Grid item xs={12} sm={4}>
-              <img src={placeholder} alt="placeholder" style={{height:100, width:200}}/>
+              <img src={placeholder} alt="placeholder" style={{height:100, width:150}}/>
             </Grid>
             <Grid item xs={12} sm={4}>
               <Typography variant="subtitle1">{project.name}</Typography>
@@ -55,7 +54,7 @@ const project = ProjectUser.project
               <Tooltip title={"Open project"}>
                 <Button
                   onClick={() => {
-                    initializeMirador(project.userWorkspace, project.id);
+                    initializeMirador(project.userWorkspace, ProjectUser.id);
                   }}
                   variant="contained"
                 >
@@ -96,6 +95,5 @@ const project = ProjectUser.project
           </Grid>
         </Grid>
       </Card>
-    </>
   );
 };

@@ -25,7 +25,6 @@ const MiradorViewer = ({ miradorState ,ProjectUser, viewer, setViewer }:MiradorV
 
   console.log(ProjectUser.rights)
 
-  console.log('try to find theme', ProjectUser.project.userWorkspace)
   useEffect(() => {
 
     if (viewerRef.current) {

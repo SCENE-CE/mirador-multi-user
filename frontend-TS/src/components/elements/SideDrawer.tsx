@@ -1,31 +1,30 @@
-import {
-  Box, CSSObject,
-  Divider, Grid,
-  IconButton, List,
-  styled, Theme, Tooltip
-} from "@mui/material";
+import { Box, CSSObject, Divider, Grid, IconButton, List, styled, Theme, Tooltip } from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
-import Mirador from 'mirador';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import MuiDrawer from '@mui/material/Drawer';
-import WorkIcon from '@mui/icons-material/Work';
-import SubscriptionsIcon from '@mui/icons-material/Subscriptions';
-import GroupsIcon from '@mui/icons-material/Groups';
-import ShareIcon from '@mui/icons-material/Share';
-import ConnectWithoutContactIcon from '@mui/icons-material/ConnectWithoutContact';
-import SettingsIcon from '@mui/icons-material/Settings';
+import Mirador from "mirador";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import MuiDrawer from "@mui/material/Drawer";
+import WorkIcon from "@mui/icons-material/Work";
+import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
+import GroupsIcon from "@mui/icons-material/Groups";
+import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
+import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ItemButton } from "./SideBar/ItemButton.tsx";
 import { AllProjects } from "../../features/projects/components/AllProjects.tsx";
 import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
-import SaveIcon from '@mui/icons-material/Save';import { updateProject } from "../../features/projects/api/updateProject.ts";
+import SaveIcon from "@mui/icons-material/Save";
+import { updateProject } from "../../features/projects/api/updateProject.ts";
 import toast from "react-hot-toast";
 import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
 import IState from "../../features/mirador/interface/IState.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
+import miradorAnnotationEditorVideo
+  from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
+import { MMUModal } from "./modal.tsx";
+import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
+import MiradorViewer from "../../features/mirador/Mirador.tsx";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -93,7 +92,8 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
   const [viewer, setViewer] = useState<IState>();
-  const [miradorState] = useState<IState>();
+  const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
+  const [miradorState, setMiradorState] = useState<IState | undefined>();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -114,6 +114,10 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
 
   const HandleSetUserProjects=(userProjects:ProjectUser[])=>{
     setUserProjects(userProjects)
+  }
+
+  const HandleSetMiradorState =(state:IState | undefined)=>{
+    setMiradorState(state)
   }
 
   const saveMiradorState = useCallback(async (state: IState) => {
@@ -202,7 +206,14 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
     saveMiradorState(viewer!.store.getState());
   }
 
+  const handleSetDisconnectModalOpen=()=>{
+    setModalDisconectIsOpen(!modalDisconectIsOpen);
+  }
 
+  const handleDisonnectUser = ()=>{
+    handleDisconnect()
+    handleSetDisconnectModalOpen()
+  }
 
   return(
     <>
@@ -218,20 +229,37 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
           <Tooltip title={"Mes projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} selected={false} icon={<ShareIcon />} text="Shares" action={()=>{console.log('Shares')}}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>
         <Divider/>
-        <List>
-          <Tooltip title=""><ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Mirador" action={saveProject}/></Tooltip>
-        </List>
-        <Divider />
+        {
+          selectedProjectId && (
+            <>
+              <List>
+                <Tooltip title=""><ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Mirador" action={saveProject}/></Tooltip>
+              </List>
+              <Divider />
+            </>
+          )
+        }
+
         <List>
           <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{console.log('settings')}}/>
-          <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleDisconnect}/>
+          <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleSetDisconnectModalOpen}/>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        {selectedProjectId &&(
+          <Grid item xs={12}>
+            <MiradorViewer
+              miradorState={miradorState!}
+              ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId) ?userProjects.find(projectUser => projectUser.project.id == selectedProjectId)! : userProjects.find(projectUser => projectUser.id == selectedProjectId)!  }
+              viewer={viewer}
+              setViewer={setViewer}
+            />
+          </Grid>
+        )
+        }
         <Grid item container direction="column">
           <Grid item>
             {user && user.id && selectedContent === CONTENT.PROJECTS && (
@@ -241,8 +269,7 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
                 user={user}
                 userProjects={userProjects}
                 setUserProjects={HandleSetUserProjects}
-                viewer={viewer}
-                setViewer={setViewer}
+                handleSetMiradorState={HandleSetMiradorState}
               />
 
             )}
@@ -252,6 +279,11 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
                   user={user}
                 />
               )
+            }
+            {modalDisconectIsOpen &&(
+              <MMUModal openModal={modalDisconectIsOpen} setOpenModal={handleSetDisconnectModalOpen} width={400} children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />}/>
+            )
+
             }
           </Grid>
         </Grid>
