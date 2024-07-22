@@ -1,9 +1,9 @@
 import "./App.css";
-import { AppProvider } from "providers/app-provider.tsx";
 import { AppRoutes } from "routes/routes.tsx";
 import { Toaster } from "react-hot-toast";
 import { CssBaseline, ThemeProvider } from "@mui/material";
 import { theme } from './assets/theme/mainTheme.ts'
+import { AppProvider } from "./features/miscellaneous/AppProvider.tsx";
 
 function App() {
 
