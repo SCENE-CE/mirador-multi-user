@@ -38,7 +38,7 @@ const FormField: React.FC<FormFieldProps> = (
     </Grid>
     {
       error && (
-        <Grid item>
+        <Grid item width={200}>
     <FormLabel error={true}>{error.message}</FormLabel>
         </Grid>
       )
