@@ -10,7 +10,7 @@ import placeholder from "../../../assets/Placeholder.svg";
 import { ProjectRights } from "../../user-group/types/types.ts";
 
 interface CardProps {
-  initializeMirador: (projectWorkspace: IState, projectId: number) => void,
+  initializeMirador: (projectWorkspace: IState, ProjectUser:ProjectUser) => void,
   deleteProject: (projectId: number) => void,
   ProjectUser:ProjectUser,
   updateUserProject:(project:ProjectUser, newProjectName:string)=>void,
@@ -55,7 +55,7 @@ const project = ProjectUser.project
               <Tooltip title={"Open project"}>
                 <Button
                   onClick={() => {
-                    initializeMirador(project.userWorkspace, project.id);
+                    initializeMirador(project.userWorkspace, ProjectUser);
                   }}
                   variant="contained"
                 >

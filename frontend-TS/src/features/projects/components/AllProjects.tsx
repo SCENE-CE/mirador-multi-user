@@ -21,8 +21,8 @@ import {  UserGroup } from "../../user-group/types/types.ts";
 
 interface AllProjectsProps {
   user: User;
-  setSelectedProjectId: (id: number) => void;
-  selectedProjectId?: number;
+  setSelectedProjectUser: (ProjectUser:ProjectUser) => void;
+  selectedProjectUser?: ProjectUser;
   setUserProjects:(userProjects: ProjectUser[])=>void;
   userProjects:ProjectUser[]
   viewer:any;
@@ -41,7 +41,7 @@ const emptyWorkspace: IState = {
   workspace: {},
 };
 
-export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects, viewer, setViewer }:AllProjectsProps) => {
+export const AllProjects = ({ user, selectedProjectUser, setSelectedProjectUser,userProjects,setUserProjects, viewer, setViewer }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
@@ -102,10 +102,10 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     setUserProjects(updatedListOfProject);
   },[userProjects])
 
-  const initializeMirador = useCallback((miradorState: IState | undefined, projectId: number) => {
-    setSelectedProjectId(projectId);
+  const initializeMirador = useCallback((miradorState: IState | undefined, ProjectUser: ProjectUser) => {
+    setSelectedProjectUser(ProjectUser);
     setMiradorState(miradorState);
-  },[selectedProjectId]);
+  },[selectedProjectUser]);
 
   const toggleModalProjectCreation = useCallback(()=>{
     setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
@@ -121,7 +121,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     setUserProjects( [...userProjects,
       response]
     );
-    initializeMirador(undefined, response.id)
+    initializeMirador(undefined, response)
     toggleModalProjectCreation()
   },[initializeMirador, toggleModalProjectCreation, user.id])
 
@@ -147,14 +147,13 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     }
   }
   console.log("userProjects",userProjects)
-  console.log("selectedProjectId",selectedProjectId)
   console.log('searchedProject : ',searchedProject)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
         <Grid item container direction="row-reverse" spacing={2} alignItems="center">
           {
-            !selectedProjectId &&(
+            !selectedProjectUser! &&(
               <Grid item>
                 <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabel} setSearchedProject={handleSetSearchProject}/>
               </Grid>
@@ -170,7 +169,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
               <Typography variant="h6" component="h2">No projects yet, start to work when clicking on "New project" button.</Typography>
             </Grid>
           )}
-          {!selectedProjectId && !searchedProject && userProjects && (
+          {!selectedProjectUser! && !searchedProject && userProjects && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((projectUser) => (
                   <Grid item key={projectUser.project.id} >
@@ -195,11 +194,11 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
               </Grid>
             </Grid>
           ) }
-          {selectedProjectId &&(
+          {selectedProjectUser &&(
             <Grid item xs={12}>
               <MiradorViewer
                 miradorState={miradorState!}
-                ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!}
+                ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectUser.project.id)!}
                 viewer={viewer}
                 setViewer={setViewer}
               />
@@ -207,7 +206,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           )
           }
           {
-            searchedProject && !selectedProjectId &&(
+            searchedProject && !selectedProjectUser &&(
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item>
                   <ProjectCard
