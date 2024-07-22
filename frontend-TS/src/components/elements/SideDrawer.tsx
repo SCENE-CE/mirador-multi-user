@@ -76,8 +76,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 interface ISideDrawerProps{
   user: any,
   handleDisconnect:()=>void
-  selectedProjectId?:number
-  setSelectedProjectId :(id?:number)=>void
 }
 
 
@@ -86,7 +84,7 @@ const CONTENT = {
   PROJECTS:'PROJECT',
   GROUPS:'GROUPS'
 }
-export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedProjectId}:ISideDrawerProps) => {
+export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
@@ -94,6 +92,8 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
   const [viewer, setViewer] = useState<IState>();
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
+  const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
+
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -122,6 +122,7 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
 
   const saveMiradorState = useCallback(async (state: IState) => {
     console.log('saveProject');
+    console.log('selectedProjectId',selectedProjectId)
     if (selectedProjectId) {
       console.log('IF')
       console.log('selectedProjectId',selectedProjectId);
@@ -145,23 +146,23 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
       toast.success("Project saved");
     } else {
       console.log('ELSE')
-      const project: CreateProjectDto = {
-        name: 'new project',
-        owner: user,
-        userWorkspace: state,
-      };
-      const r = await createProject(project);
-      console.log('project creation id', r.project.id)
-      if (r) {
-        setSelectedProjectId(r.id);
-        handleSaveProject({
-          ...r,
-          project: {
-            ...project,
-            id: r.project.id
-          }
-        });
-      }
+      // const project: CreateProjectDto = {
+      //   name: 'new project',
+      //   owner: user,
+      //   userWorkspace: state,
+      // };
+      // const r = await createProject(project);
+      // console.log('project creation id', r.project.id)
+      // if (r) {
+      //   setSelectedProjectId(r.id);
+      //   handleSaveProject({
+      //     ...r,
+      //     project: {
+      //       ...project,
+      //       id: r.project.id
+      //     }
+      //   });
+      // }
     }
   }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
 

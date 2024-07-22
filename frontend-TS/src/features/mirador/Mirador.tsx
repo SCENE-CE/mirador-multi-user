@@ -20,10 +20,10 @@ interface MiradorViewerProps {
 
 const MiradorViewer = ({ miradorState ,ProjectUser, viewer, setViewer }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
-  console.log(ProjectUser)
+  console.log('ProjectUser',ProjectUser)
   const project = ProjectUser.project;
 
-  console.log(ProjectUser.rights)
+  console.log('ProjectUser.rights',ProjectUser.rights)
 
   useEffect(() => {
 
