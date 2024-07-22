@@ -20,8 +20,8 @@ import {  UserGroup } from "../../user-group/types/types.ts";
 
 interface AllProjectsProps {
   user: User;
-  setSelectedProjectId: (id: number) => void;
-  selectedProjectId?: number;
+  setSelectedProject: (ProjectUser:ProjectUser) => void;
+  selectedProject?: ProjectUser;
   setUserProjects:(userProjects: ProjectUser[])=>void;
   userProjects:ProjectUser[]
   handleSetMiradorState:(state:IState | undefined)=>void;
@@ -41,7 +41,7 @@ const emptyWorkspace: IState = {
   workspace: {},
 };
 
-export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
+export const AllProjects = ({ user, selectedProject, setSelectedProject,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
@@ -86,7 +86,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     });
     console.log('updatedListOfProject',updatedListOfProject)
     setUserProjects(updatedListOfProject);
-  },[userProjects]);
+  },[setUserProjects, userProjects]);
 
   const updateUserProject = useCallback(async (projectUser:ProjectUser, newProjectName:string)=>{
     const updatedProject:ProjectUser = {...projectUser, project: {
@@ -99,12 +99,12 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     });
     updatedListOfProject = [updatedProject,...updatedListOfProject]
     setUserProjects(updatedListOfProject);
-  },[userProjects])
+  },[setUserProjects, userProjects])
 
-  const initializeMirador = useCallback((miradorState: IState | undefined, projectId: number) => {
-    setSelectedProjectId(projectId);
+  const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: ProjectUser) => {
+    setSelectedProject(projectUser);
     handleSetMiradorState(miradorState);
-  },[selectedProjectId]);
+  },[handleSetMiradorState, setSelectedProject]);
 
   const toggleModalProjectCreation = useCallback(()=>{
     setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
@@ -120,9 +120,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     setUserProjects( [...userProjects,
       response]
     );
-    initializeMirador(undefined, response.id)
+    initializeMirador(undefined, response)
     toggleModalProjectCreation()
-  },[initializeMirador, toggleModalProjectCreation, user.id])
+  },[initializeMirador, setUserProjects, toggleModalProjectCreation, user, userProjects])
 
   const getOptionLabel = (option: Project): string => {
     return option.name;
@@ -150,7 +150,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
         <Grid item container direction="row-reverse" spacing={2} alignItems="center">
           {
-            !selectedProjectId &&(
+            !selectedProject &&(
               <Grid item>
                 <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabel} setSearchedProject={handleSetSearchProject}/>
               </Grid>
@@ -166,11 +166,12 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
               <Typography variant="h6" component="h2">No projects yet, start to work when clicking on "New project" button.</Typography>
             </Grid>
           )}
-          {!selectedProjectId && !searchedProject && userProjects && (
+          {!selectedProject && !searchedProject && userProjects && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((projectUser) => (
                   <Grid item key={projectUser.project.id} >
                     <ProjectCard
+                      project={projectUser.project}
                       ProjectUser={projectUser}
                       initializeMirador={initializeMirador}
                       deleteProject={deleteUserProject}
@@ -193,10 +194,11 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           ) }
 
           {
-            searchedProject && !selectedProjectId &&(
+            searchedProject && !selectedProject &&(
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item>
                   <ProjectCard
+                    project={searchedProject.project}
                     ProjectUser={searchedProject}
                     initializeMirador={initializeMirador}
                     deleteProject={deleteUserProject}

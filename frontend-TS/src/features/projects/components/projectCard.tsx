@@ -5,29 +5,33 @@ import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { useCallback, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalEditProject } from "./ModalEditProject.tsx";
-import { ProjectUser } from "../types/types.ts";
+import { Project, ProjectUser } from "../types/types.ts";
 import placeholder from "../../../assets/Placeholder.svg";
 import { ProjectRights } from "../../user-group/types/types.ts";
 
 interface CardProps {
-  initializeMirador: (projectWorkspace: IState, projectId: number) => void,
+  initializeMirador: (projectWorkspace: IState, projectUser: ProjectUser) => void,
   deleteProject: (projectId: number) => void,
   ProjectUser:ProjectUser,
   updateUserProject:(project:ProjectUser, newProjectName:string)=>void,
+  project:Project
 }
 
 export const ProjectCard= ({
   initializeMirador,
   deleteProject,
   ProjectUser,
-  updateUserProject
+  updateUserProject,
+  project
 }:CardProps
 ) => {
   const [openModal, setOpenMOdal] = useState(false)
-const project = ProjectUser.project
+
+
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
+
   return (
       <Card>
         <Grid item container flexDirection="row" wrap="nowrap" sx={{minHeight:'120px'}}>
@@ -54,7 +58,7 @@ const project = ProjectUser.project
               <Tooltip title={"Open project"}>
                 <Button
                   onClick={() => {
-                    initializeMirador(project.userWorkspace, ProjectUser.id);
+                    initializeMirador(project.userWorkspace, ProjectUser);
                   }}
                   variant="contained"
                 >

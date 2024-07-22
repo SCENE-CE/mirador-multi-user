@@ -1,4 +1,15 @@
-import { Box, CSSObject, Divider, Grid, IconButton, List, styled, Theme, Tooltip } from "@mui/material";
+import {
+  Box,
+  CSSObject,
+  Divider,
+  Grid,
+  IconButton,
+  List,
+  styled,
+  Theme,
+  Tooltip,
+  Typography
+} from "@mui/material";
 import { useCallback, useEffect, useRef, useState } from "react";
 import Mirador from "mirador";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -17,14 +28,13 @@ import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
 import toast from "react-hot-toast";
 import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
-import { createProject } from "../../features/projects/api/createProject.ts";
 import IState from "../../features/mirador/interface/IState.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
 import miradorAnnotationEditorVideo
   from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
-import MiradorViewer from "../../features/mirador/Mirador.tsx";
+import { createProject } from "../../features/projects/api/createProject.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -89,12 +99,12 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
-  const [viewer, setViewer] = useState<IState>();
+  const [viewer, setViewer] = useState<any>(undefined);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
-  const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
-
-
+  const [selectedProject, setSelectedProject] = useState< ProjectUser|undefined>(undefined);
+  console.log('viewerRef',viewerRef)
+  console.log('viewer',viewer)
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -108,7 +118,7 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
   };
 
   const handleChangeContent = (content:string)=>{
-    setSelectedProjectId(undefined);
+    setSelectedProject(undefined);
     setSelectedContent(content);
   }
 
@@ -122,14 +132,14 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
 
   const saveMiradorState = useCallback(async (state: IState) => {
     console.log('saveProject');
-    console.log('selectedProjectId',selectedProjectId)
-    if (selectedProjectId) {
+    console.log('selectedProjectId',selectedProject)
+    if (selectedProject) {
       console.log('IF')
-      console.log('selectedProjectId',selectedProjectId);
-      let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
-    //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
+      console.log('selectedProjectId',selectedProject);
+      let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProject.project.id)!;
+      //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
       if(projectToUpdate == undefined){
-        projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
+        projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProject.project.id)!;
       }
       projectToUpdate.project.userWorkspace = state;
       console.log('projectToUpdate',projectToUpdate)
@@ -146,27 +156,28 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
       toast.success("Project saved");
     } else {
       console.log('ELSE')
-      // const project: CreateProjectDto = {
-      //   name: 'new project',
-      //   owner: user,
-      //   userWorkspace: state,
-      // };
-      // const r = await createProject(project);
-      // console.log('project creation id', r.project.id)
-      // if (r) {
-      //   setSelectedProjectId(r.id);
-      //   handleSaveProject({
-      //     ...r,
-      //     project: {
-      //       ...project,
-      //       id: r.project.id
-      //     }
-      //   });
-      // }
+      const project: CreateProjectDto = {
+        name: 'new project',
+        owner: user,
+        userWorkspace: state,
+      };
+      const r = await createProject(project);
+      console.log('project creation id', r.project.id)
+      if (r) {
+        setSelectedProject(r);
+        handleSaveProject({
+          ...r,
+          project: {
+            ...project,
+            id: r.project.id
+          }
+        });
+      }
     }
-  }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
+  }, [handleSaveProject, setSelectedProject, user, userProjects]);
 
-  useEffect(() => {
+
+  const handleSetUpMirador = ()=>{
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
@@ -185,13 +196,13 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
           ...miradorAnnotationEditorVideo]);
       }
       if(!miradorState){
-        saveMiradorState(loadingMiradorViewer.store.getState(),);
+        saveMiradorState(loadingMiradorViewer.store.getState());
       }
 
       console.log('miradorState', miradorState)
 
       // Load state only if it is not empty
-      if (loadingMiradorViewer && miradorState) {
+      if (loadingMiradorViewer && selectedProject && selectedProject.project.id && miradorState) {
         loadingMiradorViewer.store.dispatch(
           Mirador.actions.importMiradorState(miradorState)
         );
@@ -199,11 +210,13 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
 
       setViewer(loadingMiradorViewer);
     }
-  }, []);
+  }
+  useEffect(() => {
+    handleSetUpMirador()
+  }, [miradorState, selectedProject]);
+
 
   const saveProject = () => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
     saveMiradorState(viewer!.store.getState());
   }
 
@@ -234,7 +247,7 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
         </List>
         <Divider/>
         {
-          selectedProjectId && (
+          selectedProject && (
             <>
               <List>
                 <Tooltip title=""><ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Mirador" action={saveProject}/></Tooltip>
@@ -250,14 +263,22 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {selectedProjectId &&(
+        {selectedProject &&(
           <Grid item xs={12}>
-            <MiradorViewer
-              miradorState={miradorState!}
-              ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId) ?userProjects.find(projectUser => projectUser.project.id == selectedProjectId)! : userProjects.find(projectUser => projectUser.id == selectedProjectId)!  }
-              viewer={viewer}
-              setViewer={setViewer}
-            />
+            <Grid container flexDirection='column' spacing={2}>
+              <Grid item container flexDirection='row'>
+                <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
+                  <Grid item>
+                    <Typography>
+                      {selectedProject.project.name}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              </Grid>
+              <Grid item>
+                <div ref={viewerRef} id="mirador"></div>
+              </Grid>
+            </Grid>
           </Grid>
         )
         }
@@ -265,8 +286,8 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
           <Grid item>
             {user && user.id && selectedContent === CONTENT.PROJECTS && (
               <AllProjects
-                selectedProjectId={selectedProjectId}
-                setSelectedProjectId={setSelectedProjectId}
+                selectedProject={selectedProject}
+                setSelectedProject={setSelectedProject}
                 user={user}
                 userProjects={userProjects}
                 setUserProjects={HandleSetUserProjects}
