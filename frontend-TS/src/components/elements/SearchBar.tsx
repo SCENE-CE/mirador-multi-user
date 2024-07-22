@@ -40,6 +40,7 @@ export const SearchBar = <T,>({getOptionLabel,setSearchedProject, setSelectedDat
 
   const handleChange = (_event: SyntheticEvent, value: T | null) => {
     if(setSelectedData){
+      console.log(value)
       setSelectedData(value);
     }else if(setSearchedProject){
       setSearchedProject(value);

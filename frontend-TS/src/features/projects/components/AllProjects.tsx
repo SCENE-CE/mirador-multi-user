@@ -139,11 +139,16 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   }
 
   const handleSetSearchProject = (project:Project)=>{
-    const  searchedProject = userProjects.find(userProject => userProject.project.id === project.id)
-    setSearchedProject(searchedProject!)
+    if(project){
+      const  searchedProject = userProjects.find(userProject => userProject.project.id === project.id)
+      setSearchedProject(searchedProject!)
+    }else{
+      setSearchedProject(null);
+    }
   }
   console.log("userProjects",userProjects)
   console.log("selectedProjectId",selectedProjectId)
+  console.log('searchedProject : ',searchedProject)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
