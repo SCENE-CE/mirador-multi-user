@@ -66,15 +66,27 @@ const project = ProjectUser.project
                 {project.id  && (
                   <>
                   <Grid item>
-                    <Tooltip title={"Project configuration"}>
-                      <Button
-                        disabled={ProjectUser.rights == ProjectRights.READER}
-                        onClick={HandleOpenModal}
-                        variant="contained"
-                      >
-                        <ModeEditIcon/>
-                      </Button>
-                    </Tooltip>
+                    {
+                      ProjectUser.rights == ProjectRights.READER ? (
+                          <Button
+                            disabled={true}
+                            onClick={HandleOpenModal}
+                            variant="contained"
+                          >
+                            <ModeEditIcon/>
+                          </Button>
+                      ):(
+                        <Tooltip title={"Project configuration"}>
+                          <Button
+                            disabled={false}
+                            onClick={HandleOpenModal}
+                            variant="contained"
+                          >
+                            <ModeEditIcon/>
+                          </Button>
+                        </Tooltip>
+                      )
+                    }
                   </Grid>
                   </>
                 )}

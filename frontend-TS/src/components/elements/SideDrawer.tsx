@@ -4,7 +4,7 @@ import {
   IconButton, List,
   styled, Theme, Tooltip
 } from "@mui/material";
-import { createContext, useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import Mirador from 'mirador';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
@@ -93,7 +93,7 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
   const [viewer, setViewer] = useState<IState>();
-  const [miradorState, setMiradorState] = useState<IState>();
+  const [miradorState] = useState<IState>();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -186,6 +186,8 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
   }, []);
 
   const saveProject = () => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     saveMiradorState(viewer!.store.getState());
   }
 
