@@ -5,6 +5,12 @@ export enum UserGroupTypes {
   MULTI_USER = 'multi-user',
 }
 
+export enum ProjectRights{
+  ADMIN="admin",
+  EDITOR="editor",
+  READER = 'reader',
+
+}
 export type UserGroup = {
   id:number;
   name:string;
@@ -20,7 +26,7 @@ export type CreateGroupDto ={
 }
 
 export type AddProjectToGroupDto ={
-  projectId:number;
+  projectsId:number[];
   groupId:number;
 }
 

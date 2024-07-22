@@ -5,13 +5,14 @@ import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 interface IUsersSearchBarProps<T>{
   handleAdd?:()=>void
   setSelectedData?:Dispatch<SetStateAction<T | null>>
-  fetchFunction:(partialString:string)=>Promise<T[]>
+  setSearchedProject?:any
+  fetchFunction:(partialString:string)=>Promise<any[]>
   getOptionLabel:(option:T)=>string
   setSearchInput?:(value:string)=>void
   actionButtonLabel?:string
 }
 
-export const SearchBar = <T,>({getOptionLabel,setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
+export const SearchBar = <T,>({getOptionLabel,setSearchedProject, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
   const [Suggestions, setSuggestions]=useState<T[]>([]);
 
   const HandlefetchUsers = async(partialUserName:string)=>{
@@ -40,6 +41,8 @@ export const SearchBar = <T,>({getOptionLabel,setSelectedData,fetchFunction,hand
   const handleChange = (_event: SyntheticEvent, value: T | null) => {
     if(setSelectedData){
       setSelectedData(value);
+    }else if(setSearchedProject){
+      setSearchedProject(value);
     }
   };
 

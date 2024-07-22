@@ -45,6 +45,7 @@ export class ProjectService {
   async findOne(projectId: number): Promise<Project> {
     try {
       const project = await this.projectRepository.findOneBy({ id: projectId });
+      console.log(project)
       return project;
     } catch (error) {
       throw new InternalServerErrorException(error);
@@ -57,6 +58,7 @@ export class ProjectService {
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(dto.id);
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException(error);
     }
   }
@@ -84,6 +86,7 @@ export class ProjectService {
         .distinct(true)
         .limit(3)
         .getMany();
+
     } catch (error) {
       console.log(error);
     }

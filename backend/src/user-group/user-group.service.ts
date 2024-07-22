@@ -1,15 +1,10 @@
-import {
-  BadRequestException,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateUserGroupDto } from './dto/create-user-group.dto';
-import { UpdateUserGroupDto } from './dto/update-user-group.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserGroup } from './entities/user-group.entity';
-import { Brackets, Repository } from 'typeorm';
-import { UserGroupTypes } from '../enum/user-group-types';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateUserGroupDto } from "./dto/create-user-group.dto";
+import { UpdateUserGroupDto } from "./dto/update-user-group.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { UserGroup } from "./entities/user-group.entity";
+import { Brackets, Repository } from "typeorm";
+import { UserGroupTypes } from "../enum/user-group-types";
 
 @Injectable()
 export class UserGroupService {
@@ -95,10 +90,15 @@ export class UserGroupService {
         .innerJoinAndSelect('userGroup.users', 'user')
         .where('user.id = :userId', { userId: userId })
         .getMany();
-      return allUserGroups.find(
+
+  console.log(allUserGroups);
+      const userPersonalGroup = allUserGroups.find(
         (userPersonalGroup) =>
           userPersonalGroup.type === UserGroupTypes.PERSONAL,
       );
+
+      console.log(userPersonalGroup);
+      return userPersonalGroup;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -161,12 +161,12 @@ export class UserGroupService {
     }
   }
 
-  findOne(id: number) {
+  async findOne(id: number) {
     try {
-      return this.userGroupRepository.findOne({
+      return await this.userGroupRepository.findOne({
         where: { id },
         relations: ['users'],
-      });
+      })
     } catch (error) {
       console.log(error);
     }

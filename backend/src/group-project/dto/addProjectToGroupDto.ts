@@ -1,4 +1,4 @@
 export class AddProjectToGroupDto {
-  projectId:number;
-  groupId:number;
+  projectsId: number[];
+  groupId: number;
 }

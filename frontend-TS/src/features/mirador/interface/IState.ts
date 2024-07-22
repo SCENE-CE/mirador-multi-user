@@ -1,7 +1,10 @@
 //TODO: define proper interface for Workspace
 
 export default interface IState {
-  catalog:[],
+  store?: {
+    getState: () => any;
+  };
+  catalog:any[],
   companionWindows:{},
   config:{},
   elasticLayout:{},

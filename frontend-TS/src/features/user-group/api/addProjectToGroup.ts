@@ -4,7 +4,7 @@ import { BACKEND_URL } from "../../../config/config.ts";
 
 export const addProjectToGroup = async (dto:AddProjectToGroupDto)=>{
   const token = storage.getToken();
-  console.log(dto)
+  console.log('add project to group dto',dto)
   try{
     const response = await fetch(`${BACKEND_URL}/group-project/project/add`,
       {
@@ -13,7 +13,7 @@ export const addProjectToGroup = async (dto:AddProjectToGroupDto)=>{
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({projectId:dto.projectId, groupId:dto.groupId})
+        body: JSON.stringify({projectsId:dto.projectsId, groupId:dto.groupId})
       });
     const toReturn= await response.json();
     console.log(toReturn)

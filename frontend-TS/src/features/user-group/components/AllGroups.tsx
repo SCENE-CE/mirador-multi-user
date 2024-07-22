@@ -31,7 +31,8 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     try {
       let groups = await getAllUserGroups(user.id)
       const users : UserGroup[] = groups.filter((group:UserGroup)=> group.type === UserGroupTypes.PERSONAL)
-      groups = groups.filter(((group : UserGroup)=>{ return users.indexOf(group) < 0}))
+
+      groups = groups.filter((group : UserGroup)=> group.type == UserGroupTypes.MULTI_USER)
       setGroups(groups)
       setUsers(users)
     } catch (error) {
@@ -90,11 +91,9 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
         {groups && !selectedUserGroup && groups.map((group) => (
-          <>
             <Grid item key={group.id}>
               <GroupCard group={group} personalGroup={personalGroup!}  HandleOpenEditGroupModal={HandleOpenEditGroupModal}/>
             </Grid>
-          </>
         ))}
         {selectedUserGroup &&(
           <>

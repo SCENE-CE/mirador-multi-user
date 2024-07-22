@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { Dispatch, useEffect, useRef } from "react";
 import Mirador from 'mirador';
 import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 import '@fontsource/roboto/300.css';
@@ -7,26 +7,25 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IMiradorState from "./interface/IState.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import { Button, Grid, Tooltip, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import './style/mirador.css'
-import { MMUModal } from "../../components/elements/modal.tsx";
-import { ModalEditProject } from "../projects/components/ModalEditProject.tsx";
-import { Project } from "../projects/types/types.ts";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { ProjectUser } from "../projects/types/types.ts";
 
 interface MiradorViewerProps {
   miradorState: IMiradorState,
-  saveMiradorState: (state:IMiradorState, name:string) => void,
-  project:Project
-  updateUserProject:(project:Project, newProjectName:string)=>void,
+  ProjectUser:ProjectUser,
+  viewer:any;
+  setViewer:Dispatch<any>
 }
 
-const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProject }:MiradorViewerProps) => {
+const MiradorViewer = ({ miradorState ,ProjectUser, viewer, setViewer }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
-  const [viewer, setViewer] = useState<any>(undefined);
-  const [openModal, setOpenMOdal] = useState(false)
+  console.log(ProjectUser)
+  const project = ProjectUser.project;
 
+  console.log(ProjectUser.rights)
   useEffect(() => {
+
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
@@ -44,11 +43,7 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProje
         loadingMiradorViewer = Mirador.viewer(config, [
           ...miradorAnnotationEditorVideo]);
       }
-      if(!miradorState){
-        saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
-      }
 
-      console.log('miradorState', miradorState)
 
       // Load state only if it is not empty
       if (loadingMiradorViewer && project.id && miradorState) {
@@ -56,49 +51,26 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,updateUserProje
           Mirador.actions.importMiradorState(miradorState)
         );
       }
-
       setViewer(loadingMiradorViewer);
     }
+
   }, []);
 
-  const saveProject = () => {
-    saveMiradorState(viewer.store.getState(),project.name);
-  }
-
-  const HandleOpenModal = useCallback(()=>{
-    setOpenMOdal(!openModal)
-  },[setOpenMOdal,openModal])
-
-
   return(
-  <Grid container flexDirection='column' spacing={2}>
-    <Grid item container flexDirection='row'>
-      <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
-        <Grid item>
-          <Typography>
-            {project.name}
-          </Typography>
-        </Grid>
-        <Grid item>
-          <Tooltip title={"Project configuration"}>
-            <Button
-              onClick={HandleOpenModal}
-              variant="contained"
-            >
-              <ModeEditIcon/>
-            </Button>
-          </Tooltip>
-        </Grid>
-        <MMUModal width={400} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject updateUserProject={updateUserProject} project={project}/>}/>
-        <Grid item>
-        <Button variant="contained" onClick={saveProject}>Save Project</Button>
+    <Grid container flexDirection='column' spacing={2}>
+      <Grid item container flexDirection='row'>
+        <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
+          <Grid item>
+            <Typography>
+              {project.name}
+            </Typography>
+          </Grid>
         </Grid>
       </Grid>
+      <Grid item>
+        <div ref={viewerRef} id="mirador"></div>
+      </Grid>
     </Grid>
-    <Grid item>
-    <div ref={viewerRef} id="mirador"></div>
-    </Grid>
-  </Grid>
   )
 }
 

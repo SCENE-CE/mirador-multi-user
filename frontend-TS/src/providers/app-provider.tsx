@@ -8,9 +8,9 @@ export const AppProvider = ({children}: {children: ReactNode}) => {
   return(
     <Suspense fallback={<BigSpinner/>}>
       <QueryClientProvider client={queryClient}>
-      <Router>
-        {children}
-      </Router>
+        <Router>
+          {children}
+        </Router>
       </QueryClientProvider>
     </Suspense>
   )

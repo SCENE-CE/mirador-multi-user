@@ -1,18 +1,18 @@
 import storage from "../../../utils/storage.ts";
 import { BACKEND_URL } from "../../../config/config.ts";
 
-export const deleteProject = async (projectId: number) => {
+export const getGroupsAccessToProject = async (projectId: number) => {
   const token = storage.getToken();
 
   try {
-    const response = await fetch(`${BACKEND_URL}/group-project/delete/project/${projectId}`, {
-      method: "DELETE",
+    const response = await fetch(`${BACKEND_URL}/group-project/project/relation/${projectId}`, {
+      method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
-    return response.json();
+    return await response.json();
   } catch (error) {
-    throw error;
+    console.error(error);
   }
-};
+}

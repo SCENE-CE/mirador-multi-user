@@ -23,13 +23,11 @@ import { Project } from './entities/project.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { Action } from '../casl/enum/Action';
 import { CheckPolicies } from '../casl/decorators/CheckPolicies';
-import { LinkGroupProjectService } from '../link-group-project/link-group-project.service';
 
 @Controller('project')
 export class ProjectController {
   constructor(
     private readonly projectService: ProjectService,
-    private readonly linkGroupProjectService: LinkGroupProjectService,
   ) {}
 
   @Post()
@@ -43,15 +41,15 @@ export class ProjectController {
     }
   }
 
-  @Get(':id')
+  @Get(':userId')
   @UseGuards(AuthGuard)
   @CheckPolicies((ability) => ability.can(Action.Read, Project))
   findAll(@Param() params: FindAllParams): Promise<Project[]> {
     console.log('FIND ALL CONTROLLER');
-    return this.projectService.findAll(params.id);
+    return this.projectService.findAll(params.userId);
   }
 
-  @Get(':id')
+  @Get('/individual/:id')
   @UseGuards(AuthGuard)
   findOne(@Param() params: FindOneParams) {
     return this.projectService.findOne(params.id);

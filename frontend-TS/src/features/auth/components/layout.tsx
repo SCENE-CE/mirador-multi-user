@@ -14,6 +14,9 @@ export const  Layout = ({ children, title }: LayoutProps) => {
       justifyContent="space-around"
       alignItems="center"
       min-height="100vh"
+      sx={{
+        height:'100%'
+      }}
     >
       <Grid
         item
@@ -30,7 +33,8 @@ export const  Layout = ({ children, title }: LayoutProps) => {
         <Grid item>
         <Typography
           variant="h2"
-          component="h1">
+          component="h1"
+        >
           {title}
         </Typography>
         </Grid>
