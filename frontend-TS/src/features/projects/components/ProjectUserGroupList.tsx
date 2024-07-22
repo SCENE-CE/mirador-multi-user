@@ -10,7 +10,7 @@ import {
   Typography
 } from "@mui/material";
 import { ProjectGroup, ProjectUser } from "../types/types.ts";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ProjectRights } from "../../user-group/types/types.ts";
 import { updateProject } from "../api/updateProject.ts";
 
@@ -21,6 +21,8 @@ interface IProjectUserGroup {
 }
 
 export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: IProjectUserGroup) => {
+const [rights, setRights] = useState<string>();
+
   const handleChangeRights = (group: ProjectGroup) => async (event: SelectChangeEvent) => {
     const updatedProjectGroup = await updateProject({
       id: group.id,
@@ -29,6 +31,7 @@ export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: I
       rights: event.target.value as ProjectRights
     });
 
+    setRights(event.target.value);
     setGroupList(prevGroupList => prevGroupList.map(g =>
       g.id === group.id ? { ...g, rights: updatedProjectGroup.rights } : g
     ));
@@ -51,7 +54,7 @@ export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: I
                   <FormControl sx={{ m: 1, width: 300 }}>
                     <InputLabel>Rights</InputLabel>
                     <Select
-                      value={projectGroup.rights.toUpperCase()}
+                      value={projectGroup.rights ? projectGroup.rights.toUpperCase() : rights  }
                       label="Rights"
                       onChange={handleChangeRights(projectGroup)}
                     >

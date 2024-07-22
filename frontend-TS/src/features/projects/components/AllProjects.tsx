@@ -32,7 +32,9 @@ interface AllProjectsProps {
 const emptyWorkspace: IState = {
   catalog: [],
   companionWindows: {},
-  config: {},
+  config: {
+    selectedTheme: "light"
+  },
   elasticLayout: {},
   layers: {},
   manifests: {},
@@ -149,6 +151,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   console.log("userProjects",userProjects)
   console.log("selectedProjectId",selectedProjectId)
   console.log('searchedProject : ',searchedProject)
+  console.log('project send to MIrador', userProjects.find(projectUser => projectUser.project.id == selectedProjectId))
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -199,7 +202,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
             <Grid item xs={12}>
               <MiradorViewer
                 miradorState={miradorState!}
-                ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!}
+                ProjectUser={userProjects.find(projectUser => projectUser.project.id == selectedProjectId) ?userProjects.find(projectUser => projectUser.project.id == selectedProjectId)! : userProjects.find(projectUser => projectUser.id == selectedProjectId)!  }
                 viewer={viewer}
                 setViewer={setViewer}
               />

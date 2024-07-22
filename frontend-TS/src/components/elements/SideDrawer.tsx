@@ -119,8 +119,13 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
   const saveMiradorState = useCallback(async (state: IState) => {
     console.log('saveProject');
     if (selectedProjectId) {
+      console.log('IF')
       console.log('selectedProjectId',selectedProjectId);
-      const projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
+      let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
+    //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
+      if(projectToUpdate == undefined){
+        projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
+      }
       projectToUpdate.project.userWorkspace = state;
       console.log('projectToUpdate',projectToUpdate)
       if(projectToUpdate){
@@ -135,20 +140,26 @@ export const SideDrawer = ({user,handleDisconnect,selectedProjectId,setSelectedP
 
       toast.success("Project saved");
     } else {
+      console.log('ELSE')
       const project: CreateProjectDto = {
         name: 'new project',
         owner: user,
         userWorkspace: state,
       };
-      createProject(project).then(r => {
-        setSelectedProjectId(r.project.id);
+      const r = await createProject(project);
+      console.log('project creation id', r.project.id)
+      if (r) {
+        setSelectedProjectId(r.id);
         handleSaveProject({
           ...r,
-          project: { ...project, id: r.project.id }
+          project: {
+            ...project,
+            id: r.project.id
+          }
         });
-      });
+      }
     }
-  },[handleSaveProject, selectedProjectId, user.id, userProjects])
+  }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
 
   useEffect(() => {
     if (viewerRef.current) {
