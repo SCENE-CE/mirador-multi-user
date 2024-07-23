@@ -10,55 +10,54 @@ import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter
 import { Button, Grid, Typography } from "@mui/material";
 import './style/mirador.css'
 import { Project } from "../projects/types/types.ts";
-import IState from "./interface/IState.ts";
+import { useMiradorState } from "../../providers/MiradorContext.tsx";
 
 interface MiradorViewerProps {
-  miradorState: IMiradorState,
   saveMiradorState: (state:IMiradorState, name:string) => void,
   project:Project
-  setMiradorState:(state:IState)=>void
 }
 
-const MiradorViewer = ({ miradorState, saveMiradorState ,project,setMiradorState }:MiradorViewerProps) => {
+const MiradorViewer = ({  saveMiradorState ,project, }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [viewer, setViewer] = useState<any>(undefined);
+  const { miradorState, setMiradorState } = useMiradorState();
 
   useEffect(() => {
-    if (viewerRef.current) {
+    if (viewerRef.current && !viewer) {
       const config = {
         id: viewerRef.current.id,
         annotation: {
-          adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          adapter: (canvasId: string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
           // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
           exportLocalStorageAnnotations: false, // display annotation JSON export button
         }
       };
 
+      const loadingMiradorViewer = Mirador.viewer(config, [
+        ...miradorAnnotationEditorVideo
+      ]);
 
-      let loadingMiradorViewer;
-      // First displaying of the viewer
-      if(!viewer){
-        loadingMiradorViewer = Mirador.viewer(config, [
-          ...miradorAnnotationEditorVideo]);
-      }
-      if(!miradorState){
-        saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
-      }
+      setViewer(loadingMiradorViewer);
+      setMiradorState(loadingMiradorViewer.store.getState());
 
-      console.log('miradorState', miradorState)
-
-      // Load state only if it is not empty
-      if (loadingMiradorViewer && project.id && miradorState) {
+      if (miradorState) {
         loadingMiradorViewer.store.dispatch(
           Mirador.actions.importMiradorState(miradorState)
         );
       }
-      console.log('loadingMiradorViewer',loadingMiradorViewer);
-      console.log('viewer',viewer)
-
-      setViewer(loadingMiradorViewer);
-      setMiradorState(loadingMiradorViewer.store.getState());
     }
+  }, [viewerRef, viewer, miradorState, setMiradorState]);
+
+    useEffect(() => {
+      const updateStateInterval = setInterval(() => {
+        if (viewer) {
+          const currentState = viewer.store.getState();
+          setMiradorState(currentState);
+          saveMiradorState(currentState, project.name);
+        }
+      }, 3000);
+
+    return () => clearInterval(updateStateInterval);
   }, []);
 
   const saveProject = () => {

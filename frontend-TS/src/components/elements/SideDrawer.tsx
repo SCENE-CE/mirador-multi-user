@@ -32,6 +32,7 @@ import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
 import { createProject } from "../../features/projects/api/createProject.ts";
 import MiradorViewer from "../../features/mirador/Mirador.tsx";
+import { useMiradorState } from "../../providers/MiradorContext.tsx";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -98,7 +99,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
-  const [miradorState, setMiradorState] = useState<IState | undefined>();
+  const { miradorState,setMiradorState } = useMiradorState();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -126,7 +127,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }
 
   const saveMiradorState = useCallback(async (state: IState) => {
-    console.log(state)
+    console.log('state',state)
+console.log('miradorState',miradorState)
     console.log('saveProject');
     console.log('selectedProjectId',selectedProjectId)
     if (selectedProjectId) {
@@ -183,11 +185,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     handleDisconnect()
     handleSetDisconnectModalOpen()
   }
-  const handleSetMiradorState = (state:IState)=>{
-    setMiradorState(state)
-  }
+
 console.log('userProjects',userProjects)
-  console.log(selectedProjectId)
+  console.log("selectedProjectId",selectedProjectId)
   return(
     <>
       <Drawer variant="permanent" open={open}
@@ -224,8 +224,6 @@ console.log('userProjects',userProjects)
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {selectedProjectId &&(
           <MiradorViewer
-            miradorState={miradorState!}
-            setMiradorState={handleSetMiradorState}
             project={userProjects.find(userProject => userProject.project.id == selectedProjectId).project}
             saveMiradorState={saveMiradorState}/>
         )
