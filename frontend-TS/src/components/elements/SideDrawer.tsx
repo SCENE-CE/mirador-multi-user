@@ -25,12 +25,11 @@ import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
 import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
 import toast from "react-hot-toast";
-import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
+import {ProjectUser } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
 
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
-import { createProject } from "../../features/projects/api/createProject.ts";
 import MiradorViewer from "../../features/mirador/Mirador.tsx";
 
 const drawerWidth = 240;
@@ -188,6 +187,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }
 console.log('userProjects',userProjects)
   console.log(selectedProjectId)
+  // @ts-ignore
+  // @ts-ignore
+  // @ts-ignore
   return(
     <>
       <Drawer variant="permanent" open={open}
@@ -226,6 +228,7 @@ console.log('userProjects',userProjects)
           <MiradorViewer
             miradorState={miradorState!}
             setMiradorState={handleSetMiradorState}
+            // @ts-expect-error
             project={userProjects.find(userProject => userProject.project.id == selectedProjectId).project}
             saveMiradorState={saveMiradorState}/>
         )
