@@ -8,10 +8,8 @@ import {
   styled,
   Theme,
   Tooltip,
-  Typography
 } from "@mui/material";
-import { useCallback, useEffect, useRef, useState } from "react";
-import Mirador from "mirador";
+import { useCallback, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MuiDrawer from "@mui/material/Drawer";
@@ -29,12 +27,11 @@ import { updateProject } from "../../features/projects/api/updateProject.ts";
 import toast from "react-hot-toast";
 import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
-import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import miradorAnnotationEditorVideo
-  from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
+
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
 import { createProject } from "../../features/projects/api/createProject.ts";
+import MiradorViewer from "../../features/mirador/Mirador.tsx";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -86,6 +83,8 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 interface ISideDrawerProps{
   user: any,
   handleDisconnect:()=>void
+  selectedProjectId?:number
+  setSelectedProjectId :(id?:number)=>void
 }
 
 
@@ -94,17 +93,13 @@ const CONTENT = {
   PROJECTS:'PROJECT',
   GROUPS:'GROUPS'
 }
-export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
+export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
-  const viewerRef = useRef<HTMLDivElement | null>(null);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
-  const [viewer, setViewer] = useState<any>(undefined);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
-  const [selectedProject, setSelectedProject] = useState< ProjectUser|undefined>(undefined);
-  console.log('viewerRef',viewerRef)
-  console.log('viewer',viewer)
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -118,7 +113,7 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
   };
 
   const handleChangeContent = (content:string)=>{
-    setSelectedProject(undefined);
+    setSelectedProjectId(undefined);
     setSelectedContent(content);
   }
 
@@ -131,15 +126,15 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
   }
 
   const saveMiradorState = useCallback(async (state: IState) => {
+    console.log(state)
     console.log('saveProject');
-    console.log('selectedProjectId',selectedProject)
-    if (selectedProject) {
+    console.log('selectedProjectId',selectedProjectId)
+    if (selectedProjectId) {
       console.log('IF')
-      console.log('selectedProjectId',selectedProject);
-      let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProject.project.id)!;
+      let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
       if(projectToUpdate == undefined){
-        projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProject.project.id)!;
+        projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       }
       projectToUpdate.project.userWorkspace = state;
       console.log('projectToUpdate',projectToUpdate)
@@ -156,68 +151,28 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
       toast.success("Project saved");
     } else {
       console.log('ELSE')
-      const project: CreateProjectDto = {
-        name: 'new project',
-        owner: user,
-        userWorkspace: state,
-      };
-      const r = await createProject(project);
-      console.log('project creation id', r.project.id)
-      if (r) {
-        setSelectedProject(r);
-        handleSaveProject({
-          ...r,
-          project: {
-            ...project,
-            id: r.project.id
-          }
-        });
-      }
+      // const project: CreateProjectDto = {
+      //   name: 'new project',
+      //   owner: user,
+      //   userWorkspace: state,
+      // };
+      // const r = await createProject(project);
+      // console.log('project creation id', r.project.id)
+      // if (r) {
+      //   setSelectedProjectId(r.project.id);
+      //   handleSaveProject({
+      //     ...r,
+      //     project: {
+      //       ...project,
+      //       id: r.project.id
+      //     }
+      //   });
+      // }
     }
-  }, [handleSaveProject, setSelectedProject, user, userProjects]);
-
-
-  const handleSetUpMirador = ()=>{
-    if (viewerRef.current) {
-      const config = {
-        id: viewerRef.current.id,
-        annotation: {
-          adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-          // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
-          exportLocalStorageAnnotations: false, // display annotation JSON export button
-        }
-      };
-
-
-      let loadingMiradorViewer;
-      // First displaying of the viewer
-      if(!viewer){
-        loadingMiradorViewer = Mirador.viewer(config, [
-          ...miradorAnnotationEditorVideo]);
-      }
-      if(!miradorState){
-        saveMiradorState(loadingMiradorViewer.store.getState());
-      }
-
-      console.log('miradorState', miradorState)
-
-      // Load state only if it is not empty
-      if (loadingMiradorViewer && selectedProject && selectedProject.project.id && miradorState) {
-        loadingMiradorViewer.store.dispatch(
-          Mirador.actions.importMiradorState(miradorState)
-        );
-      }
-
-      setViewer(loadingMiradorViewer);
-    }
-  }
-  useEffect(() => {
-    handleSetUpMirador()
-  }, [miradorState, selectedProject]);
-
+  }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
 
   const saveProject = () => {
-    saveMiradorState(viewer!.store.getState());
+    saveMiradorState(miradorState!);
   }
 
   const handleSetDisconnectModalOpen=()=>{
@@ -228,7 +183,11 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
     handleDisconnect()
     handleSetDisconnectModalOpen()
   }
-
+  const handleSetMiradorState = (state:IState)=>{
+    setMiradorState(state)
+  }
+console.log('userProjects',userProjects)
+  console.log(selectedProjectId)
   return(
     <>
       <Drawer variant="permanent" open={open}
@@ -247,7 +206,7 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
         </List>
         <Divider/>
         {
-          selectedProject && (
+          selectedProjectId && (
             <>
               <List>
                 <Tooltip title=""><ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Mirador" action={saveProject}/></Tooltip>
@@ -263,31 +222,20 @@ export const SideDrawer = ({user,handleDisconnect}:ISideDrawerProps) => {
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {selectedProject &&(
-          <Grid item xs={12}>
-            <Grid container flexDirection='column' spacing={2}>
-              <Grid item container flexDirection='row'>
-                <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
-                  <Grid item>
-                    <Typography>
-                      {selectedProject.project.name}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </Grid>
-              <Grid item>
-                <div ref={viewerRef} id="mirador"></div>
-              </Grid>
-            </Grid>
-          </Grid>
+        {selectedProjectId &&(
+          <MiradorViewer
+            miradorState={miradorState!}
+            setMiradorState={handleSetMiradorState}
+            project={userProjects.find(userProject => userProject.project.id == selectedProjectId).project}
+            saveMiradorState={saveMiradorState}/>
         )
         }
         <Grid item container direction="column">
           <Grid item>
             {user && user.id && selectedContent === CONTENT.PROJECTS && (
               <AllProjects
-                selectedProject={selectedProject}
-                setSelectedProject={setSelectedProject}
+                selectedProjectId={selectedProjectId}
+                setSelectedProjectId={setSelectedProjectId}
                 user={user}
                 userProjects={userProjects}
                 setUserProjects={HandleSetUserProjects}

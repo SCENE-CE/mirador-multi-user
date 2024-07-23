@@ -1,4 +1,4 @@
-import { Dispatch, forwardRef, useEffect, useRef } from "react";
+import {  useEffect, useRef, useState } from "react";
 import Mirador from 'mirador';
 import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 import '@fontsource/roboto/300.css';
@@ -7,42 +7,45 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IMiradorState from "./interface/IState.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import { Grid, Typography } from "@mui/material";
-import './style/mirador.css';
-import { ProjectUser } from "../projects/types/types.ts";
+import { Button, Grid, Typography } from "@mui/material";
+import './style/mirador.css'
+import { Project } from "../projects/types/types.ts";
+import IState from "./interface/IState.ts";
 
 interface MiradorViewerProps {
   miradorState: IMiradorState,
-  ProjectUser: ProjectUser,
-  viewer: any;
-  setViewer: Dispatch<any>;
+  saveMiradorState: (state:IMiradorState, name:string) => void,
+  project:Project
+  setMiradorState:(state:IState)=>void
 }
 
-const MiradorViewer = forwardRef<HTMLDivElement, MiradorViewerProps>((props, ref) => {
-  const { miradorState, ProjectUser, viewer, setViewer } = props;
+const MiradorViewer = ({ miradorState, saveMiradorState ,project,setMiradorState }:MiradorViewerProps) => {
   const viewerRef = useRef<HTMLDivElement | null>(null);
-  console.log('ProjectUser', ProjectUser);
-  const project = ProjectUser.project;
-
-  console.log('ProjectUser.rights', ProjectUser.rights);
+  const [viewer, setViewer] = useState<any>(undefined);
 
   useEffect(() => {
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
         annotation: {
-          adapter: (canvasId: string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
           exportLocalStorageAnnotations: false, // display annotation JSON export button
         }
       };
 
+
       let loadingMiradorViewer;
       // First displaying of the viewer
-      if (!viewer) {
+      if(!viewer){
         loadingMiradorViewer = Mirador.viewer(config, [
-          ...miradorAnnotationEditorVideo
-        ]);
+          ...miradorAnnotationEditorVideo]);
       }
+      if(!miradorState){
+        saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
+      }
+
+      console.log('miradorState', miradorState)
 
       // Load state only if it is not empty
       if (loadingMiradorViewer && project.id && miradorState) {
@@ -50,26 +53,38 @@ const MiradorViewer = forwardRef<HTMLDivElement, MiradorViewerProps>((props, ref
           Mirador.actions.importMiradorState(miradorState)
         );
       }
-      setViewer(loadingMiradorViewer);
-    }
-  }, [miradorState, project.id, setViewer, viewer]);
+      console.log('loadingMiradorViewer',loadingMiradorViewer);
+      console.log('viewer',viewer)
 
-  return (
+      setViewer(loadingMiradorViewer);
+      setMiradorState(loadingMiradorViewer.store.getState());
+    }
+  }, []);
+
+  const saveProject = () => {
+    saveMiradorState(viewer.store.getState(),project.name);
+  }
+
+
+  return(
     <Grid container flexDirection='column' spacing={2}>
       <Grid item container flexDirection='row'>
-        <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{ position: 'relative', top: '-20px' }}>
+        <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
           <Grid item>
             <Typography>
               {project.name}
             </Typography>
           </Grid>
+          <Grid item>
+            <Button variant="contained" onClick={saveProject}>Save Project</Button>
+          </Grid>
         </Grid>
       </Grid>
       <Grid item>
-        <div ref={ref} id="mirador"></div>
+        <div ref={viewerRef} id="mirador"></div>
       </Grid>
     </Grid>
-  );
-});
+  )
+}
 
 export default MiradorViewer;

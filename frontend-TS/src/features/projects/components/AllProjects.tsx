@@ -20,8 +20,8 @@ import {  UserGroup } from "../../user-group/types/types.ts";
 
 interface AllProjectsProps {
   user: User;
-  setSelectedProject: (ProjectUser:ProjectUser) => void;
-  selectedProject?: ProjectUser;
+  setSelectedProjectId: (id: number) => void;
+  selectedProjectId?: number;
   setUserProjects:(userProjects: ProjectUser[])=>void;
   userProjects:ProjectUser[]
   handleSetMiradorState:(state:IState | undefined)=>void;
@@ -41,7 +41,7 @@ const emptyWorkspace: IState = {
   workspace: {},
 };
 
-export const AllProjects = ({ user, selectedProject, setSelectedProject,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
+export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
 
@@ -102,9 +102,9 @@ export const AllProjects = ({ user, selectedProject, setSelectedProject,userProj
   },[setUserProjects, userProjects])
 
   const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: ProjectUser) => {
-    setSelectedProject(projectUser);
+    setSelectedProjectId(projectUser.project.id);
     handleSetMiradorState(miradorState);
-  },[handleSetMiradorState, setSelectedProject]);
+  },[handleSetMiradorState, setSelectedProjectId]);
 
   const toggleModalProjectCreation = useCallback(()=>{
     setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
@@ -150,7 +150,7 @@ export const AllProjects = ({ user, selectedProject, setSelectedProject,userProj
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
         <Grid item container direction="row-reverse" spacing={2} alignItems="center">
           {
-            !selectedProject &&(
+            !selectedProjectId &&(
               <Grid item>
                 <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabel} setSearchedProject={handleSetSearchProject}/>
               </Grid>
@@ -166,7 +166,7 @@ export const AllProjects = ({ user, selectedProject, setSelectedProject,userProj
               <Typography variant="h6" component="h2">No projects yet, start to work when clicking on "New project" button.</Typography>
             </Grid>
           )}
-          {!selectedProject && !searchedProject && userProjects && (
+          {!selectedProjectId && !searchedProject && userProjects && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((projectUser) => (
                   <Grid item key={projectUser.project.id} >
@@ -194,7 +194,7 @@ export const AllProjects = ({ user, selectedProject, setSelectedProject,userProj
           ) }
 
           {
-            searchedProject && !selectedProject &&(
+            searchedProject && !selectedProjectId &&(
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item>
                   <ProjectCard
