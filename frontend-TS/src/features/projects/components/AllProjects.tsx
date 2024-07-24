@@ -84,7 +84,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     const updatedListOfProject = userProjects.filter(function(ProjectUser) {
       return ProjectUser.project.id != projectId;
     });
-    console.log('updatedListOfProject',updatedListOfProject)
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects]);
 
