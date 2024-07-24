@@ -9,7 +9,7 @@ import {
   Theme,
   Tooltip,
 } from "@mui/material";
-import { Dispatch, useCallback, useRef, useState } from "react";
+import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MuiDrawer from "@mui/material/Drawer";
@@ -31,6 +31,8 @@ import IState from "../../features/mirador/interface/IState.ts";
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
 import MiradorViewer from "../../features/mirador/Mirador.tsx";
+import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
+import { getAllGroupProjects } from "../../features/user-group/api/getAllGroupProjects.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
 
 const drawerWidth = 240;
@@ -106,6 +108,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
   const myRef = useRef<MiradorViewerHandle>(null);
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -114,6 +117,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setUserProjects([...userProjects, newProject]);
 
   },[setUserProjects])
+
   const handleDrawerClose = () => {
     setOpen(false);
   };
@@ -134,6 +138,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = myRef.current?.setViewer();
     console.log('viewer return from child :',miradorViewer)
+    console.log(selectedProjectId)
     if (selectedProjectId) {
       console.log('IF')
       let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
@@ -191,8 +196,38 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const handleSetMiradorState = (state:IState)=>{
     setMiradorState(state)
   }
-console.log('userProjects',userProjects)
-  console.log(selectedProjectId)
+
+  const fetchProjects = async () => {
+    try {
+      const userGroups = await getUserAllProjects(user.id);
+      const projects = [];
+      const projectIds = new Set();
+      for (const group of userGroups) {
+        const groupProjects = await getAllGroupProjects(group.id);
+        for (const groupProject of groupProjects) {
+          if (!projectIds.has(groupProject.project.id)) {
+            projectIds.add(groupProject.project.id);
+            projects.push(groupProject);
+          }
+        }
+      }
+      setUserProjects(projects);
+    } catch (error) {
+      console.error("Failed to fetch projects:", error);
+    }
+  };
+  //UseEffect is necessary cause in some case selectedProjectId is undefined and made save bug
+  useEffect(()=>{
+    fetchProjects();
+  },[selectedProjectId])
+
+  const projectSelected = useMemo(() => {
+    if (userProjects) {
+      const foundProject = userProjects.find(userProject => userProject.project.id === selectedProjectId);
+      return foundProject ? foundProject.project : null;
+    }
+    return null;
+  }, [userProjects, selectedProjectId]);
   return(
     <>
       <Drawer variant="permanent" open={open}
@@ -227,12 +262,11 @@ console.log('userProjects',userProjects)
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-        {selectedProjectId &&(
+        {selectedProjectId && projectSelected &&(
           <MiradorViewer
             miradorState={miradorState!}
             setMiradorState={handleSetMiradorState}
-            // @ts-expect-error
-            project={userProjects.find(userProject => userProject.project.id == selectedProjectId).project}
+            project={projectSelected}
             saveMiradorState={saveMiradorState}
             viewer={viewer}
             setViewer={setViewer}
