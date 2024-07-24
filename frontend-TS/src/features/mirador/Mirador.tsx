@@ -1,4 +1,4 @@
-import {  useEffect, useRef, useState } from "react";
+import { Dispatch, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import Mirador from 'mirador';
 import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
 import '@fontsource/roboto/300.css';
@@ -7,23 +7,44 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IMiradorState from "./interface/IState.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import { Button, Grid, Typography } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import './style/mirador.css'
 import { Project } from "../projects/types/types.ts";
 import IState from "./interface/IState.ts";
+
+interface MiradorViewerHandle {
+  setViewer:()=>IState;
+  saveProject: () => void;
+}
 
 interface MiradorViewerProps {
   miradorState: IMiradorState,
   saveMiradorState: (state:IMiradorState, name:string) => void,
   project:Project
   setMiradorState:(state:IState)=>void
+  setViewer: Dispatch<any>
+  viewer:any
 }
+const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props, ref) => {
+   const { miradorState, saveMiradorState, project, setMiradorState, setViewer,viewer } = props;
+    const viewerRef = useRef<HTMLDivElement | null>(null);
+  const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
+  console.log(miradorViewer)
+  console.log(viewer)
 
-const MiradorViewer = ({ miradorState, saveMiradorState ,project,setMiradorState }:MiradorViewerProps) => {
-  const viewerRef = useRef<HTMLDivElement | null>(null);
-  const [viewer, setViewer] = useState<any>(undefined);
+   useImperativeHandle(ref, () => ({
+     saveProject: () => {
+     console.log(miradorViewer.store.getState())
+     },
+     setViewer: ()=>{
+       const viewer : IState = miradorViewer.store.getState()
+       console.log('setMiradorViewer', viewer)
+       setViewer(viewer);
+       return viewer
+     }
+   }));
 
-  useEffect(() => {
+   useEffect(() => {
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
@@ -37,7 +58,7 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,setMiradorState
 
       let loadingMiradorViewer;
       // First displaying of the viewer
-      if(!viewer){
+      if(!miradorViewer){
         loadingMiradorViewer = Mirador.viewer(config, [
           ...miradorAnnotationEditorVideo]);
       }
@@ -54,16 +75,13 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,setMiradorState
         );
       }
       console.log('loadingMiradorViewer',loadingMiradorViewer);
-      console.log('viewer',viewer)
+      console.log('viewer',miradorViewer)
 
-      setViewer(loadingMiradorViewer);
+      setMiradorViewer(loadingMiradorViewer);
+      setViewer(loadingMiradorViewer)
       setMiradorState(loadingMiradorViewer.store.getState());
     }
   }, []);
-
-  const saveProject = () => {
-    saveMiradorState(viewer.store.getState(),project.name);
-  }
 
 
   return(
@@ -75,9 +93,6 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,setMiradorState
               {project.name}
             </Typography>
           </Grid>
-          <Grid item>
-            <Button variant="contained" onClick={saveProject}>Save Project</Button>
-          </Grid>
         </Grid>
       </Grid>
       <Grid item>
@@ -85,6 +100,6 @@ const MiradorViewer = ({ miradorState, saveMiradorState ,project,setMiradorState
       </Grid>
     </Grid>
   )
-}
+});
 
 export default MiradorViewer;

@@ -9,7 +9,7 @@ import {
   Theme,
   Tooltip,
 } from "@mui/material";
-import { useCallback, useState } from "react";
+import { Dispatch, useCallback, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MuiDrawer from "@mui/material/Drawer";
@@ -25,12 +25,13 @@ import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
 import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
 import toast from "react-hot-toast";
-import {ProjectUser } from "../../features/projects/types/types.ts";
+import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
 
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
 import MiradorViewer from "../../features/mirador/Mirador.tsx";
+import { createProject } from "../../features/projects/api/createProject.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -84,21 +85,27 @@ interface ISideDrawerProps{
   handleDisconnect:()=>void
   selectedProjectId?:number
   setSelectedProjectId :(id?:number)=>void
+  setViewer: Dispatch<any>
+  viewer:any
 }
 
+interface MiradorViewerHandle {
+  saveProject: () => void;
+  setViewer:()=>IState;
+}
 
 
 const CONTENT = {
   PROJECTS:'PROJECT',
   GROUPS:'GROUPS'
 }
-export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId}:ISideDrawerProps) => {
+export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
-
+  const myRef = useRef<MiradorViewerHandle>(null);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -124,10 +131,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setMiradorState(state)
   }
 
-  const saveMiradorState = useCallback(async (state: IState) => {
-    console.log(state)
-    console.log('saveProject');
-    console.log('selectedProjectId',selectedProjectId)
+  const saveMiradorState = useCallback(async () => {
+    const miradorViewer = myRef.current?.setViewer();
+    console.log('viewer return from child :',miradorViewer)
     if (selectedProjectId) {
       console.log('IF')
       let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
@@ -135,7 +141,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       if(projectToUpdate == undefined){
         projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       }
-      projectToUpdate.project.userWorkspace = state;
+      projectToUpdate.project.userWorkspace = miradorViewer!;
       console.log('projectToUpdate',projectToUpdate)
       if(projectToUpdate){
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -150,28 +156,28 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       toast.success("Project saved");
     } else {
       console.log('ELSE')
-      // const project: CreateProjectDto = {
-      //   name: 'new project',
-      //   owner: user,
-      //   userWorkspace: state,
-      // };
-      // const r = await createProject(project);
-      // console.log('project creation id', r.project.id)
-      // if (r) {
-      //   setSelectedProjectId(r.project.id);
-      //   handleSaveProject({
-      //     ...r,
-      //     project: {
-      //       ...project,
-      //       id: r.project.id
-      //     }
-      //   });
-      // }
+      const project: CreateProjectDto = {
+        name: 'new project',
+        owner: user,
+        userWorkspace: miradorViewer!,
+      };
+      const r = await createProject(project);
+      console.log('project creation id', r.project.id)
+      if (r) {
+        setSelectedProjectId(r.project.id);
+        handleSaveProject({
+          ...r,
+          project: {
+            ...project,
+            id: r.project.id
+          }
+        });
+      }
     }
   }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
 
   const saveProject = () => {
-    saveMiradorState(miradorState!);
+    saveMiradorState();
   }
 
   const handleSetDisconnectModalOpen=()=>{
@@ -187,9 +193,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }
 console.log('userProjects',userProjects)
   console.log(selectedProjectId)
-  // @ts-ignore
-  // @ts-ignore
-  // @ts-ignore
   return(
     <>
       <Drawer variant="permanent" open={open}
@@ -230,7 +233,11 @@ console.log('userProjects',userProjects)
             setMiradorState={handleSetMiradorState}
             // @ts-expect-error
             project={userProjects.find(userProject => userProject.project.id == selectedProjectId).project}
-            saveMiradorState={saveMiradorState}/>
+            saveMiradorState={saveMiradorState}
+            viewer={viewer}
+            setViewer={setViewer}
+            ref={myRef}
+          />
         )
         }
         <Grid item container direction="column">
