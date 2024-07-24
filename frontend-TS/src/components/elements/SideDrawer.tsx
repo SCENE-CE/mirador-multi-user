@@ -24,7 +24,6 @@ import { AllProjects } from "../../features/projects/components/AllProjects.tsx"
 import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
 import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
-import toast from "react-hot-toast";
 import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
 
@@ -137,8 +136,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = myRef.current?.setViewer();
-    console.log('viewer return from child :',miradorViewer)
-    console.log(selectedProjectId)
     if (selectedProjectId) {
       console.log('IF')
       let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
@@ -147,18 +144,13 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       }
       projectToUpdate.project.userWorkspace = miradorViewer!;
-      console.log('projectToUpdate',projectToUpdate)
       if(projectToUpdate){
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { rights, ...projectWithoutRights } = projectToUpdate;
-        console.log('projectWithoutRights',projectWithoutRights)
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const projectUpdated =await updateProject(projectWithoutRights!)
         console.log(projectUpdated);
-        toast.success("Project saved");
       }
-
-      toast.success("Project saved");
     } else {
       console.log('ELSE')
       const project: CreateProjectDto = {
@@ -167,7 +159,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         userWorkspace: miradorViewer!,
       };
       const r = await createProject(project);
-      console.log('project creation id', r.project.id)
       if (r) {
         setSelectedProjectId(r.project.id);
         handleSaveProject({
@@ -228,6 +219,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     }
     return null;
   }, [userProjects, selectedProjectId]);
+
   return(
     <>
       <Drawer variant="permanent" open={open}
