@@ -33,6 +33,7 @@ import MiradorViewer from "../../features/mirador/Mirador.tsx";
 import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
 import { getAllGroupProjects } from "../../features/user-group/api/getAllGroupProjects.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
+import toast from "react-hot-toast";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -113,7 +114,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   };
 
   const handleSaveProject = useCallback((newProject:ProjectUser)=>{
-    setUserProjects([...userProjects, newProject]);
+    return setUserProjects([...userProjects, newProject]);
 
   },[setUserProjects])
 
@@ -150,6 +151,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const projectUpdated =await updateProject(projectWithoutRights!)
         console.log(projectUpdated);
+        toast.success("Project saved");
+
       }
     } else {
       console.log('ELSE')
