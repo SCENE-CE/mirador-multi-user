@@ -40,3 +40,14 @@ services:
     links:
       - db
 
+  caddy:
+    hostname: files
+    image: caddy:latest
+    restart: $CADDY_RESTART
+    environment:
+      - CORS_ALLOWED_HOSTS
+      - WEBPACK_MODE=development
+    volumes:
+      - ./caddy/$HTTP_FOLDER:/srv
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+
