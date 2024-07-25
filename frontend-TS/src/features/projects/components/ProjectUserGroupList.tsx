@@ -3,8 +3,6 @@ import {
   FormControl,
   Grid,
   InputLabel,
-  ListItem,
-  ListItemText,
   MenuItem,
   Select, SelectChangeEvent,
   Typography
@@ -13,6 +11,7 @@ import { ProjectGroup, ProjectUser } from "../types/types.ts";
 import { Dispatch, SetStateAction, useState } from "react";
 import { ProjectRights } from "../../user-group/types/types.ts";
 import { updateProject } from "../api/updateProject.ts";
+import { BigSpinner } from "../../../components/elements/spinner.tsx";
 
 interface IProjectUserGroup {
   projectUser: ProjectUser;
@@ -21,7 +20,7 @@ interface IProjectUserGroup {
 }
 
 export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: IProjectUserGroup) => {
-const [rights, setRights] = useState<string>();
+  const [rights, setRights] = useState<string>();
 
   const handleChangeRights = (group: ProjectGroup) => async (event: SelectChangeEvent) => {
     const updatedProjectGroup = await updateProject({
@@ -45,17 +44,18 @@ const [rights, setRights] = useState<string>();
       <Grid item container flexDirection="column" spacing={1}>
         {groupList && groupList.map((projectGroup) => (
           projectGroup.user_group ? (
-            <Grid key={projectGroup.id} item container flexDirection="row">
-              <Grid item>
-                <ListItem component="div" disablePadding>
-                  <ListItemText primary={projectGroup.user_group.name} />
-                </ListItem>
+            <Grid key={projectGroup.id} item container flexDirection="row" alignItems="center">
+              <Grid item sx={{ flexGrow: 1 }}>
+                <Typography>{projectGroup.user_group.name}</Typography>
+              </Grid>
+              <Grid item container alignItems="center" justifyContent="flex-end" sx={{ width: 'auto' }}>
                 <Grid item>
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel>Rights</InputLabel>
+                  <InputLabel>Rights</InputLabel>
+                </Grid>
+                <Grid item sx={{ ml: 1 }}>
+                  <FormControl sx={{ width: 100, mb:1 }} size="small">
                     <Select
-                      value={projectGroup.rights ? projectGroup.rights.toUpperCase() : rights  }
-                      label="Rights"
+                      value={projectGroup.rights ? projectGroup.rights.toUpperCase() : rights}
                       onChange={handleChangeRights(projectGroup)}
                     >
                       {(Object.keys(ProjectRights) as Array<keyof typeof ProjectRights>).map((right, index) => (
@@ -65,11 +65,11 @@ const [rights, setRights] = useState<string>();
                   </FormControl>
                 </Grid>
               </Grid>
-              <Grid item>
+              <Grid item xs={12} sx={{mb:"5px"}}>
                 <Divider />
               </Grid>
             </Grid>
-          ) : (<p key={projectGroup.id}>LOADING</p>)
+          ) : (<><BigSpinner/></>)
         ))}
       </Grid>
     </Grid>

@@ -97,7 +97,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
             </Grid>
           )}
         {projectUser.rights !== ProjectRights.READER  &&(
-          <>
+          <Grid item>
             <SearchBar
               handleAdd={handleAddUser}
               setSelectedData={setUserToAdd}
@@ -107,10 +107,10 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
               actionButtonLabel={"ADD"}
             />
             <ProjectUserGroupList projectUser={projectUser} groupList={groupList} setGroupList={setGroupList}/>
-          </>
+          </Grid>
         )}
         {projectUser.rights === ProjectRights.ADMIN &&(
-          <>
+          <Grid item container>
             <Grid item>
               <Tooltip title={"Delete project"}>
                 <Button
@@ -123,7 +123,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
               </Tooltip>
             </Grid>
             <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteProject} projectId={project.id} projectName={project.name}/>}/>
-          </>
+          </Grid>
         )
         }
       </Grid>
