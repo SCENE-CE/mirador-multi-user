@@ -5,7 +5,6 @@ services:
       volumes:
         - ./backend/.:/app
         - ./backend/node_modules:/app/node_modules
-        - ./caddy/$HTTP_FOLDER:/uploadMedia
       command: npm run start:debug
 
     frontend:

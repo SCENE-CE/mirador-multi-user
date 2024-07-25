@@ -30,6 +30,8 @@ services:
 
   backend:
     build: ./backend
+    volumes:
+      - ./backend/$HTTP_FOLDER:/uploadMedia
     environment:
       DB_HOST: ${DB_HOST}
       DB_PASS: ${DB_PASS}
@@ -53,6 +55,6 @@ services:
       - CORS_ALLOWED_HOSTS
       - WEBPACK_MODE=development
     volumes:
-      - ./caddy/$HTTP_FOLDER:/srv
+      - ./backend/$HTTP_FOLDER:/srv
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
 
