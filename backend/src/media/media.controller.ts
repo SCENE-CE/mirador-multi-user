@@ -17,6 +17,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName } from './utils/editFileName';
 import { fileFilter } from './utils/fileFilter';
+import { CreateMediaDto } from './dto/create-media.dto';
 
 @Controller('media')
 export class MediaController {
@@ -32,14 +33,15 @@ export class MediaController {
       fileFilter: fileFilter,
     }),
   )
-  uploadSingleFile(@UploadedFile() file) {
-    console.log(file);
-    return {
-      filename: file.filename,
-      originalname: file.originalname,
-      size: file.size,
-      path: file.path,
+  async uploadSingleFile(
+    @UploadedFile() file,
+    @Body() CreateMediaDto: CreateMediaDto,
+  ) {
+    const mediaToCreate = {
+      ...CreateMediaDto,
+      path: `http://localhost:9000/${file.filename}`,
     };
+    return await this.mediaService.create(mediaToCreate);
   }
 
   @Get(':id')

@@ -1,11 +1,15 @@
 import { extname } from 'path';
+import * as bcrypt from 'bcrypt';
 
-export const editFileName = (req, file, callback) => {
+export const editFileName = async (req, file, callback) => {
   const name = file.originalname.split('.')[0];
   const fileExtName = extname(file.originalname);
-  const randomName = Array(4)
-    .fill(null)
-    .map(() => Math.round(Math.random() * 16).toString(16))
-    .join('');
-  callback(null, `${name}-${randomName}${fileExtName}`);
+
+  try {
+    const hash = await bcrypt.hash(name, 10);
+    const urlSafeHash = hash.replace(/[\/\+=\.]/g, ''); // Remove characters that might cause issues in URLs
+    callback(null, `${urlSafeHash}-${name}${fileExtName}`);
+  } catch (err) {
+    callback(err, null);
+  }
 };

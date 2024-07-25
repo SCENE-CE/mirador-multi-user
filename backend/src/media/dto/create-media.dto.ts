@@ -1,9 +1,7 @@
-import { IsNotEmpty, IsNumberString, IsOptional, IsString } from "class-validator";
+import { IsNotEmpty, IsNumberString, IsOptional } from "class-validator";
 import { UserGroup } from '../../user-group/entities/user-group.entity';
 
 export class CreateMediaDto {
-  @IsString()
-  @IsNotEmpty()
   path: string;
 
   @IsNumberString()
