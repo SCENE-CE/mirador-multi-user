@@ -17,8 +17,13 @@ services:
       context: ./frontend-TS
       args:
         BACKEND_URL: ${BACKEND_URL}
+    deploy:
+      resources:
+        limits:
+          memory: 4G
     environment:
       BACKEND_URL: ${BACKEND_URL}
+      CADDY_URL: ${}
     depends_on:
       - backend
     restart: unless-stopped
@@ -26,6 +31,8 @@ services:
 
   backend:
     build: ./backend
+    volumes:
+      - ./backend/$HTTP_FOLDER:/uploadMedia
     environment:
       DB_HOST: ${DB_HOST}
       DB_PASS: ${DB_PASS}
@@ -40,6 +47,7 @@ services:
     links:
       - db
 
+
   caddy:
     hostname: files
     image: caddy:latest
@@ -48,6 +56,6 @@ services:
       - CORS_ALLOWED_HOSTS
       - WEBPACK_MODE=development
     volumes:
-      - ./caddy/$HTTP_FOLDER:/srv
+      - ./backend/$HTTP_FOLDER:/srv
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
 
