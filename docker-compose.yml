@@ -23,7 +23,6 @@ services:
           memory: 4G
     environment:
       BACKEND_URL: ${BACKEND_URL}
-      CADDY_URL: ${}
     depends_on:
       - backend
     restart: unless-stopped
