@@ -17,10 +17,6 @@ services:
       context: ./frontend-TS
       args:
         BACKEND_URL: ${BACKEND_URL}
-    deploy:
-      resources:
-        limits:
-          memory: 4G
     environment:
       BACKEND_URL: ${BACKEND_URL}
     depends_on:
