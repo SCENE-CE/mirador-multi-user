@@ -7,19 +7,39 @@ import {
   Param,
   Delete,
   UseGuards,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { MediaService } from './media.service';
-import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { editFileName } from './utils/editFileName';
+import { fileFilter } from './utils/fileFilter';
 
 @Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}
 
-  @Post()
-  create(@Body() createMediaDto: CreateMediaDto) {
-    return this.mediaService.create(createMediaDto);
+  @Post('upload')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploadMedia/',
+        filename: editFileName,
+      }),
+      fileFilter: fileFilter,
+    }),
+  )
+  uploadSingleFile(@UploadedFile() file) {
+    console.log(file);
+    return {
+      filename: file.filename,
+      originalname: file.originalname,
+      size: file.size,
+      path: file.path,
+    };
   }
 
   @Get(':id')
