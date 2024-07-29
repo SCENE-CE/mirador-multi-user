@@ -1,5 +1,5 @@
 # Base image
-FROM node:20-alpine as builder
+FROM node:20-alpine
 WORKDIR /app
 
 # Install dependencies
@@ -17,6 +17,8 @@ RUN cp ./src/config/config.sample.ts ./src/config/config.ts
 RUN npm install --global serve
 
 # Build the application if necessary
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 RUN npm run build
 
 # Change ownership (if necessary) and adjust permissions

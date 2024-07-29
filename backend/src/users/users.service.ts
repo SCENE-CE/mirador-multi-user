@@ -39,7 +39,7 @@ export class UsersService {
       return savedUser;
     } catch (error) {
       if (error instanceof QueryFailedError) {
-        throw new ConflictException('This user already exists');
+        throw new ConflictException('User creation failed', error.message);
       } else {
         console.log(error);
         throw new InternalServerErrorException(

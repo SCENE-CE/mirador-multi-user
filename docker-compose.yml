@@ -13,12 +13,9 @@ services:
       - ./mariaDB/data:/var/lib/mysql:rw
 
   frontend:
-    build:
-      context: ./frontend-TS
-      args:
-        BACKEND_URL: ${BACKEND_URL}
+    image: drilio/arvest:latest
     environment:
-      BACKEND_URL: ${BACKEND_URL}
+      VITE_BACKEND_URL: ${BACKEND_URL}
     depends_on:
       - backend
     restart: unless-stopped
