@@ -1,12 +1,11 @@
 import { AddProjectToGroupDto } from "../types/types.ts";
 import storage from "../../../utils/storage.ts";
-import { BACKEND_URL } from "../../../config/config.ts";
 
 export const addProjectToGroup = async (dto:AddProjectToGroupDto)=>{
   const token = storage.getToken();
   console.log('add project to group dto',dto)
   try{
-    const response = await fetch(`${BACKEND_URL}/group-project/project/add`,
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/project/add`,
       {
         method: "POST",
         headers:{
