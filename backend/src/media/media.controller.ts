@@ -33,12 +33,14 @@ export class MediaController {
       fileFilter: fileFilter,
     }),
   )
-  async uploadSingleFile(
-    @UploadedFile() file,
-    @Body() CreateMediaDto: CreateMediaDto,
-  ) {
+  async uploadSingleFile(@UploadedFile() file, @Body() CreateMediaDto) {
+
+
+    const userGroup = JSON.parse(CreateMediaDto.user_group);
+
     const mediaToCreate = {
       ...CreateMediaDto,
+      user_group: userGroup,
       path: `http://localhost:9000/${file.filename}`,
     };
     return await this.mediaService.create(mediaToCreate);

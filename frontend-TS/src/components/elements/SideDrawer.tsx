@@ -34,6 +34,8 @@ import { getUserAllProjects } from "../../features/projects/api/getUserAllProjec
 import { getAllGroupProjects } from "../../features/user-group/api/getAllGroupProjects.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
 import toast from "react-hot-toast";
+import { AllMedias } from "../../features/media/component/AllMedias.tsx";
+import { User } from "../../features/auth/types/types.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -83,7 +85,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 interface ISideDrawerProps{
-  user: any,
+  user: User,
   handleDisconnect:()=>void
   selectedProjectId?:number
   setSelectedProjectId :(id?:number)=>void
@@ -99,7 +101,8 @@ interface MiradorViewerHandle {
 
 const CONTENT = {
   PROJECTS:'PROJECT',
-  GROUPS:'GROUPS'
+  GROUPS:'GROUPS',
+  MEDIA:'MEDIA',
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
@@ -235,7 +238,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         <Divider />
         <List sx={{minHeight:'70vh'}}>
           <Tooltip title={"Mes projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>
@@ -282,6 +285,13 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
               />
 
             )}
+            {
+              user && user.id && selectedContent === CONTENT.MEDIA && (
+                <AllMedias
+                user={user}
+                />
+              )
+            }
             {
               user && user.id && selectedContent === CONTENT.GROUPS &&(
                 <AllGroups

@@ -27,18 +27,13 @@ export class GroupMediaService {
         '-------------------------------user_groupId-------------------------------',
         user_group.id,
       );
-      const userPersonalGroup =
-        await this.userGroupService.findUserPersonalGroup(user_group.id);
-      console.log(
-        '-------------------------------userPersonalGroup-------------------------------',
-        userPersonalGroup,
-      );
+
       const media = await this.mediaService.create(mediaDto);
       await this.addMediaToGroup({
-        userGroup: userPersonalGroup,
+        userGroup: user_group,
         mediasId: [media.id],
       });
-      return await this.getMediaRightsForUser(userPersonalGroup.id, media.id);
+      return await this.getMediaRightsForUser(user_group.id, media.id);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(

@@ -30,13 +30,15 @@ export class GroupMediaController {
   )
   async uploadSingleFile(
     @UploadedFile() file,
-    @Body() CreateMediaDto: CreateMediaDto,
+    @Body() CreateMediaDto,
   ) {
+    const userGroup = JSON.parse(CreateMediaDto.user_group);
     const mediaToCreate = {
       ...CreateMediaDto,
+      user_group: userGroup,
       path: `http://localhost:9000/${file.filename}`,
     };
-    console.log(mediaToCreate)
+    console.log(mediaToCreate);
     return await this.groupMediaService.createMedia(mediaToCreate);
   }
 
