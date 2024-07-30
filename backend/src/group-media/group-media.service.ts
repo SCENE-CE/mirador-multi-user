@@ -93,28 +93,22 @@ export class GroupMediaService {
       return media.find((linkMediaGroup) => linkMediaGroup.media.id == mediaId);
     } catch (error) {
       throw new InternalServerErrorException(
-        'an error occured whil getting media rights for user',
+        'an error occurred while getting media rights for user',
         error,
       );
     }
   }
-  create(createGroupMediaDto: CreateGroupMediaDto) {
-    return 'This action adds a new groupMedia';
-  }
 
-  findAll() {
-    return `This action returns all groupMedia`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} groupMedia`;
-  }
-
-  update(id: number, updateGroupMediaDto: UpdateGroupMediaDto) {
-    return `This action updates a #${id} groupMedia`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} groupMedia`;
+  async getAllMediasForUserGroup(userGroupId: number) {
+    try {
+      return await this.linkMediaGroupService.findAllMediaByUserGroupId(
+        userGroupId,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'an error occurred while getting all medias for user',
+        error,
+      );
+    }
   }
 }

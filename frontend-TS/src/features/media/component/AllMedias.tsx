@@ -1,13 +1,13 @@
-import { Button, Grid, styled } from "@mui/material";
+import { Button, Grid, ImageList, ImageListItem, styled, Typography } from "@mui/material";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import LoadingButton from '@mui/lab/LoadingButton';
-import SaveIcon from "@mui/icons-material/Save";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
-import { getUserAllProjects } from "../../projects/api/getUserAllProjects.ts";
 import { getUserPersonalGroup } from "../../projects/api/getUserPersonalGroup.ts";
 import { UserGroup } from "../../user-group/types/types.ts";
+import { getUserGroupMedias } from "../api/getUserGroupMedias.ts";
+import { Media } from "../types/types.ts";
+import toast from "react-hot-toast";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -21,37 +21,75 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
+const CustomImageItem = styled(ImageListItem)({
+  position: 'relative',
+  "&:hover img": {
+    opacity: 0.4,
+  },
+  "&:hover .text": {
+    opacity: 1,
+  }
+});
+
+const CustomButton = styled(Button)({
+  position: 'absolute',
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  textAlign: "center",
+})
+
+const CustomText = styled(Typography)({
+  color: "black",
+  fontSize: "20px",
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  textAlign: "center",
+  opacity: 0,
+  transition: 'opacity 0.3s ease',
+});
+
 interface IAllMediasProps{
   user:User
 }
 
 export const AllMedias = ({user}:IAllMediasProps) => {
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
-
+  const [medias, setMedias] = useState<Media[]>()
 
   const fetchUserPersonalGroup = async()=>{
     const personalGroup = await getUserPersonalGroup(user.id)
     setUserPersonalGroup(personalGroup)
+    return personalGroup
+  }
+
+  const fetchMediaForUser = async()=>{
+    const userPersonalGroup= await fetchUserPersonalGroup()
+    const medias = await getUserGroupMedias(userPersonalGroup!.id)
+    setMedias(medias);
   }
   useEffect(() => {
-    fetchUserPersonalGroup()
-  }, [user]);
+    fetchMediaForUser()
+  }, []);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
     if (event.target.files) {
-      const userGroups = await getUserAllProjects(user.id);
-      console.log('idCreator :',user.id)
-
+      console.log(userPersonalGroup)
       createMedia({
         idCreator: user.id,
         user_group: userPersonalGroup!,
         file: event.target.files[0],
       });
-      console.log(userGroups);
     }
   },[])
 
+  const handleCopyToClipBoard = async (path: string) => {
+    await navigator.clipboard.writeText(path);
+    toast.success('path copied to clipboard');
+  }
   return(
     <Grid>
       <Grid item>
@@ -68,14 +106,21 @@ export const AllMedias = ({user}:IAllMediasProps) => {
             onChange={handleCreateMedia}
           />
         </Button>
-        <LoadingButton
-          loading
-          loadingPosition="start"
-          startIcon={<SaveIcon />}
-          variant="outlined"
-        >
-          Save
-        </LoadingButton>
+        <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+          {(medias ?? []).map((media) => (
+            <CustomImageItem key={media.path}>
+                <img
+                  srcSet={`${media.path}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+                  src={`${media.path}?w=164&h=164&fit=crop&auto=format`}
+                  alt="media-img"
+                  loading="lazy"
+                />
+              <CustomButton disableRipple onClick={()=>handleCopyToClipBoard(media.path)}>
+                <CustomText className="text">Copy path to clipboard</CustomText>
+              </CustomButton>
+            </CustomImageItem>
+          ))}
+        </ImageList>
       </Grid>
     </Grid>
   )

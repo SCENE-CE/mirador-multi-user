@@ -4,10 +4,10 @@ import {
   Divider,
   Grid,
   IconButton,
-  List,
+  List, Popover,
   styled,
   Theme,
-  Tooltip,
+  Tooltip, Typography
 } from "@mui/material";
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -26,7 +26,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
 import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
-
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
 import MiradorViewer from "../../features/mirador/Mirador.tsx";
@@ -110,8 +109,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
+  const [popUpAnchor, setPopUpAnchor]=useState<HTMLButtonElement | null>(null)
   const myRef = useRef<MiradorViewerHandle>(null);
-
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -226,6 +225,13 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     return null;
   }, [userProjects, selectedProjectId]);
 
+  const handlePopUpClose = ()=>{
+    setPopUpAnchor(null)
+  }
+  const handlePopUpMedia = useCallback((event: React.MouseEvent<HTMLButtonElement>)=>{
+    setPopUpAnchor(event.currentTarget);
+    console.log('popUP')
+  },[popUpAnchor, setPopUpAnchor])
   return(
     <>
       <Drawer variant="permanent" open={open}
@@ -237,8 +243,28 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         </DrawerHeader>
         <Divider />
         <List sx={{minHeight:'70vh'}}>
-          <Tooltip title={"Mes projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
+          <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
+          {
+            !selectedProjectId ? (
+          <Tooltip title="My Media"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
+
+              ):(
+              <>
+              <Tooltip title="Add Medias"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={handlePopUpMedia}/></Tooltip>
+                <Popover
+                open={!!popUpAnchor}
+                anchorEl={popUpAnchor}
+                onClose={handlePopUpClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                >
+                  <Typography>TOTO</Typography>
+                </Popover>
+              </>
+            )
+          }
           <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>
@@ -286,7 +312,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
             )}
             {
-              user && user.id && selectedContent === CONTENT.MEDIA && (
+              user && user.id && !selectedProjectId &&selectedContent === CONTENT.MEDIA && (
                 <AllMedias
                 user={user}
                 />

@@ -5,3 +5,11 @@ export type CreateMediaDto = {
   user_group:UserGroup;
   file:File;
 }
+
+export type Media={
+  id:number
+  path:string,
+  idCreator:number,
+  created_at:Date,
+  updated_at:Date,
+}
