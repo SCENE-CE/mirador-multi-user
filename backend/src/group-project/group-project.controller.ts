@@ -34,14 +34,12 @@ export class GroupProjectController {
     @Param('projectId') projectId: number,
     @Param('userGroupId') userGroupId: number,
   ) {
-    console.log('on the road get project for user')
+    console.log('on the road get project for user');
     return this.groupProjectService.getProjectRightForUser(
       projectId,
       userGroupId,
     );
   }
-
-
 
   @Post('/project/add')
   addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
@@ -72,9 +70,7 @@ export class GroupProjectController {
     );
   }
   @Delete('/delete/project/:projectId')
-  deleteProject(
-    @Param('projectId') project_id: number,
-  ){
+  deleteProject(@Param('projectId') project_id: number) {
     console.log(
       '-----------------------DELETE PROJECT-------------------------------',
     );
@@ -92,6 +88,4 @@ export class GroupProjectController {
       groupId,
     });
   }
-
-
 }

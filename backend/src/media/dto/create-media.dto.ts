@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsNumberString, IsOptional } from "class-validator";
+import { IsNotEmpty, IsNumberString, IsOptional, ValidateNested } from "class-validator";
 import { UserGroup } from '../../user-group/entities/user-group.entity';
+import { Type } from 'class-transformer';
 
 export class CreateMediaDto {
   path: string;
@@ -9,5 +10,7 @@ export class CreateMediaDto {
   idCreator: number;
 
   @IsOptional()
+  @ValidateNested()
+  @Type(() => UserGroup)
   user_group: UserGroup;
 }
