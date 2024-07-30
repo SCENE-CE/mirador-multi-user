@@ -35,6 +35,11 @@ import { createProject } from "../../features/projects/api/createProject.ts";
 import toast from "react-hot-toast";
 import { AllMedias } from "../../features/media/component/AllMedias.tsx";
 import { User } from "../../features/auth/types/types.ts";
+import { PopUpMedia } from "../../features/media/component/PopUpMedia.tsx";
+import { Media } from "../../features/media/types/types.ts";
+import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias.ts";
+import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
+import { UserGroup } from "../../features/user-group/types/types.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -109,7 +114,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
+  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [popUpAnchor, setPopUpAnchor]=useState<HTMLButtonElement | null>(null)
+  const [medias, setMedias] = useState<Media[]>([])
+
+
   const myRef = useRef<MiradorViewerHandle>(null);
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -135,6 +144,18 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const HandleSetMiradorState =(state:IState | undefined)=>{
     setMiradorState(state)
+  }
+
+  const fetchUserPersonalGroup = async()=>{
+    const personalGroup = await getUserPersonalGroup(user.id)
+    setUserPersonalGroup(personalGroup)
+    return personalGroup
+  }
+
+  const fetchMediaForUser = async()=>{
+    const userPersonalGroup= await fetchUserPersonalGroup()
+    const medias = await getUserGroupMedias(userPersonalGroup!.id)
+    setMedias(medias);
   }
 
   const saveMiradorState = useCallback(async () => {
@@ -215,6 +236,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   //UseEffect is necessary cause in some case selectedProjectId is undefined and made save bug
   useEffect(()=>{
     fetchProjects();
+    fetchMediaForUser();
   },[selectedProjectId])
 
   const projectSelected = useMemo(() => {
@@ -232,6 +254,12 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setPopUpAnchor(event.currentTarget);
     console.log('popUP')
   },[popUpAnchor, setPopUpAnchor])
+
+  const handleSetMedia = useCallback((newMedia:Media)=>{
+    console.log('NEW MEDIA :', newMedia)
+    setMedias([...medias, newMedia])
+  },[setMedias,medias])
+
   return(
     <>
       <Drawer variant="permanent" open={open}
@@ -256,11 +284,15 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
                 anchorEl={popUpAnchor}
                 onClose={handlePopUpClose}
                 anchorOrigin={{
-                  vertical: 'bottom',
+                  vertical: 'center',
+                  horizontal: 'right',
+                }}
+                transformOrigin={{
+                  vertical: 'center',
                   horizontal: 'left',
                 }}
                 >
-                  <Typography>TOTO</Typography>
+                  <PopUpMedia medias={medias}/>
                 </Popover>
               </>
             )
@@ -315,6 +347,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
               user && user.id && !selectedProjectId &&selectedContent === CONTENT.MEDIA && (
                 <AllMedias
                 user={user}
+                userPersonalGroup={userPersonalGroup!}
+                medias={medias}
+                handleSetMedia={handleSetMedia}
                 />
               )
             }

@@ -1,11 +1,9 @@
 import { Button, Grid, ImageList, ImageListItem, styled, Typography } from "@mui/material";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback } from "react";
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
-import { getUserPersonalGroup } from "../../projects/api/getUserPersonalGroup.ts";
 import { UserGroup } from "../../user-group/types/types.ts";
-import { getUserGroupMedias } from "../api/getUserGroupMedias.ts";
 import { Media } from "../types/types.ts";
 import toast from "react-hot-toast";
 
@@ -53,38 +51,26 @@ const CustomText = styled(Typography)({
 
 interface IAllMediasProps{
   user:User
+  userPersonalGroup:UserGroup
+  medias:Media[]
+  handleSetMedia: (newMedia:Media)=>void
 }
 
-export const AllMedias = ({user}:IAllMediasProps) => {
-  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
-  const [medias, setMedias] = useState<Media[]>()
+export const AllMedias = ({user,userPersonalGroup,medias,handleSetMedia}:IAllMediasProps) => {
 
-  const fetchUserPersonalGroup = async()=>{
-    const personalGroup = await getUserPersonalGroup(user.id)
-    setUserPersonalGroup(personalGroup)
-    return personalGroup
-  }
-
-  const fetchMediaForUser = async()=>{
-    const userPersonalGroup= await fetchUserPersonalGroup()
-    const medias = await getUserGroupMedias(userPersonalGroup!.id)
-    setMedias(medias);
-  }
-  useEffect(() => {
-    fetchMediaForUser()
-  }, []);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
     if (event.target.files) {
       console.log(userPersonalGroup)
-      createMedia({
+      const newMedia = await createMedia({
         idCreator: user.id,
         user_group: userPersonalGroup!,
         file: event.target.files[0],
       });
+      handleSetMedia(newMedia)
     }
-  },[])
+  },[handleSetMedia, medias])
 
   const handleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
