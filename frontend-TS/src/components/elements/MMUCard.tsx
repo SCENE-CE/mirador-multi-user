@@ -1,26 +1,33 @@
-import { Card, Grid, Typography, CardActions } from '@mui/material';
+import { Card, Grid, Typography, CardActions, Tooltip } from "@mui/material";
 import { MMUModal } from "./modal.tsx";
-import { ReactNode } from "react";
+import { ReactElement, ReactNode } from "react";
 import placeholder from '../../assets/Placeholder.svg'
+
 interface IMMUCardProps {
-  item: {
-    name: string;
-  };
+  name: string;
+  id: number;
+  rights: string;
   description?: string;
   ModalChildren: ReactNode;
   HandleOpenModal: () => void;
   openModal: boolean;
-  ButtonChildren: ReactNode;
+  DefaultButton: ReactElement;
+  ReaderButton: ReactElement;
+  EditorButton: ReactElement;
 }
 
 const MMUCard = (
   {
-    item,
+    name,
+    id,
+    rights,
     description,
     ModalChildren,
     HandleOpenModal,
     openModal,
-    ButtonChildren,
+    DefaultButton,
+    ReaderButton,
+    EditorButton,
   }:IMMUCardProps
 ) => {
   return (
@@ -31,7 +38,7 @@ const MMUCard = (
             <img src={placeholder} alt="placeholder" style={{ height: 100, width: 150 }} />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Typography variant="subtitle1">{item.name}</Typography>
+            <Typography variant="subtitle1">{name}</Typography>
           </Grid>
           <Grid item xs={12} sm={3}>
             {description}
@@ -41,7 +48,35 @@ const MMUCard = (
           <CardActions>
             <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
               <Grid item container>
-                {ButtonChildren}
+                <CardActions>
+                  <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
+                    <Grid item>
+
+                      <Tooltip title={"Open project"}>
+                        {DefaultButton}
+
+                      </Tooltip>
+                    </Grid>
+                    {id  && (
+                      <>
+                        <Grid item>
+                          {rights === 'READER' ? ReaderButton : EditorButton}
+                        </Grid>
+                        {/*<Grid item>*/}
+                        {/*  {*/}
+                        {/*    item.rights == ProjectRights.READER ? (*/}
+                        {/*      { ReaderButton }*/}
+
+                        {/*    ):(*/}
+                        {/*      {EditorButton}*/}
+
+                        {/*    )*/}
+                        {/*  }*/}
+                        {/*</Grid>*/}
+                      </>
+                    )}
+                  </Grid>
+                </CardActions>
               </Grid>
             </Grid>
           </CardActions>
