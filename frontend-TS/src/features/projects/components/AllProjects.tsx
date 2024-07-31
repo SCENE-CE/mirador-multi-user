@@ -16,6 +16,7 @@ import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
 import {  UserGroup } from "../../user-group/types/types.ts";
+import MMUCard from "../../../components/elements/MMUCard.tsx";
 
 
 interface AllProjectsProps {
@@ -44,6 +45,7 @@ const emptyWorkspace: IState = {
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
+  const [openModal, setOpenMOdal] = useState(false)
 
 
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
@@ -144,6 +146,11 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
       setSearchedProject(null);
     }
   }
+
+  const HandleOpenModal =useCallback (()=>{
+    setOpenMOdal(!openModal)
+  },[setOpenMOdal, openModal])
+
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -168,15 +175,20 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           {!selectedProjectId && !searchedProject && userProjects && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((projectUser) => (
-                  <Grid item key={projectUser.project.id} >
-                    <ProjectCard
-                      project={projectUser.project}
-                      ProjectUser={projectUser}
-                      initializeMirador={initializeMirador}
-                      deleteProject={deleteUserProject}
-                      updateUserProject={updateUserProject}
-                    />
-                  </Grid>
+                  <>
+                    <Grid item key={projectUser.project.id} >
+                      <ProjectCard
+                        project={projectUser.project}
+                        ProjectUser={projectUser}
+                        initializeMirador={initializeMirador}
+                        deleteProject={deleteUserProject}
+                        updateUserProject={updateUserProject}
+                      />
+                    </Grid>
+                    <Grid item>
+                      <MMUCard item={projectUser.project} description="Some description" ModalChildren={<Grid>Some Modal Content</Grid>} HandleOpenModal={HandleOpenModal} openModal={openModal} ButtonChildren={<Grid>Some buttons</Grid>}/>
+                    </Grid>
+                  </>
                 )
               )}
               <Grid item>
@@ -204,6 +216,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     updateUserProject={updateUserProject}
                   />
                 </Grid>
+
               </Grid>
             )
           }

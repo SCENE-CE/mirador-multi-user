@@ -274,23 +274,23 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
           {
             !selectedProjectId ? (
-          <Tooltip title="My Media"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
+              <Tooltip title="My Media"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
 
-              ):(
+            ):(
               <>
-              <Tooltip title="Add Medias"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={handlePopUpMedia}/></Tooltip>
+                <Tooltip title="Add Medias"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={handlePopUpMedia}/></Tooltip>
                 <Popover
-                open={!!popUpAnchor}
-                anchorEl={popUpAnchor}
-                onClose={handlePopUpClose}
-                anchorOrigin={{
-                  vertical: 'center',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'center',
-                  horizontal: 'left',
-                }}
+                  open={!!popUpAnchor}
+                  anchorEl={popUpAnchor}
+                  onClose={handlePopUpClose}
+                  anchorOrigin={{
+                    vertical: 'center',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'center',
+                    horizontal: 'left',
+                  }}
                 >
                   <PopUpMedia medias={medias}/>
                 </Popover>
@@ -330,43 +330,38 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           />
         )
         }
-        <Grid item container direction="column">
-          <Grid item>
-            {user && user.id && selectedContent === CONTENT.PROJECTS && (
-              <AllProjects
-                selectedProjectId={selectedProjectId}
-                setSelectedProjectId={setSelectedProjectId}
-                user={user}
-                userProjects={userProjects}
-                setUserProjects={HandleSetUserProjects}
-                handleSetMiradorState={HandleSetMiradorState}
-              />
+        {user && user.id && selectedContent === CONTENT.PROJECTS && (
+          <AllProjects
+            selectedProjectId={selectedProjectId}
+            setSelectedProjectId={setSelectedProjectId}
+            user={user}
+            userProjects={userProjects}
+            setUserProjects={HandleSetUserProjects}
+            handleSetMiradorState={HandleSetMiradorState}
+          />
 
-            )}
-            {
-              user && user.id && !selectedProjectId &&selectedContent === CONTENT.MEDIA && (
-                <AllMedias
-                user={user}
-                userPersonalGroup={userPersonalGroup!}
-                medias={medias}
-                handleSetMedia={handleSetMedia}
-                />
-              )
-            }
-            {
-              user && user.id && selectedContent === CONTENT.GROUPS &&(
-                <AllGroups
-                  user={user}
-                />
-              )
-            }
-            {modalDisconectIsOpen &&(
-              <MMUModal openModal={modalDisconectIsOpen} setOpenModal={handleSetDisconnectModalOpen} width={400} children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />}/>
-            )
-
-            }
-          </Grid>
-        </Grid>
+        )}
+        {
+          user && user.id && !selectedProjectId &&selectedContent === CONTENT.MEDIA && (
+            <AllMedias
+              user={user}
+              userPersonalGroup={userPersonalGroup!}
+              medias={medias}
+              handleSetMedia={handleSetMedia}
+            />
+          )
+        }
+        {
+          user && user.id && selectedContent === CONTENT.GROUPS &&(
+            <AllGroups
+              user={user}
+            />
+          )
+        }
+        {modalDisconectIsOpen &&(
+          <MMUModal openModal={modalDisconectIsOpen} setOpenModal={handleSetDisconnectModalOpen} width={400} children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />}/>
+        )
+        }
       </Box>
     </>
   )

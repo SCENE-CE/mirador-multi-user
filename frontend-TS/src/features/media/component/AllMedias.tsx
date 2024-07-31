@@ -77,37 +77,37 @@ export const AllMedias = ({user,userPersonalGroup,medias,handleSetMedia}:IAllMed
     toast.success('path copied to clipboard');
   }
   return(
-    <Grid>
-      <Grid item>
-        <Button
-          component="label"
-          role={undefined}
-          variant="contained"
-          tabIndex={-1}
-          startIcon={<CloudUploadIcon />}
-        >
-          Upload file
-          <VisuallyHiddenInput
-            type="file"
-            onChange={handleCreateMedia}
-          />
-        </Button>
-        <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
-          {(medias ?? []).map((media) => (
-            <CustomImageItem key={media.path}>
+    <Grid item container flexDirection="column">
+        <Grid item>
+          <Button
+            component="label"
+            variant="contained"
+            startIcon={<CloudUploadIcon />}
+          >
+            Upload file
+            <VisuallyHiddenInput
+              type="file"
+              onChange={handleCreateMedia}
+            />
+          </Button>
+        </Grid>
+        <Grid item>
+          <ImageList cols={5}>
+            {(medias ?? []).map((media) => (
+              <CustomImageItem key={media.path}>
                 <img
                   srcSet={`${media.path}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                   src={`${media.path}?w=164&h=164&fit=crop&auto=format`}
                   alt="media-img"
                   loading="lazy"
                 />
-              <CustomButton disableRipple onClick={()=>handleCopyToClipBoard(media.path)}>
-                <CustomText className="text">Copy path to clipboard</CustomText>
-              </CustomButton>
-            </CustomImageItem>
-          ))}
-        </ImageList>
-      </Grid>
+                <CustomButton disableRipple onClick={() => handleCopyToClipBoard(media.path)}>
+                  <CustomText>Copy path to clipboard</CustomText>
+                </CustomButton>
+              </CustomImageItem>
+            ))}
+          </ImageList>
+        </Grid>
     </Grid>
   )
 }
