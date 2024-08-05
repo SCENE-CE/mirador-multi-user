@@ -2,6 +2,7 @@ import { Card, Grid, Typography, CardActions, Tooltip } from "@mui/material";
 import { MMUModal } from "./modal.tsx";
 import { ReactElement, ReactNode } from "react";
 import placeholder from '../../assets/Placeholder.svg'
+import { ProjectUser } from "../../features/projects/types/types.ts";
 
 interface IMMUCardProps {
   name: string;
@@ -14,6 +15,7 @@ interface IMMUCardProps {
   DefaultButton: ReactElement;
   ReaderButton: ReactElement;
   EditorButton: ReactElement;
+  projectUser: ProjectUser
 }
 
 const MMUCard = (
@@ -28,8 +30,11 @@ const MMUCard = (
     DefaultButton,
     ReaderButton,
     EditorButton,
+    projectUser,
   }:IMMUCardProps
 ) => {
+
+  console.log('projectUser',projectUser)
   return (
     <Card>
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
