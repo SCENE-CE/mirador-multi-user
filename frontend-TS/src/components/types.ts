@@ -1,3 +1,5 @@
+import { ProjectRights } from "../features/user-group/types/types.ts";
+
 export type ListItem = {
   id:number
   name:string
@@ -10,8 +12,11 @@ export type SelectorItem = {
   name:  "ADMIN" | "EDITOR" | "READER"
 }
 
-export type ModalEditItem= {
-  id: number;
-  name: string;
-  rights: string;
+export type ItemOwner={
+  rights: ProjectRights
+}
+export type ModalEditItem={
+  id:number,
+  name:string,
+
 }

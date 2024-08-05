@@ -6,11 +6,12 @@ import { useCallback, useMemo, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
 import placeholder from "../../../assets/Placeholder.svg";
-import { ProjectRights } from "../../user-group/types/types.ts";
+import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { MMUModalEdit, ModalEditItem } from "../../../components/elements/MMUModalEdit.tsx";
 import { ListItem } from "../../../components/types.ts";
 import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
 import { updateProject } from "../api/updateProject.ts";
+import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
 
 interface CardProps {
   initializeMirador: (projectWorkspace: IState, projectUser: ProjectUser) => void,
@@ -31,6 +32,7 @@ export const ProjectCard= (
 ) => {
   const [openModal, setOpenMOdal] = useState(false)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
+  const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
 
 
 
@@ -53,6 +55,14 @@ export const ProjectCard= (
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
+
+  const handleAddUser = async () => {
+    if (userToAdd) {
+      await addProjectToGroup({ projectsId: [project.id], groupId: userToAdd.id });
+      fetchGroupsForProject(); // Refresh the list after adding a user
+    }
+  };
+
 
   const listOfGroup: ListItem[] = useMemo(() => {
     return groupList.map((projectGroup) => ({
@@ -130,7 +140,7 @@ export const ProjectCard= (
             openModal={openModal}
             setOpenModal={HandleOpenModal}
             children={
-              <MMUModalEdit handleSelectorChange={handleChangeRights} fetchData={fetchGroupsForProject} listOfItem={listOfGroup} />
+              <MMUModalEdit setItemToAdd={setUserToAdd} handleSelectorChange={handleChangeRights} fetchData={fetchGroupsForProject} listOfItem={listOfGroup} itemOwner={ProjectUser} />
             }/>
         </Grid>
       </Grid>

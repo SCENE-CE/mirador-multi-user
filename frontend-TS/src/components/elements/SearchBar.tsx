@@ -5,19 +5,19 @@ import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 interface IUsersSearchBarProps<T>{
   handleAdd?:()=>void
   setSelectedData?:Dispatch<SetStateAction<T | null>>
-  setSearchedProject?:any
+  setSearchedData?:any
   fetchFunction:(partialString:string)=>Promise<any[]>
   getOptionLabel:(option:T)=>string
   setSearchInput?:(value:string)=>void
   actionButtonLabel?:string
 }
 
-export const SearchBar = <T,>({getOptionLabel,setSearchedProject, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
+export const SearchBar = <T,>({getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
   const [Suggestions, setSuggestions]=useState<T[]>([]);
 
-  const HandlefetchUsers = async(partialUserName:string)=>{
+  const HandlefetchData = async(partialDataName:string)=>{
     try{
-      const data = await fetchFunction(partialUserName);
+      const data = await fetchFunction(partialDataName);
       console.log('data',data)
       setSuggestions(data);
     } catch (error) {
@@ -25,7 +25,7 @@ export const SearchBar = <T,>({getOptionLabel,setSearchedProject, setSelectedDat
     }
   }
   const debouncedFetch = useDebounceCallback(async (value: string) => {
-    await HandlefetchUsers(value)
+    await HandlefetchData(value)
   }, 500);
 
   const handleInputChange= async (_event: SyntheticEvent, value: string) => {
@@ -42,8 +42,8 @@ export const SearchBar = <T,>({getOptionLabel,setSearchedProject, setSelectedDat
     if(setSelectedData){
       console.log(value)
       setSelectedData(value);
-    }else if(setSearchedProject){
-      setSearchedProject(value);
+    }else if(setSearchedData){
+      setSearchedData(value);
     }
   };
 

@@ -6,10 +6,10 @@ import {
   Typography
 } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import { ProjectGroup } from "../../features/projects/types/types.ts";
 import { ProjectRights, UserGroup } from "../../features/user-group/types/types.ts";
-import { ListItem, SelectorItem } from "../types.ts";
+import { ItemOwner, ListItem, ModalEditItem, SelectorItem } from "../types.ts";
 import SaveIcon from "@mui/icons-material/Save";
 import { SearchBar } from "./SearchBar.tsx";
 import { ItemList } from "./ItemList.tsx";
@@ -18,47 +18,49 @@ import { MMUModal } from "./modal.tsx";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 
 
-interface ModalItemProps<T> {
-  itemUser: T,
-  item: T,
-  updateItem: (itemUser: T, newItemName: string) => void,
+interface ModalItemProps{
+  itemOwner: ItemOwner,
+  item: ModalEditItem,
+  updateItem: (itemOwner: ItemOwner, newItemName: string) => void,
   deleteItem: (itemId: number) => void,
   getGroupsAccessToItem: (itemId: number) => Promise<ProjectGroup[]>,
   addItemToGroup: (itemId: number, groupId: number) => Promise<void>,
   updateItemGroupRights: (itemGroupId: number, itemId: number, groupId: number, rights: ProjectRights) => Promise<void>,
-  searchUsers: (query: string) => Promise<UserGroup[]>,
-  getOptionLabel: (option: UserGroup, searchInput: string) => string,
+  searchModalEditItem: (query: string) => Promise<ModalEditItem[]>,
+  getOptionLabel: (option: ModalEditItem, searchInput: string) => string,
   itemRights: typeof ProjectRights,
   handleSelectorChange: (group: ListItem) => (event: SelectChangeEvent) => Promise<void>;
   fetchData: () => Promise<void>,
   listOfItem: ListItem[]
+  setItemToAdd: Dispatch<SetStateAction<ModalEditItem | null>>,
+  handleAddItem:()=>void,
 }
 
-export const MMUModalEdit = <T extends { id: number, name: string, rights: ProjectRights,  }>(
+export const MMUModalEdit = (
   {
-    itemUser,
+    setItemToAdd,
+    itemOwner,
     item,
     updateItem,
     deleteItem,
-    addItemToGroup,
-    searchUsers,
+    searchModalEditItem,
     getOptionLabel,
     itemRights,
     handleSelectorChange,
     fetchData,
-    listOfItem
-  }: ModalItemProps<T>) => {
+    listOfItem,
+    handleAddItem,
+  }: ModalItemProps) => {
   const [editName, setEditName] = useState(false);
   const [newItemName, setNewItemName] = useState(item!.name);
   const [openModal, setOpenModal] = useState(false);
-  const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
   const [searchInput, setSearchInput] = useState<string>('');
 
 
   const handleUpdateItem = useCallback(async () => {
-    updateItem(itemUser, newItemName);
+    updateItem(itemOwner, newItemName);
     setEditName(!editName);
-  }, [editName, newItemName, itemUser, updateItem]);
+  }, [editName, newItemName, itemOwner, updateItem]);
 
   const handleEditName = useCallback(() => {
     setEditName(!editName);
@@ -71,13 +73,6 @@ export const MMUModalEdit = <T extends { id: number, name: string, rights: Proje
   const handleConfirmDeleteModal = useCallback(() => {
     setOpenModal(!openModal);
   }, [openModal]);
-
-  const handleAddUser = async () => {
-    if (userToAdd) {
-      await addItemToGroup(item.id, userToAdd.id);
-      await fetchData(); // Refresh the list after adding a user
-    }
-  };
 
   useEffect(() => {
     fetchData();
@@ -106,13 +101,13 @@ export const MMUModalEdit = <T extends { id: number, name: string, rights: Proje
             </Button>
           </Grid>
         )}
-        {itemUser.rights !== ProjectRights.READER && (
+        {itemOwner.rights !== ProjectRights.READER && (
           <Grid item>
             <SearchBar
-              handleAdd={handleAddUser}
-              setSelectedData={setUserToAdd}
-              getOptionLabel={(option: UserGroup) => getOptionLabel(option, searchInput)}
-              fetchFunction={searchUsers}
+              handleAdd={handleAddItem}
+              setSelectedData={setItemToAdd}
+              getOptionLabel={(option: ModalEditItem) => getOptionLabel(option, searchInput)}
+              fetchFunction={searchModalEditItem}
               setSearchInput={setSearchInput}
               actionButtonLabel={"ADD"}
             />
@@ -127,7 +122,7 @@ export const MMUModalEdit = <T extends { id: number, name: string, rights: Proje
             </ItemList>
           </Grid>
         )}
-        {itemUser.rights === ProjectRights.ADMIN && (
+        {itemOwner.rights === ProjectRights.ADMIN && (
           <Grid item container>
             <Grid item>
               <Tooltip title={"Delete item"}>
