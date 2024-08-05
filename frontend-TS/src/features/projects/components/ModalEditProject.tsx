@@ -40,8 +40,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
   const handleChangeRights = (group: ListItem) => async (event: SelectChangeEvent) => {
     const userGroup = groupList.find((projectGroup) => projectGroup.user_group.id === group.id);
     console.log(userGroup)
-    console.log('group',group)
-    console.log('groupList',groupList)
+    console.log(event.target.value);
     const updatedProjectGroup = await updateProject({
       id: userGroup!.id,
       project: projectUser.project,
@@ -49,9 +48,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
       rights: event.target.value as ProjectRights
     });
 
-    const groupListToUpdate = groupList.map(g=> g.id === group.id ? {...g, rights:updatedProjectGroup.rights } : g);
-
-    setGroupList(groupListToUpdate);
+    fetchGroupsForProject()
   };
 
 
@@ -97,7 +94,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
 
   useEffect(() => {
     fetchGroupsForProject();
-  }, [fetchGroupsForProject, groupList]);
+  }, [fetchGroupsForProject]);
 
 
   const rightsSelectorItems: SelectorItem[] = (Object.keys(ProjectRights) as Array<keyof typeof ProjectRights>).map((right) => ({
@@ -148,7 +145,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
               {(item) => (
                 <Selector
                   selectorItems={rightsSelectorItems}
-                  defaultValue={item.rights!.toUpperCase()}
+                  value={item.rights!.toUpperCase()}
                   onChange={handleChangeRights(item)}
                 />
               )}
@@ -168,7 +165,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
                 </Button>
               </Tooltip>
             </Grid>
-            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteProject} projectId={project.id} projectName={project.name}/>}/>
+            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteItem={deleteProject} itemId={project.id} itemName={project.name}/>}/>
           </Grid>
         )
         }

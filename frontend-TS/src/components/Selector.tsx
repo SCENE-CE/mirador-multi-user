@@ -1,21 +1,25 @@
 import { FormControl, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { SelectorItem } from "./types.ts";
+import { useEffect, useState } from "react";
 
 interface SelectorProps {
-  defaultValue: string;
+  value: string;
   selectorItems: SelectorItem[];
   onChange: (event: SelectChangeEvent) => void;
 }
 
-const Selector =  ({ selectorItems, defaultValue, onChange }: SelectorProps) => {
+const Selector =  ({ selectorItems, value, onChange }: SelectorProps) => {
+useEffect(()=>{
+  console.log(value)
+},[value])
   return (
     <FormControl sx={{ width: 120, mb:1 }} size="small">
       <Select
-        value={defaultValue}
+        value={value}
         onChange={onChange}
       >
         {selectorItems.map((item ) => (
-          <MenuItem key={item.id} value={item.name}>{item.name}</MenuItem>
+          <MenuItem key={item.name} value={item.name}>{item.name}</MenuItem>
         ))}
       </Select>
     </FormControl>

@@ -23,6 +23,7 @@ export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: I
   const [rights, setRights] = useState<string>();
 
   const handleChangeRights = (group: ProjectGroup) => async (event: SelectChangeEvent) => {
+    console.log(group)
     const updatedProjectGroup = await updateProject({
       id: group.id,
       project: projectUser.project,
