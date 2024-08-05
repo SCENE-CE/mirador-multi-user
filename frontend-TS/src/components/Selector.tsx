@@ -8,7 +8,7 @@ interface SelectorProps {
 }
 
 const Selector =  ({ selectorItems, value, onChange }: SelectorProps) => {
-
+console.log(selectorItems);
   return (
     <FormControl sx={{ width: 120, mb:1 }} size="small">
       <Select
