@@ -51,10 +51,8 @@ const MMUCard = (
                 <CardActions>
                   <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
                     <Grid item>
-
                       <Tooltip title={"Open project"}>
                         {DefaultButton}
-
                       </Tooltip>
                     </Grid>
                     {id  && (
@@ -62,17 +60,6 @@ const MMUCard = (
                         <Grid item>
                           {rights === 'READER' ? ReaderButton : EditorButton}
                         </Grid>
-                        {/*<Grid item>*/}
-                        {/*  {*/}
-                        {/*    item.rights == ProjectRights.READER ? (*/}
-                        {/*      { ReaderButton }*/}
-
-                        {/*    ):(*/}
-                        {/*      {EditorButton}*/}
-
-                        {/*    )*/}
-                        {/*  }*/}
-                        {/*</Grid>*/}
                       </>
                     )}
                   </Grid>
@@ -84,8 +71,8 @@ const MMUCard = (
             width={500}
             openModal={openModal}
             setOpenModal={HandleOpenModal}
+            children={ModalChildren}
           >
-            {ModalChildren}
           </MMUModal>
         </Grid>
       </Grid>

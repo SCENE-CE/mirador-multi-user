@@ -18,12 +18,12 @@ interface CardProps {
 }
 
 export const ProjectCard= ({
-  initializeMirador,
-  deleteProject,
-  ProjectUser,
-  updateUserProject,
-  project
-}:CardProps
+                             initializeMirador,
+                             deleteProject,
+                             ProjectUser,
+                             updateUserProject,
+                             project
+                           }:CardProps
 ) => {
   const [openModal, setOpenMOdal] = useState(false)
 
@@ -33,51 +33,51 @@ export const ProjectCard= ({
   },[setOpenMOdal,openModal])
 
   return (
-      <Card>
-        <Grid item container flexDirection="row" wrap="nowrap" sx={{minHeight:'120px'}}>
-          <Grid item container flexDirection="row"  alignItems="center" justifyContent="flex-start" spacing={2}>
-            <Grid item xs={12} sm={4}>
-              <img src={placeholder} alt="placeholder" style={{height:100, width:150}}/>
-            </Grid>
-            <Grid item xs={12} sm={4}>
-              <Typography variant="subtitle1">{project.name}</Typography>
-            </Grid>
-            <Grid item xs={12} sm={3}>
-              {project.userWorkspace.catalog.length === 0 && "No manifest"}
-              {project.userWorkspace.catalog.length === 1 && `${project.userWorkspace.catalog.length} manifest`}
-              {project.userWorkspace.catalog.length > 1 && `${project.userWorkspace.catalog.length} manifests`}
-            </Grid>
+    <Card>
+      <Grid item container flexDirection="row" wrap="nowrap" sx={{minHeight:'120px'}}>
+        <Grid item container flexDirection="row"  alignItems="center" justifyContent="flex-start" spacing={2}>
+          <Grid item xs={12} sm={4}>
+            <img src={placeholder} alt="placeholder" style={{height:100, width:150}}/>
           </Grid>
-          <Grid item
-                alignSelf="center"
-          >
-            <CardActions>
-              <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
-                <Grid item>
+          <Grid item xs={12} sm={4}>
+            <Typography variant="subtitle1">{project.name}</Typography>
+          </Grid>
+          <Grid item xs={12} sm={3}>
+            {project.userWorkspace.catalog.length === 0 && "No manifest"}
+            {project.userWorkspace.catalog.length === 1 && `${project.userWorkspace.catalog.length} manifest`}
+            {project.userWorkspace.catalog.length > 1 && `${project.userWorkspace.catalog.length} manifests`}
+          </Grid>
+        </Grid>
+        <Grid item
+              alignSelf="center"
+        >
+          <CardActions>
+            <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
+              <Grid item>
 
-              <Tooltip title={"Open project"}>
-                <Button
-                  onClick={() => {
-                    initializeMirador(project.userWorkspace, ProjectUser);
-                  }}
-                  variant="contained"
-                >
-                  <OpenInNewIcon />
-                </Button>
-              </Tooltip>
-                </Grid>
-                {project.id  && (
-                  <>
+                <Tooltip title={"Open project"}>
+                  <Button
+                    onClick={() => {
+                      initializeMirador(project.userWorkspace, ProjectUser);
+                    }}
+                    variant="contained"
+                  >
+                    <OpenInNewIcon />
+                  </Button>
+                </Tooltip>
+              </Grid>
+              {project.id  && (
+                <>
                   <Grid item>
                     {
                       ProjectUser.rights == ProjectRights.READER ? (
-                          <Button
-                            disabled={true}
-                            onClick={HandleOpenModal}
-                            variant="contained"
-                          >
-                            <ModeEditIcon/>
-                          </Button>
+                        <Button
+                          disabled={true}
+                          onClick={HandleOpenModal}
+                          variant="contained"
+                        >
+                          <ModeEditIcon/>
+                        </Button>
                       ):(
                         <Tooltip title={"Project configuration"}>
                           <Button
@@ -91,13 +91,24 @@ export const ProjectCard= ({
                       )
                     }
                   </Grid>
-                  </>
-                )}
-              </Grid>
-            </CardActions>
-            <MMUModal width={500} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditProject project={project} deleteProject={deleteProject!} updateUserProject={updateUserProject} projectUser={ProjectUser}/>}/>
-          </Grid>
+                </>
+              )}
+            </Grid>
+          </CardActions>
+          <MMUModal
+            width={500}
+            openModal={openModal}
+            setOpenModal={HandleOpenModal}
+            children={
+              <ModalEditProject
+                project={project}
+                deleteProject={deleteProject!}
+                updateUserProject={updateUserProject}
+                projectUser={ProjectUser}
+              />
+            }/>
         </Grid>
-      </Card>
+      </Grid>
+    </Card>
   );
 };

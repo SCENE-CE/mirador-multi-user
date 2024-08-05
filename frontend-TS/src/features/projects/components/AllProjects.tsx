@@ -19,6 +19,10 @@ import {  UserGroup } from "../../user-group/types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import { ProjectDefaultButton } from "./ProjectDefaultButton.tsx";
+import { ProjectEditorButton } from "./ProjectEditorButton.tsx";
+import { ProjectReaderButton } from "./ProjectReaderButton.tsx";
+import { ModalEditProject } from "./ModalEditProject.tsx";
 
 
 interface AllProjectsProps {
@@ -181,43 +185,26 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     <Grid item>
                       <MMUCard
                         description="Some description"
-                        ModalChildren={<Grid>Some Modal Content</Grid>}
+                        ModalChildren={
+                          <ModalEditProject
+                            project={projectUser.project}
+                            deleteProject={deleteUserProject}
+                            updateUserProject={updateUserProject}
+                            projectUser={projectUser}
+                          />
+                        }
                         HandleOpenModal={HandleOpenModal}
                         openModal={openModal}
-                        DefaultButton={
-                          <Button
-                            onClick={() => {
-                              initializeMirador(projectUser.project.userWorkspace, projectUser);
-                            }}
-                            variant="contained"
-                          >
-                            <OpenInNewIcon />
-                          </Button>
-                        }
-                        EditorButton={
-                          <Tooltip title={"Project configuration"}>
-                            <Button
-                              disabled={false}
-                              onClick={HandleOpenModal}
-                              variant="contained"
-                            >
-                              <ModeEditIcon/>
-                            </Button>
-                          </Tooltip>
-                        }
-                        ReaderButton={
-                          <Button
-                            disabled={true}
-                            onClick={HandleOpenModal}
-                            variant="contained"
-                          >
-                            <ModeEditIcon/>
-                          </Button>
-                        }
+                        DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={projectUser}/>}
+                        EditorButton={<ProjectEditorButton HandleOpenModal={HandleOpenModal}/>}
+                        ReaderButton={<ProjectReaderButton HandleOpenModal={HandleOpenModal} />}
                         id={projectUser.id}
                         name={projectUser.project.name}
                         rights={projectUser.rights}
                       />
+                    </Grid>
+                    <Grid>
+                      <ProjectCard initializeMirador={initializeMirador} deleteProject={deleteUserProject} ProjectUser={projectUser} updateUserProject={updateUserProject} project={projectUser.project}/>
                     </Grid>
                   </>
                 )
