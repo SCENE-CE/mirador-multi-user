@@ -1,6 +1,5 @@
 import { FormControl, MenuItem, Select, SelectChangeEvent } from "@mui/material";
 import { SelectorItem } from "./types.ts";
-import { useEffect, useState } from "react";
 
 interface SelectorProps {
   value: string;
@@ -9,9 +8,7 @@ interface SelectorProps {
 }
 
 const Selector =  ({ selectorItems, value, onChange }: SelectorProps) => {
-useEffect(()=>{
-  console.log(value)
-},[value])
+
   return (
     <FormControl sx={{ width: 120, mb:1 }} size="small">
       <Select

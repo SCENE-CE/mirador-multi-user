@@ -1,62 +1,71 @@
 import {
   Button,
-  Grid,
+  Grid, SelectChangeEvent,
   TextField,
   Tooltip,
   Typography
 } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ProjectGroup } from "../../features/projects/types/types.ts";
+import { ProjectRights, UserGroup } from "../../features/user-group/types/types.ts";
+import { ListItem, SelectorItem } from "../types.ts";
 import SaveIcon from "@mui/icons-material/Save";
-import { MMUModal } from "../../../components/elements/modal.tsx";
-import { ModalConfirmDelete } from "./ModalConfirmDelete.tsx";
-import { SearchBar } from "../../../components/elements/SearchBar.tsx";
+import { SearchBar } from "./SearchBar.tsx";
+import { ItemList } from "./ItemList.tsx";
+import Selector from "../Selector.tsx";
+import { MMUModal } from "./modal.tsx";
+import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 
-interface ModalEditProps {
-  item: any;
-  updateItem: (item: any, newName: string) => void;
-  deleteItem: (itemId: number) => void;
-  fetchGroups: (itemId: number) => Promise<any[]>;
-  addItemToGroup: (itemId: number, groupId: number) => Promise<void>;
-  rights: string;
-  groupLabel: string;
-  fetchUsers: (searchInput: string) => Promise<any[]>;
+
+interface ModalItemProps<T> {
+  itemUser: T,
+  item: T,
+  updateItem: (itemUser: T, newItemName: string) => void,
+  deleteItem: (itemId: number) => void,
+  getGroupsAccessToItem: (itemId: number) => Promise<ProjectGroup[]>,
+  addItemToGroup: (itemId: number, groupId: number) => Promise<void>,
+  updateItemGroupRights: (itemGroupId: number, itemId: number, groupId: number, rights: ProjectRights) => Promise<void>,
+  searchUsers: (query: string) => Promise<UserGroup[]>,
+  getOptionLabel: (option: UserGroup, searchInput: string) => string,
+  itemRights: typeof ProjectRights,
+  handleSelectorChange: (group: ListItem) => (event: SelectChangeEvent) => Promise<void>;
+  fetchData: () => Promise<void>,
+  listOfItem: ListItem[]
 }
 
-export const ModalEdit = (
+export const MMUModalEdit = <T extends { id: number, name: string, rights: ProjectRights,  }>(
   {
+    itemUser,
     item,
     updateItem,
     deleteItem,
-    fetchGroups,
     addItemToGroup,
-    rights,
-    groupLabel,
-    fetchUsers,
-  }: ModalEditProps) => {
+    searchUsers,
+    getOptionLabel,
+    itemRights,
+    handleSelectorChange,
+    fetchData,
+    listOfItem
+  }: ModalItemProps<T>) => {
   const [editName, setEditName] = useState(false);
-  const [newName, setNewName] = useState(item.name);
+  const [newItemName, setNewItemName] = useState(item!.name);
   const [openModal, setOpenModal] = useState(false);
-  const [userToAdd, setUserToAdd] = useState<any | null>(null);
+  const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
   const [searchInput, setSearchInput] = useState<string>('');
-  const [groupList, setGroupList] = useState<any[]>([]);
 
-  const HandleUpdateItem = useCallback(async () => {
-    updateItem(item, newName);
+
+  const handleUpdateItem = useCallback(async () => {
+    updateItem(itemUser, newItemName);
     setEditName(!editName);
-  }, [editName, newName, item, updateItem]);
+  }, [editName, newItemName, itemUser, updateItem]);
 
   const handleEditName = useCallback(() => {
     setEditName(!editName);
   }, [editName]);
 
-  const fetchGroupsForItem = useCallback(async () => {
-    const groups = await fetchGroups(item.id);
-    setGroupList(groups);
-  }, [item.id, fetchGroups]);
-
   const handleChangeName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
-    setNewName(e.target.value);
+    setNewItemName(e.target.value);
   }, []);
 
   const handleConfirmDeleteModal = useCallback(() => {
@@ -66,24 +75,18 @@ export const ModalEdit = (
   const handleAddUser = async () => {
     if (userToAdd) {
       await addItemToGroup(item.id, userToAdd.id);
-      fetchGroupsForItem(); // Refresh the list after adding a user
+      await fetchData(); // Refresh the list after adding a user
     }
-  };
-
-  const getOptionLabel = (option: any): string => {
-    const user = option.users[0];
-    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.mail;
-    }
-    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.name;
-    }
-    return user.mail;
   };
 
   useEffect(() => {
-    fetchGroupsForItem();
-  }, [fetchGroupsForItem]);
+    fetchData();
+  }, [fetchData]);
+
+  const rightsSelectorItems: SelectorItem[] = (Object.keys(itemRights) as Array<keyof typeof ProjectRights>).map((right) => ({
+    id: right,
+    name: right
+  }));
 
   return (
     <Grid container>
@@ -98,34 +101,42 @@ export const ModalEdit = (
         ) : (
           <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
             <TextField type="text" onChange={handleChangeName} variant="outlined" defaultValue={item.name} />
-            <Button variant="contained" onClick={HandleUpdateItem}>
+            <Button variant="contained" onClick={handleUpdateItem}>
               <SaveIcon />
             </Button>
           </Grid>
         )}
-        {rights !== 'READER' && (
+        {itemUser.rights !== ProjectRights.READER && (
           <Grid item>
             <SearchBar
               handleAdd={handleAddUser}
               setSelectedData={setUserToAdd}
-              getOptionLabel={getOptionLabel}
-              fetchFunction={fetchUsers}
+              getOptionLabel={(option: UserGroup) => getOptionLabel(option, searchInput)}
+              fetchFunction={searchUsers}
               setSearchInput={setSearchInput}
               actionButtonLabel={"ADD"}
             />
-            <GroupList groupList={groupList} setGroupList={setGroupList} />
+            <ItemList items={listOfItem}>
+              {(item) => (
+                <Selector
+                  selectorItems={rightsSelectorItems}
+                  value={item.rights!.toUpperCase()}
+                  onChange={handleSelectorChange(item)}
+                />
+              )}
+            </ItemList>
           </Grid>
         )}
-        {rights === 'ADMIN' && (
+        {itemUser.rights === ProjectRights.ADMIN && (
           <Grid item container>
             <Grid item>
-              <Tooltip title={`Delete ${groupLabel}`}>
+              <Tooltip title={"Delete item"}>
                 <Button
                   color='error'
                   onClick={handleConfirmDeleteModal}
                   variant="contained"
                 >
-                  DELETE {groupLabel.toUpperCase()}
+                  DELETE ITEM
                 </Button>
               </Tooltip>
             </Grid>
@@ -134,5 +145,5 @@ export const ModalEdit = (
         )}
       </Grid>
     </Grid>
-  );
-};
+  )
+}

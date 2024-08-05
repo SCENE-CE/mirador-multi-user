@@ -1,13 +1,16 @@
-import { Button, Card, CardActions, Grid, Tooltip, Typography } from "@mui/material";
+import { Button, Card, CardActions, Grid, SelectChangeEvent, Tooltip, Typography } from "@mui/material";
 import IState from "../../mirador/interface/IState.ts";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
-import { ModalEditProject } from "./ModalEditProject.tsx";
-import { Project, ProjectUser } from "../types/types.ts";
+import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
 import placeholder from "../../../assets/Placeholder.svg";
 import { ProjectRights } from "../../user-group/types/types.ts";
+import { MMUModalEdit, ModalEditItem } from "../../../components/elements/MMUModalEdit.tsx";
+import { ListItem } from "../../../components/types.ts";
+import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
+import { updateProject } from "../api/updateProject.ts";
 
 interface CardProps {
   initializeMirador: (projectWorkspace: IState, projectUser: ProjectUser) => void,
@@ -17,20 +20,47 @@ interface CardProps {
   project:Project
 }
 
-export const ProjectCard= ({
-                             initializeMirador,
-                             deleteProject,
-                             ProjectUser,
-                             updateUserProject,
-                             project
-                           }:CardProps
+export const ProjectCard= (
+  {
+    initializeMirador,
+    deleteProject,
+    ProjectUser,
+    updateUserProject,
+    project
+  }:CardProps
 ) => {
   const [openModal, setOpenMOdal] = useState(false)
+  const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 
+
+
+  const handleChangeRights = (group: ListItem) => async (event: SelectChangeEvent) => {
+    const userGroup = groupList.find((itemGroup) => itemGroup.user_group.id === group.id);
+    await updateProject({
+      id: userGroup!.id,
+      project: ProjectUser.project,
+      group: userGroup!.user_group,
+      rights: event.target.value as ProjectRights
+    });
+    await fetchGroupsForProject();
+  };
+
+  const fetchGroupsForProject = useCallback(async () => {
+    const groups = await getGroupsAccessToProject(project.id);
+    setGroupList(groups);
+  }, [project.id]);
 
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal,openModal])
+
+  const listOfGroup: ListItem[] = useMemo(() => {
+    return groupList.map((projectGroup) => ({
+      id: projectGroup.user_group.id,
+      name: projectGroup.user_group.name,
+      rights: projectGroup.rights.toString()
+    }));
+  }, [groupList]);
 
   return (
     <Card>
@@ -100,12 +130,7 @@ export const ProjectCard= ({
             openModal={openModal}
             setOpenModal={HandleOpenModal}
             children={
-              <ModalEditProject
-                project={project}
-                deleteProject={deleteProject!}
-                updateUserProject={updateUserProject}
-                projectUser={ProjectUser}
-              />
+              <MMUModalEdit handleSelectorChange={handleChangeRights} fetchData={fetchGroupsForProject} listOfItem={listOfGroup} />
             }/>
         </Grid>
       </Grid>

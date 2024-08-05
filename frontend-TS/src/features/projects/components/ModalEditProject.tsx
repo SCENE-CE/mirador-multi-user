@@ -41,7 +41,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
     const userGroup = groupList.find((projectGroup) => projectGroup.user_group.id === group.id);
     console.log(userGroup)
     console.log(event.target.value);
-    const updatedProjectGroup = await updateProject({
+    await updateProject({
       id: userGroup!.id,
       project: projectUser.project,
       group: userGroup!.user_group,
