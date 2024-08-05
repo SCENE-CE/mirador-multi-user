@@ -6,12 +6,13 @@ import { useCallback, useMemo, useState } from "react";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
 import placeholder from "../../../assets/Placeholder.svg";
-import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
-import { MMUModalEdit, ModalEditItem } from "../../../components/elements/MMUModalEdit.tsx";
-import { ListItem } from "../../../components/types.ts";
+import { ProjectRights } from "../../user-group/types/types.ts";
+import { MMUModalEdit } from "../../../components/elements/MMUModalEdit.tsx";
+import { ListItem, ModalEditItem } from "../../../components/types.ts";
 import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
 import { updateProject } from "../api/updateProject.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
+import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
 
 interface CardProps {
   initializeMirador: (projectWorkspace: IState, projectUser: ProjectUser) => void,
@@ -32,7 +33,8 @@ export const ProjectCard= (
 ) => {
   const [openModal, setOpenMOdal] = useState(false)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-  const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
+  const [userToAdd, setUserToAdd] = useState<ModalEditItem | null>(null);
+  const [searchInput, setSearchInput] = useState<string>('');
 
 
 
@@ -63,6 +65,16 @@ export const ProjectCard= (
     }
   };
 
+  const getOptionLabel = (option: ModalEditItem): string => {
+    const user = option.users![0];
+    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.mail;
+    }
+    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.name;
+    }
+    return user.mail;
+  };
 
   const listOfGroup: ListItem[] = useMemo(() => {
     return groupList.map((projectGroup) => ({
@@ -140,7 +152,22 @@ export const ProjectCard= (
             openModal={openModal}
             setOpenModal={HandleOpenModal}
             children={
-              <MMUModalEdit setItemToAdd={setUserToAdd} handleSelectorChange={handleChangeRights} fetchData={fetchGroupsForProject} listOfItem={listOfGroup} itemOwner={ProjectUser} />
+              <MMUModalEdit
+                handleSelectorChange={handleChangeRights}
+                fetchData={fetchGroupsForProject}
+                listOfItem={listOfGroup}
+                itemOwner={ProjectUser}
+                deleteItem={deleteProject}
+                getGroupsAccessToItem={getGroupsAccessToProject}
+                getOptionLabel={getOptionLabel}
+                setSearchInput={setSearchInput}
+                handleAddItem={handleAddUser}
+                item={ProjectUser.project}
+                itemRights={ProjectUser.rights}
+                searchInput={searchInput}
+                searchModalEditItem={lookingForUsers}
+                setItemToAdd={setUserToAdd}
+                updateItem={updateUserProject}/>
             }/>
         </Grid>
       </Grid>
