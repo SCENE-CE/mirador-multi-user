@@ -17,7 +17,7 @@ import { ProjectRights } from "../../features/user-group/types/types.ts";
 import { ListItem, SelectorItem } from "../types.ts";
 
 interface ModalItemProps<T, G,O> {
-  itemOwner: O,
+  itemOwner: any,
   item: T,
   itemLabel: string,
   updateItem: (itemOwner: O, newItemName: string) => void,
@@ -28,14 +28,14 @@ interface ModalItemProps<T, G,O> {
   handleSelectorChange: (listItem: ListItem) => (event: SelectChangeEvent) => Promise<void>,
   fetchData: () => Promise<void>,
   listOfItem: ListItem[],
-  setItemToAdd: Dispatch<SetStateAction<G | null>>,
+  setItemToAdd: Dispatch<SetStateAction<G | undefined>>,
   handleAddAccessListItem: () => void,
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,
   rights: ProjectRights,
 }
 
-export const MMUModalEdit = <T extends { id: number }, G,O>(
+export const MMUModalEdit = <O, T extends { id: number }, G>(
   {
     itemLabel,
     setItemToAdd,
@@ -53,7 +53,7 @@ export const MMUModalEdit = <T extends { id: number }, G,O>(
     searchInput,
     rights,
     handleDeleteAccessListItem,
-  }: ModalItemProps<T, G,O>) => {
+  }: ModalItemProps<T, G, O>) => {
   const [editName, setEditName] = useState(false);
   const [newItemName, setNewItemName] = useState(itemLabel);
   const [openModal, setOpenModal] = useState(false);

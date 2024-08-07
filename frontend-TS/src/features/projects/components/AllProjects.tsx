@@ -1,6 +1,6 @@
 import {  Grid, SelectChangeEvent,  Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
@@ -24,6 +24,7 @@ import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
 import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
+import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
 
 
 interface AllProjectsProps {
@@ -54,8 +55,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [openModal, setOpenMOdal] = useState(false)
   const [ userToAdd, setUserToAdd ] = useState<UserGroup>()
-  const [ userGroup, setUserGroup ] = useState<UserGroup>()
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
+  const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 
   const fetchProjects = async () => {
     try {
@@ -186,6 +187,15 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     });
   };
 
+  const listOfGroup: ListItem[] = useMemo(() => {
+    return groupList.map((projectGroup) => ({
+      id: projectGroup.user_group.id,
+      name: projectGroup.user_group.name,
+      rights: projectGroup.rights
+    }));
+  }, [groupList]);
+
+
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -228,13 +238,15 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         handleSelectorChange={handleChangeRights}
                         item={projectUser.project}
                         itemLabel={projectUser.project.name}
-                        itemOwner={}
-                        listOfItem={}
-                        searchModalEditItem={}
-                        getAccessToItem={}
+                        itemOwner={projectUser}
+                        listOfItem={listOfGroup}
+                        searchModalEditItem={lookingForUsers}
+                        getAccessToItem={getGroupsAccessToProject}
                         setItemToAdd={setUserToAdd}
-                        updateItem={}
+                        updateItem={updateUserProject}
                         removeAccessListItemFunction={handleRemoveUser}
+                        itemList={groupList}
+                        setItemList={setGroupList}
                       />
                     </Grid>
                     <Grid>

@@ -6,7 +6,7 @@ import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 
-interface IMMUCardProps<T,G,O> {
+interface IMMUCardProps<T,G,O, X> {
   name: string;
   id: number;
   rights: ProjectRights;
@@ -29,9 +29,11 @@ interface IMMUCardProps<T,G,O> {
   updateItem: (itemOwner: T, newItemName: string) => void,
   getAccessToItem:(itemId:number)=> Promise<any>
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
+  itemList: X,
+  setItemList:Dispatch<SetStateAction<X>>
 }
 
-const MMUCard = <T extends { id: number },G, O> (
+const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
   {
     name,
     id,
@@ -54,11 +56,12 @@ const MMUCard = <T extends { id: number },G, O> (
     updateItem,
     setItemToAdd,
     searchModalEditItem,
-    removeAccessListItemFunction
-  }:IMMUCardProps<T,G,O>
+    removeAccessListItemFunction,
+    itemList,
+    setItemList
+  }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
-  const [itemList, setItemList] = useState<ListItem>()
 
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
     await removeAccessListItemFunction(item.id, accessItemId)

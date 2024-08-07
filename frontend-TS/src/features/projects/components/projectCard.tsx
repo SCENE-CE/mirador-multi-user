@@ -34,7 +34,7 @@ export const ProjectCard= (
 ) => {
   const [openModal, setOpenMOdal] = useState(false)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-  const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
+  const [userToAdd, setUserToAdd] = useState<UserGroup | undefined>();
   const [searchInput, setSearchInput] = useState<string>('');
 
 
