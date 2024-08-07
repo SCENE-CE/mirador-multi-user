@@ -164,7 +164,6 @@ export const ProjectCard= (
                 setSearchInput={setSearchInput}
                 handleAddItem={handleAddUser}
                 item={ProjectUser}
-                itemRights={ProjectUser.rights}
                 searchInput={searchInput}
                 searchModalEditItem={lookingForUsers}
                 setItemToAdd={setUserToAdd}

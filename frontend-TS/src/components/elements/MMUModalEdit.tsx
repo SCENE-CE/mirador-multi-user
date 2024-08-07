@@ -25,7 +25,6 @@ interface ModalItemProps<T, G> {
   getGroupsAccessToItem: (itemId: number) => Promise<G[]>,
   searchModalEditItem: (query: string) => Promise<G[]>,
   getOptionLabel: (option: G, searchInput: string) => string,
-  itemRights: typeof ProjectRights,
   handleSelectorChange: (group: ListItem) => (event: SelectChangeEvent) => Promise<void>,
   fetchData: () => Promise<void>,
   listOfItem: ListItem[],
@@ -46,7 +45,6 @@ export const MMUModalEdit = <T extends { id: number }, G>(
     deleteItem,
     searchModalEditItem,
     getOptionLabel,
-    itemRights,
     handleSelectorChange,
     fetchData,
     listOfItem,
@@ -59,7 +57,6 @@ export const MMUModalEdit = <T extends { id: number }, G>(
   const [newItemName, setNewItemName] = useState(label);
   const [openModal, setOpenModal] = useState(false);
 
-  console.log('listOfItem MMUModalEdit', listOfItem);
 
   const handleUpdateItem = useCallback(async () => {
     updateItem(itemOwner, newItemName);
@@ -87,7 +84,6 @@ export const MMUModalEdit = <T extends { id: number }, G>(
     name: right as unknown as "ADMIN" | "EDITOR" | "READER"
   }));
 
-  console.log('rightsSelectorItems', rightsSelectorItems);
 
   return (
     <Grid container>
@@ -120,8 +116,9 @@ export const MMUModalEdit = <T extends { id: number }, G>(
             <ItemList items={listOfItem}>
               {(item) => (
                 <Selector
+                  item={item}
                   selectorItems={rightsSelectorItems}
-                  value={item.rights!.toUpperCase()}
+                  value={item.rights!}
                   onChange={handleSelectorChange(item)}
                 />
               )}

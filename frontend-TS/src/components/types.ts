@@ -4,7 +4,7 @@ import { User } from "../features/auth/types/types.ts";
 export type ListItem = {
   id:number
   name:string
-  rights?: string
+  rights?: ProjectRights
 
 }
 

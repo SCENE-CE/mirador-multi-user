@@ -1,14 +1,15 @@
 import { FormControl, MenuItem, Select, SelectChangeEvent } from "@mui/material";
-import { SelectorItem } from "./types.ts";
+import { ListItem, SelectorItem } from "./types.ts";
+import { useEffect } from "react";
 
 interface SelectorProps {
   value: string;
   selectorItems: SelectorItem[];
   onChange: (event: SelectChangeEvent) => void;
+  item:ListItem
 }
 
-const Selector =  ({ selectorItems, value, onChange }: SelectorProps) => {
-console.log(selectorItems);
+const Selector =  ({ selectorItems, value, onChange, item }: SelectorProps) => {
   return (
     <FormControl sx={{ width: 120, mb:1 }} size="small">
       <Select
