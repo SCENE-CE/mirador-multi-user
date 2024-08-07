@@ -1,40 +1,77 @@
-import { Card, Grid, Typography, CardActions, Tooltip } from "@mui/material";
+import { Card, Grid, Typography, CardActions, Tooltip, SelectChangeEvent } from "@mui/material";
 import { MMUModal } from "./modal.tsx";
-import { ReactElement, ReactNode } from "react";
+import { Dispatch, ReactElement, SetStateAction, useCallback, useState } from "react";
 import placeholder from '../../assets/Placeholder.svg'
-import { ProjectUser } from "../../features/projects/types/types.ts";
+import { MMUModalEdit } from "./MMUModalEdit.tsx";
+import { ListItem } from "../types.ts";
+import { ProjectRights } from "../../features/user-group/types/types.ts";
 
-interface IMMUCardProps {
+interface IMMUCardProps<T,G> {
   name: string;
   id: number;
-  rights: string;
+  rights: ProjectRights;
   description?: string;
-  ModalChildren: ReactNode;
   HandleOpenModal: () => void;
   openModal: boolean;
   DefaultButton: ReactElement;
   ReaderButton: ReactElement;
   EditorButton: ReactElement;
-  projectUser: ProjectUser
+  itemLabel:string;
+  handleSelectorChange: (group: ListItem) => (event: SelectChangeEvent) => Promise<void>,
+  listOfItem: ListItem[],
+  itemOwner: T,
+  deleteItem: (itemId: number) => void,
+  getOptionLabel: (option: G, searchInput: string) => string,
+  handleAddAccessListItem: () => void,
+  item : T,
+  searchModalEditItem: (query: string) => Promise<G[]>,
+  setItemToAdd: Dispatch<SetStateAction<G | null>>,
+  updateItem: (itemOwner: T, newItemName: string) => void,
+  getAccessToItem:(itemId:number)=> Promise<any>
+  setItemList:Dispatch<SetStateAction<T>>
+  removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
 }
 
-const MMUCard = (
+const MMUCard = <T extends { id: number },G> (
   {
     name,
     id,
     rights,
     description,
-    ModalChildren,
     HandleOpenModal,
     openModal,
     DefaultButton,
     ReaderButton,
     EditorButton,
-    projectUser,
-  }:IMMUCardProps
+    itemLabel,
+    handleSelectorChange,
+    getAccessToItem,
+    itemOwner,
+    listOfItem,
+    deleteItem,
+    getOptionLabel,
+    handleAddAccessListItem,
+    item,
+    updateItem,
+    setItemToAdd,
+    searchModalEditItem,
+    setItemList,
+    removeAccessListItemFunction
+  }:IMMUCardProps<T,G>
 ) => {
+  const [searchInput, setSearchInput] = useState<string>('');
 
-  console.log('projectUser',projectUser)
+  const handleRemoveAccessListItem = async ( accessItemId : number) =>{
+    await removeAccessListItemFunction(item.id, accessItemId)
+    fetchData(); // Refresh the list after removing an item
+  }
+
+
+  const fetchData = useCallback(async () => {
+    const list = await getAccessToItem(item.id);
+    setItemList(list, searchInput);
+  }, [getAccessToItem, item.id, setItemList]);
+
   return (
     <Card>
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
@@ -63,7 +100,7 @@ const MMUCard = (
                     {id  && (
                       <>
                         <Grid item>
-                          {rights === 'READER' ? ReaderButton : EditorButton}
+                          {rights == ProjectRights.READER ? ReaderButton : EditorButton}
                         </Grid>
                       </>
                     )}
@@ -76,9 +113,26 @@ const MMUCard = (
             width={500}
             openModal={openModal}
             setOpenModal={HandleOpenModal}
-            children={ModalChildren}
-          >
-          </MMUModal>
+            children={
+              <MMUModalEdit
+                itemLabel={itemLabel}
+                handleSelectorChange={handleSelectorChange}
+                fetchData={fetchData}
+                listOfItem={listOfItem}
+                itemOwner={itemOwner}
+                deleteItem={deleteItem}
+                getOptionLabel={getOptionLabel}
+                setSearchInput={setSearchInput}
+                handleAddAccessListItem={handleAddAccessListItem}
+                item={item}
+                searchInput={searchInput}
+                searchModalEditItem={searchModalEditItem}
+                setItemToAdd={setItemToAdd}
+                updateItem={updateItem}
+                rights={rights}
+                handleDeleteAccessListItem={handleRemoveAccessListItem}
+              />
+            }/>
         </Grid>
       </Grid>
     </Card>

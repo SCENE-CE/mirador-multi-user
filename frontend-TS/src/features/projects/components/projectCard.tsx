@@ -13,6 +13,7 @@ import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
 import { updateProject } from "../api/updateProject.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
 import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
+import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 
 interface CardProps {
   initializeMirador: (projectWorkspace: IState, projectUser: ProjectUser) => void,
@@ -65,6 +66,11 @@ export const ProjectCard= (
     }
   };
 
+  const handleRemoveUser = async (userToRemoveId : number) =>{
+    await removeProjectToGroup({ groupId: userToRemoveId, projectId: project.id })
+    fetchGroupsForProject(); // Refresh the list after adding a user
+  }
+
   const getOptionLabel = (option: UserGroup): string => {
     const user = option.users![0];
     if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
@@ -80,7 +86,7 @@ export const ProjectCard= (
     return groupList.map((projectGroup) => ({
       id: projectGroup.user_group.id,
       name: projectGroup.user_group.name,
-      rights: projectGroup.rights.toString()
+      rights: projectGroup.rights
     }));
   }, [groupList]);
 
@@ -153,7 +159,7 @@ export const ProjectCard= (
             setOpenModal={HandleOpenModal}
             children={
               <MMUModalEdit
-                label={ProjectUser.project.name}
+                itemLabel={ProjectUser.project.name}
                 handleSelectorChange={handleChangeRights}
                 fetchData={fetchGroupsForProject}
                 listOfItem={listOfGroup}
@@ -162,13 +168,14 @@ export const ProjectCard= (
                 getGroupsAccessToItem={getGroupsAccessToProject}
                 getOptionLabel={getOptionLabel}
                 setSearchInput={setSearchInput}
-                handleAddItem={handleAddUser}
+                handleAddAccessListItem={handleAddUser}
                 item={ProjectUser}
                 searchInput={searchInput}
                 searchModalEditItem={lookingForUsers}
                 setItemToAdd={setUserToAdd}
                 updateItem={updateUserProject}
                 rights={ProjectUser.rights}
+                handleDeleteAccessListItem={handleRemoveUser}
               />
             }/>
         </Grid>

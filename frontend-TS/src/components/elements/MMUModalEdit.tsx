@@ -19,17 +19,17 @@ import { ListItem, SelectorItem } from "../types.ts";
 interface ModalItemProps<T, G> {
   itemOwner: T,
   item: T,
-  label: string,
+  itemLabel: string,
   updateItem: (itemOwner: T, newItemName: string) => void,
   deleteItem: (itemId: number) => void,
-  getGroupsAccessToItem: (itemId: number) => Promise<G[]>,
+  handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem: (query: string) => Promise<G[]>,
   getOptionLabel: (option: G, searchInput: string) => string,
-  handleSelectorChange: (group: ListItem) => (event: SelectChangeEvent) => Promise<void>,
+  handleSelectorChange: (listItem: ListItem) => (event: SelectChangeEvent) => Promise<void>,
   fetchData: () => Promise<void>,
   listOfItem: ListItem[],
   setItemToAdd: Dispatch<SetStateAction<G | null>>,
-  handleAddItem: () => void,
+  handleAddAccessListItem: () => void,
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,
   rights: ProjectRights,
@@ -37,7 +37,7 @@ interface ModalItemProps<T, G> {
 
 export const MMUModalEdit = <T extends { id: number }, G>(
   {
-    label,
+    itemLabel,
     setItemToAdd,
     itemOwner,
     item,
@@ -48,17 +48,18 @@ export const MMUModalEdit = <T extends { id: number }, G>(
     handleSelectorChange,
     fetchData,
     listOfItem,
-    handleAddItem,
+    handleAddAccessListItem,
     setSearchInput,
     searchInput,
     rights,
+    handleDeleteAccessListItem,
   }: ModalItemProps<T, G>) => {
   const [editName, setEditName] = useState(false);
-  const [newItemName, setNewItemName] = useState(label);
+  const [newItemName, setNewItemName] = useState(itemLabel);
   const [openModal, setOpenModal] = useState(false);
 
 
-  const handleUpdateItem = useCallback(async () => {
+  const handleUpdateItemName = useCallback(async () => {
     updateItem(itemOwner, newItemName);
     setEditName(!editName);
   }, [editName, newItemName, itemOwner, updateItem]);
@@ -71,7 +72,7 @@ export const MMUModalEdit = <T extends { id: number }, G>(
     setNewItemName(e.target.value);
   }, []);
 
-  const handleConfirmDeleteModal = useCallback(() => {
+  const handleConfirmDeleteItemModal = useCallback(() => {
     setOpenModal(!openModal);
   }, [openModal]);
 
@@ -90,15 +91,15 @@ export const MMUModalEdit = <T extends { id: number }, G>(
       <Grid item container flexDirection="column">
         {!editName ? (
           <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
-            <Typography>{label}</Typography>
+            <Typography>{itemLabel}</Typography>
             <Button variant="contained" onClick={handleEditName}>
               <ModeEditIcon />
             </Button>
           </Grid>
         ) : (
           <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
-            <TextField type="text" onChange={handleChangeName} variant="outlined" defaultValue={label} />
-            <Button variant="contained" onClick={handleUpdateItem}>
+            <TextField type="text" onChange={handleChangeName} variant="outlined" defaultValue={itemLabel} />
+            <Button variant="contained" onClick={handleUpdateItemName}>
               <SaveIcon />
             </Button>
           </Grid>
@@ -106,20 +107,19 @@ export const MMUModalEdit = <T extends { id: number }, G>(
         {rights !== ProjectRights.READER && (
           <Grid item>
             <SearchBar
-              handleAdd={handleAddItem}
+              handleAdd={handleAddAccessListItem}
               setSelectedData={setItemToAdd}
               getOptionLabel={(option) => getOptionLabel(option, searchInput)}
               fetchFunction={searchModalEditItem}
               setSearchInput={setSearchInput}
               actionButtonLabel={"ADD"}
             />
-            <ItemList items={listOfItem}>
-              {(item) => (
+            <ItemList items={listOfItem} removeItem={handleDeleteAccessListItem}>
+              {(accessListItem) => (
                 <Selector
-                  item={item}
                   selectorItems={rightsSelectorItems}
-                  value={item.rights!}
-                  onChange={handleSelectorChange(item)}
+                  value={accessListItem.rights!}
+                  onChange={handleSelectorChange(accessListItem)}
                 />
               )}
             </ItemList>
@@ -131,14 +131,21 @@ export const MMUModalEdit = <T extends { id: number }, G>(
               <Tooltip title={"Delete item"}>
                 <Button
                   color='error'
-                  onClick={handleConfirmDeleteModal}
+                  onClick={handleConfirmDeleteItemModal}
                   variant="contained"
                 >
                   DELETE ITEM
                 </Button>
               </Tooltip>
             </Grid>
-            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteItem={deleteItem} itemId={item.id} itemName={label} />} />
+            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteItemModal} children={
+              <ModalConfirmDelete
+                deleteItem={deleteItem}
+                itemId={item.id}
+                itemName={itemLabel}
+              />
+            }
+            />
           </Grid>
         )}
       </Grid>

@@ -5,6 +5,9 @@ import { useCallback, useState } from "react";
 import placeholder from "../../../assets/Placeholder.svg";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalEditGroup } from "./ModalEditGroup.tsx";
+import { MMUModalEdit } from "../../../components/elements/MMUModalEdit.tsx";
+import { getGroupsAccessToProject } from "../../projects/api/getGroupsAccessToProject.ts";
+import { lookingForUsers } from "../api/lookingForUsers.ts";
 
 interface GroupCardProps {
   group: UserGroup;
@@ -13,12 +16,18 @@ interface GroupCardProps {
 }
 export const GroupCard = ({ group ,personalGroup, HandleOpenEditGroupModal}:GroupCardProps)=>{
   const [openModal, setOpenMOdal] = useState(false)
+  const [openAgnosticModal, setopenAgnosticModal] = useState(false)
 
   const HandleOpenModal = useCallback(()=>{
     setOpenMOdal(!openModal)
     //We need
     HandleOpenEditGroupModal()
   },[setOpenMOdal,openModal])
+
+  const HandleOpenAgnosticModal = useCallback(()=>{
+    setOpenMOdal(!openAgnosticModal)
+    //We need
+  },[setopenAgnosticModal,openAgnosticModal])
 
   return(
     <Card>
@@ -45,8 +54,40 @@ export const GroupCard = ({ group ,personalGroup, HandleOpenEditGroupModal}:Grou
                 </Button>
               </Tooltip>
             </Grid>
+            <Grid item>
+              <Tooltip title={"Project configuration"}>
+                <Button
+                  onClick={HandleOpenModal}
+                  variant="contained"
+                >
+                  <ModeEditIcon/>
+                </Button>
+              </Tooltip>
+            </Grid>
           </CardActions>
           <MMUModal width={900} openModal={openModal} setOpenModal={HandleOpenModal} children={<ModalEditGroup group={group} personalGroup={personalGroup} HandleOpenModal={HandleOpenModal}/>}/>
+          {/*<MMUModal width={900} openModal={openAgnosticModal} setOpenModal={HandleOpenAgnosticModal} children={*/}
+          {/*   <MMUModalEdit*/}
+          {/*     itemLabel={group.name}*/}
+          {/*     handleSelectorChange={}*/}
+          {/*     fetchData={}*/}
+          {/*     listOfItem={}*/}
+          {/*     itemOwner={}*/}
+          {/*     deleteItem={}*/}
+          {/*     getGroupsAccessToItem={}*/}
+          {/*     getOptionLabel={}*/}
+          {/*     setSearchInput={}*/}
+          {/*     handleAddAccessListItem={}*/}
+          {/*     item={}*/}
+          {/*     searchInput={}*/}
+          {/*     searchModalEditItem={}*/}
+          {/*     setItemToAdd={}*/}
+          {/*     updateItem={}*/}
+          {/*     rights={}*/}
+          {/*    handleDeleteAccessListItem={}*/}
+          {/*   />*/}
+          {/*}*/}
+          {/*/>*/}
         </Grid>
       </Grid>
     </Card>

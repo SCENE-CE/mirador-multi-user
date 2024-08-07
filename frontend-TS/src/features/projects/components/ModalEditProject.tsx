@@ -107,7 +107,7 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
     return groupList.map((projectGroup) => ({
       id: projectGroup.user_group.id,
       name: projectGroup.user_group.name,
-      rights: projectGroup.rights.toString()
+      rights: projectGroup.rights
     }));
   }, [groupList]);
 

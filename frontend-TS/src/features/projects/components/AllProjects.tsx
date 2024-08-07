@@ -1,7 +1,7 @@
 import { Button, Grid, Tooltip, Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useCallback, useEffect, useState } from "react";
-import {  Project, ProjectUser } from "../types/types.ts";
+import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
 import { ProjectCard } from "./projectCard.tsx";
@@ -23,6 +23,8 @@ import { ProjectDefaultButton } from "./ProjectDefaultButton.tsx";
 import { ProjectEditorButton } from "./ProjectEditorButton.tsx";
 import { ProjectReaderButton } from "./ProjectReaderButton.tsx";
 import { ModalEditProject } from "./ModalEditProject.tsx";
+import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
+import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
 
 
 interface AllProjectsProps {
@@ -52,6 +54,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [openModal, setOpenMOdal] = useState(false)
+  const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 
 
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
@@ -131,10 +134,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     toggleModalProjectCreation()
   },[initializeMirador, setUserProjects, toggleModalProjectCreation, user, userProjects])
 
-  const getOptionLabel = (option: Project): string => {
-    return option.name;
-  };
-
   const handleLookingForProject = async (partialProjectName: string) => {
     const userProjectArray = await lookingForProject(partialProjectName, userPersonalGroup!.id)
     const projectArray = []
@@ -156,6 +155,24 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const HandleOpenModal =useCallback (()=>{
     setOpenMOdal(!openModal)
   },[setOpenMOdal, openModal])
+
+
+
+  const handleRemoveUser = async (userToRemoveId : number, projectId: number) =>{
+    await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
+  }
+
+  const getOptionLabel = (option: UserGroup , searchInput: string): string => {
+    const user = option.users![0];
+    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.mail;
+    }
+    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.name;
+    }
+    return user.mail;
+  };
+
 
   return (
     <>
@@ -185,14 +202,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     <Grid item>
                       <MMUCard
                         description="Some description"
-                        ModalChildren={
-                          <ModalEditProject
-                            project={projectUser.project}
-                            deleteProject={deleteUserProject}
-                            updateUserProject={updateUserProject}
-                            projectUser={projectUser}
-                          />
-                        }
                         HandleOpenModal={HandleOpenModal}
                         openModal={openModal}
                         DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={projectUser}/>}
@@ -201,7 +210,20 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         id={projectUser.id}
                         name={projectUser.project.name}
                         rights={projectUser.rights}
-                      />
+                        deleteItem={deleteProject}
+                        getOptionLabel={getOptionLabel}
+                        handleAddAccessListItem={}
+                        handleSelectorChange={}
+                        item={projectUser.project}
+                        itemLabel={projectUser.project.name}
+                        itemOwner={}
+                        listOfItem={}
+                        searchModalEditItem={}
+                        getAccessToItem={}
+                        setItemList={setGroupList}
+                        setItemToAdd={}
+                        updateItem={}
+                        removeAccessListItemFunction={handleRemoveUser}/>
                     </Grid>
                     <Grid>
                       <ProjectCard initializeMirador={initializeMirador} deleteProject={deleteUserProject} ProjectUser={projectUser} updateUserProject={updateUserProject} project={projectUser.project}/>
@@ -226,45 +248,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
             searchedProject && !selectedProjectId &&(
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item>
-                  <MMUCard
-                    description="Some description"
-                    ModalChildren={<Grid>Some Modal Content</Grid>}
-                    HandleOpenModal={HandleOpenModal}
-                    openModal={openModal}
-                    DefaultButton={
-                      <Button
-                        onClick={() => {
-                          initializeMirador(searchedProject.project.userWorkspace, searchedProject);
-                        }}
-                        variant="contained"
-                      >
-                        <OpenInNewIcon />
-                      </Button>
-                    }
-                    EditorButton={
-                      <Tooltip title={"Project configuration"}>
-                        <Button
-                          disabled={false}
-                          onClick={HandleOpenModal}
-                          variant="contained"
-                        >
-                          <ModeEditIcon/>
-                        </Button>
-                      </Tooltip>
-                    }
-                    ReaderButton={
-                      <Button
-                        disabled={true}
-                        onClick={HandleOpenModal}
-                        variant="contained"
-                      >
-                        <ModeEditIcon/>
-                      </Button>
-                    }
-                    id={searchedProject.id}
-                    name={searchedProject.project.name}
-                    rights={searchedProject.rights}
-                  />
+
                 </Grid>
 
               </Grid>
