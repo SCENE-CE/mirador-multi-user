@@ -16,11 +16,11 @@ import { ModalConfirmDelete } from "../../features/projects/components/ModalConf
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 import { ListItem, SelectorItem } from "../types.ts";
 
-interface ModalItemProps<T, G> {
-  itemOwner: T,
+interface ModalItemProps<T, G,O> {
+  itemOwner: O,
   item: T,
   itemLabel: string,
-  updateItem: (itemOwner: T, newItemName: string) => void,
+  updateItem: (itemOwner: O, newItemName: string) => void,
   deleteItem: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem: (query: string) => Promise<G[]>,
@@ -35,7 +35,7 @@ interface ModalItemProps<T, G> {
   rights: ProjectRights,
 }
 
-export const MMUModalEdit = <T extends { id: number }, G>(
+export const MMUModalEdit = <T extends { id: number }, G,O>(
   {
     itemLabel,
     setItemToAdd,
@@ -53,7 +53,7 @@ export const MMUModalEdit = <T extends { id: number }, G>(
     searchInput,
     rights,
     handleDeleteAccessListItem,
-  }: ModalItemProps<T, G>) => {
+  }: ModalItemProps<T, G,O>) => {
   const [editName, setEditName] = useState(false);
   const [newItemName, setNewItemName] = useState(itemLabel);
   const [openModal, setOpenModal] = useState(false);

@@ -6,7 +6,7 @@ import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 
-interface IMMUCardProps<T,G> {
+interface IMMUCardProps<T,G,O> {
   name: string;
   id: number;
   rights: ProjectRights;
@@ -17,9 +17,9 @@ interface IMMUCardProps<T,G> {
   ReaderButton: ReactElement;
   EditorButton: ReactElement;
   itemLabel:string;
-  handleSelectorChange: (itemList: ListItem, eventValue : string) => Promise<void>,
+  handleSelectorChange: (itemList: ListItem, eventValue : string, itemId:number, owner :O ) => Promise<void>,
   listOfItem: ListItem[],
-  itemOwner: T,
+  itemOwner:O,
   deleteItem: (itemId: number) => void,
   getOptionLabel: (option: any, searchInput: string) => string,
   AddAccessListItemFunction: (accessItemId :number, itemId: number ) => Promise<void>,
@@ -31,7 +31,7 @@ interface IMMUCardProps<T,G> {
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
 }
 
-const MMUCard = <T extends { id: number },G> (
+const MMUCard = <T extends { id: number },G, O> (
   {
     name,
     id,
@@ -55,10 +55,11 @@ const MMUCard = <T extends { id: number },G> (
     setItemToAdd,
     searchModalEditItem,
     removeAccessListItemFunction
-  }:IMMUCardProps<T,G>
+  }:IMMUCardProps<T,G,O>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
   const [itemList, setItemList] = useState<ListItem>()
+
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
     await removeAccessListItemFunction(item.id, accessItemId)
     fetchData(); // Refresh the list after removing an item
@@ -77,7 +78,7 @@ const MMUCard = <T extends { id: number },G> (
   }, [getAccessToItem, item.id, setItemList]);
 
   const handleChangeSelectedItem = () => async (event: SelectChangeEvent) => {
-    await handleSelectorChange( itemList!, event.target.value);
+    await handleSelectorChange( itemList!, event.target.value, item.id, itemOwner);
     await fetchData();
   };
 

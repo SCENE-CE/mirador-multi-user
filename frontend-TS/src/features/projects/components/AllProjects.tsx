@@ -23,6 +23,7 @@ import { ProjectReaderButton } from "./ProjectReaderButton.tsx";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
+import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
 
 
 interface AllProjectsProps {
@@ -53,7 +54,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [openModal, setOpenMOdal] = useState(false)
   const [ userToAdd, setUserToAdd ] = useState<UserGroup>()
-
+  const [ userGroup, setUserGroup ] = useState<UserGroup>()
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
 
   const fetchProjects = async () => {
@@ -173,15 +174,16 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     return user.mail;
   };
 
-  const handleChangeRights = (group: ListItem) => async (event: SelectChangeEvent) => {
-    const userGroup = groupList.find((itemGroup) => itemGroup.user_group.id === group.id);
+  const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:ProjectUser) => {
+    const groups:ProjectGroup[] = await getGroupsAccessToProject(projectId);
+
+    const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
     await updateProject({
       id: userGroup!.id,
       project: ProjectUser.project,
       group: userGroup!.user_group,
-      rights: event.target.value as ProjectRights
+      rights: eventValue as ProjectRights
     });
-    await fetchGroupsForProject();
   };
 
   return (

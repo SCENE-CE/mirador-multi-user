@@ -1,7 +1,7 @@
 import storage from "../../../utils/storage.ts";
-import { UserGroup } from "../../user-group/types/types.ts";
+import { ProjectGroup } from "../types/types.ts";
 
-export const getGroupsAccessToProject = async (projectId: number): Promise<UserGroup[]> => {
+export const getGroupsAccessToProject = async (projectId: number): Promise<ProjectGroup[]> => {
   const token = storage.getToken();
 
   try {
