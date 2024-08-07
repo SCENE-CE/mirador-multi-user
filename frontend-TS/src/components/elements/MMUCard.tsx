@@ -17,18 +17,17 @@ interface IMMUCardProps<T,G> {
   ReaderButton: ReactElement;
   EditorButton: ReactElement;
   itemLabel:string;
-  handleSelectorChange: (group: ListItem) => (event: SelectChangeEvent) => Promise<void>,
+  handleSelectorChange: (itemList: ListItem, eventValue : string) => Promise<void>,
   listOfItem: ListItem[],
   itemOwner: T,
   deleteItem: (itemId: number) => void,
-  getOptionLabel: (option: G, searchInput: string) => string,
-  handleAddAccessListItem: () => void,
+  getOptionLabel: (option: any, searchInput: string) => string,
+  AddAccessListItemFunction: (accessItemId :number, itemId: number ) => Promise<void>,
   item : T,
   searchModalEditItem: (query: string) => Promise<G[]>,
-  setItemToAdd: Dispatch<SetStateAction<G | null>>,
+  setItemToAdd: Dispatch<SetStateAction<G | undefined>>,
   updateItem: (itemOwner: T, newItemName: string) => void,
   getAccessToItem:(itemId:number)=> Promise<any>
-  setItemList:Dispatch<SetStateAction<T>>
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
 }
 
@@ -50,27 +49,38 @@ const MMUCard = <T extends { id: number },G> (
     listOfItem,
     deleteItem,
     getOptionLabel,
-    handleAddAccessListItem,
+    AddAccessListItemFunction,
     item,
     updateItem,
     setItemToAdd,
     searchModalEditItem,
-    setItemList,
     removeAccessListItemFunction
   }:IMMUCardProps<T,G>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
-
+  const [itemList, setItemList] = useState<ListItem>()
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
     await removeAccessListItemFunction(item.id, accessItemId)
     fetchData(); // Refresh the list after removing an item
   }
 
 
+  const handleAddAccessListItem = async () =>{
+    await AddAccessListItemFunction(item.id, itemList!.id)
+    fetchData(); // Refresh the list after removing an item
+  }
+
+
   const fetchData = useCallback(async () => {
     const list = await getAccessToItem(item.id);
-    setItemList(list, searchInput);
+    setItemList(list);
   }, [getAccessToItem, item.id, setItemList]);
+
+  const handleChangeSelectedItem = () => async (event: SelectChangeEvent) => {
+    await handleSelectorChange( itemList!, event.target.value);
+    await fetchData();
+  };
+
 
   return (
     <Card>
@@ -116,7 +126,7 @@ const MMUCard = <T extends { id: number },G> (
             children={
               <MMUModalEdit
                 itemLabel={itemLabel}
-                handleSelectorChange={handleSelectorChange}
+                handleSelectorChange={handleChangeSelectedItem}
                 fetchData={fetchData}
                 listOfItem={listOfItem}
                 itemOwner={itemOwner}

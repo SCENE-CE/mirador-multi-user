@@ -1,4 +1,4 @@
-import { Button, Grid, Tooltip, Typography } from "@mui/material";
+import {  Grid, SelectChangeEvent,  Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useCallback, useEffect, useState } from "react";
 import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
@@ -15,16 +15,14 @@ import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
-import {  UserGroup } from "../../user-group/types/types.ts";
+import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { ProjectDefaultButton } from "./ProjectDefaultButton.tsx";
 import { ProjectEditorButton } from "./ProjectEditorButton.tsx";
 import { ProjectReaderButton } from "./ProjectReaderButton.tsx";
-import { ModalEditProject } from "./ModalEditProject.tsx";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
-import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
+import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
+import { ListItem } from "../../../components/types.ts";
 
 
 interface AllProjectsProps {
@@ -54,8 +52,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [openModal, setOpenMOdal] = useState(false)
-  const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-
+  const [ userToAdd, setUserToAdd ] = useState<UserGroup>()
 
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
 
@@ -157,6 +154,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   },[setOpenMOdal, openModal])
 
 
+  const handleAddUser = async ( projectId: number) => {
+      await addProjectToGroup({ projectsId: [projectId], groupId: userToAdd!.id });
+  };
 
   const handleRemoveUser = async (userToRemoveId : number, projectId: number) =>{
     await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
@@ -173,6 +173,16 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     return user.mail;
   };
 
+  const handleChangeRights = (group: ListItem) => async (event: SelectChangeEvent) => {
+    const userGroup = groupList.find((itemGroup) => itemGroup.user_group.id === group.id);
+    await updateProject({
+      id: userGroup!.id,
+      project: ProjectUser.project,
+      group: userGroup!.user_group,
+      rights: event.target.value as ProjectRights
+    });
+    await fetchGroupsForProject();
+  };
 
   return (
     <>
@@ -212,18 +222,18 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         rights={projectUser.rights}
                         deleteItem={deleteProject}
                         getOptionLabel={getOptionLabel}
-                        handleAddAccessListItem={}
-                        handleSelectorChange={}
+                        AddAccessListItemFunction={handleAddUser}
+                        handleSelectorChange={handleChangeRights}
                         item={projectUser.project}
                         itemLabel={projectUser.project.name}
                         itemOwner={}
                         listOfItem={}
                         searchModalEditItem={}
                         getAccessToItem={}
-                        setItemList={setGroupList}
-                        setItemToAdd={}
+                        setItemToAdd={setUserToAdd}
                         updateItem={}
-                        removeAccessListItemFunction={handleRemoveUser}/>
+                        removeAccessListItemFunction={handleRemoveUser}
+                      />
                     </Grid>
                     <Grid>
                       <ProjectCard initializeMirador={initializeMirador} deleteProject={deleteUserProject} ProjectUser={projectUser} updateUserProject={updateUserProject} project={projectUser.project}/>

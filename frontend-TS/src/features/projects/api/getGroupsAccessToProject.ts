@@ -1,6 +1,7 @@
 import storage from "../../../utils/storage.ts";
+import { UserGroup } from "../../user-group/types/types.ts";
 
-export const getGroupsAccessToProject = async (projectId: number) => {
+export const getGroupsAccessToProject = async (projectId: number): Promise<UserGroup[]> => {
   const token = storage.getToken();
 
   try {
@@ -10,8 +11,14 @@ export const getGroupsAccessToProject = async (projectId: number) => {
         "Authorization": `Bearer ${token}`
       }
     });
+    if (!response.ok) {
+      throw new Error(`Error fetching groups: ${response.statusText}`);
+    }
+
     return await response.json();
+
   } catch (error) {
-    console.error(error);
+    console.error("Error in getGroupsAccessToProject:", error);
+    return [];
   }
 }
