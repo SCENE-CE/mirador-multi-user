@@ -160,7 +160,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   };
 
   const handleRemoveUser = async ( projectId: number, userToRemoveId: number) =>{
-    console.log('userToRemoveId',userToRemoveId)
     await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
   }
 
