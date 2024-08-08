@@ -1,4 +1,4 @@
-import { Controller, Get } from "@nestjs/common";
+import { Controller, Get } from '@nestjs/common';
 import { LinkMediaGroupService } from './link-media-group.service';
 
 @Controller('link-media-group')

@@ -1,12 +1,12 @@
 import { Button, Grid, Typography } from "@mui/material";
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 interface IModalConfirmDeleteProps {
-  projectName: string;
-  deleteProject:(projectId:number)=>void,
-  projectId:number
+  itemName: string;
+  deleteItem:(itemId:number)=>void,
+  itemId:number
 }
 
-export const ModalConfirmDelete = ({projectName,deleteProject,projectId}:IModalConfirmDeleteProps) => {
+export const ModalConfirmDelete = ({itemName,deleteItem,itemId}:IModalConfirmDeleteProps) => {
   return(
     <Grid container wrap="nowrap" spacing={2}>
       <Grid item>
@@ -15,13 +15,13 @@ export const ModalConfirmDelete = ({projectName,deleteProject,projectId}:IModalC
       <Grid item container spacing={2}>
 
       <Grid item>
-        <Typography> Are you sure you want to delete the project <b>{projectName}</b>, this action is <b>irreversible</b>.</Typography>
+        <Typography> Are you sure you want to delete <b>{itemName}</b>, this action is <b>irreversible</b>.</Typography>
       </Grid>
       <Grid item>
         <Button
           color="error"
           variant="contained"
-          onClick={()=>deleteProject(projectId)}>
+          onClick={()=>deleteItem(itemId)}>
           DELETE DEFINITELY
         </Button>
       </Grid>

@@ -1,3 +1,4 @@
 .env
 .idea/
 frontend-TS/src/config/config.ts
+backend/uploadMedia/

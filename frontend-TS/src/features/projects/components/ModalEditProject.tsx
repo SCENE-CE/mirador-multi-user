@@ -1,22 +1,25 @@
 import {
   Button,
-  Grid,
+  Grid, SelectChangeEvent,
   TextField,
   Tooltip,
   Typography
 } from "@mui/material";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { ChangeEvent, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
 import SaveIcon from "@mui/icons-material/Save";
 import { MMUModal } from "../../../components/elements/modal.tsx";
 import { ModalConfirmDelete } from "./ModalConfirmDelete.tsx";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
-import { ProjectUserGroupList } from "./ProjectUserGroupList.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
 import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
+import { ItemList } from "../../../components/elements/ItemList.tsx";
+import Selector from "../../../components/Selector.tsx";
+import { updateProject } from "../api/updateProject.ts";
+import { ListItem, SelectorItem } from "../../../components/types.ts";
 
 interface ModalProjectProps {
   projectUser:ProjectUser,
@@ -32,6 +35,22 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
   const [userToAdd, setUserToAdd] = useState<UserGroup | null>(null);
   const [searchInput, setSearchInput] = useState<string>('');
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
+
+
+  const handleChangeRights = (group: ListItem) => async (event: SelectChangeEvent) => {
+    const userGroup = groupList.find((projectGroup) => projectGroup.user_group.id === group.id);
+    console.log(userGroup)
+    console.log(event.target.value);
+    await updateProject({
+      id: userGroup!.id,
+      project: projectUser.project,
+      group: userGroup!.user_group,
+      rights: event.target.value as ProjectRights
+    });
+
+    fetchGroupsForProject()
+  };
+
 
   const HandleUpdateProject = useCallback(async () => {
     updateUserProject(projectUser, newProjectName);
@@ -76,6 +95,22 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
   useEffect(() => {
     fetchGroupsForProject();
   }, [fetchGroupsForProject]);
+
+
+  const rightsSelectorItems: SelectorItem[] = (Object.keys(ProjectRights) as Array<keyof typeof ProjectRights>).map((right) => ({
+    id: right,
+    name: right
+  }));
+
+
+  const listOfGroup: ListItem[] = useMemo(() => {
+    return groupList.map((projectGroup) => ({
+      id: projectGroup.user_group.id,
+      name: projectGroup.user_group.name,
+      rights: projectGroup.rights
+    }));
+  }, [groupList]);
+
   return(
     <Grid container>
 
@@ -106,9 +141,17 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
               setSearchInput={setSearchInput}
               actionButtonLabel={"ADD"}
             />
-            <ProjectUserGroupList projectUser={projectUser} groupList={groupList} setGroupList={setGroupList}/>
+            <ItemList items={listOfGroup}>
+              {(item) => (
+                <Selector
+                  selectorItems={rightsSelectorItems}
+                  value={item.rights!.toUpperCase()}
+                  onChange={handleChangeRights(item)}
+                />
+              )}
+              </ItemList>
           </Grid>
-        )}
+          )}
         {projectUser.rights === ProjectRights.ADMIN &&(
           <Grid item container>
             <Grid item>
@@ -122,11 +165,11 @@ export const ModalEditProject = ({ projectUser, project, updateUserProject, dele
                 </Button>
               </Tooltip>
             </Grid>
-            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteProject={deleteProject} projectId={project.id} projectName={project.name}/>}/>
+            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteModal} children={<ModalConfirmDelete deleteItem={deleteProject} itemId={project.id} itemName={project.name}/>}/>
           </Grid>
         )
         }
       </Grid>
     </Grid>
-  )
+)
 }

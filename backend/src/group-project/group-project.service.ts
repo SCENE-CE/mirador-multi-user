@@ -51,11 +51,12 @@ export class GroupProjectService {
       const projectToUpdate = dto.project;
       let projectToReturn;
       if (dto.rights && dto.group && dto.rights !== GroupProjectRights.READER) {
-        const updateRelation = await this.linkGroupProjectService.UpdateRelation(
-          dto.project.id,
-          dto.group.id,
-          dto.rights,
-        );
+        const updateRelation =
+          await this.linkGroupProjectService.UpdateRelation(
+            dto.project.id,
+            dto.group.id,
+            dto.rights,
+          );
         projectToReturn =
           await this.linkGroupProjectService.getProjectRelations(
             dto.project.id,

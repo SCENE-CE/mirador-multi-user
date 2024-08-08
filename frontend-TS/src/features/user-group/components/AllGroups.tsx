@@ -11,6 +11,7 @@ import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
 import { createGroup } from "../api/createGroup.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForUserGroups } from "../api/lookingForUserGroups.ts";
+import MMUCard from "../../../components/elements/MMUCard.tsx";
 
 
 interface allGroupsProps {
@@ -91,9 +92,24 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
         {groups && !selectedUserGroup && groups.map((group) => (
+          <>
             <Grid item key={group.id}>
               <GroupCard group={group} personalGroup={personalGroup!}  HandleOpenEditGroupModal={HandleOpenEditGroupModal}/>
             </Grid>
+            <Grid>
+              {/*<MMUCard*/}
+              {/*  name={group.name}*/}
+              {/*  id={group.id}*/}
+              {/*  rights={}*/}
+              {/*  ModalChildren={}*/}
+              {/*  HandleOpenModal={}*/}
+              {/*  openModal={}*/}
+              {/*  DefaultButton={}*/}
+              {/*  ReaderButton={}*/}
+              {/*  EditorButton={}*/}
+              {/*/>*/}
+            </Grid>
+          </>
         ))}
         {selectedUserGroup &&(
           <>

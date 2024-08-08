@@ -1,6 +1,7 @@
 import storage from "../../../utils/storage.ts";
+import { UserGroup } from "../../user-group/types/types.ts";
 
-export const getUserPersonalGroup = async (userId:number)=>{
+export const getUserPersonalGroup = async (userId:number) :Promise<UserGroup>=>{
     const token = storage.getToken();
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-group/groups/user-personnal/${userId}`, {

@@ -1,11 +1,17 @@
-import { forwardRef, Inject, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateLinkMediaGroupDto } from "./dto/create-link-media-group.dto";
-import { UpdateLinkMediaGroupDto } from "./dto/update-link-media-group.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { LinkMediaGroup } from "./entities/link-media-group.entity";
-import { Repository } from "typeorm";
-import { UserGroupService } from "../user-group/user-group.service";
-import { MediaService } from "../media/media.service";
+import {
+  forwardRef,
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateLinkMediaGroupDto } from './dto/create-link-media-group.dto';
+import { UpdateLinkMediaGroupDto } from './dto/update-link-media-group.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { LinkMediaGroup } from './entities/link-media-group.entity';
+import { Repository } from 'typeorm';
+import { UserGroupService } from '../user-group/user-group.service';
+import { MediaService } from '../media/media.service';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -21,9 +27,7 @@ export class LinkMediaGroupService {
       const linkMediaGroup: LinkMediaGroup =
         this.linkMediaGroupRepository.create({ ...createLinkMediaGroupDto });
 
-      return await this.linkMediaGroupRepository.upsert(
-        linkMediaGroup,
-        {
+      return await this.linkMediaGroupRepository.upsert(linkMediaGroup, {
         conflictPaths: ['rights', 'media', 'user_group'],
       });
     } catch (error) {
@@ -89,6 +93,20 @@ export class LinkMediaGroupService {
         `An error occurred while finding all Group for this media id : ${id}`,
         error,
       );
+    }
+  }
+
+  async findAllMediaGroupByUserGroupId(userGroupId: number){
+    try{
+      const request = await this.linkMediaGroupRepository.find(
+        {
+          where: { user_group: { id: userGroupId } },
+          relations: ['media'],
+        }
+      )
+        return request
+    }catch(error){
+      throw new InternalServerErrorException(`an error occurred whild finding all MediaGroup for this userGroup : ${userGroupId}`, error);
     }
   }
 

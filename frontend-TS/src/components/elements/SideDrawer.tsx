@@ -4,10 +4,10 @@ import {
   Divider,
   Grid,
   IconButton,
-  List,
+  List, Popover,
   styled,
   Theme,
-  Tooltip,
+  Tooltip, Typography
 } from "@mui/material";
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -26,7 +26,6 @@ import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
 import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
-
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
 import MiradorViewer from "../../features/mirador/Mirador.tsx";
@@ -34,6 +33,13 @@ import { getUserAllProjects } from "../../features/projects/api/getUserAllProjec
 import { getAllGroupProjects } from "../../features/user-group/api/getAllGroupProjects.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
 import toast from "react-hot-toast";
+import { AllMedias } from "../../features/media/component/AllMedias.tsx";
+import { User } from "../../features/auth/types/types.ts";
+import { PopUpMedia } from "../../features/media/component/PopUpMedia.tsx";
+import { Media } from "../../features/media/types/types.ts";
+import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias.ts";
+import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
+import { UserGroup } from "../../features/user-group/types/types.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -83,7 +89,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 interface ISideDrawerProps{
-  user: any,
+  user: User,
   handleDisconnect:()=>void
   selectedProjectId?:number
   setSelectedProjectId :(id?:number)=>void
@@ -99,7 +105,8 @@ interface MiradorViewerHandle {
 
 const CONTENT = {
   PROJECTS:'PROJECT',
-  GROUPS:'GROUPS'
+  GROUPS:'GROUPS',
+  MEDIA:'MEDIA',
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
@@ -107,8 +114,12 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
-  const myRef = useRef<MiradorViewerHandle>(null);
+  const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
+  const [popUpAnchor, setPopUpAnchor]=useState<HTMLButtonElement | null>(null)
+  const [medias, setMedias] = useState<Media[]>([])
 
+
+  const myRef = useRef<MiradorViewerHandle>(null);
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -133,6 +144,18 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const HandleSetMiradorState =(state:IState | undefined)=>{
     setMiradorState(state)
+  }
+
+  const fetchUserPersonalGroup = async()=>{
+    const personalGroup = await getUserPersonalGroup(user.id)
+    setUserPersonalGroup(personalGroup)
+    return personalGroup
+  }
+
+  const fetchMediaForUser = async()=>{
+    const userPersonalGroup= await fetchUserPersonalGroup()
+    const medias = await getUserGroupMedias(userPersonalGroup!.id)
+    setMedias(medias);
   }
 
   const saveMiradorState = useCallback(async () => {
@@ -213,6 +236,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   //UseEffect is necessary cause in some case selectedProjectId is undefined and made save bug
   useEffect(()=>{
     fetchProjects();
+    fetchMediaForUser();
   },[selectedProjectId])
 
   const projectSelected = useMemo(() => {
@@ -222,6 +246,19 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     }
     return null;
   }, [userProjects, selectedProjectId]);
+
+  const handlePopUpClose = ()=>{
+    setPopUpAnchor(null)
+  }
+  const handlePopUpMedia = useCallback((event: React.MouseEvent<HTMLButtonElement>)=>{
+    setPopUpAnchor(event.currentTarget);
+    console.log('popUP')
+  },[popUpAnchor, setPopUpAnchor])
+
+  const handleSetMedia = useCallback((newMedia:Media)=>{
+    console.log('NEW MEDIA :', newMedia)
+    setMedias([...medias, newMedia])
+  },[setMedias,medias])
 
   return(
     <>
@@ -234,8 +271,32 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         </DrawerHeader>
         <Divider />
         <List sx={{minHeight:'70vh'}}>
-          <Tooltip title={"Mes projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>{console.log('Media')}}/></Tooltip>
+          <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
+          {
+            !selectedProjectId ? (
+              <Tooltip title="My Media"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
+
+            ):(
+              <>
+                <Tooltip title="Add Medias"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={handlePopUpMedia}/></Tooltip>
+                <Popover
+                  open={!!popUpAnchor}
+                  anchorEl={popUpAnchor}
+                  onClose={handlePopUpClose}
+                  anchorOrigin={{
+                    vertical: 'center',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'center',
+                    horizontal: 'left',
+                  }}
+                >
+                  <PopUpMedia medias={medias}/>
+                </Popover>
+              </>
+            )
+          }
           <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>
@@ -269,33 +330,38 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           />
         )
         }
-        <Grid item container direction="column">
-          <Grid item>
-            {user && user.id && selectedContent === CONTENT.PROJECTS && (
-              <AllProjects
-                selectedProjectId={selectedProjectId}
-                setSelectedProjectId={setSelectedProjectId}
-                user={user}
-                userProjects={userProjects}
-                setUserProjects={HandleSetUserProjects}
-                handleSetMiradorState={HandleSetMiradorState}
-              />
+        {user && user.id && selectedContent === CONTENT.PROJECTS && (
+          <AllProjects
+            selectedProjectId={selectedProjectId}
+            setSelectedProjectId={setSelectedProjectId}
+            user={user}
+            userProjects={userProjects}
+            setUserProjects={HandleSetUserProjects}
+            handleSetMiradorState={HandleSetMiradorState}
+          />
 
-            )}
-            {
-              user && user.id && selectedContent === CONTENT.GROUPS &&(
-                <AllGroups
-                  user={user}
-                />
-              )
-            }
-            {modalDisconectIsOpen &&(
-              <MMUModal openModal={modalDisconectIsOpen} setOpenModal={handleSetDisconnectModalOpen} width={400} children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />}/>
-            )
-
-            }
-          </Grid>
-        </Grid>
+        )}
+        {
+          user && user.id && !selectedProjectId &&selectedContent === CONTENT.MEDIA && (
+            <AllMedias
+              user={user}
+              userPersonalGroup={userPersonalGroup!}
+              medias={medias}
+              handleSetMedia={handleSetMedia}
+            />
+          )
+        }
+        {
+          user && user.id && selectedContent === CONTENT.GROUPS &&(
+            <AllGroups
+              user={user}
+            />
+          )
+        }
+        {modalDisconectIsOpen &&(
+          <MMUModal openModal={modalDisconectIsOpen} setOpenModal={handleSetDisconnectModalOpen} width={400} children={<ConfirmDisconnect handleDisconnect={handleDisonnectUser} />}/>
+        )
+        }
       </Box>
     </>
   )
