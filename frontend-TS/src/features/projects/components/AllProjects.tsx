@@ -54,7 +54,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [openModal, setOpenMOdal] = useState(false)
-  const [ userToAdd, setUserToAdd ] = useState<UserGroup>()
+  const [ userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 

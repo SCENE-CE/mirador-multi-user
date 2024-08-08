@@ -6,7 +6,7 @@ import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 
-interface IMMUCardProps<T,G,O, X> {
+interface IMMUCardProps<T,G,O,X> {
   name: string;
   id: number;
   rights: ProjectRights;
@@ -25,12 +25,12 @@ interface IMMUCardProps<T,G,O, X> {
   AddAccessListItemFunction: (accessItemId :number, itemId: number ) => Promise<void>,
   item : T,
   searchModalEditItem: (query: string) => Promise<G[]>,
-  setItemToAdd: Dispatch<SetStateAction<G | undefined>>,
-  updateItem: (itemOwner: T, newItemName: string) => void,
+  setItemToAdd: Dispatch<SetStateAction<G | null>>,
+  updateItem: (itemOwner: O, newItemName: string) => void,
   getAccessToItem:(itemId:number)=> Promise<any>
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
-  itemList: X,
-  setItemList:Dispatch<SetStateAction<X>>
+  itemList: X[],
+  setItemList:Dispatch<SetStateAction<X[]>>
 }
 
 const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
@@ -71,6 +71,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
 
   const handleAddAccessListItem = async () =>{
     await AddAccessListItemFunction(item.id, itemList!.id)
+    console.log('passed here', itemList)
     fetchData(); // Refresh the list after removing an item
   }
 

@@ -28,7 +28,7 @@ interface ModalItemProps<T, G,O> {
   handleSelectorChange: (listItem: ListItem) => (event: SelectChangeEvent) => Promise<void>,
   fetchData: () => Promise<void>,
   listOfItem: ListItem[],
-  setItemToAdd: Dispatch<SetStateAction<G | undefined>>,
+  setItemToAdd: Dispatch<SetStateAction<G | null>>,
   handleAddAccessListItem: () => void,
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,

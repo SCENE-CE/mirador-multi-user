@@ -4,7 +4,7 @@ import { Dispatch, SetStateAction, SyntheticEvent, useState } from "react";
 
 interface IUsersSearchBarProps<T>{
   handleAdd?:()=>void
-  setSelectedData?:Dispatch<SetStateAction<T | undefined>>
+  setSelectedData?:Dispatch<SetStateAction<T | null>>
   setSearchedData?:any
   fetchFunction:(partialString:string)=>Promise<any[]>
   getOptionLabel:(option:T)=>string
