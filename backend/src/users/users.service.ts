@@ -27,7 +27,6 @@ export class UsersService {
       userToSave.password = hashPassword;
 
       const savedUser = await this.userRepository.save(userToSave);
-      console.log('beforeUserGroupService call');
       const privateUserGroup =
         await this.userGroupService.createUserPersonalGroup({
           name: savedUser.name,
@@ -35,7 +34,6 @@ export class UsersService {
           users: [savedUser],
         });
 
-      console.log('afer user group service response');
       return savedUser;
     } catch (error) {
       if (error instanceof QueryFailedError) {

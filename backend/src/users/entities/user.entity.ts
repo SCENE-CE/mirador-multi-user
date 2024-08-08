@@ -2,12 +2,10 @@ import {
   Column,
   Entity,
   Index,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Project } from '../../project/entities/project.entity';
-import { UserGroup } from '../../user-group/entities/user-group.entity';
 import { LinkUserGroup } from "../../link-user-group/entities/link-user-group.entity";
 
 @Entity()
