@@ -1,10 +1,13 @@
-import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateUserGroupDto } from "./dto/create-user-group.dto";
-import { UpdateUserGroupDto } from "./dto/update-user-group.dto";
-import { InjectRepository } from "@nestjs/typeorm";
-import { UserGroup } from "./entities/user-group.entity";
-import { Brackets, Repository } from "typeorm";
-import { UserGroupTypes } from "../enum/user-group-types";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateUserGroupDto } from './dto/create-user-group.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UserGroup } from './entities/user-group.entity';
+import { Brackets, Repository } from 'typeorm';
+import { UserGroupTypes } from '../enum/user-group-types';
 
 @Injectable()
 export class UserGroupService {
@@ -91,7 +94,6 @@ export class UserGroupService {
         .where('user.id = :userId', { userId: userId })
         .getMany();
 
-  console.log(allUserGroups);
       const userPersonalGroup = allUserGroups.find(
         (userPersonalGroup) =>
           userPersonalGroup.type === UserGroupTypes.PERSONAL,
@@ -165,61 +167,60 @@ export class UserGroupService {
     try {
       return await this.userGroupRepository.findOne({
         where: { id },
-        relations: ['users'],
-      })
+      });
     } catch (error) {
       console.log(error);
     }
   }
 
-  async updateUsersForUserGroup(id: number, dto: UpdateUserGroupDto) {
-    try {
-      if (!dto.users) {
-        throw new BadRequestException(
-          "A group of users can't contain less than one user",
-        );
-      }
-
-      // Get the existing user group
-      const userGroup = await this.userGroupRepository.findOne({
-        where: { id },
-        relations: ['users'],
-      });
-
-      if (!userGroup) {
-        throw new NotFoundException(`User group with ID ${id} not found`);
-      }
-
-      // Extract user IDs from dto
-      const newUserIds = dto.users.map((user) => user.id);
-
-      // Update the users relation
-      await this.userGroupRepository
-        .createQueryBuilder()
-        .relation(UserGroup, 'users')
-        .of(userGroup)
-        .addAndRemove(
-          newUserIds,
-          userGroup.users.map((user) => user.id),
-        );
-
-      // Return the updated user group
-      const updatedUserGroup = await this.userGroupRepository.findOne({
-        where: { id },
-        relations: ['users'],
-      });
-
-      if (!updatedUserGroup) {
-        throw new InternalServerErrorException(
-          'Failed to retrieve updated user group',
-        );
-      }
-      return updatedUserGroup;
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(error);
-    }
-  }
+  // async updateUsersForUserGroup(id: number, dto: UpdateUserGroupDto) {
+  //   try {
+  //     if (!dto.users) {
+  //       throw new BadRequestException(
+  //         "A group of users can't contain less than one user",
+  //       );
+  //     }
+  //
+  //     // Get the existing user group
+  //     const userGroup = await this.userGroupRepository.findOne({
+  //       where: { id },
+  //       relations: ['users'],
+  //     });
+  //
+  //     if (!userGroup) {
+  //       throw new NotFoundException(`User group with ID ${id} not found`);
+  //     }
+  //
+  //     // Extract user IDs from dto
+  //     const newUserIds = dto.users.map((user) => user.id);
+  //
+  //     // Update the users relation
+  //     await this.userGroupRepository
+  //       .createQueryBuilder()
+  //       .relation(UserGroup, 'users')
+  //       .of(userGroup)
+  //       .addAndRemove(
+  //         newUserIds,
+  //         userGroup.users.map((user) => user.id),
+  //       );
+  //
+  //     // Return the updated user group
+  //     const updatedUserGroup = await this.userGroupRepository.findOne({
+  //       where: { id },
+  //       relations: ['users'],
+  //     });
+  //
+  //     if (!updatedUserGroup) {
+  //       throw new InternalServerErrorException(
+  //         'Failed to retrieve updated user group',
+  //       );
+  //     }
+  //     return updatedUserGroup;
+  //   } catch (error) {
+  //     console.log(error);
+  //     throw new InternalServerErrorException(error);
+  //   }
+  // }
 
   async remove(id: number) {
     try {

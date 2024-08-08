@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Project } from '../../project/entities/project.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
+import { LinkUserGroup } from "../../link-user-group/entities/link-user-group.entity";
 
 @Entity()
 export class User {
@@ -36,6 +37,6 @@ export class User {
   })
   projects: Project[];
 
-  @ManyToMany(() => UserGroup, (UserGroup) => UserGroup.users)
-  user_groups: UserGroup[];
+  @OneToMany(() => LinkUserGroup, (LinkUserGroup) => LinkUserGroup.user)
+  linkUserGroups: LinkUserGroup[];
 }

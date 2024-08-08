@@ -82,18 +82,18 @@ export class UsersService {
     }
   }
 
-  async getUserGroupsByUserId(userId: number): Promise<UserGroup[]> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['user_groups'],
-    });
-
-    if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
-    }
-
-    return user.user_groups;
-  }
+  // async getUserGroupsByUserId(userId: number): Promise<UserGroup[]> {
+  //   const user = await this.userRepository.findOne({
+  //     where: { id: userId },
+  //     relations: ['user_groups'],
+  //   });
+  //
+  //   if (!user) {
+  //     throw new Error(`User with ID ${userId} not found`);
+  //   }
+  //
+  //   return user.user_groups;
+  // }
 
   async remove(id: number) {
     try {
