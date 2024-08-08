@@ -58,10 +58,6 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   const [newItemName, setNewItemName] = useState(itemLabel);
   const [openModal, setOpenModal] = useState(false);
 
-
-  console.log('MMU MODAL EDIT ITEM ', item)
-  console.log('MMU MODAL EDIT ITEMOWNER ', itemOwner)
-
   const handleUpdateItemName = useCallback(async () => {
     updateItem(itemOwner, newItemName);
     setEditName(!editName);

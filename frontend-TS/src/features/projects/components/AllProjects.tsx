@@ -52,7 +52,7 @@ const emptyWorkspace: IState = {
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
-  const [openModal, setOpenMOdal] = useState(false)
+  const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(null); // Updated state
   const [userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
@@ -150,9 +150,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     }
   }
 
-  const HandleOpenModal =useCallback (()=>{
-    setOpenMOdal(!openModal)
-  },[setOpenMOdal, openModal])
+  const HandleOpenModal =useCallback ((projectId: number)=>{
+    setOpenModalProjectId(openModalProjectId === projectId ? null : projectId); // Updated logic
+  },[setOpenModalProjectId, openModalProjectId])
 
 
   const handleAddUser = async ( projectId: number) => {
@@ -226,11 +226,11 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     <Grid item>
                       <MMUCard
                         description="Some description"
-                        HandleOpenModal={HandleOpenModal}
-                        openModal={openModal}
+                        HandleOpenModal={()=>HandleOpenModal(projectUser.project.id)}
+                        openModal={openModalProjectId === projectUser.project.id}
                         DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={projectUser}/>}
-                        EditorButton={<ProjectEditorButton HandleOpenModal={HandleOpenModal}/>}
-                        ReaderButton={<ProjectReaderButton HandleOpenModal={HandleOpenModal} />}
+                        EditorButton={<ProjectEditorButton HandleOpenModal={()=>HandleOpenModal(projectUser.project.id)}/>}
+                        ReaderButton={<ProjectReaderButton HandleOpenModal={()=>HandleOpenModal(projectUser.project.id)} />}
                         id={projectUser.id}
                         name={projectUser.project.name}
                         rights={projectUser.rights}
@@ -272,11 +272,11 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                 <Grid item>
                   <MMUCard
                     description="Some description"
-                    HandleOpenModal={HandleOpenModal}
-                    openModal={openModal}
+                    HandleOpenModal={()=>HandleOpenModal(searchedProject.project.id)}
+                    openModal={openModalProjectId === searchedProject.project.id}
                     DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={searchedProject}/>}
-                    EditorButton={<ProjectEditorButton HandleOpenModal={HandleOpenModal}/>}
-                    ReaderButton={<ProjectReaderButton HandleOpenModal={HandleOpenModal} />}
+                    EditorButton={<ProjectEditorButton HandleOpenModal={()=>HandleOpenModal(searchedProject.project.id)}/>}
+                    ReaderButton={<ProjectReaderButton HandleOpenModal={()=>HandleOpenModal(searchedProject.project.id)} />}
                     id={searchedProject.id}
                     name={searchedProject.project.name}
                     rights={searchedProject.rights}
