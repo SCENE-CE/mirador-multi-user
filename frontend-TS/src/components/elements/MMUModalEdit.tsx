@@ -17,7 +17,7 @@ import { ProjectRights } from "../../features/user-group/types/types.ts";
 import { ListItem, SelectorItem } from "../types.ts";
 
 interface ModalItemProps<T, G,O> {
-  itemOwner: any,
+  itemOwner: O,
   item: T,
   itemLabel: string,
   updateItem: (itemOwner: O, newItemName: string) => void,
@@ -85,6 +85,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     name: right as unknown as "ADMIN" | "EDITOR" | "READER"
   }));
 
+  const handleGetOtpionLabel = (option : G) => getOptionLabel(option, searchInput)
 
   return (
     <Grid container>
@@ -109,7 +110,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
             <SearchBar
               handleAdd={handleAddAccessListItem}
               setSelectedData={setItemToAdd}
-              getOptionLabel={(option) => getOptionLabel(option, searchInput)}
+              getOptionLabel={handleGetOtpionLabel}
               fetchFunction={searchModalEditItem}
               setSearchInput={setSearchInput}
               actionButtonLabel={"ADD"}

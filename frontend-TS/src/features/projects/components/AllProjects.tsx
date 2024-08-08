@@ -1,10 +1,9 @@
-import {  Grid, SelectChangeEvent,  Typography } from "@mui/material";
+import {  Grid,  Typography } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
-import { ProjectCard } from "./projectCard.tsx";
 import { deleteProject } from "../api/deleteProject.ts";
 import { getUserAllProjects } from "../api/getUserAllProjects.ts";
 import { updateProject } from "../api/updateProject";
@@ -54,7 +53,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [openModal, setOpenMOdal] = useState(false)
-  const [ userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
+  const [userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 
@@ -195,6 +194,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     }));
   }, [groupList]);
 
+  const getOptionLabelForProjectSearchBar = (option: Project): string => {
+    return option.name;
+  };
 
   return (
     <>
@@ -203,7 +205,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           {
             !selectedProjectId &&(
               <Grid item>
-                <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabel} setSearchedProject={handleSetSearchProject}/>
+                <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
               </Grid>
             )
           }
@@ -232,7 +234,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         id={projectUser.id}
                         name={projectUser.project.name}
                         rights={projectUser.rights}
-                        deleteItem={deleteProject}
+                        deleteItem={deleteUserProject}
                         getOptionLabel={getOptionLabel}
                         AddAccessListItemFunction={handleAddUser}
                         handleSelectorChange={handleChangeRights}
@@ -248,9 +250,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         itemList={groupList}
                         setItemList={setGroupList}
                       />
-                    </Grid>
-                    <Grid>
-                      <ProjectCard initializeMirador={initializeMirador} deleteProject={deleteUserProject} ProjectUser={projectUser} updateUserProject={updateUserProject} project={projectUser.project}/>
                     </Grid>
                   </>
                 )
@@ -272,7 +271,32 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
             searchedProject && !selectedProjectId &&(
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item>
-
+                  <MMUCard
+                    description="Some description"
+                    HandleOpenModal={HandleOpenModal}
+                    openModal={openModal}
+                    DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={searchedProject}/>}
+                    EditorButton={<ProjectEditorButton HandleOpenModal={HandleOpenModal}/>}
+                    ReaderButton={<ProjectReaderButton HandleOpenModal={HandleOpenModal} />}
+                    id={searchedProject.id}
+                    name={searchedProject.project.name}
+                    rights={searchedProject.rights}
+                    deleteItem={deleteUserProject}
+                    getOptionLabel={getOptionLabel}
+                    AddAccessListItemFunction={handleAddUser}
+                    handleSelectorChange={handleChangeRights}
+                    item={searchedProject.project}
+                    itemLabel={searchedProject.project.name}
+                    itemOwner={searchedProject}
+                    listOfItem={listOfGroup}
+                    searchModalEditItem={lookingForUsers}
+                    getAccessToItem={getGroupsAccessToProject}
+                    setItemToAdd={setUserToAdd}
+                    updateItem={updateUserProject}
+                    removeAccessListItemFunction={handleRemoveUser}
+                    itemList={groupList}
+                    setItemList={setGroupList}
+                  />
                 </Grid>
 
               </Grid>

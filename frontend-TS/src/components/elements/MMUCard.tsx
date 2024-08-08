@@ -22,7 +22,7 @@ interface IMMUCardProps<T,G,O,X> {
   itemOwner:O,
   deleteItem: (itemId: number) => void,
   getOptionLabel: (option: any, searchInput: string) => string,
-  AddAccessListItemFunction: (accessItemId :number, itemId: number ) => Promise<void>,
+  AddAccessListItemFunction: (itemId: number ) => Promise<void>,
   item : T,
   searchModalEditItem: (query: string) => Promise<G[]>,
   setItemToAdd: Dispatch<SetStateAction<G | null>>,
@@ -62,7 +62,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
-
+ console.log(itemOwner)
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
     await removeAccessListItemFunction(item.id, accessItemId)
     fetchData(); // Refresh the list after removing an item
@@ -70,7 +70,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
 
 
   const handleAddAccessListItem = async () =>{
-    await AddAccessListItemFunction(item.id, itemList!.id)
+    await AddAccessListItemFunction(item.id)
     console.log('passed here', itemList)
     fetchData(); // Refresh the list after removing an item
   }
@@ -81,8 +81,9 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     setItemList(list);
   }, [getAccessToItem, item.id, setItemList]);
 
-  const handleChangeSelectedItem = () => async (event: SelectChangeEvent) => {
-    await handleSelectorChange( itemList!, event.target.value, item.id, itemOwner);
+  const handleChangeSelectedItem = (itemSelected: ListItem) => async (event: SelectChangeEvent) => {
+
+    await handleSelectorChange( itemSelected, event.target.value, item.id, itemOwner);
     await fetchData();
   };
 
