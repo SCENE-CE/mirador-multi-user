@@ -15,7 +15,6 @@ interface IProjectUserGroup {
 }
 
 export const ItemList = ({ items, children, removeItem }: IProjectUserGroup) => {
-console.log('items',items)
   return (
     <Grid container item>
       <Grid item>

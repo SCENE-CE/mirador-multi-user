@@ -247,7 +247,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         setItemToAdd={setUserToAdd}
                         updateItem={updateUserProject}
                         removeAccessListItemFunction={handleRemoveUser}
-                        itemList={groupList}
                         setItemList={setGroupList}
                       />
                     </Grid>
@@ -294,7 +293,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     setItemToAdd={setUserToAdd}
                     updateItem={updateUserProject}
                     removeAccessListItemFunction={handleRemoveUser}
-                    itemList={groupList}
                     setItemList={setGroupList}
                   />
                 </Grid>

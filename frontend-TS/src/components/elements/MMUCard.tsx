@@ -29,7 +29,6 @@ interface IMMUCardProps<T,G,O,X> {
   updateItem: (itemOwner: O, newItemName: string) => void,
   getAccessToItem:(itemId:number)=> Promise<any>
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
-  itemList: X[],
   setItemList:Dispatch<SetStateAction<X[]>>
 }
 
@@ -57,12 +56,11 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     setItemToAdd,
     searchModalEditItem,
     removeAccessListItemFunction,
-    itemList,
     setItemList
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
- console.log(itemOwner)
+
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
     await removeAccessListItemFunction(item.id, accessItemId)
     fetchData(); // Refresh the list after removing an item
@@ -71,7 +69,6 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
 
   const handleAddAccessListItem = async () =>{
     await AddAccessListItemFunction(item.id)
-    console.log('passed here', itemList)
     fetchData(); // Refresh the list after removing an item
   }
 
