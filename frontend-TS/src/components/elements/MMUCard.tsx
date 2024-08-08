@@ -62,6 +62,8 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
   const [searchInput, setSearchInput] = useState<string>('');
 
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
+    console.log('handleRemoveAccessListItem item', item)
+    console.log('handleRemoveAccessListItem accessItemId', accessItemId)
     await removeAccessListItemFunction(item.id, accessItemId)
     fetchData(); // Refresh the list after removing an item
   }

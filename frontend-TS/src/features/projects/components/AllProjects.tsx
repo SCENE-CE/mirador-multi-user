@@ -159,7 +159,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
       await addProjectToGroup({ projectsId: [projectId], groupId: userToAdd!.id });
   };
 
-  const handleRemoveUser = async (userToRemoveId : number, projectId: number) =>{
+  const handleRemoveUser = async ( projectId: number, userToRemoveId: number) =>{
+    console.log('userToRemoveId',userToRemoveId)
     await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
   }
 
@@ -265,7 +266,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
               </Grid>
             </Grid>
           ) }
-
           {
             searchedProject && !selectedProjectId &&(
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
