@@ -11,6 +11,7 @@ import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../project/dto/create-project.dto';
 import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
+import { LinkUserGroupService } from "../link-user-group/link-user-group.service";
 
 @Injectable()
 export class GroupProjectService {
@@ -18,6 +19,7 @@ export class GroupProjectService {
     private readonly linkGroupProjectService: LinkGroupProjectService,
     private readonly userGroupService: UserGroupService,
     private readonly projectService: ProjectService,
+    private readonly linkUserGroup: LinkUserGroupService,
   ) {}
 
   async getAllGroupProjects(groupId: number) {
@@ -207,7 +209,7 @@ export class GroupProjectService {
   async createProject(dto: CreateProjectDto) {
     try {
       const userPersonalGroup =
-        await this.userGroupService.findUserPersonalGroup(dto.owner.id);
+        await this.linkUserGroup.findUserPersonalGroup(dto.owner.id);
       const project = await this.projectService.create(dto);
       await this.addProjectsToGroup({
         groupId: userPersonalGroup.id,
