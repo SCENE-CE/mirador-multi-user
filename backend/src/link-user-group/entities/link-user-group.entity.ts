@@ -22,12 +22,12 @@ export class LinkUserGroup {
   @ManyToOne(() => User, (user) => user.linkUserGroups, {
     eager: false,
   })
-  @JoinColumn({ name: 'user' })
+  @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 
   @ManyToOne(() => UserGroup, (group) => group.linkUserGroups, {
     eager: false,
   })
-  @JoinColumn({ name: 'user_group' })
+  @JoinColumn({ name: 'user_group_id', referencedColumnName: 'id' })
   user_group: UserGroup;
 }

@@ -11,6 +11,7 @@ import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
 import { Project } from "../project/entities/project.entity";
 import { LinkGroupProjectService } from "../link-group-project/link-group-project.service";
+import { UserGroup } from "../user-group/entities/user-group.entity";
 
 @Injectable()
 export class LinkUserGroupService {
@@ -172,18 +173,24 @@ export class LinkUserGroupService {
     }
   }
 
-  async findUserPersonalGroup(userId: number) {
+  async findUserPersonalGroup(userId: number): Promise<UserGroup> {
     try {
-      const personnalLinkUserGroup =  await this.linkUserGroupRepository
-        .createQueryBuilder('userPersonalGroup')
+      const personnalLinkUserGroup = await this.linkUserGroupRepository
+        .createQueryBuilder('linkUserGroup')
+        .innerJoinAndSelect('linkUserGroup.user', 'user')
+        .innerJoinAndSelect('linkUserGroup.user_group', 'group')
         .where('user.id = :userId', { userId })
         .andWhere('group.type = :type', { type: UserGroupTypes.PERSONAL })
         .getOne();
 
+      if (!personnalLinkUserGroup) {
+        throw new Error(`No personal group found for user id: ${userId}`);
+      }
+
       return personnalLinkUserGroup.user_group;
     } catch (error) {
       throw new InternalServerErrorException(
-        `an error occurred while trying to find user personal group for this user id : ${userId}`,
+        `An error occurred while trying to find the personal group for user id: ${userId}. Error: ${error.message}`,
       );
     }
   }

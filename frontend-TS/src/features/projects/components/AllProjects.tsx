@@ -59,18 +59,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   const fetchProjects = async () => {
     try {
-      const userGroups = await getUserAllProjects(user.id);
-      const projects = [];
-      const projectIds = new Set();
-      for (const group of userGroups) {
-        const groupProjects = await getAllGroupProjects(group.id);
-        for (const groupProject of groupProjects) {
-          if (!projectIds.has(groupProject.project.id)) {
-            projectIds.add(groupProject.project.id);
-            projects.push(groupProject);
-          }
-        }
-      }
+      const projects = await getUserAllProjects(user.id);
       setUserProjects(projects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);

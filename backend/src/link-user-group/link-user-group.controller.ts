@@ -29,6 +29,11 @@ export class LinkUserGroupController {
   lookingForUser(@Param('partialString') partialString: string) {
     return this.linkUserGroupService.searchForUserGroup(partialString);
   }
+
+  @Get('/user-personal-groups/:userId')
+  getUserPersonalGroup(@Param('userId') userId: number) {
+    return this.linkUserGroupService.findUserPersonalGroup(userId);
+  }
   @Post('/access')
   grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
     return this.linkUserGroupService.GrantAccessToUserGroup(
