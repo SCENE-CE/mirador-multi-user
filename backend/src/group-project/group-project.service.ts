@@ -11,8 +11,8 @@ import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../project/dto/create-project.dto';
 import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
-import { LinkUserGroupService } from "../link-user-group/link-user-group.service";
-import { Project } from "../project/entities/project.entity";
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { Project } from '../project/entities/project.entity';
 
 @Injectable()
 export class GroupProjectService {
@@ -173,9 +173,11 @@ export class GroupProjectService {
           userGroupId,
         );
 
-      return project.find(
+      const toReturn = project.find(
         (linkGroupProject) => linkGroupProject.project.id == projectId,
       );
+
+      return toReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error);
@@ -209,8 +211,14 @@ export class GroupProjectService {
 
   async createProject(dto: CreateProjectDto) {
     try {
-      const userPersonalGroup =
-        await this.linkUserGroup.findUserPersonalGroup(dto.owner.id);
+      const userPersonalGroup = await this.linkUserGroup.findUserPersonalGroup(
+        dto.owner.id,
+      );
+      if (!userPersonalGroup) {
+        throw new NotFoundException(
+          `there is no user personal group for : ${dto.owner.id}`,
+        );
+      }
       const project = await this.projectService.create(dto);
       await this.addProjectsToGroup({
         groupId: userPersonalGroup.id,
@@ -229,15 +237,14 @@ export class GroupProjectService {
     }
   }
 
-
   async findAllUserProjects(userId: number) {
     try {
-      const userGroups = await this.linkUserGroup.findALlGroupsForUser(userId);
+      const linkUserGroups = await this.linkUserGroup.findALlGroupsForUser(userId);
       let projects: Project[] = [];
-      for (const userGroup of userGroups) {
+      for (const linkUserGroup of linkUserGroups) {
         const groupProjects =
           await this.linkGroupProjectService.findAllProjectByUserGroupId(
-            userGroup.id,
+            linkUserGroup.user_group.id,
           );
         projects = projects.concat(
           groupProjects.filter((project) => !projects.includes(project)),

@@ -62,10 +62,13 @@ export class LinkGroupProjectService {
 
   async findAllProjectByUserGroupId(userGroupId: number) {
     try {
+      console.log(userGroupId)
       const linkGroupProjects = await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userGroupId } },
         relations: { project: true },
       });
+
+      console.log('link group projects', linkGroupProjects)
 
       return linkGroupProjects.map(
         (linkGroupProject) => linkGroupProject.project,
@@ -81,7 +84,6 @@ export class LinkGroupProjectService {
   async findAllGroupProjectByUserGroupId(userId: number) {
     try {
       console.log('findAllGroupProjectByUserGroupId');
-      console.log('userId', userId);
       const request = await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
         relations: ['project'],
