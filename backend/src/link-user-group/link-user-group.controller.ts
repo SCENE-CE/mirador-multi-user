@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Patch, Param, Delete, Get } from "@nestjs/common";
+import {
+  Controller,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Get,
+} from '@nestjs/common';
 import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
@@ -38,11 +46,13 @@ export class LinkUserGroupController {
     );
   }
 
-  @Delete('/delete-access/:groupId/:userId')
+  @Delete('/remove-access/:groupId/:userId')
   removeAccess(
     @Param('groupId') groupId: number,
     @Param('userId') userId: number,
   ) {
+    console.log('groupId', groupId);
+    console.log('userId', userId);
     return this.linkUserGroupService.RemoveAccessToUserGroup(groupId, userId);
   }
 }
