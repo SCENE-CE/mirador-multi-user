@@ -1,6 +1,4 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { CreateGroupMediaDto } from './dto/create-group-media.dto';
-import { UpdateGroupMediaDto } from './dto/update-group-media.dto';
 import { LinkMediaGroupService } from '../link-media-group/link-media-group.service';
 import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';

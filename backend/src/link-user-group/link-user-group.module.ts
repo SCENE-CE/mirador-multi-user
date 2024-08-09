@@ -8,5 +8,6 @@ import { LinkUserGroupController } from './link-user-group.controller';
   imports: [TypeOrmModule.forFeature([LinkUserGroup])],
   providers: [LinkUserGroupService],
   controllers: [LinkUserGroupController],
+  exports: [LinkUserGroupService],
 })
 export class LinkUserGroupModule {}

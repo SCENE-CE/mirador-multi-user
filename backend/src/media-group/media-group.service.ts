@@ -10,7 +10,6 @@ import { LinkUserGroupService } from '../link-user-group/link-user-group.service
 @Injectable()
 export class MediaGroupService {
   constructor(
-    private readonly userGroupService: UserGroupService,
     private readonly mediaService: MediaService,
     private readonly linkMediaGroupService: LinkMediaGroupService,
     private readonly linkUserGroupService: LinkUserGroupService,
