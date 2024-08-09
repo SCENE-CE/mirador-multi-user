@@ -5,11 +5,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 import { UserGroupService } from '../user-group/user-group.service';
+import { LinkUserGroup } from '../link-user-group/entities/link-user-group.entity';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserGroup])],
+  imports: [TypeOrmModule.forFeature([User, UserGroup, LinkUserGroup])],
   controllers: [UsersController],
-  providers: [UsersService, UserGroupService],
+  providers: [UsersService, UserGroupService, LinkUserGroupService],
   exports: [UsersService],
 })
 export class UsersModule {}

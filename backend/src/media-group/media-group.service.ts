@@ -5,13 +5,14 @@ import { CreateMediaDto } from '../media/dto/create-media.dto';
 import { MediaService } from '../media/media.service';
 import { MediaGroupRights } from '../enum/media-group-rights';
 import { InsertResult } from 'typeorm';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 
 @Injectable()
 export class MediaGroupService {
   constructor(
-    private readonly userGroupService: UserGroupService,
     private readonly mediaService: MediaService,
     private readonly linkMediaGroupService: LinkMediaGroupService,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
 
   async createMedia(mediaPayload: CreateMediaDto) {
@@ -19,11 +20,11 @@ export class MediaGroupService {
       const mediaInformation = { ...mediaPayload };
 
       mediaInformation.user_group =
-        await this.userGroupService.findUserPersonalGroup(
+        await this.linkUserGroupService.findUserPersonalGroup(
           mediaPayload.idCreator,
         );
 
-      console.log('mediaInformation',mediaInformation);
+      console.log('mediaInformation', mediaInformation);
       const media = await this.mediaService.create({
         path: mediaInformation.path,
         idCreator: mediaInformation.idCreator,
@@ -36,12 +37,9 @@ export class MediaGroupService {
           media: media,
           user_group: mediaInformation.user_group,
         });
-      console.log(insertMediaGroup)
-
       const linkMediaGroup = await this.linkMediaGroupService.findOne(
         insertMediaGroup.identifiers[0].id,
       );
-      console.log(linkMediaGroup)
 
       return { media: media };
     } catch (error) {

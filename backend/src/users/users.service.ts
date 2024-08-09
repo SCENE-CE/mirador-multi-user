@@ -10,8 +10,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { UserGroup } from '../user-group/entities/user-group.entity';
 import { UserGroupService } from '../user-group/user-group.service';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { User_UserGroupRights } from '../enum/user-user_group-rights';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,7 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
 
     private readonly userGroupService: UserGroupService,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
@@ -27,7 +29,6 @@ export class UsersService {
       userToSave.password = hashPassword;
 
       const savedUser = await this.userRepository.save(userToSave);
-      console.log('beforeUserGroupService call');
       const privateUserGroup =
         await this.userGroupService.createUserPersonalGroup({
           name: savedUser.name,
@@ -35,7 +36,12 @@ export class UsersService {
           users: [savedUser],
         });
 
-      console.log('afer user group service response');
+      // const linkGroupToUser = await this.linkUserGroupService.create({
+      //   rights: User_UserGroupRights.ADMIN,
+      //   user_group: privateUserGroup,
+      //   user: savedUser,
+      // });
+
       return savedUser;
     } catch (error) {
       if (error instanceof QueryFailedError) {
@@ -64,7 +70,6 @@ export class UsersService {
     try {
       return await this.userRepository.findOne({
         where: { id },
-        relations: ['user_groups'],
       });
     } catch (err) {
       throw new NotFoundException(`User not found :${id}`);
@@ -80,19 +85,6 @@ export class UsersService {
       console.log(error);
       throw new InternalServerErrorException(error);
     }
-  }
-
-  async getUserGroupsByUserId(userId: number): Promise<UserGroup[]> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['user_groups'],
-    });
-
-    if (!user) {
-      throw new Error(`User with ID ${userId} not found`);
-    }
-
-    return user.user_groups;
   }
 
   async remove(id: number) {
