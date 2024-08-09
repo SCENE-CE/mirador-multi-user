@@ -70,7 +70,6 @@ export class UsersService {
     try {
       return await this.userRepository.findOne({
         where: { id },
-        relations: ['user_groups'],
       });
     } catch (err) {
       throw new NotFoundException(`User not found :${id}`);

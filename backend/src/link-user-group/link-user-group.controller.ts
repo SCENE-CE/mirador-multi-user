@@ -12,7 +12,7 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.findAllUsersForGroup(groupId);
   }
 
-  @Get('/group/:userId')
+  @Get('/groups/:userId')
   getAllGroupForUser(@Param('userId') userId: number) {
     return this.linkUserGroupService.findALlGroupsForUser(userId);
   }

@@ -8,12 +8,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UserGroup } from './entities/user-group.entity';
 import { Brackets, Repository } from 'typeorm';
 import { UserGroupTypes } from '../enum/user-group-types';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { User_UserGroupRights } from '../enum/user-user_group-rights';
 
 @Injectable()
 export class UserGroupService {
   constructor(
     @InjectRepository(UserGroup)
     private readonly userGroupRepository: Repository<UserGroup>,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
   async create(createUserGroupDto: CreateUserGroupDto): Promise<UserGroup> {
     try {
@@ -21,7 +24,23 @@ export class UserGroupService {
         ...createUserGroupDto,
         type: UserGroupTypes.MULTI_USER,
       };
-      return await this.userGroupRepository.save(groupToCreate);
+      const userGroup = await this.userGroupRepository.save(groupToCreate);
+      for (const user of userGroup.users) {
+        if (user.id === createUserGroupDto.ownerId) {
+          await this.linkUserGroupService.create({
+            rights: User_UserGroupRights.ADMIN,
+            user: user,
+            user_group: userGroup,
+          });
+        } else {
+          await this.linkUserGroupService.create({
+            rights: User_UserGroupRights.READER,
+            user: user,
+            user_group: userGroup,
+          });
+        }
+      }
+      return userGroup;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -92,7 +111,6 @@ export class UserGroupService {
       console.log(error);
     }
   }
-
 
   async remove(id: number) {
     try {
