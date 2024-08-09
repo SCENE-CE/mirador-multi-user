@@ -1,9 +1,48 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Patch, Param, Delete, Get } from "@nestjs/common";
 import { LinkUserGroupService } from './link-user-group.service';
+import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
+import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 
 @Controller('link-user-group')
 export class LinkUserGroupController {
   constructor(private readonly linkUserGroupService: LinkUserGroupService) {}
 
+  @Get('/users/:groupId')
+  getAllUsersForGroup(@Param('groupId') groupId: number) {
+    return this.linkUserGroupService.findAllUsersForGroup(groupId);
+  }
 
+  @Get('/group/:userId')
+  getAllGroupForUser(@Param('userId') userId: number) {
+    return this.linkUserGroupService.findALlGroupsForUser(userId);
+  }
+
+  @Get('/looking-for-user/:partialString')
+  lookingForUser(@Param('partialString') partialString: string) {
+    return this.linkUserGroupService.searchForUserGroup(partialString);
+  }
+  @Post(':/access')
+  grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
+    return this.linkUserGroupService.GrantAccessToUserGroup(
+      grantAccessToGroupDto,
+    );
+  }
+  @Patch('/change-access/:groupId')
+  changeAccess(
+    @Body() grantAccessToGroupDto: UpdateLinkUserGroupDto,
+    @Param('groupId') groupId: number,
+  ) {
+    return this.linkUserGroupService.ChangeAccessToUserGroup(
+      groupId,
+      grantAccessToGroupDto,
+    );
+  }
+
+  @Delete('/delete-access/:groupId/:userId')
+  removeAccess(
+    @Param('groupId') groupId: number,
+    @Param('userId') userId: number,
+  ) {
+    return this.linkUserGroupService.RemoveAccessToUserGroup(groupId, userId);
+  }
 }

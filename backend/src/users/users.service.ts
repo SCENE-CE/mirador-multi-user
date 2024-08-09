@@ -10,8 +10,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
-import { UserGroup } from '../user-group/entities/user-group.entity';
 import { UserGroupService } from '../user-group/user-group.service';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { User_UserGroupRights } from '../enum/user-user_group-rights';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +20,7 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
 
     private readonly userGroupService: UserGroupService,
+    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
@@ -33,6 +35,12 @@ export class UsersService {
           ownerId: savedUser.id,
           users: [savedUser],
         });
+
+      const linkGroupToUser = await this.linkUserGroupService.create({
+        rights: User_UserGroupRights.ADMIN,
+        user_group: privateUserGroup,
+        user: savedUser,
+      });
 
       return savedUser;
     } catch (error) {
@@ -79,19 +87,6 @@ export class UsersService {
       throw new InternalServerErrorException(error);
     }
   }
-
-  // async getUserGroupsByUserId(userId: number): Promise<UserGroup[]> {
-  //   const user = await this.userRepository.findOne({
-  //     where: { id: userId },
-  //     relations: ['user_groups'],
-  //   });
-  //
-  //   if (!user) {
-  //     throw new Error(`User with ID ${userId} not found`);
-  //   }
-  //
-  //   return user.user_groups;
-  // }
 
   async remove(id: number) {
     try {
