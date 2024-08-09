@@ -12,6 +12,7 @@ import { CreateProjectDto } from '../project/dto/create-project.dto';
 import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { LinkUserGroupService } from "../link-user-group/link-user-group.service";
+import { Project } from "../project/entities/project.entity";
 
 @Injectable()
 export class GroupProjectService {
@@ -223,6 +224,29 @@ export class GroupProjectService {
       console.log(error);
       throw new InternalServerErrorException(
         'an error occurred while creating project',
+        error,
+      );
+    }
+  }
+
+
+  async findAllUserProjects(userId: number) {
+    try {
+      const userGroups = await this.linkUserGroup.findALlGroupsForUser(userId);
+      let projects: Project[] = [];
+      for (const userGroup of userGroups) {
+        const groupProjects =
+          await this.linkGroupProjectService.findAllProjectByUserGroupId(
+            userGroup.id,
+          );
+        projects = projects.concat(
+          groupProjects.filter((project) => !projects.includes(project)),
+        );
+      }
+      return projects;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `an error occurred while finding project for userId: ${userId}`,
         error,
       );
     }

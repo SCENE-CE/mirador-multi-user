@@ -41,6 +41,11 @@ export class GroupProjectController {
     );
   }
 
+  @Get('/user/projects/:userId')
+  getAllUsersProjects(@Param('userID') userId: number) {
+    return this.groupProjectService.findAllUserProjects(userId);
+  }
+
   @Post('/project/add')
   addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
     console.log('ON THE ROAD ADD PROJECT TO GROUP');

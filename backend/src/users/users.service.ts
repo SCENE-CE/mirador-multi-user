@@ -11,16 +11,12 @@ import { User } from './entities/user.entity';
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroupService } from '../user-group/user-group.service';
-import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
-import { User_UserGroupRights } from '../enum/user-user_group-rights';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
-
     private readonly userGroupService: UserGroupService,
-    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {

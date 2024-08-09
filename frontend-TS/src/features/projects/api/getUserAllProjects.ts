@@ -9,7 +9,9 @@ export const getUserAllProjects = async (userId: number) => {
       }
     });
 
-    return await response.json();
+    const toReturn =  await response.json();
+    console.log('toReturn Get User All Projects',toReturn)
+    return toReturn;
   } catch (error) {
     throw error;
   }

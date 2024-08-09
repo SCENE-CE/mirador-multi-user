@@ -9,6 +9,8 @@ import { Brackets, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
+import { Project } from "../project/entities/project.entity";
+import { LinkGroupProjectService } from "../link-group-project/link-group-project.service";
 
 @Injectable()
 export class LinkUserGroupService {
@@ -19,8 +21,6 @@ export class LinkUserGroupService {
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
     try {
-      console.log('-------------------------------------------------------')
-      console.log('linkUserGroupDto',linkUserGroupDto);
       const linkGroup = this.linkUserGroupRepository.create(linkUserGroupDto);
       return await this.linkUserGroupRepository.upsert(linkGroup, {
         conflictPaths: ['user_group', 'user'],
@@ -187,4 +187,5 @@ export class LinkUserGroupService {
       );
     }
   }
+
 }
