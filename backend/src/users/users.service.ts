@@ -36,11 +36,11 @@ export class UsersService {
           users: [savedUser],
         });
 
-      const linkGroupToUser = await this.linkUserGroupService.create({
-        rights: User_UserGroupRights.ADMIN,
-        user_group: privateUserGroup,
-        user: savedUser,
-      });
+      // const linkGroupToUser = await this.linkUserGroupService.create({
+      //   rights: User_UserGroupRights.ADMIN,
+      //   user_group: privateUserGroup,
+      //   user: savedUser,
+      // });
 
       return savedUser;
     } catch (error) {

@@ -58,7 +58,17 @@ export class UserGroupService {
         ...createUserGroupDto,
         type: UserGroupTypes.PERSONAL,
       };
-      return await this.userGroupRepository.save(groupToCreate);
+
+      const userPersonalGroup =
+        await this.userGroupRepository.save(groupToCreate);
+
+      await this.linkUserGroupService.create({
+        rights: User_UserGroupRights.ADMIN,
+        user: createUserGroupDto.users[0],
+        user_group: userPersonalGroup,
+      });
+
+      return userPersonalGroup;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
