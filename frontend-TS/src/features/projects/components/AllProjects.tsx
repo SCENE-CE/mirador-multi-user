@@ -187,6 +187,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     return option.name;
   };
 
+  console.log('userProjects',userProjects)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
