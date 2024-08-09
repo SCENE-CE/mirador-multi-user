@@ -21,7 +21,7 @@ export class LinkUserGroupController {
   lookingForUser(@Param('partialString') partialString: string) {
     return this.linkUserGroupService.searchForUserGroup(partialString);
   }
-  @Post(':/access')
+  @Post('/access')
   grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
     return this.linkUserGroupService.GrantAccessToUserGroup(
       grantAccessToGroupDto,

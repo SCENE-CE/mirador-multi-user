@@ -51,9 +51,11 @@ export class LinkUserGroupService {
       const linkUserToUserGroup = this.linkUserGroupRepository.create({
         ...createUserGroupDto,
       });
-      return await this.linkUserGroupRepository.upsert(linkUserToUserGroup, {
+      await this.linkUserGroupRepository.upsert(linkUserToUserGroup, {
         conflictPaths: ['rights', 'user', 'user_group'],
       });
+
+      return linkUserToUserGroup;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -69,26 +71,23 @@ export class LinkUserGroupService {
   ) {
     try {
       const linkGroup = await this.linkUserGroupRepository.findOne({
-        where: { user_group: { id: groupId, type: UserGroupTypes.PERSONAL } },
+        where: { user_group: { id: groupId, type: UserGroupTypes.MULTI_USER } },
+        relations: ['user', 'user_group'],  // Ensuring relations are loaded
       });
 
       if (!linkGroup) {
         throw new NotFoundException(`User group with id ${groupId} not found.`);
       }
 
-      const updateResult = await this.linkUserGroupRepository.update(
-        linkGroup.id,
-        updateUserGroupDto,
-      );
+      // Merge the existing entity with new data
+      Object.assign(linkGroup, updateUserGroupDto);
 
-      if (updateResult.affected !== 1) {
-        throw new NotFoundException(
-          `Failed to update user group with id ${linkGroup.id}.`,
-        );
-      }
-      return this.findOne(linkGroup.id);
+      // Save the updated entity
+      const updatedGroup = await this.linkUserGroupRepository.save(linkGroup);
+
+      return updatedGroup;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new InternalServerErrorException(
         `Updating access for userId ${updateUserGroupDto.user} to group ${updateUserGroupDto.user_group} failed`,
         error,
@@ -148,18 +147,17 @@ export class LinkUserGroupService {
 
   async searchForUserGroup(userPartialString: string) {
     try {
-      const partialStringLength = userPartialString.length;
       return await this.linkUserGroupRepository
-        .createQueryBuilder('userGroup')
+        .createQueryBuilder('linkUserGroup')
+        .innerJoinAndSelect('linkUserGroup.user', 'user')
+        .innerJoinAndSelect('linkUserGroup.user_group', 'userGroup')
         .where('userGroup.type = :type', { type: UserGroupTypes.PERSONAL })
         .andWhere(
           new Brackets((qb) => {
-            qb.where('(user.name,:length) = : userPartialString', {
-              length: partialStringLength,
-              userPartialString,
-            }).orWhere('(user.mail, :length) = :userPartialString', {
-              length: partialStringLength,
-              userPartialString,
+            qb.where('user.name LIKE :userPartialString', {
+              userPartialString: `%${userPartialString}%`,
+            }).orWhere('user.mail LIKE :userPartialString', {
+              userPartialString: `%${userPartialString}%`,
             });
           }),
         )
