@@ -72,8 +72,16 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   },[modalGroupCreationIsOpen,setModalGroupCreationIsOpen])
 
 
-  const getOptionLabel = (option: UserGroup): string => {
-    return option.name;
+  const getOptionLabel = (option: LinkUserGroup , searchInput: string): string => {
+    console.log('option',option)
+    const user = option.user;
+    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.mail;
+    }
+    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.name;
+    }
+    return user.mail;
   };
 
   const handleChangeRights = async(group: UserGroup, updateData: Partial<LinkUserGroup>) =>{
