@@ -3,7 +3,6 @@ import { Button, Grid } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CreateGroupDto, LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
-import { GroupCard } from "./GroupCard.tsx";
 import { useUser } from "../../../utils/auth.tsx";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
@@ -15,6 +14,8 @@ import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { ChangeAccessToGroup } from "../api/ChangeAccessToGroup.ts";
 import { deleteGroup } from "../api/deleteGroup.ts";
 import { grantAccessToGroup } from "../api/grantAccessToGroup.ts";
+import { removeAccessToGroup } from "../api/removeAccessToGroup.ts";
+import { lookingForUsers } from "../api/lookingForUsers.ts";
 
 
 interface allGroupsProps {
@@ -74,7 +75,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const personalGroup = useMemo(() => {
     if (!Array.isArray(groups)) return null;
 
-    const filteredGroups = users.filter(group => Array.isArray(group.users) && group.name === currentUser.data!.name );
+    const filteredGroups = users.filter(group => (group) && group.name === currentUser.data!.name );
 
     return filteredGroups[0];
   }, [groups]);
@@ -97,11 +98,11 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     setOpenModalGroupId(openModalGroupId === groupId ? null : groupId); // Updated logic
   },[openModalGroupId, setOpenModalGroupId])
 
-const handleDeleteGroup = useCallback(async (groupId: number) => {
-  await deleteGroup(groupId);
-  const updateListOfGroup = groups.filter((group: UserGroup) => group.id !== groupId);
-  setGroups(updateListOfGroup);
-},[groups, setGroups])
+  const handleDeleteGroup = useCallback(async (groupId: number) => {
+    await deleteGroup(groupId);
+    const updateListOfGroup = groups.filter((group: UserGroup) => group.id !== groupId);
+    setGroups(updateListOfGroup);
+  },[groups, setGroups])
 
   const updateGroup= ()=>{
     console.log('UPDATE THIS GROUP ')
@@ -119,7 +120,9 @@ const handleDeleteGroup = useCallback(async (groupId: number) => {
     }))
   },[userPersonalGroupList])
 
-
+  const handleRemoveUser= async (groupId: number, userToRemoveId: number)=>{
+    await removeAccessToGroup(groupId, userToRemoveId)
+  }
   console.log('groups',groups)
   console.log("users",users)
 
@@ -133,10 +136,7 @@ const handleDeleteGroup = useCallback(async (groupId: number) => {
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
         {groups && !selectedUserGroup && groups.map((group) => (
           <>
-            <Grid item key={group.id}>
-              <GroupCard group={group} personalGroup={personalGroup!}  HandleOpenEditGroupModal={HandleOpenEditGroupModal}/>
-            </Grid>
-            <Grid>
+            <Grid item>
               <MMUCard
                 rights={group.rights!}
                 itemLabel={group.name}
@@ -154,24 +154,43 @@ const handleDeleteGroup = useCallback(async (groupId: number) => {
                 getAccessToItem={getAllUserGroups}
                 itemOwner={group}
                 listOfItem={listOfUserPersonalGroup}
-                removeAccessListItemFunction={}
-                searchModalEditItem={}
+                removeAccessListItemFunction={handleRemoveUser}
+                searchModalEditItem={lookingForUsers}
                 setItemList={setUserPersonalGroupList}
                 setItemToAdd={setUserToAdd}
-                config={}
-                description={}
-                plugins={}
+                description={"Some description"}
                 handleSelectorChange={handleChangeRights}
-               />
+              />
             </Grid>
           </>
         ))}
         {selectedUserGroup &&(
-          <>
             <Grid item>
-              <GroupCard group={selectedUserGroup} personalGroup={personalGroup!} HandleOpenEditGroupModal={HandleOpenEditGroupModal}/>
+              <MMUCard
+                rights={selectedUserGroup.rights!}
+                itemLabel={selectedUserGroup.name}
+                openModal={openModalGroupId === selectedUserGroup.id}
+                getOptionLabel={getOptionLabel}
+                deleteItem={handleDeleteGroup}
+                item={selectedUserGroup}
+                updateItem={updateGroup}
+                HandleOpenModal={()=>HandleOpenModal(selectedUserGroup.id)}
+                id={selectedUserGroup.id}
+                AddAccessListItemFunction={grantingAccessToGroup}
+                DefaultButton={<Button>DEFAULT</Button>}
+                EditorButton={<Button>EDITOR</Button>}
+                ReaderButton={<Button>READER</Button>}
+                getAccessToItem={getAllUserGroups}
+                itemOwner={selectedUserGroup}
+                listOfItem={listOfUserPersonalGroup}
+                removeAccessListItemFunction={handleRemoveUser}
+                searchModalEditItem={lookingForUsers}
+                setItemList={setUserPersonalGroupList}
+                setItemToAdd={setUserToAdd}
+                description={"Some description"}
+                handleSelectorChange={handleChangeRights}
+              />
             </Grid>
-          </>
         )}
       </Grid>
       <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />

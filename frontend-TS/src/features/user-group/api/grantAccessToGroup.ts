@@ -12,7 +12,7 @@ export const grantAccessToGroup = async (rights: ProjectRights, userPersonalGrou
       },
       body: JSON.stringify({rights, userPersonalGroupId, user_group_id})
       })
-    return response.json()
+    return await response.json()
   } catch (error) {
     console.log(error);
   }

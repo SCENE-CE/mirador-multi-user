@@ -8,7 +8,7 @@ export const getAccessToGroup =async (userId: number, groupId: number)=>{
       headers:{
         authorization: `Bearer ${token}`,
       }})
-    return response.json();
+    return await response.json();
   }catch(error){
     console.log(error);
   }
