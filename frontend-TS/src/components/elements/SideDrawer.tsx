@@ -2,12 +2,11 @@ import {
   Box,
   CSSObject,
   Divider,
-  Grid,
   IconButton,
   List, Popover,
   styled,
   Theme,
-  Tooltip, Typography
+  Tooltip
 } from "@mui/material";
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -24,13 +23,12 @@ import { AllProjects } from "../../features/projects/components/AllProjects.tsx"
 import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
 import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
-import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
+import { CreateProjectDto, Project, ProjectUser } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
 import MiradorViewer from "../../features/mirador/Mirador.tsx";
 import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
-import { getAllGroupProjects } from "../../features/user-group/api/getAllGroupProjects.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
 import toast from "react-hot-toast";
 import { AllMedias } from "../../features/media/component/AllMedias.tsx";
@@ -111,7 +109,7 @@ const CONTENT = {
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
-  const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
+  const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
@@ -138,7 +136,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setSelectedContent(content);
   }
 
-  const HandleSetUserProjects=(userProjects:ProjectUser[])=>{
+  const HandleSetUserProjects=(userProjects:Project[])=>{
     setUserProjects(userProjects)
   }
 
@@ -230,12 +228,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const projectSelected = useMemo(() => {
     if (userProjects && selectedProjectId){
-      console.log('-----------------------------------')
-      console.log('userProjects',userProjects)
-      console.log('selectedProjectId',selectedProjectId);
-      const foundProject = userProjects.find(userProject => userProject.project.id === selectedProjectId);
-      console.log('foundProject',foundProject)
-      return foundProject ? foundProject.project : null;
+      const foundProject = userProjects.find(userProject => userProject.id === selectedProjectId);
+      return foundProject ? foundProject : null;
     }
     return null;
   }, [userProjects, selectedProjectId]);

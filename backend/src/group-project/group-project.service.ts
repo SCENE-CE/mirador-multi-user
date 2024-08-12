@@ -176,7 +176,10 @@ export class GroupProjectService {
       const toReturn = project.find(
         (linkGroupProject) => linkGroupProject.project.id == projectId,
       );
-
+      console.log(
+        '-------------------------------------------------------------',
+      );
+      console.log(toReturn);
       return toReturn;
     } catch (error) {
       console.log(error);
@@ -239,17 +242,28 @@ export class GroupProjectService {
 
   async findAllUserProjects(userId: number) {
     try {
-      const linkUserGroups = await this.linkUserGroup.findALlGroupsForUser(userId);
+      const linkUserGroups =
+        await this.linkUserGroup.findALlGroupsForUser(userId);
       let projects: Project[] = [];
       for (const linkUserGroup of linkUserGroups) {
+        console.log('linkUserGroup');
+        console.log(linkUserGroup);
         const groupProjects =
           await this.linkGroupProjectService.findAllProjectByUserGroupId(
             linkUserGroup.user_group.id,
           );
+        const userProjects = groupProjects.map((project) => {
+          return {
+            ...project,
+            rights: linkUserGroup.rights,
+          };
+        });
         projects = projects.concat(
-          groupProjects.filter((project) => !projects.includes(project)),
+          userProjects.filter((project) => !projects.includes(project)),
         );
       }
+      console.log('------------------------------');
+      console.log(projects);
       return projects;
     } catch (error) {
       throw new InternalServerErrorException(

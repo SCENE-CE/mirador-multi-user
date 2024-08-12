@@ -10,7 +10,6 @@ import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
-import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
@@ -30,8 +29,8 @@ interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
   selectedProjectId?: number;
-  setUserProjects:(userProjects: ProjectUser[])=>void;
-  userProjects:ProjectUser[]
+  setUserProjects:(userProjects: Project[])=>void;
+  userProjects:Project[]
   handleSetMiradorState:(state:IState | undefined)=>void;
 }
 
@@ -50,7 +49,7 @@ const emptyWorkspace: IState = {
 };
 
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
-  const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
+  const [searchedProject, setSearchedProject] = useState<Project|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(null); // Updated state
   const [userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
@@ -80,26 +79,26 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const deleteUserProject = useCallback(async (projectId: number) => {
     await deleteProject(projectId);
     const updatedListOfProject = userProjects.filter(function(ProjectUser) {
-      return ProjectUser.project.id != projectId;
+      return ProjectUser.id != projectId;
     });
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects]);
 
   const updateUserProject = useCallback(async (projectUser:ProjectUser, newProjectName:string)=>{
-    const updatedProject:ProjectUser = {...projectUser, project: {
+    const updatedProject : Project = {
         ...projectUser.project,
         name: newProjectName
-      }}
+      }
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
-      return p.project.id != updatedProject.project.id;
+      return p.id != updatedProject.id;
     });
     updatedListOfProject = [updatedProject,...updatedListOfProject]
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects])
 
-  const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: ProjectUser) => {
-    setSelectedProjectId(projectUser.project.id);
+  const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: Project) => {
+    setSelectedProjectId(projectUser.id);
     handleSetMiradorState(miradorState);
   },[handleSetMiradorState, setSelectedProjectId]);
 
@@ -132,7 +131,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   const handleSetSearchProject = (project:Project)=>{
     if(project){
-      const  searchedProject = userProjects.find(userProject => userProject.project.id === project.id)
+      const  searchedProject = userProjects.find(userProject => userProject.id === project.id)
       setSearchedProject(searchedProject!)
     }else{
       setSearchedProject(null);
