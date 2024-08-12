@@ -86,6 +86,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   }));
 
   console.log('item', item)
+  console.log('listof items ', listOfItem)
   const handleGetOtpionLabel = (option : G) => getOptionLabel(option, searchInput)
 
   return (

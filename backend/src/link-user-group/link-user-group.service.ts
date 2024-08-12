@@ -61,9 +61,11 @@ export class LinkUserGroupService {
 
   async GrantAccessToUserGroup(createUserGroupDto: CreateLinkUserGroupDto) {
     try {
+      console.log(createUserGroupDto)
       const linkUserToUserGroup = this.linkUserGroupRepository.create({
-        ...createUserGroupDto,
+        ...createUserGroupDto
       });
+      console.log('-------------linkUserToUserGroup-------------',linkUserToUserGroup)
       await this.linkUserGroupRepository.upsert(linkUserToUserGroup, {
         conflictPaths: ['rights', 'user', 'user_group'],
       });

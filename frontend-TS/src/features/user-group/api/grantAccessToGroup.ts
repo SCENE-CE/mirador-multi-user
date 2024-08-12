@@ -1,16 +1,25 @@
 import storage from "../../../utils/storage.ts";
-import { ProjectRights } from "../types/types.ts";
+import { ProjectRights, UserGroup } from "../types/types.ts";
+import { User } from "../../auth/types/types.ts";
 
-export const grantAccessToGroup = async (rights: ProjectRights, userPersonalGroupId : number, user_group_id : number) => {
+export const grantAccessToGroup = async (rights: ProjectRights, user : User, user_group : UserGroup) => {
   const token = storage.getToken();
   try {
+    const payload = {
+      rights: rights,
+      user: user,
+      user_group: user_group
+    };
+
+    console.log("Payload being sent:", JSON.stringify(payload, null, 2));
+
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/access/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         "Authorization": `Bearer ${token}`
       },
-      body: JSON.stringify({rights, userPersonalGroupId, user_group_id})
+      body: JSON.stringify(payload)
       })
     return await response.json()
   } catch (error) {

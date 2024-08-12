@@ -18,6 +18,7 @@ import { lookingForUsers } from "../api/lookingForUsers.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { UpdateGroup } from "../api/updateGroup.ts";
+import { GetAllGroupUsers } from "../api/getAllGroupUsers.ts";
 
 
 interface allGroupsProps {
@@ -29,8 +30,8 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
   const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(null);
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
-  const [userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
-  const [ userPersonalGroupList, setUserPersonalGroupList] = useState<UserGroup[]>([])
+  const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
+  const [ userPersonalGroupList, setUserPersonalGroupList] = useState<LinkUserGroup[]>([])
 
 
   const fetchGroups = async () => {
@@ -113,13 +114,15 @@ export const AllGroups= ({user}:allGroupsProps)=>{
 
 
   const grantingAccessToGroup = async ( user_group_id: number) => {
-    await grantAccessToGroup(ProjectRights.READER, userToAdd!.id, user_group_id )
+    const user_group = groups.find((groups)=> groups.id === user_group_id)
+    console.log('GRANT ACCESS REQUEST',userToAdd, user_group)
+    await grantAccessToGroup(ProjectRights.READER, userToAdd!.user, user_group! )
   }
 
   const listOfUserPersonalGroup = useMemo(()=>{
-    return userPersonalGroupList.map((userPersonalGroup: UserGroup) => ({
-      id: userPersonalGroup.id,
-      name: userPersonalGroup.name,
+    return userPersonalGroupList.map((userPersonalGroup) => ({
+      id: userPersonalGroup.user.id,
+      name: userPersonalGroup.user.name,
       rights: userPersonalGroup.rights
     }))
   },[userPersonalGroupList])
@@ -129,7 +132,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   }
   console.log('groups',groups)
   console.log("users",users)
-
+  console.log('item list ALL GROUPS', userPersonalGroupList)
   return(
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
       <Grid item container direction="row-reverse" spacing={2} alignItems="center">
@@ -154,7 +157,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 AddAccessListItemFunction={grantingAccessToGroup}
                 EditorButton={<ModalButton disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
                 ReaderButton={<ModalButton disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
-                getAccessToItem={getAllUserGroups}
+                getAccessToItem={GetAllGroupUsers}
                 itemOwner={group}
                 listOfItem={listOfUserPersonalGroup}
                 removeAccessListItemFunction={handleRemoveUser}

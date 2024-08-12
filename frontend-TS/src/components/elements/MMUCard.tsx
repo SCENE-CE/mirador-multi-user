@@ -73,6 +73,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
 
   const fetchData = useCallback(async () => {
     const list = await getAccessToItem(item.id);
+    console.log('LIST', list)
     setItemList(list);
   }, [getAccessToItem, item.id, setItemList]);
 
