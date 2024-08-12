@@ -19,6 +19,7 @@ import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { UpdateGroup } from "../api/updateGroup.ts";
 import { GetAllGroupUsers } from "../api/getAllGroupUsers.ts";
+import { ListItem } from "../../../components/types.ts";
 
 
 interface allGroupsProps {
@@ -85,9 +86,10 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     return user.mail;
   };
 
-  const handleChangeRights = async(group: UserGroup, updateData: Partial<LinkUserGroup>) =>{
-    const changeAccess = ChangeAccessToGroup(group.id, updateData);
-    console.log(changeAccess);
+  const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number, userGroup: LinkUserGroup) =>{
+    const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
+    const changeAccess =await  ChangeAccessToGroup(groupId, {...userToUpdate, rights: eventValue as ProjectRights} );
+    console.log('changeAccess',changeAccess);
   }
 
   const HandleOpenModal =useCallback ((groupId: number)=>{
@@ -183,7 +185,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 HandleOpenModal={()=>HandleOpenModal(selectedUserGroup.id)}
                 id={selectedUserGroup.id}
                 AddAccessListItemFunction={grantingAccessToGroup}
-                EditorButton={<ModalButton disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
+                EditorButton={<ModalButton disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
                 ReaderButton={<ModalButton disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                 getAccessToItem={getAllUserGroups}
                 itemOwner={selectedUserGroup}

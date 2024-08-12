@@ -73,7 +73,6 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
 
   const fetchData = useCallback(async () => {
     const list = await getAccessToItem(item.id);
-    console.log('LIST', list)
     setItemList(list);
   }, [getAccessToItem, item.id, setItemList]);
 
@@ -105,9 +104,11 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
                 <CardActions>
                   <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
                     <Grid item>
-                      <Tooltip title={"Open project"}>
-                        {DefaultButton}
-                      </Tooltip>
+                      {DefaultButton &&(
+                        <Tooltip title={"Open project"}>
+                          {DefaultButton}
+                        </Tooltip>
+                      )}
                     </Grid>
                     {id  && (
                       <>
