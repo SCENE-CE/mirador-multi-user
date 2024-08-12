@@ -1,11 +1,11 @@
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Button } from "@mui/material";
 import IState from "../../mirador/interface/IState.ts";
-import { ProjectUser } from "../types/types.ts";
+import { Project } from "../types/types.ts";
 
 interface IProjectDefaultButtonProps {
-  initializeMirador:(miradorState: (IState | undefined), projectUser: ProjectUser) => void,
-  projectUser: ProjectUser,
+  initializeMirador:(miradorState: (IState | undefined), projectUser: Project) => void,
+  projectUser: Project,
 }
 
 
@@ -14,7 +14,7 @@ export const ProjectDefaultButton = ({initializeMirador, projectUser}: IProjectD
     <>
       <Button
         onClick={() => {
-          initializeMirador(projectUser.project.userWorkspace, projectUser);
+          initializeMirador(projectUser.userWorkspace, projectUser);
         }}
         variant="contained"
       >

@@ -23,7 +23,7 @@ import { AllProjects } from "../../features/projects/components/AllProjects.tsx"
 import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
 import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
-import { CreateProjectDto, Project, ProjectUser } from "../../features/projects/types/types.ts";
+import { CreateProjectDto, Project } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
@@ -122,7 +122,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setOpen(true);
   };
 
-  const handleSaveProject = useCallback((newProject:ProjectUser)=>{
+  const handleSaveProject = useCallback((newProject:Project)=>{
     return setUserProjects([...userProjects, newProject]);
 
   },[setUserProjects])
@@ -160,12 +160,12 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     const miradorViewer = myRef.current?.setViewer();
     if (selectedProjectId) {
       console.log('IF')
-      let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
+      let projectToUpdate:Project = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
       if(projectToUpdate == undefined){
         projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       }
-      projectToUpdate.project.userWorkspace = miradorViewer!;
+      projectToUpdate.userWorkspace = miradorViewer!;
       if(projectToUpdate){
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { rights, ...projectWithoutRights } = projectToUpdate;
@@ -184,13 +184,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       };
       const r = await createProject(project);
       if (r) {
-        setSelectedProjectId(r.project.id);
+        setSelectedProjectId(r.id);
         handleSaveProject({
           ...r,
-          project: {
-            ...project,
-            id: r.project.id
-          }
+          ...project,
+          id: r.id
         });
       }
     }
