@@ -7,10 +7,12 @@ import {
   Delete,
   HttpCode,
   UseGuards,
+  Patch,
 } from '@nestjs/common';
 import { UserGroupService } from './user-group.service';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 
 @Controller('user-group')
 export class UserGroupController {
@@ -38,6 +40,10 @@ export class UserGroupController {
     return this.userGroupService.searchForUserGroup(partialUserGroupName);
   }
 
+  @Patch('/update')
+  updateGroup(@Body() updateDate: UpdateUserGroupDto) {
+    return this.userGroupService.updateGroup(updateDate);
+  }
 
   @Delete(':groupId')
   @UseGuards(AuthGuard)

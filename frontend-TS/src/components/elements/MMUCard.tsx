@@ -12,9 +12,9 @@ interface IMMUCardProps<T,G,O,X> {
   description?: string;
   HandleOpenModal: () => void;
   openModal: boolean;
-  DefaultButton: ReactElement;
-  ReaderButton: ReactElement;
-  EditorButton: ReactElement;
+  DefaultButton?: ReactElement;
+  ReaderButton?: ReactElement;
+  EditorButton?: ReactElement;
   itemLabel:string;
   handleSelectorChange: (itemList: ListItem, eventValue : string, itemId:number, owner :O ) => Promise<void>,
   listOfItem: ListItem[],

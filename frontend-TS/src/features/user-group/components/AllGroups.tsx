@@ -1,9 +1,8 @@
 import { User } from "../../auth/types/types.ts";
-import { Button, Grid } from "@mui/material";
+import { Grid } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CreateGroupDto, LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
-import { useUser } from "../../../utils/auth.tsx";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
 import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
@@ -16,6 +15,9 @@ import { deleteGroup } from "../api/deleteGroup.ts";
 import { grantAccessToGroup } from "../api/grantAccessToGroup.ts";
 import { removeAccessToGroup } from "../api/removeAccessToGroup.ts";
 import { lookingForUsers } from "../api/lookingForUsers.ts";
+import { ModalButton } from "../../../components/elements/ModalButton.tsx";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { UpdateGroup } from "../api/updateGroup.ts";
 
 
 interface allGroupsProps {
@@ -25,12 +27,10 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [users, setUsers] = useState<UserGroup[]>([]);
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
-  const [openEditGroupModal, setOpenEditGroupModal] = useState(false)
   const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(null);
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
   const [userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
   const [ userPersonalGroupList, setUserPersonalGroupList] = useState<UserGroup[]>([])
-  const currentUser = useUser();
 
 
   const fetchGroups = async () => {
@@ -51,7 +51,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   useEffect(
     () =>{
       fetchGroups()
-    },[openEditGroupModal]
+    },[openModalGroupId, user]
   )
   const handleCreateGroup = async (name:string)=>{
     try{
@@ -66,19 +66,6 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       console.error(error)
     }
   }
-
-  const HandleOpenEditGroupModal = useCallback(()=>{
-    setOpenEditGroupModal(!openEditGroupModal)
-  },[setOpenEditGroupModal,openEditGroupModal])
-
-
-  const personalGroup = useMemo(() => {
-    if (!Array.isArray(groups)) return null;
-
-    const filteredGroups = users.filter(group => (group) && group.name === currentUser.data!.name );
-
-    return filteredGroups[0];
-  }, [groups]);
 
   const toggleModalGroupCreation = useCallback(()=>{
     setModalGroupCreationIsOpen(!modalGroupCreationIsOpen);
@@ -104,9 +91,18 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     setGroups(updateListOfGroup);
   },[groups, setGroups])
 
-  const updateGroup= ()=>{
-    console.log('UPDATE THIS GROUP ')
-  }
+  const updateGroup= useCallback(async (group: UserGroup, newGroupName: string) => {
+    const dataForUpdate = {
+      ...group,
+      name: newGroupName,
+    }
+
+    const updateGroup =  await UpdateGroup(dataForUpdate);
+    const updateListOfGroup = groups.filter((group: UserGroup)=> group.id !== dataForUpdate.id);
+    const updatedListOfGroup = [updateGroup[0], ...updateListOfGroup]
+    setGroups(updatedListOfGroup);
+  },[groups, setGroups])
+
 
   const grantingAccessToGroup = async ( user_group_id: number) => {
     await grantAccessToGroup(ProjectRights.READER, userToAdd!.id, user_group_id )
@@ -148,9 +144,8 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 HandleOpenModal={()=>HandleOpenModal(group.id)}
                 id={group.id}
                 AddAccessListItemFunction={grantingAccessToGroup}
-                DefaultButton={<Button>DEFAULT</Button>}
-                EditorButton={<Button>EDITOR</Button>}
-                ReaderButton={<Button>READER</Button>}
+                EditorButton={<ModalButton disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
+                ReaderButton={<ModalButton disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                 getAccessToItem={getAllUserGroups}
                 itemOwner={group}
                 listOfItem={listOfUserPersonalGroup}
@@ -177,9 +172,8 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 HandleOpenModal={()=>HandleOpenModal(selectedUserGroup.id)}
                 id={selectedUserGroup.id}
                 AddAccessListItemFunction={grantingAccessToGroup}
-                DefaultButton={<Button>DEFAULT</Button>}
-                EditorButton={<Button>EDITOR</Button>}
-                ReaderButton={<Button>READER</Button>}
+                EditorButton={<ModalButton disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
+                ReaderButton={<ModalButton disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                 getAccessToItem={getAllUserGroups}
                 itemOwner={selectedUserGroup}
                 listOfItem={listOfUserPersonalGroup}

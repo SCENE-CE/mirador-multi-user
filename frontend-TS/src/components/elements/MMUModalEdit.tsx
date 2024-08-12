@@ -77,13 +77,15 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
 
   useEffect(() => {
     fetchData();
-  }, [item, itemOwner]);
+    console.log('editModal rerender')
+  }, [fetchData, item, itemOwner]);
 
   const rightsSelectorItems: SelectorItem[] = Object.values(ProjectRights).map((right) => ({
     id: right as unknown as "ADMIN" | "EDITOR" | "READER",
     name: right as unknown as "ADMIN" | "EDITOR" | "READER"
   }));
 
+  console.log('item', item)
   const handleGetOtpionLabel = (option : G) => getOptionLabel(option, searchInput)
 
   return (

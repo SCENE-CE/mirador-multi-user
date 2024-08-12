@@ -14,15 +14,15 @@ import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
 import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
-import { ProjectDefaultButton } from "./ProjectDefaultButton.tsx";
-import { ProjectEditorButton } from "./ProjectEditorButton.tsx";
-import { ProjectReaderButton } from "./ProjectReaderButton.tsx";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
 import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
 import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
 import AddIcon from "@mui/icons-material/Add";
+import { ModalButton } from "../../../components/elements/ModalButton.tsx";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
 
 interface AllProjectsProps {
@@ -218,9 +218,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         description="Some description"
                         HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                         openModal={openModalProjectId === projectUser.id}
-                        DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={projectUser}/>}
-                        EditorButton={<ProjectEditorButton HandleOpenModal={()=>HandleOpenModal(projectUser.id)}/>}
-                        ReaderButton={<ProjectReaderButton HandleOpenModal={()=>HandleOpenModal(projectUser.id)} />}
+                        DefaultButton={<ModalButton onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                        EditorButton={<ModalButton onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                        ReaderButton={<ModalButton onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
@@ -262,11 +262,10 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     description="Some description"
                     HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}
                     openModal={openModalProjectId === searchedProject.id}
-                    DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={searchedProject}/>}
-                    EditorButton={<ProjectEditorButton HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}/>}
-                    ReaderButton={<ProjectReaderButton HandleOpenModal={()=>HandleOpenModal(searchedProject.id)} />}
+                    DefaultButton={<ModalButton onClickFunction={()=>initializeMirador(searchedProject.userWorkspace,searchedProject)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                    EditorButton={<ModalButton onClickFunction={()=>HandleOpenModal(searchedProject.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    ReaderButton={<ModalButton onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                     id={searchedProject.id}
-                    name={searchedProject.name}
                     rights={searchedProject.rights!}
                     deleteItem={deleteUserProject}
                     getOptionLabel={getOptionLabel}
