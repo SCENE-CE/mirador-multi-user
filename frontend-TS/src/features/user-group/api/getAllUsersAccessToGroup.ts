@@ -1,0 +1,15 @@
+import storage from "../../../utils/storage.ts";
+
+export const getAllUsersAccessToGroup = async(groupId: number) => {
+  try{
+    const token = storage.getToken();
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/users/${groupId}}`,{
+      method: 'GET',
+      headers:{
+        authorization: `Bearer ${token}`,
+      }})
+    return response.json();
+  }catch(error){
+  console.log(error)
+  }
+}

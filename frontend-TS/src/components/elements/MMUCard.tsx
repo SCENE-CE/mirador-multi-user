@@ -7,7 +7,6 @@ import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 
 interface IMMUCardProps<T,G,O,X> {
-  name: string;
   id: number;
   rights: ProjectRights;
   description?: string;
@@ -34,7 +33,6 @@ interface IMMUCardProps<T,G,O,X> {
 
 const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
   {
-    name,
     id,
     rights,
     description,
@@ -93,7 +91,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             <img src={placeholder} alt="placeholder" style={{ height: 100, width: 150 }} />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Typography variant="subtitle1">{name}</Typography>
+            <Typography variant="subtitle1">{itemLabel}</Typography>
           </Grid>
           <Grid item xs={12} sm={3}>
             {description}

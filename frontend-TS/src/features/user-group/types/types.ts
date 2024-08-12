@@ -9,14 +9,21 @@ export enum ProjectRights{
   ADMIN="admin",
   EDITOR="editor",
   READER = 'reader',
-
 }
+
+export type LinkUserGroup = {
+  id:number,
+  rights:ProjectRights,
+  user: User,
+  user_group:UserGroup
+}
+
 export type UserGroup = {
   id:number;
   name:string;
   ownerId:number;
   type:UserGroupTypes;
-  users:User[];
+  rights?:ProjectRights;
 }
 
 export type CreateGroupDto ={

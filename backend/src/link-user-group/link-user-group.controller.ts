@@ -25,6 +25,13 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.findALlGroupsForUser(userId);
   }
 
+  @Get('/access/:userId/:groupId')
+  getAccessToGroup(
+    @Param('userId') userId: number, @Param('groupId') groupId: number,
+  ){
+    return this.linkUserGroupService.getAccessForUserToGroup(userId, groupId);
+  }
+
   @Get('/looking-for-user/:partialString')
   lookingForUser(@Param('partialString') partialString: string) {
     return this.linkUserGroupService.searchForUserGroup(partialString);

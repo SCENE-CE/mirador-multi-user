@@ -9,8 +9,6 @@ import { Brackets, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
-import { Project } from '../project/entities/project.entity';
-import { LinkGroupProjectService } from '../link-group-project/link-group-project.service';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 
 @Injectable()
@@ -42,6 +40,20 @@ export class LinkUserGroupService {
     } catch (error) {
       throw new InternalServerErrorException(
         `error while looking for linkUserGroupRepository ${LinkUserGroupId}`,
+        error,
+      );
+    }
+  }
+
+  async getAccessForUserToGroup(userId: number, groupId: number) {
+    try {
+      return await this.linkUserGroupRepository.findOne({
+        where: { user: { id: userId }, user_group: { id: groupId } },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `An error occurred when trying to get Access for user id : ${userId} to group id : ${groupId}`,
         error,
       );
     }
@@ -148,7 +160,7 @@ export class LinkUserGroupService {
       }
       return groupsToReturn;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new InternalServerErrorException(
         `an error occurred while trying to find groups for this user id : ${userId}`,
         error,

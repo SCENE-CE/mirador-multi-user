@@ -1,7 +1,7 @@
 import { User } from "../../auth/types/types.ts";
-import { Grid } from "@mui/material";
+import { Button, Grid } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CreateGroupDto, UserGroup, UserGroupTypes } from "../types/types.ts";
+import { CreateGroupDto, LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { GroupCard } from "./GroupCard.tsx";
 import { useUser } from "../../../utils/auth.tsx";
@@ -11,6 +11,10 @@ import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
 import { createGroup } from "../api/createGroup.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForUserGroups } from "../api/lookingForUserGroups.ts";
+import MMUCard from "../../../components/elements/MMUCard.tsx";
+import { ChangeAccessToGroup } from "../api/ChangeAccessToGroup.ts";
+import { deleteGroup } from "../api/deleteGroup.ts";
+import { grantAccessToGroup } from "../api/grantAccessToGroup.ts";
 
 
 interface allGroupsProps {
@@ -22,7 +26,9 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
   const [openEditGroupModal, setOpenEditGroupModal] = useState(false)
   const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(null);
-
+  const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
+  const [userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
+  const [ userPersonalGroupList, setUserPersonalGroupList] = useState<UserGroup[]>([])
   const currentUser = useUser();
 
 
@@ -30,12 +36,9 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     // eslint-disable-next-line no-useless-catch
     try {
       let groups = await getAllUserGroups(user.id)
-      console.log('fetch fuction groups pre filter', groups)
       const users : UserGroup[] = groups.filter((group:UserGroup)=> group.type === UserGroupTypes.PERSONAL)
 
       groups = groups.filter((group : UserGroup)=> group.type == UserGroupTypes.MULTI_USER)
-      console.log('fetch fuction groups ', groups)
-      console.log('fetch fuction users ', users)
 
       setGroups(groups)
       setUsers(users)
@@ -56,7 +59,6 @@ export const AllGroups= ({user}:allGroupsProps)=>{
         ownerId: user.id,
         users: [user]
       }
-      console.log(userGroupToCreate)
       await createGroup(userGroupToCreate);
       await fetchGroups()
     }catch(error){
@@ -85,8 +87,42 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const getOptionLabel = (option: UserGroup): string => {
     return option.name;
   };
-console.log(groups)
-  console.log(users)
+
+  const handleChangeRights = async(group: UserGroup, updateData: Partial<LinkUserGroup>) =>{
+    const changeAccess = ChangeAccessToGroup(group.id, updateData);
+    console.log(changeAccess);
+  }
+
+  const HandleOpenModal =useCallback ((groupId: number)=>{
+    setOpenModalGroupId(openModalGroupId === groupId ? null : groupId); // Updated logic
+  },[openModalGroupId, setOpenModalGroupId])
+
+const handleDeleteGroup = useCallback(async (groupId: number) => {
+  await deleteGroup(groupId);
+  const updateListOfGroup = groups.filter((group: UserGroup) => group.id !== groupId);
+  setGroups(updateListOfGroup);
+},[groups, setGroups])
+
+  const updateGroup= ()=>{
+    console.log('UPDATE THIS GROUP ')
+  }
+
+  const grantingAccessToGroup = async ( user_group_id: number) => {
+    await grantAccessToGroup(ProjectRights.READER, userToAdd!.id, user_group_id )
+  }
+
+  const listOfUserPersonalGroup = useMemo(()=>{
+    return userPersonalGroupList.map((userPersonalGroup: UserGroup) => ({
+      id: userPersonalGroup.id,
+      name: userPersonalGroup.name,
+      rights: userPersonalGroup.rights
+    }))
+  },[userPersonalGroupList])
+
+
+  console.log('groups',groups)
+  console.log("users",users)
+
   return(
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
       <Grid item container direction="row-reverse" spacing={2} alignItems="center">
@@ -101,17 +137,32 @@ console.log(groups)
               <GroupCard group={group} personalGroup={personalGroup!}  HandleOpenEditGroupModal={HandleOpenEditGroupModal}/>
             </Grid>
             <Grid>
-              {/*<MMUCard*/}
-              {/*  name={group.name}*/}
-              {/*  id={group.id}*/}
-              {/*  rights={}*/}
-              {/*  ModalChildren={}*/}
-              {/*  HandleOpenModal={}*/}
-              {/*  openModal={}*/}
-              {/*  DefaultButton={}*/}
-              {/*  ReaderButton={}*/}
-              {/*  EditorButton={}*/}
-              {/*/>*/}
+              <MMUCard
+                rights={group.rights!}
+                itemLabel={group.name}
+                openModal={openModalGroupId === group.id}
+                getOptionLabel={getOptionLabel}
+                deleteItem={handleDeleteGroup}
+                item={group}
+                updateItem={updateGroup}
+                HandleOpenModal={()=>HandleOpenModal(group.id)}
+                id={group.id}
+                AddAccessListItemFunction={grantingAccessToGroup}
+                DefaultButton={<Button>DEFAULT</Button>}
+                EditorButton={<Button>EDITOR</Button>}
+                ReaderButton={<Button>READER</Button>}
+                getAccessToItem={getAllUserGroups}
+                itemOwner={group}
+                listOfItem={listOfUserPersonalGroup}
+                removeAccessListItemFunction={}
+                searchModalEditItem={}
+                setItemList={setUserPersonalGroupList}
+                setItemToAdd={setUserToAdd}
+                config={}
+                description={}
+                plugins={}
+                handleSelectorChange={handleChangeRights}
+               />
             </Grid>
           </>
         ))}

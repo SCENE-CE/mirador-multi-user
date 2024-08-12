@@ -12,7 +12,7 @@ import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
-import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { ProjectDefaultButton } from "./ProjectDefaultButton.tsx";
 import { ProjectEditorButton } from "./ProjectEditorButton.tsx";
@@ -151,8 +151,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
   }
 
-  const getOptionLabel = (option: UserGroup , searchInput: string): string => {
-    const user = option.users![0];
+  const getOptionLabel = (option: LinkUserGroup , searchInput: string): string => {
+    console.log('option',option)
+    const user = option.user;
     if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
       return user.mail;
     }
@@ -221,7 +222,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         EditorButton={<ProjectEditorButton HandleOpenModal={()=>HandleOpenModal(projectUser.id)}/>}
                         ReaderButton={<ProjectReaderButton HandleOpenModal={()=>HandleOpenModal(projectUser.id)} />}
                         id={projectUser.id}
-                        name={projectUser.name}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
                         getOptionLabel={getOptionLabel}
