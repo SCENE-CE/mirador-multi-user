@@ -1,5 +1,6 @@
 import storage from "../../../utils/storage.ts";
 export const getUserAllProjects = async (userPersonalGroupId: number) => {
+  console.log("userPersonalGroupId",userPersonalGroupId);
   const token = storage.getToken();
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/user/projects/${userPersonalGroupId}`, {

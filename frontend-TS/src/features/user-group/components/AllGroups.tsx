@@ -11,7 +11,6 @@ import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
 import { createGroup } from "../api/createGroup.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForUserGroups } from "../api/lookingForUserGroups.ts";
-import MMUCard from "../../../components/elements/MMUCard.tsx";
 
 
 interface allGroupsProps {
@@ -31,9 +30,13 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     // eslint-disable-next-line no-useless-catch
     try {
       let groups = await getAllUserGroups(user.id)
+      console.log('fetch fuction groups pre filter', groups)
       const users : UserGroup[] = groups.filter((group:UserGroup)=> group.type === UserGroupTypes.PERSONAL)
 
       groups = groups.filter((group : UserGroup)=> group.type == UserGroupTypes.MULTI_USER)
+      console.log('fetch fuction groups ', groups)
+      console.log('fetch fuction users ', users)
+
       setGroups(groups)
       setUsers(users)
     } catch (error) {
@@ -82,7 +85,8 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const getOptionLabel = (option: UserGroup): string => {
     return option.name;
   };
-
+console.log(groups)
+  console.log(users)
   return(
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
       <Grid item container direction="row-reverse" spacing={2} alignItems="center">

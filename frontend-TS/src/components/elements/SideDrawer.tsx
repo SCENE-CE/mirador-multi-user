@@ -212,6 +212,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const fetchProjects = async () => {
     try {
+      console.log('fetchProjects() for : ', user.id );
       const projects = await getUserAllProjects(user.id);
       setUserProjects(projects);
     } catch (error) {

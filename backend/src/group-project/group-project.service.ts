@@ -25,7 +25,6 @@ export class GroupProjectService {
 
   async getAllGroupProjects(groupId: number) {
     try {
-      console.log('GET ALL GROUP PROJECTS');
       return await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
         groupId,
       );
@@ -38,7 +37,6 @@ export class GroupProjectService {
   }
 
   async getAllProjectGroups(projectId: number) {
-    console.log('ENTER GET ALL PROJECT GROUPS');
     try {
       return await this.linkGroupProjectService.getProjectRelations(projectId);
     } catch (error) {
@@ -51,23 +49,21 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
-      const projectToUpdate = dto.project;
+
       let projectToReturn;
       if (dto.rights && dto.group && dto.rights !== GroupProjectRights.READER) {
         const updateRelation =
           await this.linkGroupProjectService.UpdateRelation(
-            dto.project.id,
+            dto.id,
             dto.group.id,
             dto.rights,
           );
         projectToReturn =
-          await this.linkGroupProjectService.getProjectRelations(
-            dto.project.id,
-          );
+          await this.linkGroupProjectService.getProjectRelations(dto.id);
       } else {
         projectToReturn = await this.projectService.update(
-          projectToUpdate.id,
-          projectToUpdate,
+          dto.id,
+          dto,
         );
       }
 
@@ -242,20 +238,21 @@ export class GroupProjectService {
 
   async findAllUserProjects(userId: number) {
     try {
-      const linkUserGroups =
+      console.log('find all user projects userId',userId)
+      const usersGroups =
         await this.linkUserGroup.findALlGroupsForUser(userId);
+      console.log(usersGroups);
       let projects: Project[] = [];
-      for (const linkUserGroup of linkUserGroups) {
-        console.log('linkUserGroup');
-        console.log(linkUserGroup);
+      for (const usersGroup of usersGroups) {
+        console.log(usersGroup)
         const groupProjects =
           await this.linkGroupProjectService.findAllProjectByUserGroupId(
-            linkUserGroup.user_group.id,
+            usersGroup.id,
           );
+
         const userProjects = groupProjects.map((project) => {
           return {
             ...project,
-            rights: linkUserGroup.rights,
           };
         });
         projects = projects.concat(
@@ -266,6 +263,7 @@ export class GroupProjectService {
       console.log(projects);
       return projects;
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(
         `an error occurred while finding project for userId: ${userId}`,
         error,

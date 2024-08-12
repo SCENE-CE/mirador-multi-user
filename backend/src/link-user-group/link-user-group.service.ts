@@ -9,9 +9,9 @@ import { Brackets, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
-import { Project } from "../project/entities/project.entity";
-import { LinkGroupProjectService } from "../link-group-project/link-group-project.service";
-import { UserGroup } from "../user-group/entities/user-group.entity";
+import { Project } from '../project/entities/project.entity';
+import { LinkGroupProjectService } from '../link-group-project/link-group-project.service';
+import { UserGroup } from '../user-group/entities/user-group.entity';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -73,7 +73,7 @@ export class LinkUserGroupService {
     try {
       const linkGroup = await this.linkUserGroupRepository.findOne({
         where: { user_group: { id: groupId, type: UserGroupTypes.MULTI_USER } },
-        relations: ['user', 'user_group'],  // Ensuring relations are loaded
+        relations: ['user', 'user_group'], // Ensuring relations are loaded
       });
 
       if (!linkGroup) {
@@ -104,7 +104,7 @@ export class LinkUserGroupService {
 
       if (!linkGroupToDelete) {
         throw new NotFoundException(
-          `No link found between user id: ${userId} and group id: ${groupId}`
+          `No link found between user id: ${userId} and group id: ${groupId}`,
         );
       }
 
@@ -116,7 +116,6 @@ export class LinkUserGroupService {
       );
     }
   }
-
 
   async findAllUsersForGroup(groupId: number) {
     try {
@@ -134,11 +133,22 @@ export class LinkUserGroupService {
 
   async findALlGroupsForUser(userId) {
     try {
-      return await this.linkUserGroupRepository.find({
+      const allUserGroups = await this.linkUserGroupRepository.find({
         where: { user: { id: userId } },
         relations: ['user_group'],
       });
+
+      const groupsToReturn = [];
+
+      for (const group of allUserGroups) {
+        groupsToReturn.push({
+          ...group.user_group,
+          rights: group.rights,
+        });
+      }
+      return groupsToReturn;
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException(
         `an error occurred while trying to find groups for this user id : ${userId}`,
         error,
@@ -194,5 +204,4 @@ export class LinkUserGroupService {
       );
     }
   }
-
 }
