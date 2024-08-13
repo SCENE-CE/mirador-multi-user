@@ -61,11 +61,14 @@ export class LinkUserGroupService {
 
   async GrantAccessToUserGroup(createUserGroupDto: CreateLinkUserGroupDto) {
     try {
-      console.log(createUserGroupDto)
+      console.log(createUserGroupDto);
       const linkUserToUserGroup = this.linkUserGroupRepository.create({
-        ...createUserGroupDto
+        ...createUserGroupDto,
       });
-      console.log('-------------linkUserToUserGroup-------------',linkUserToUserGroup)
+      console.log(
+        '-------------linkUserToUserGroup-------------',
+        linkUserToUserGroup,
+      );
       await this.linkUserGroupRepository.upsert(linkUserToUserGroup, {
         conflictPaths: ['rights', 'user', 'user_group'],
       });
@@ -192,6 +195,36 @@ export class LinkUserGroupService {
       console.log(error);
       throw new InternalServerErrorException(
         'An error occurred while trying to search for user group with partial name',
+        error,
+      );
+    }
+  }
+
+  async searchForGroups(partialGroupName: string) {
+    try {
+      const userGroups = await this.linkUserGroupRepository
+        .createQueryBuilder('linkUserGroup')
+        .leftJoinAndSelect('linkUserGroup.user_group', 'userGroup')
+        .where('userGroup.name LIKE :partialString', {
+          partialString: `%${partialGroupName}%`,
+        })
+        .andWhere('userGroup.type = :type', { type: UserGroupTypes.MULTI_USER })
+        .getMany();
+
+      // Extract unique UserGroups based on their ID
+      const uniqueUserGroups = userGroups
+        .map((linkUserGroup) => linkUserGroup.user_group)
+        .filter(
+          (group, index, self) =>
+            index === self.findIndex((g) => g.id === group.id),
+        );
+      console.log('--------------------------------------')
+      console.log(uniqueUserGroups)
+      return uniqueUserGroups;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `An error occurred while searching for : ${partialGroupName}`,
         error,
       );
     }

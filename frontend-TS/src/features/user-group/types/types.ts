@@ -11,6 +11,7 @@ export enum ProjectRights{
   READER = 'reader',
 }
 
+
 export type LinkUserGroup = {
   id:number,
   rights:ProjectRights,

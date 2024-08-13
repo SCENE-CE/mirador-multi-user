@@ -16,7 +16,7 @@ interface IMMUCardProps<T,G,O,X> {
   ReaderButton?: ReactElement;
   EditorButton?: ReactElement;
   itemLabel:string;
-  handleSelectorChange: (itemList: ListItem, eventValue : string, itemId:number, owner :O ) => Promise<void>,
+  handleSelectorChange: (itemList: ListItem, eventValue : string, itemId:number, owner :any ) => Promise<void>,
   listOfItem: ListItem[],
   itemOwner:O,
   deleteItem: (itemId: number) => void,

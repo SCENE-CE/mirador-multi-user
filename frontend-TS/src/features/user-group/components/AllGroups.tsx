@@ -1,7 +1,13 @@
 import { User } from "../../auth/types/types.ts";
 import { Grid } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { CreateGroupDto, LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../types/types.ts";
+import {
+  CreateGroupDto,
+  LinkUserGroup,
+  ProjectRights,
+  UserGroup,
+  UserGroupTypes
+} from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
@@ -74,16 +80,11 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   },[modalGroupCreationIsOpen,setModalGroupCreationIsOpen])
 
 
-  const getOptionLabel = (option: LinkUserGroup , searchInput: string): string => {
-    console.log('option',option)
-    const user = option.user;
-    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.mail;
+  const getOptionLabel = (option: UserGroup): string => {
+    if(option.name){
+      return option.name
     }
-    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.name;
-    }
-    return user.mail;
+    return ''
   };
 
   const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number, userGroup: LinkUserGroup) =>{
@@ -132,14 +133,20 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const handleRemoveUser= async (groupId: number, userToRemoveId: number)=>{
     await removeAccessToGroup(groupId, userToRemoveId)
   }
+
+  const handleLookingForGroup = async (partialString:string)=>{
+    return await groups.filter((groups)=>groups.name.startsWith(partialString))
+  }
+
   console.log('groups',groups)
   console.log("users",users)
   console.log('item list ALL GROUPS', userPersonalGroupList)
+  console.log('selectedUserGroup',selectedUserGroup);
   return(
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
       <Grid item container direction="row-reverse" spacing={2} alignItems="center">
         <Grid item>
-          <SearchBar fetchFunction={lookingForUserGroups} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
+          <SearchBar fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
         </Grid>
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
