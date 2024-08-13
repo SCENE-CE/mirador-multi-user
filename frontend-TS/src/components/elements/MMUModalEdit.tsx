@@ -20,7 +20,7 @@ interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
   itemLabel: string,
-  updateItem: (itemOwner: O, newItemName: string) => void,
+  updateItem: (itemOwner: T | O, newItemName: string) => void,
   deleteItem: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem: (query: string) => Promise<G[]>,

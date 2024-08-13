@@ -25,7 +25,7 @@ interface IMMUCardProps<T,G,O,X> {
   item : T,
   searchModalEditItem: (query: string) => Promise<G[]>,
   setItemToAdd: Dispatch<SetStateAction<G | null>>,
-  updateItem: (itemOwner: O, newItemName: string) => void,
+  updateItem: (itemOwner: any, newItemName: string) => void,
   getAccessToItem:(itemId:number)=> Promise<any>
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
   setItemList:Dispatch<SetStateAction<X[]>>
