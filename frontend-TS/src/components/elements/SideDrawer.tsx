@@ -157,7 +157,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = myRef.current?.setViewer();
     if (selectedProjectId) {
-      console.log('IF')
       let projectToUpdate:Project = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
       if(projectToUpdate == undefined){
@@ -167,14 +166,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       if(projectToUpdate){
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { rights, ...projectWithoutRights } = projectToUpdate;
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const projectUpdated =await updateProject(projectWithoutRights!)
-        console.log(projectUpdated);
+        await updateProject(projectWithoutRights!)
         toast.success("Project saved");
 
       }
     } else {
-      console.log('ELSE')
       const project: CreateProjectDto = {
         name: 'new project',
         owner: user,
@@ -210,7 +206,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const fetchProjects = async () => {
     try {
-      console.log('fetchProjects() for : ', user.id );
       const projects = await getUserAllProjects(user.id);
       setUserProjects(projects);
     } catch (error) {
@@ -232,7 +227,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }, [userProjects, selectedProjectId]);
 
   const handleSetMedia = useCallback((newMedia:Media)=>{
-    console.log('NEW MEDIA :', newMedia)
     setMedias([...medias, newMedia])
   },[setMedias,medias])
 

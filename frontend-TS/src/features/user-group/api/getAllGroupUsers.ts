@@ -9,7 +9,6 @@ export const GetAllGroupUsers = async (groupId:number) => {
         authorization: `Bearer ${token}`,
       }})
     const toReturn =  await response.json();
-    console.log('toReturn GET ALL GROUP USERS',toReturn)
     return toReturn
   }catch(error){
     console.log(error)

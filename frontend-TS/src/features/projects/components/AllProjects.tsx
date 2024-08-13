@@ -23,6 +23,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 
 
 interface AllProjectsProps {
@@ -55,7 +56,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-
+  const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
   const fetchProjects = async () => {
     try {
       const projects = await getUserAllProjects(user.id);
@@ -83,7 +84,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     });
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects]);
-//TODO FIX UPDATE
+
+  //TODO FIX UPDATE
   const updateUserProject = useCallback(async (projectUpdated:Project)=>{
     const updatedProject : Project = {
       ...projectUpdated
@@ -95,6 +97,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     updatedListOfProject = [updatedProject,...updatedListOfProject]
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects])
+
 
   const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: Project) => {
     setSelectedProjectId(projectUser.id);
@@ -143,22 +146,18 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
 
   const handleAddUser = async ( projectId: number) => {
-    await addProjectToGroup({ projectsId: [projectId], groupId: userToAdd!.user_group.id });
+    console.log('userToAdd',userToAdd)
+    const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
+    console.log('linkUserGroupToAdd',linkUserGroupToAdd)
+    await addProjectToGroup({ projectsId: [projectId], groupId:linkUserGroupToAdd!.user_group.id });
   };
 
   const handleRemoveUser = async ( projectId: number, userToRemoveId: number) =>{
     await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
   }
 
-  const getOptionLabel = (option: LinkUserGroup , searchInput: string): string => {
-    const user = option.user;
-    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.mail;
-    }
-    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.name;
-    }
-    return user.mail;
+  const getOptionLabel = (option: UserGroup): string => {
+    return option.name
   };
 
   const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:Project) => {
@@ -185,7 +184,17 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     return option.name;
   };
 
-  console.log('userProjects',userProjects)
+  const handleLookingForUserGroups = async (partialString: string) => {
+    const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
+    console.log('linkUserGroups', linkUserGroups)
+    const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
+      .filter(
+        (group, index, self) =>
+          index === self.findIndex((g) => g.id === group.id),
+      );
+    setUserGroupSearch(linkUserGroups);
+    return uniqueUserGroups
+  }
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -213,7 +222,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                   <>
                     <Grid item>
                       <MMUCard
-                        searchBarLabel={"Search Users"}
+                        searchBarLabel={"Search"}
                         description={projectUser.description}
                         HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                         openModal={openModalProjectId === projectUser.id}
@@ -230,7 +239,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         itemLabel={projectUser.name}
                         itemOwner={projectUser.owner}
                         listOfItem={listOfGroup}
-                        searchModalEditItem={lookingForUsers}
+                        searchModalEditItem={handleLookingForUserGroups}
                         getAccessToItem={getGroupsAccessToProject}
                         setItemToAdd={setUserToAdd}
                         updateItem={updateUserProject}

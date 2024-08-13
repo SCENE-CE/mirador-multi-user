@@ -202,22 +202,24 @@ export class LinkUserGroupService {
 
   async searchForGroups(partialGroupName: string) {
     try {
-      const userGroups = await this.linkUserGroupRepository
+      const linkUserGroups = await this.linkUserGroupRepository
         .createQueryBuilder('linkUserGroup')
         .leftJoinAndSelect('linkUserGroup.user_group', 'userGroup')
+        .leftJoinAndSelect('linkUserGroup.user', 'user')
         .where('userGroup.name LIKE :partialString', {
           partialString: `%${partialGroupName}%`,
         })
-        .andWhere('userGroup.type = :type', { type: UserGroupTypes.MULTI_USER })
+        .orWhere('user.name LIKE :partialString', {
+          partialString: `%${partialGroupName}%`,
+        })
+        .orWhere('user.mail LIKE :partialString', {
+          partialString: `%${partialGroupName}%`,
+        })
+        .limit(3)
         .getMany();
-
-      const uniqueUserGroups = userGroups
-        .map((linkUserGroup) => linkUserGroup.user_group)
-        .filter(
-          (group, index, self) =>
-            index === self.findIndex((g) => g.id === group.id),
-        );
-      return uniqueUserGroups
+  console.log('-----------------linkUserGroups---------------')
+  console.log(linkUserGroups)
+      return linkUserGroups;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
