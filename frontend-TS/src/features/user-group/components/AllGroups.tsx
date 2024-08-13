@@ -145,7 +145,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
       <Grid item container direction="row-reverse" spacing={2} alignItems="center">
         <Grid item>
-          <SearchBar fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
+          <SearchBar label={"Search Groups"} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
         </Grid>
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
@@ -153,6 +153,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
           <>
             <Grid item>
               <MMUCard
+                searchBarLabel={"Search Users"}
                 rights={group.rights!}
                 itemLabel={group.name}
                 openModal={openModalGroupId === group.id}
@@ -181,6 +182,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
         {selectedUserGroup &&(
             <Grid item>
               <MMUCard
+                searchBarLabel={"Search Users"}
                 rights={selectedUserGroup.rights!}
                 itemLabel={selectedUserGroup.name}
                 openModal={openModalGroupId === selectedUserGroup.id}

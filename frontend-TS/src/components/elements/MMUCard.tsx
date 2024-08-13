@@ -29,6 +29,7 @@ interface IMMUCardProps<T,G,O,X> {
   getAccessToItem:(itemId:number)=> Promise<any>
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
   setItemList:Dispatch<SetStateAction<X[]>>
+  searchBarLabel:string
 }
 
 const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
@@ -54,7 +55,8 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     setItemToAdd,
     searchModalEditItem,
     removeAccessListItemFunction,
-    setItemList
+    setItemList,
+    searchBarLabel
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -128,6 +130,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             setOpenModal={HandleOpenModal}
             children={
               <MMUModalEdit
+                searchBarLabel={searchBarLabel}
                 itemLabel={itemLabel}
                 handleSelectorChange={handleChangeSelectedItem}
                 fetchData={fetchData}

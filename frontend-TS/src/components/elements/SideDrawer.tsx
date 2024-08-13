@@ -3,7 +3,7 @@ import {
   CSSObject,
   Divider,
   IconButton,
-  List, Popover,
+  List,
   styled,
   Theme,
   Tooltip
@@ -33,7 +33,6 @@ import { createProject } from "../../features/projects/api/createProject.ts";
 import toast from "react-hot-toast";
 import { AllMedias } from "../../features/media/component/AllMedias.tsx";
 import { User } from "../../features/auth/types/types.ts";
-import { PopUpMedia } from "../../features/media/component/PopUpMedia.tsx";
 import { Media } from "../../features/media/types/types.ts";
 import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias.ts";
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
@@ -233,14 +232,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     return null;
   }, [userProjects, selectedProjectId]);
 
-  const handlePopUpClose = ()=>{
-    setPopUpAnchor(null)
-  }
-  const handlePopUpMedia = useCallback((event: React.MouseEvent<HTMLButtonElement>)=>{
-    setPopUpAnchor(event.currentTarget);
-    console.log('popUP')
-  },[popUpAnchor, setPopUpAnchor])
-
   const handleSetMedia = useCallback((newMedia:Media)=>{
     console.log('NEW MEDIA :', newMedia)
     setMedias([...medias, newMedia])
@@ -258,31 +249,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         <Divider />
         <List sx={{minHeight:'70vh'}}>
           <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
-          {
-            !selectedProjectId ? (
-              <Tooltip title="My Media"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
-
-            ):(
-              <>
-                <Tooltip title="Add Medias"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={handlePopUpMedia}/></Tooltip>
-                <Popover
-                  open={!!popUpAnchor}
-                  anchorEl={popUpAnchor}
-                  onClose={handlePopUpClose}
-                  anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'center',
-                    horizontal: 'left',
-                  }}
-                >
-                  <PopUpMedia medias={medias}/>
-                </Popover>
-              </>
-            )
-          }
+          <Tooltip title="My Media"><ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>

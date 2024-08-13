@@ -198,7 +198,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           {
             !selectedProjectId &&(
               <Grid item>
-                <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
+                <SearchBar label={"Search Projects"} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
               </Grid>
             )
           }
@@ -218,6 +218,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                   <>
                     <Grid item>
                       <MMUCard
+                        searchBarLabel={"Search Users"}
                         description="Some description"
                         HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                         openModal={openModalProjectId === projectUser.id}
@@ -262,6 +263,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item>
                   <MMUCard
+                    searchBarLabel={"Search Users"}
                     description="Some description"
                     HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}
                     openModal={openModalProjectId === searchedProject.id}

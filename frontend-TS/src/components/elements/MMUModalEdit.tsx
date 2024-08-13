@@ -33,6 +33,7 @@ interface ModalItemProps<T, G,O> {
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,
   rights: ProjectRights,
+  searchBarLabel:string
 }
 
 export const MMUModalEdit = <O, T extends { id: number }, G>(
@@ -52,6 +53,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     setSearchInput,
     searchInput,
     rights,
+    searchBarLabel,
     handleDeleteAccessListItem,
   }: ModalItemProps<T, G, O>) => {
   const [editName, setEditName] = useState(false);
@@ -110,6 +112,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
         {rights !== ProjectRights.READER && (
           <Grid item>
             <SearchBar
+              label={searchBarLabel}
               handleAdd={handleAddAccessListItem}
               setSelectedData={setItemToAdd}
               getOptionLabel={handleGetOtpionLabel}
