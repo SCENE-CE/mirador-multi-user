@@ -144,9 +144,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
 
   const handleAddUser = async ( projectId: number) => {
-    console.log('projectId',projectId)
-    console.log('userToAdd',userToAdd)
-    console.log('groupId = userToAdd.id : ',userToAdd!.user_group.id)
     await addProjectToGroup({ projectsId: [projectId], groupId: userToAdd!.user_group.id });
   };
 
@@ -155,7 +152,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   }
 
   const getOptionLabel = (option: LinkUserGroup , searchInput: string): string => {
-    console.log('option',option)
     const user = option.user;
     if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
       return user.mail;
@@ -190,7 +186,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     return option.name;
   };
 
-  console.log('userProjects',userProjects)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">

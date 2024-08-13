@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from '../../users/entities/user.entity';
-import { IsNumberString } from 'class-validator';
+import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
 
 @Entity()
@@ -18,7 +18,12 @@ export class Project {
   id: number;
 
   @Column({ length: 100 })
+  @IsString()
   name: string;
+
+  @Column({ default: () => 'Description of the project' })
+  @IsString()
+  description: string;
 
   @ManyToOne(() => User, (user) => user.projects, {
     nullable: false,
