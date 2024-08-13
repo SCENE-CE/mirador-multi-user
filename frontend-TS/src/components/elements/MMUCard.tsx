@@ -9,7 +9,7 @@ import { ProjectRights } from "../../features/user-group/types/types.ts";
 interface IMMUCardProps<T,G,O,X> {
   id: number;
   rights: ProjectRights;
-  description?: string;
+  description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
   DefaultButton?: ReactElement;
@@ -25,7 +25,7 @@ interface IMMUCardProps<T,G,O,X> {
   item : T,
   searchModalEditItem: (query: string) => Promise<G[]>,
   setItemToAdd: Dispatch<SetStateAction<G | null>>,
-  updateItem: (itemOwner: any, newItemName: string) => void,
+  updateItem: (item: T) => void,
   getAccessToItem:(itemId:number)=> Promise<any>
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
   setItemList:Dispatch<SetStateAction<X[]>>
@@ -130,6 +130,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             setOpenModal={HandleOpenModal}
             children={
               <MMUModalEdit
+                description={description}
                 searchBarLabel={searchBarLabel}
                 itemLabel={itemLabel}
                 handleSelectorChange={handleChangeSelectedItem}

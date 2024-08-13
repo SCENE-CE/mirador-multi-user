@@ -102,10 +102,9 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     setGroups(updateListOfGroup);
   },[groups, setGroups])
 
-  const updateGroup= useCallback(async (group: UserGroup, newGroupName: string) => {
+  const updateGroup= useCallback(async (groupUdated: UserGroup) => {
     const dataForUpdate = {
-      ...group,
-      name: newGroupName,
+      ...groupUdated
     }
 
     const updateGroup =  await UpdateGroup(dataForUpdate);
@@ -173,7 +172,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 searchModalEditItem={lookingForUsers}
                 setItemList={setUserPersonalGroupList}
                 setItemToAdd={setUserToAdd}
-                description={"Some description"}
+                description={group.description}
                 handleSelectorChange={handleChangeRights}
               />
             </Grid>
@@ -202,7 +201,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 searchModalEditItem={lookingForUsers}
                 setItemList={setUserPersonalGroupList}
                 setItemToAdd={setUserToAdd}
-                description={"Some description"}
+                description={selectedUserGroup.description}
                 handleSelectorChange={handleChangeRights}
               />
             </Grid>

@@ -8,6 +8,7 @@ export type Project = {
   userWorkspace:IState;
   owner:User;
   rights?: ProjectRights;
+  description:string
 }
 
 export type ProjectGroup = {

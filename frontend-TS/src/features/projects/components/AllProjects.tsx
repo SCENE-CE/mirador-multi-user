@@ -83,11 +83,10 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     });
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects]);
-
-  const updateUserProject = useCallback(async (projectUser:Project, newProjectName:string)=>{
+//TODO FIX UPDATE
+  const updateUserProject = useCallback(async (projectUpdated:Project)=>{
     const updatedProject : Project = {
-      ...projectUser,
-      name: newProjectName
+      ...projectUpdated
     }
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
@@ -186,6 +185,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     return option.name;
   };
 
+  console.log('userProjects',userProjects)
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -214,7 +214,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     <Grid item>
                       <MMUCard
                         searchBarLabel={"Search Users"}
-                        description="Some description"
+                        description={projectUser.description}
                         HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                         openModal={openModalProjectId === projectUser.id}
                         DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
@@ -259,7 +259,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                 <Grid item>
                   <MMUCard
                     searchBarLabel={"Search Users"}
-                    description="Some description"
+                    description={searchedProject.description}
                     HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}
                     openModal={openModalProjectId === searchedProject.id}
                     DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(searchedProject.userWorkspace,searchedProject)} disabled={false} icon={<OpenInNewIcon/>}/>}

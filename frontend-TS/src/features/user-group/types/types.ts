@@ -23,6 +23,7 @@ export type UserGroup = {
   id:number;
   name:string;
   ownerId:number;
+  description:string;
   type:UserGroupTypes;
   rights?:ProjectRights;
 }

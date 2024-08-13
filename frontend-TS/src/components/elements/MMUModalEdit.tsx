@@ -20,7 +20,7 @@ interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
   itemLabel: string,
-  updateItem: (itemOwner: T | O, newItemName: string) => void,
+  updateItem: (newItem: T) => void,
   deleteItem: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem: (query: string) => Promise<G[]>,
@@ -34,6 +34,7 @@ interface ModalItemProps<T, G,O> {
   searchInput: string,
   rights: ProjectRights,
   searchBarLabel:string
+  description:string
 }
 
 export const MMUModalEdit = <O, T extends { id: number }, G>(
@@ -55,22 +56,39 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     rights,
     searchBarLabel,
     handleDeleteAccessListItem,
+    description
   }: ModalItemProps<T, G, O>) => {
   const [editName, setEditName] = useState(false);
+  const [editDescription, setEditDescription] = useState(false);
   const [newItemName, setNewItemName] = useState(itemLabel);
+  const [newItemDescription, setNewItemDescription] = useState(description);
   const [openModal, setOpenModal] = useState(false);
 
   const handleUpdateItemName = useCallback(async () => {
-    updateItem(itemOwner, newItemName);
-    setEditName(!editName);
-  }, [editName, newItemName, itemOwner, updateItem]);
+    const itemToUpdate = {...item,
+    name:newItemName,
+    description:newItemDescription,
+    }
+    updateItem(itemToUpdate);
+    setEditName(false);
+    setEditDescription(false)
+  }, [item, newItemName, newItemDescription, updateItem, itemOwner, editName, editDescription]);
 
   const handleEditName = useCallback(() => {
     setEditName(!editName);
   }, [editName]);
 
+  const handleEditDescription = useCallback(() => {
+    setEditDescription(!editDescription);
+  }, [editDescription]);
+
+
   const handleChangeName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setNewItemName(e.target.value);
+  }, []);
+
+  const handleChangeDescription= useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setNewItemDescription(e.target.value);
   }, []);
 
   const handleConfirmDeleteItemModal = useCallback(() => {
@@ -110,6 +128,22 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
             </Button>
           </Grid>
         )}
+        {!editDescription ? (
+          <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
+            <Typography>{description}</Typography>
+            <Button variant="contained" onClick={handleEditDescription}>
+              <ModeEditIcon />
+            </Button>
+          </Grid>
+        ) : (
+          <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
+            <TextField type="text" onChange={handleChangeDescription} variant="outlined" defaultValue={description} />
+            <Button variant="contained" onClick={handleUpdateItemName}>
+              <SaveIcon />
+            </Button>
+          </Grid>
+        )}
+
         {rights !== ProjectRights.READER && (
           <Grid item>
             <SearchBar
