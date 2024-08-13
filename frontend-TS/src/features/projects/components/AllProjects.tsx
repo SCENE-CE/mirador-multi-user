@@ -144,7 +144,10 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
 
   const handleAddUser = async ( projectId: number) => {
-    await addProjectToGroup({ projectsId: [projectId], groupId: userToAdd!.id });
+    console.log('projectId',projectId)
+    console.log('userToAdd',userToAdd)
+    console.log('groupId = userToAdd.id : ',userToAdd!.user_group.id)
+    await addProjectToGroup({ projectsId: [projectId], groupId: userToAdd!.user_group.id });
   };
 
   const handleRemoveUser = async ( projectId: number, userToRemoveId: number) =>{

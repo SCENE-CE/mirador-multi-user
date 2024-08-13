@@ -14,7 +14,6 @@ import AddIcon from "@mui/icons-material/Add";
 import { DrawerCreateGroup } from "./DrawerCreateGroup.tsx";
 import { createGroup } from "../api/createGroup.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
-import { lookingForUserGroups } from "../api/lookingForUserGroups.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { ChangeAccessToGroup } from "../api/ChangeAccessToGroup.ts";
 import { deleteGroup } from "../api/deleteGroup.ts";
@@ -87,7 +86,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     return ''
   };
 
-  const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number, userGroup: LinkUserGroup) =>{
+  const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number) =>{
     const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
     const changeAccess =await  ChangeAccessToGroup(groupId, {...userToUpdate, rights: eventValue as ProjectRights} );
     console.log('changeAccess',changeAccess);

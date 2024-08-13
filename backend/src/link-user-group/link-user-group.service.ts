@@ -211,16 +211,13 @@ export class LinkUserGroupService {
         .andWhere('userGroup.type = :type', { type: UserGroupTypes.MULTI_USER })
         .getMany();
 
-      // Extract unique UserGroups based on their ID
       const uniqueUserGroups = userGroups
         .map((linkUserGroup) => linkUserGroup.user_group)
         .filter(
           (group, index, self) =>
             index === self.findIndex((g) => g.id === group.id),
         );
-      console.log('--------------------------------------')
-      console.log(uniqueUserGroups)
-      return uniqueUserGroups;
+      return uniqueUserGroups
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(

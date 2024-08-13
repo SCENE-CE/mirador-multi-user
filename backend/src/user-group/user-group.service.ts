@@ -94,9 +94,9 @@ export class UserGroupService {
       const toReturn = await this.userGroupRepository
         .createQueryBuilder('userGroup')
         .leftJoin('userGroup.linkUserGroups', 'linkUserGroup')
-        .leftJoinAndSelect('linkUserGroup.user', 'user') // Select user with specific fields
-        .addSelect(['user.id', 'user.name', 'user.mail']) // Only select these fields for the user
-        .addSelect(['linkUserGroup.id', 'linkUserGroup.rights']) // Ensure LinkUserGroup fields are selected
+        .leftJoinAndSelect('linkUserGroup.user', 'user')
+        .addSelect(['user.id', 'user.name', 'user.mail'])
+        .addSelect(['linkUserGroup.id', 'linkUserGroup.rights'])
         .where('userGroup.type = :type', { type: UserGroupTypes.MULTI_USER })
         .andWhere(
           new Brackets((qb) => {
@@ -108,10 +108,8 @@ export class UserGroupService {
         )
         .limit(3)
         .getMany();
-      console.log('--------------------------TO RETURN SEARCH USER GROUP------------------------------- ')
-      console.dir(toReturn, { depth: null });
 
-      return toReturn
+      return toReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
