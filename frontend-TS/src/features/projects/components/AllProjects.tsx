@@ -222,9 +222,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         description="Some description"
                         HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                         openModal={openModalProjectId === projectUser.id}
-                        DefaultButton={<ModalButton onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
-                        EditorButton={<ModalButton onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                        ReaderButton={<ModalButton onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
+                        DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                        EditorButton={<ModalButton  tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                        ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
@@ -267,9 +267,9 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     description="Some description"
                     HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}
                     openModal={openModalProjectId === searchedProject.id}
-                    DefaultButton={<ModalButton onClickFunction={()=>initializeMirador(searchedProject.userWorkspace,searchedProject)} disabled={false} icon={<OpenInNewIcon/>}/>}
-                    EditorButton={<ModalButton onClickFunction={()=>HandleOpenModal(searchedProject.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                    ReaderButton={<ModalButton onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
+                    DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(searchedProject.userWorkspace,searchedProject)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                    EditorButton={<ModalButton tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(searchedProject.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                     id={searchedProject.id}
                     rights={searchedProject.rights!}
                     deleteItem={deleteUserProject}

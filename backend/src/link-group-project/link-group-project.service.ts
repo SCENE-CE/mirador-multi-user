@@ -71,7 +71,7 @@ export class LinkGroupProjectService {
       console.log('link group projects', linkGroupProjects)
 
       return linkGroupProjects.map(
-        (linkGroupProject) => linkGroupProject.project,
+        (linkGroupProject) => linkGroupProject,
       );
     } catch (error) {
       throw new InternalServerErrorException(

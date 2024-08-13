@@ -112,7 +112,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
-  const [popUpAnchor, setPopUpAnchor]=useState<HTMLButtonElement | null>(null)
   const [medias, setMedias] = useState<Media[]>([])
 
 

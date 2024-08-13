@@ -49,7 +49,6 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
-
       let projectToReturn;
       if (dto.rights && dto.group && dto.rights !== GroupProjectRights.READER) {
         const updateRelation =
@@ -61,10 +60,7 @@ export class GroupProjectService {
         projectToReturn =
           await this.linkGroupProjectService.getProjectRelations(dto.id);
       } else {
-        projectToReturn = await this.projectService.update(
-          dto.id,
-          dto,
-        );
+        projectToReturn = await this.projectService.update(dto.id, dto);
       }
 
       return projectToReturn;
@@ -172,10 +168,6 @@ export class GroupProjectService {
       const toReturn = project.find(
         (linkGroupProject) => linkGroupProject.project.id == projectId,
       );
-      console.log(
-        '-------------------------------------------------------------',
-      );
-      console.log(toReturn);
       return toReturn;
     } catch (error) {
       console.log(error);
@@ -238,29 +230,27 @@ export class GroupProjectService {
 
   async findAllUserProjects(userId: number) {
     try {
-      console.log('find all user projects userId',userId)
-      const usersGroups =
-        await this.linkUserGroup.findALlGroupsForUser(userId);
+      console.log('find all user projects userId', userId);
+      const usersGroups = await this.linkUserGroup.findALlGroupsForUser(userId);
       console.log(usersGroups);
       let projects: Project[] = [];
       for (const usersGroup of usersGroups) {
-        console.log(usersGroup)
+        console.log(usersGroup);
         const groupProjects =
           await this.linkGroupProjectService.findAllProjectByUserGroupId(
             usersGroup.id,
           );
 
-        const userProjects = groupProjects.map((project) => {
+        const userProjects = groupProjects.map((groupProjects) => {
           return {
-            ...project,
+            ...groupProjects.project,
+            rights: groupProjects.rights,
           };
         });
         projects = projects.concat(
           userProjects.filter((project) => !projects.includes(project)),
         );
       }
-      console.log('------------------------------');
-      console.log(projects);
       return projects;
     } catch (error) {
       console.log(error);

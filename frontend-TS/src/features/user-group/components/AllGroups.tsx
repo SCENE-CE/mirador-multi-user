@@ -164,8 +164,8 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 HandleOpenModal={()=>HandleOpenModal(group.id)}
                 id={group.id}
                 AddAccessListItemFunction={grantingAccessToGroup}
-                EditorButton={<ModalButton disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
-                ReaderButton={<ModalButton disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
+                EditorButton={<ModalButton tooltipButton={"Edit Group"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
+                ReaderButton={<ModalButton disabled={true} tooltipButton={"OpenGroup"} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                 getAccessToItem={GetAllGroupUsers}
                 itemOwner={group}
                 listOfItem={listOfUserPersonalGroup}
@@ -193,8 +193,8 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 HandleOpenModal={()=>HandleOpenModal(selectedUserGroup.id)}
                 id={selectedUserGroup.id}
                 AddAccessListItemFunction={grantingAccessToGroup}
-                EditorButton={<ModalButton disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
-                ReaderButton={<ModalButton disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
+                EditorButton={<ModalButton tooltipButton={"Edit"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
+                ReaderButton={<ModalButton tooltipButton={"Open"} disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                 getAccessToItem={getAllUserGroups}
                 itemOwner={selectedUserGroup}
                 listOfItem={listOfUserPersonalGroup}

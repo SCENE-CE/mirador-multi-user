@@ -5,12 +5,13 @@ interface IModalButtonProps {
   onClickFunction:()=>void,
   disabled:boolean,
   icon:  ReactElement
+  tooltipButton:string
 }
-export const ModalButton = ({onClickFunction, disabled,icon}:IModalButtonProps )=>{
+export const ModalButton = ({tooltipButton, onClickFunction, disabled,icon}:IModalButtonProps )=>{
 
   return(
     <>
-      <Tooltip title={"Project configuration"}>
+      <Tooltip title={tooltipButton}>
         <Button
           disabled={disabled}
           onClick={onClickFunction}
