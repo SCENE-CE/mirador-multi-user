@@ -1,7 +1,7 @@
 import storage from "../../../utils/storage.ts";
-import { CreateProjectDto, ProjectUser } from "../types/types.ts";
+import { CreateProjectDto, Project } from "../types/types.ts";
 
-export const createProject = async (project: CreateProjectDto): Promise<ProjectUser> => {
+export const createProject = async (project: CreateProjectDto): Promise<Project> => {
   const token = storage.getToken();
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/project`, {

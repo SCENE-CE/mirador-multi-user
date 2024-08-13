@@ -2,12 +2,11 @@ import {
   Box,
   CSSObject,
   Divider,
-  Grid,
   IconButton,
-  List, Popover,
+  List,
   styled,
   Theme,
-  Tooltip, Typography
+  Tooltip
 } from "@mui/material";
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -24,18 +23,16 @@ import { AllProjects } from "../../features/projects/components/AllProjects.tsx"
 import { AllGroups } from "../../features/user-group/components/AllGroups.tsx";
 import SaveIcon from "@mui/icons-material/Save";
 import { updateProject } from "../../features/projects/api/updateProject.ts";
-import { CreateProjectDto, ProjectUser } from "../../features/projects/types/types.ts";
+import { CreateProjectDto, Project } from "../../features/projects/types/types.ts";
 import IState from "../../features/mirador/interface/IState.ts";
 import { MMUModal } from "./modal.tsx";
 import { ConfirmDisconnect } from "../../features/auth/components/confirmDisconect.tsx";
 import MiradorViewer from "../../features/mirador/Mirador.tsx";
 import { getUserAllProjects } from "../../features/projects/api/getUserAllProjects.ts";
-import { getAllGroupProjects } from "../../features/user-group/api/getAllGroupProjects.ts";
 import { createProject } from "../../features/projects/api/createProject.ts";
 import toast from "react-hot-toast";
 import { AllMedias } from "../../features/media/component/AllMedias.tsx";
 import { User } from "../../features/auth/types/types.ts";
-import { PopUpMedia } from "../../features/media/component/PopUpMedia.tsx";
 import { Media } from "../../features/media/types/types.ts";
 import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias.ts";
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
@@ -111,11 +108,10 @@ const CONTENT = {
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
-  const [userProjects, setUserProjects] = useState<ProjectUser[]>([]);
+  const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);
   const [miradorState, setMiradorState] = useState<IState | undefined>();
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
-  const [popUpAnchor, setPopUpAnchor]=useState<HTMLButtonElement | null>(null)
   const [medias, setMedias] = useState<Media[]>([])
 
 
@@ -124,7 +120,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setOpen(true);
   };
 
-  const handleSaveProject = useCallback((newProject:ProjectUser)=>{
+  const handleSaveProject = useCallback((newProject:Project)=>{
     return setUserProjects([...userProjects, newProject]);
 
   },[setUserProjects])
@@ -138,7 +134,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setSelectedContent(content);
   }
 
-  const HandleSetUserProjects=(userProjects:ProjectUser[])=>{
+  const HandleSetUserProjects=(userProjects:Project[])=>{
     setUserProjects(userProjects)
   }
 
@@ -162,12 +158,12 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     const miradorViewer = myRef.current?.setViewer();
     if (selectedProjectId) {
       console.log('IF')
-      let projectToUpdate:ProjectUser = userProjects.find(projectUser => projectUser.project.id == selectedProjectId)!;
+      let projectToUpdate:Project = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
       if(projectToUpdate == undefined){
         projectToUpdate= userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       }
-      projectToUpdate.project.userWorkspace = miradorViewer!;
+      projectToUpdate.userWorkspace = miradorViewer!;
       if(projectToUpdate){
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { rights, ...projectWithoutRights } = projectToUpdate;
@@ -186,13 +182,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       };
       const r = await createProject(project);
       if (r) {
-        setSelectedProjectId(r.project.id);
+        setSelectedProjectId(r.id);
         handleSaveProject({
           ...r,
-          project: {
-            ...project,
-            id: r.project.id
-          }
+          ...project,
+          id: r.id
         });
       }
     }
@@ -216,18 +210,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const fetchProjects = async () => {
     try {
-      const userGroups = await getUserAllProjects(user.id);
-      const projects = [];
-      const projectIds = new Set();
-      for (const group of userGroups) {
-        const groupProjects = await getAllGroupProjects(group.id);
-        for (const groupProject of groupProjects) {
-          if (!projectIds.has(groupProject.project.id)) {
-            projectIds.add(groupProject.project.id);
-            projects.push(groupProject);
-          }
-        }
-      }
+      console.log('fetchProjects() for : ', user.id );
+      const projects = await getUserAllProjects(user.id);
       setUserProjects(projects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
@@ -240,20 +224,12 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   },[selectedProjectId])
 
   const projectSelected = useMemo(() => {
-    if (userProjects) {
-      const foundProject = userProjects.find(userProject => userProject.project.id === selectedProjectId);
-      return foundProject ? foundProject.project : null;
+    if (userProjects && selectedProjectId){
+      const foundProject = userProjects.find(userProject => userProject.id === selectedProjectId);
+      return foundProject ? foundProject : null;
     }
     return null;
   }, [userProjects, selectedProjectId]);
-
-  const handlePopUpClose = ()=>{
-    setPopUpAnchor(null)
-  }
-  const handlePopUpMedia = useCallback((event: React.MouseEvent<HTMLButtonElement>)=>{
-    setPopUpAnchor(event.currentTarget);
-    console.log('popUP')
-  },[popUpAnchor, setPopUpAnchor])
 
   const handleSetMedia = useCallback((newMedia:Media)=>{
     console.log('NEW MEDIA :', newMedia)
@@ -272,31 +248,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         <Divider />
         <List sx={{minHeight:'70vh'}}>
           <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
-          {
-            !selectedProjectId ? (
-              <Tooltip title="My Media"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
-
-            ):(
-              <>
-                <Tooltip title="Add Medias"><ItemButton open={open} selected={false} icon={<SubscriptionsIcon />} text="Media" action={handlePopUpMedia}/></Tooltip>
-                <Popover
-                  open={!!popUpAnchor}
-                  anchorEl={popUpAnchor}
-                  onClose={handlePopUpClose}
-                  anchorOrigin={{
-                    vertical: 'center',
-                    horizontal: 'right',
-                  }}
-                  transformOrigin={{
-                    vertical: 'center',
-                    horizontal: 'left',
-                  }}
-                >
-                  <PopUpMedia medias={medias}/>
-                </Popover>
-              </>
-            )
-          }
+          <Tooltip title="My Media"><ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
         </List>

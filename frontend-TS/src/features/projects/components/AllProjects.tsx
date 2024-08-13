@@ -1,7 +1,6 @@
 import {  Grid,  Typography } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Project, ProjectGroup, ProjectUser } from "../types/types.ts";
+import { Project, ProjectGroup } from "../types/types.ts";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
 import { deleteProject } from "../api/deleteProject.ts";
@@ -10,28 +9,28 @@ import { updateProject } from "../api/updateProject";
 import { createProject } from "../api/createProject";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
-import { getAllGroupProjects } from "../../user-group/api/getAllGroupProjects.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
-import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
-import { ProjectDefaultButton } from "./ProjectDefaultButton.tsx";
-import { ProjectEditorButton } from "./ProjectEditorButton.tsx";
-import { ProjectReaderButton } from "./ProjectReaderButton.tsx";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
 import { getGroupsAccessToProject } from "../api/getGroupsAccessToProject.ts";
 import { lookingForUsers } from "../../user-group/api/lookingForUsers.ts";
+import AddIcon from "@mui/icons-material/Add";
+import { ModalButton } from "../../../components/elements/ModalButton.tsx";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
 
 interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
   selectedProjectId?: number;
-  setUserProjects:(userProjects: ProjectUser[])=>void;
-  userProjects:ProjectUser[]
+  setUserProjects:(userProjects: Project[])=>void;
+  userProjects:Project[]
   handleSetMiradorState:(state:IState | undefined)=>void;
 }
 
@@ -50,27 +49,16 @@ const emptyWorkspace: IState = {
 };
 
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
-  const [searchedProject, setSearchedProject] = useState<ProjectUser|null>(null);
+  const [searchedProject, setSearchedProject] = useState<Project|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(null); // Updated state
-  const [userToAdd, setUserToAdd ] = useState<UserGroup | null>(null)
+  const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 
   const fetchProjects = async () => {
     try {
-      const userGroups = await getUserAllProjects(user.id);
-      const projects = [];
-      const projectIds = new Set();
-      for (const group of userGroups) {
-        const groupProjects = await getAllGroupProjects(group.id);
-        for (const groupProject of groupProjects) {
-          if (!projectIds.has(groupProject.project.id)) {
-            projectIds.add(groupProject.project.id);
-            projects.push(groupProject);
-          }
-        }
-      }
+      const projects = await getUserAllProjects(user.id);
       setUserProjects(projects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
@@ -91,26 +79,26 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const deleteUserProject = useCallback(async (projectId: number) => {
     await deleteProject(projectId);
     const updatedListOfProject = userProjects.filter(function(ProjectUser) {
-      return ProjectUser.project.id != projectId;
+      return ProjectUser.id != projectId;
     });
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects]);
 
-  const updateUserProject = useCallback(async (projectUser:ProjectUser, newProjectName:string)=>{
-    const updatedProject:ProjectUser = {...projectUser, project: {
-        ...projectUser.project,
-        name: newProjectName
-      }}
+  const updateUserProject = useCallback(async (projectUser:Project, newProjectName:string)=>{
+    const updatedProject : Project = {
+      ...projectUser,
+      name: newProjectName
+    }
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
-      return p.project.id != updatedProject.project.id;
+      return p.id != updatedProject.id;
     });
     updatedListOfProject = [updatedProject,...updatedListOfProject]
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects])
 
-  const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: ProjectUser) => {
-    setSelectedProjectId(projectUser.project.id);
+  const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: Project) => {
+    setSelectedProjectId(projectUser.id);
     handleSetMiradorState(miradorState);
   },[handleSetMiradorState, setSelectedProjectId]);
 
@@ -143,7 +131,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   const handleSetSearchProject = (project:Project)=>{
     if(project){
-      const  searchedProject = userProjects.find(userProject => userProject.project.id === project.id)
+      const  searchedProject = userProjects.find(userProject => userProject.id === project.id)
       setSearchedProject(searchedProject!)
     }else{
       setSearchedProject(null);
@@ -156,15 +144,15 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
 
   const handleAddUser = async ( projectId: number) => {
-      await addProjectToGroup({ projectsId: [projectId], groupId: userToAdd!.id });
+    await addProjectToGroup({ projectsId: [projectId], groupId: userToAdd!.user_group.id });
   };
 
   const handleRemoveUser = async ( projectId: number, userToRemoveId: number) =>{
     await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
   }
 
-  const getOptionLabel = (option: UserGroup , searchInput: string): string => {
-    const user = option.users![0];
+  const getOptionLabel = (option: LinkUserGroup , searchInput: string): string => {
+    const user = option.user;
     if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
       return user.mail;
     }
@@ -174,13 +162,13 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     return user.mail;
   };
 
-  const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:ProjectUser) => {
+  const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:Project) => {
     const groups:ProjectGroup[] = await getGroupsAccessToProject(projectId);
 
     const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
     await updateProject({
+      ...ProjectUser,
       id: userGroup!.id,
-      project: ProjectUser.project,
       group: userGroup!.user_group,
       rights: eventValue as ProjectRights
     });
@@ -205,7 +193,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           {
             !selectedProjectId &&(
               <Grid item>
-                <SearchBar fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
+                <SearchBar label={"Search Projects"} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
               </Grid>
             )
           }
@@ -225,22 +213,22 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                   <>
                     <Grid item>
                       <MMUCard
+                        searchBarLabel={"Search Users"}
                         description="Some description"
-                        HandleOpenModal={()=>HandleOpenModal(projectUser.project.id)}
-                        openModal={openModalProjectId === projectUser.project.id}
-                        DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={projectUser}/>}
-                        EditorButton={<ProjectEditorButton HandleOpenModal={()=>HandleOpenModal(projectUser.project.id)}/>}
-                        ReaderButton={<ProjectReaderButton HandleOpenModal={()=>HandleOpenModal(projectUser.project.id)} />}
+                        HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
+                        openModal={openModalProjectId === projectUser.id}
+                        DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                        EditorButton={<ModalButton  tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                        ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                         id={projectUser.id}
-                        name={projectUser.project.name}
-                        rights={projectUser.rights}
+                        rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
                         getOptionLabel={getOptionLabel}
                         AddAccessListItemFunction={handleAddUser}
                         handleSelectorChange={handleChangeRights}
-                        item={projectUser.project}
-                        itemLabel={projectUser.project.name}
-                        itemOwner={projectUser}
+                        item={projectUser}
+                        itemLabel={projectUser.name}
+                        itemOwner={projectUser.owner}
                         listOfItem={listOfGroup}
                         searchModalEditItem={lookingForUsers}
                         getAccessToItem={getGroupsAccessToProject}
@@ -270,21 +258,21 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item>
                   <MMUCard
+                    searchBarLabel={"Search Users"}
                     description="Some description"
-                    HandleOpenModal={()=>HandleOpenModal(searchedProject.project.id)}
-                    openModal={openModalProjectId === searchedProject.project.id}
-                    DefaultButton={<ProjectDefaultButton initializeMirador={initializeMirador} projectUser={searchedProject}/>}
-                    EditorButton={<ProjectEditorButton HandleOpenModal={()=>HandleOpenModal(searchedProject.project.id)}/>}
-                    ReaderButton={<ProjectReaderButton HandleOpenModal={()=>HandleOpenModal(searchedProject.project.id)} />}
+                    HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}
+                    openModal={openModalProjectId === searchedProject.id}
+                    DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(searchedProject.userWorkspace,searchedProject)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                    EditorButton={<ModalButton tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(searchedProject.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                     id={searchedProject.id}
-                    name={searchedProject.project.name}
-                    rights={searchedProject.rights}
+                    rights={searchedProject.rights!}
                     deleteItem={deleteUserProject}
                     getOptionLabel={getOptionLabel}
                     AddAccessListItemFunction={handleAddUser}
                     handleSelectorChange={handleChangeRights}
-                    item={searchedProject.project}
-                    itemLabel={searchedProject.project.name}
+                    item={searchedProject}
+                    itemLabel={searchedProject.name}
                     itemOwner={searchedProject}
                     listOfItem={listOfGroup}
                     searchModalEditItem={lookingForUsers}

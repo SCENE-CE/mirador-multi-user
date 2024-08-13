@@ -1,15 +1,18 @@
 import storage from "../../../utils/storage.ts";
-export const getUserAllProjects = async (userId: number) => {
+export const getUserAllProjects = async (userPersonalGroupId: number) => {
+  console.log("userPersonalGroupId",userPersonalGroupId);
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-group/groups/${userId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/user/projects/${userPersonalGroupId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
       }
     });
 
-    return await response.json();
+    const toReturn =  await response.json();
+    console.log('toReturn Get User All Projects',toReturn)
+    return toReturn;
   } catch (error) {
     throw error;
   }

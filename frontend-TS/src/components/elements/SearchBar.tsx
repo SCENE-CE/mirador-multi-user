@@ -7,12 +7,13 @@ interface IUsersSearchBarProps<T>{
   setSelectedData?:Dispatch<SetStateAction<T | null>>
   setSearchedData?:any
   fetchFunction:(partialString:string)=>Promise<any[]>
-  getOptionLabel:(option:T)=>string
+  getOptionLabel:(option:any)=>string
   setSearchInput?:(value:string)=>void
   actionButtonLabel?:string
+  label:string
 }
 
-export const SearchBar = <T,>({getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
+export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
   const [Suggestions, setSuggestions]=useState<T[]>([]);
 
   const HandlefetchData = async(partialDataName:string)=>{
@@ -60,7 +61,7 @@ export const SearchBar = <T,>({getOptionLabel,setSearchedData, setSelectedData,f
               onChange={handleChange}
               id="combo-box-demo"
               options={Suggestions}
-              renderInput={(params) => <TextField {...params} label="Search" />}
+              renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
             />
           </Grid>

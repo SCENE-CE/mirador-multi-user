@@ -7,6 +7,7 @@ export type Project = {
   name: string;
   userWorkspace:IState;
   owner:User;
+  rights?: ProjectRights;
 }
 
 export type ProjectGroup = {
@@ -22,8 +23,10 @@ export type ProjectUser = {
 
 export type ProjectGroupUpdateDto = {
   id:number;
-  rights?: ProjectRights
-  project: Project,
+  name: string;
+  userWorkspace:IState;
+  owner:User;
+  rights?: ProjectRights;
   group?:UserGroup
 }
 export type CreateProjectDto = {

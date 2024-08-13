@@ -9,6 +9,7 @@ import { Brackets, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
+import { UserGroup } from '../user-group/entities/user-group.entity';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -19,8 +20,6 @@ export class LinkUserGroupService {
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
     try {
-      console.log('-------------------------------------------------------')
-      console.log('linkUserGroupDto',linkUserGroupDto);
       const linkGroup = this.linkUserGroupRepository.create(linkUserGroupDto);
       return await this.linkUserGroupRepository.upsert(linkGroup, {
         conflictPaths: ['user_group', 'user'],
@@ -46,11 +45,30 @@ export class LinkUserGroupService {
     }
   }
 
+  async getAccessForUserToGroup(userId: number, groupId: number) {
+    try {
+      return await this.linkUserGroupRepository.findOne({
+        where: { user: { id: userId }, user_group: { id: groupId } },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `An error occurred when trying to get Access for user id : ${userId} to group id : ${groupId}`,
+        error,
+      );
+    }
+  }
+
   async GrantAccessToUserGroup(createUserGroupDto: CreateLinkUserGroupDto) {
     try {
+      console.log(createUserGroupDto);
       const linkUserToUserGroup = this.linkUserGroupRepository.create({
         ...createUserGroupDto,
       });
+      console.log(
+        '-------------linkUserToUserGroup-------------',
+        linkUserToUserGroup,
+      );
       await this.linkUserGroupRepository.upsert(linkUserToUserGroup, {
         conflictPaths: ['rights', 'user', 'user_group'],
       });
@@ -72,7 +90,7 @@ export class LinkUserGroupService {
     try {
       const linkGroup = await this.linkUserGroupRepository.findOne({
         where: { user_group: { id: groupId, type: UserGroupTypes.MULTI_USER } },
-        relations: ['user', 'user_group'],  // Ensuring relations are loaded
+        relations: ['user', 'user_group'], // Ensuring relations are loaded
       });
 
       if (!linkGroup) {
@@ -103,7 +121,7 @@ export class LinkUserGroupService {
 
       if (!linkGroupToDelete) {
         throw new NotFoundException(
-          `No link found between user id: ${userId} and group id: ${groupId}`
+          `No link found between user id: ${userId} and group id: ${groupId}`,
         );
       }
 
@@ -115,7 +133,6 @@ export class LinkUserGroupService {
       );
     }
   }
-
 
   async findAllUsersForGroup(groupId: number) {
     try {
@@ -133,11 +150,22 @@ export class LinkUserGroupService {
 
   async findALlGroupsForUser(userId) {
     try {
-      return await this.linkUserGroupRepository.find({
+      const allUserGroups = await this.linkUserGroupRepository.find({
         where: { user: { id: userId } },
         relations: ['user_group'],
       });
+
+      const groupsToReturn = [];
+
+      for (const group of allUserGroups) {
+        groupsToReturn.push({
+          ...group.user_group,
+          rights: group.rights,
+        });
+      }
+      return groupsToReturn;
     } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(
         `an error occurred while trying to find groups for this user id : ${userId}`,
         error,
@@ -172,18 +200,51 @@ export class LinkUserGroupService {
     }
   }
 
-  async findUserPersonalGroup(userId: number) {
+  async searchForGroups(partialGroupName: string) {
     try {
-      const personnalLinkUserGroup =  await this.linkUserGroupRepository
-        .createQueryBuilder('userPersonalGroup')
+      const userGroups = await this.linkUserGroupRepository
+        .createQueryBuilder('linkUserGroup')
+        .leftJoinAndSelect('linkUserGroup.user_group', 'userGroup')
+        .where('userGroup.name LIKE :partialString', {
+          partialString: `%${partialGroupName}%`,
+        })
+        .andWhere('userGroup.type = :type', { type: UserGroupTypes.MULTI_USER })
+        .getMany();
+
+      const uniqueUserGroups = userGroups
+        .map((linkUserGroup) => linkUserGroup.user_group)
+        .filter(
+          (group, index, self) =>
+            index === self.findIndex((g) => g.id === group.id),
+        );
+      return uniqueUserGroups
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `An error occurred while searching for : ${partialGroupName}`,
+        error,
+      );
+    }
+  }
+
+  async findUserPersonalGroup(userId: number): Promise<UserGroup> {
+    try {
+      const personnalLinkUserGroup = await this.linkUserGroupRepository
+        .createQueryBuilder('linkUserGroup')
+        .innerJoinAndSelect('linkUserGroup.user', 'user')
+        .innerJoinAndSelect('linkUserGroup.user_group', 'group')
         .where('user.id = :userId', { userId })
         .andWhere('group.type = :type', { type: UserGroupTypes.PERSONAL })
         .getOne();
 
+      if (!personnalLinkUserGroup) {
+        throw new Error(`No personal group found for user id: ${userId}`);
+      }
+
       return personnalLinkUserGroup.user_group;
     } catch (error) {
       throw new InternalServerErrorException(
-        `an error occurred while trying to find user personal group for this user id : ${userId}`,
+        `An error occurred while trying to find the personal group for user id: ${userId}. Error: ${error.message}`,
       );
     }
   }

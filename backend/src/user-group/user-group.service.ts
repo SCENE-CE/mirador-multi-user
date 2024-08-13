@@ -10,6 +10,7 @@ import { Brackets, Repository } from 'typeorm';
 import { UserGroupTypes } from '../enum/user-group-types';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { User_UserGroupRights } from '../enum/user-user_group-rights';
+import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 
 @Injectable()
 export class UserGroupService {
@@ -90,8 +91,12 @@ export class UserGroupService {
     try {
       const partialUserGroupNameLength = partialUserGroupName.length;
 
-      return await this.userGroupRepository
+      const toReturn = await this.userGroupRepository
         .createQueryBuilder('userGroup')
+        .leftJoin('userGroup.linkUserGroups', 'linkUserGroup')
+        .leftJoinAndSelect('linkUserGroup.user', 'user')
+        .addSelect(['user.id', 'user.name', 'user.mail'])
+        .addSelect(['linkUserGroup.id', 'linkUserGroup.rights'])
         .where('userGroup.type = :type', { type: UserGroupTypes.MULTI_USER })
         .andWhere(
           new Brackets((qb) => {
@@ -103,6 +108,8 @@ export class UserGroupService {
         )
         .limit(3)
         .getMany();
+
+      return toReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -119,6 +126,26 @@ export class UserGroupService {
       });
     } catch (error) {
       console.log(error);
+    }
+  }
+
+  async updateGroup(updateData: UpdateUserGroupDto) {
+    try {
+      console.log(updateData);
+      const { rights, ...data } = updateData;
+      if (rights === User_UserGroupRights.ADMIN) {
+        await this.userGroupRepository.update(updateData.id, {
+          ...data,
+        });
+      }
+      return await this.userGroupRepository.find({
+        where: { id: updateData.id },
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `An error occurred while updating group with id : ${updateData.id}`,
+      );
     }
   }
 

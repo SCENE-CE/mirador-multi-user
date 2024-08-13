@@ -20,7 +20,7 @@ interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
   itemLabel: string,
-  updateItem: (itemOwner: O, newItemName: string) => void,
+  updateItem: (itemOwner: T | O, newItemName: string) => void,
   deleteItem: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem: (query: string) => Promise<G[]>,
@@ -33,6 +33,7 @@ interface ModalItemProps<T, G,O> {
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,
   rights: ProjectRights,
+  searchBarLabel:string
 }
 
 export const MMUModalEdit = <O, T extends { id: number }, G>(
@@ -52,6 +53,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     setSearchInput,
     searchInput,
     rights,
+    searchBarLabel,
     handleDeleteAccessListItem,
   }: ModalItemProps<T, G, O>) => {
   const [editName, setEditName] = useState(false);
@@ -77,13 +79,17 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
 
   useEffect(() => {
     fetchData();
-  }, [item, itemOwner]);
+    console.log('editModal rerender')
+  }, [fetchData, item, itemOwner]);
 
   const rightsSelectorItems: SelectorItem[] = Object.values(ProjectRights).map((right) => ({
     id: right as unknown as "ADMIN" | "EDITOR" | "READER",
     name: right as unknown as "ADMIN" | "EDITOR" | "READER"
   }));
 
+  console.log('item', item)
+  console.log('listof items ', listOfItem)
+  console.log('RIGHTS', rights)
   const handleGetOtpionLabel = (option : G) => getOptionLabel(option, searchInput)
 
   return (
@@ -107,6 +113,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
         {rights !== ProjectRights.READER && (
           <Grid item>
             <SearchBar
+              label={searchBarLabel}
               handleAdd={handleAddAccessListItem}
               setSelectedData={setItemToAdd}
               getOptionLabel={handleGetOtpionLabel}

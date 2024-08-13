@@ -1,9 +1,4 @@
-import {
-  Column,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { IsEnum, IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
 import { LinkMediaGroup } from '../../link-media-group/entities/link-media-group.entity';
@@ -23,6 +18,10 @@ export class UserGroup {
   @Column()
   @IsNumberString()
   ownerId: number;
+
+  @Column({ default: () => 'Description of the group' })
+  @IsString()
+  description: string;
 
   @Column({ type: 'enum', enum: UserGroupTypes })
   @IsEnum(UserGroupTypes)

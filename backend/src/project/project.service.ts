@@ -92,6 +92,14 @@ export class ProjectService {
     }
   }
 
+  async findUsersProject(userId:number){
+    try{
+
+    }catch (error){
+      throw new InternalServerErrorException(`an error occurred while trying to find project for users id : ${userId}`, error);
+    }
+  }
+
   //TODO: Check user authorization for deleting project
   async remove(id: number) {
     try {

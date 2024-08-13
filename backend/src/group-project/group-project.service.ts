@@ -11,7 +11,8 @@ import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../project/dto/create-project.dto';
 import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
-import { LinkUserGroupService } from "../link-user-group/link-user-group.service";
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { Project } from '../project/entities/project.entity';
 
 @Injectable()
 export class GroupProjectService {
@@ -24,7 +25,6 @@ export class GroupProjectService {
 
   async getAllGroupProjects(groupId: number) {
     try {
-      console.log('GET ALL GROUP PROJECTS');
       return await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
         groupId,
       );
@@ -37,7 +37,6 @@ export class GroupProjectService {
   }
 
   async getAllProjectGroups(projectId: number) {
-    console.log('ENTER GET ALL PROJECT GROUPS');
     try {
       return await this.linkGroupProjectService.getProjectRelations(projectId);
     } catch (error) {
@@ -50,24 +49,18 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
-      const projectToUpdate = dto.project;
       let projectToReturn;
       if (dto.rights && dto.group && dto.rights !== GroupProjectRights.READER) {
         const updateRelation =
           await this.linkGroupProjectService.UpdateRelation(
-            dto.project.id,
+            dto.id,
             dto.group.id,
             dto.rights,
           );
         projectToReturn =
-          await this.linkGroupProjectService.getProjectRelations(
-            dto.project.id,
-          );
+          await this.linkGroupProjectService.getProjectRelations(dto.id);
       } else {
-        projectToReturn = await this.projectService.update(
-          projectToUpdate.id,
-          projectToUpdate,
-        );
+        projectToReturn = await this.projectService.update(dto.id, dto);
       }
 
       return projectToReturn;
@@ -172,9 +165,10 @@ export class GroupProjectService {
           userGroupId,
         );
 
-      return project.find(
+      const toReturn = project.find(
         (linkGroupProject) => linkGroupProject.project.id == projectId,
       );
+      return toReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(error);
@@ -208,8 +202,14 @@ export class GroupProjectService {
 
   async createProject(dto: CreateProjectDto) {
     try {
-      const userPersonalGroup =
-        await this.linkUserGroup.findUserPersonalGroup(dto.owner.id);
+      const userPersonalGroup = await this.linkUserGroup.findUserPersonalGroup(
+        dto.owner.id,
+      );
+      if (!userPersonalGroup) {
+        throw new NotFoundException(
+          `there is no user personal group for : ${dto.owner.id}`,
+        );
+      }
       const project = await this.projectService.create(dto);
       await this.addProjectsToGroup({
         groupId: userPersonalGroup.id,
@@ -223,6 +223,39 @@ export class GroupProjectService {
       console.log(error);
       throw new InternalServerErrorException(
         'an error occurred while creating project',
+        error,
+      );
+    }
+  }
+
+  async findAllUserProjects(userId: number) {
+    try {
+      console.log('find all user projects userId', userId);
+      const usersGroups = await this.linkUserGroup.findALlGroupsForUser(userId);
+      console.log(usersGroups);
+      let projects: Project[] = [];
+      for (const usersGroup of usersGroups) {
+        console.log(usersGroup);
+        const groupProjects =
+          await this.linkGroupProjectService.findAllProjectByUserGroupId(
+            usersGroup.id,
+          );
+
+        const userProjects = groupProjects.map((groupProjects) => {
+          return {
+            ...groupProjects.project,
+            rights: groupProjects.rights,
+          };
+        });
+        projects = projects.concat(
+          userProjects.filter((project) => !projects.includes(project)),
+        );
+      }
+      return projects;
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occurred while finding project for userId: ${userId}`,
         error,
       );
     }

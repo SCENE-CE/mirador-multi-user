@@ -10,6 +10,7 @@ export const getAllGroupProjects = async (groupId: number) :Promise<ProjectUser[
       }
     });
     const toReturn = await response.json();
+    console.log('toReturn get all group projects',toReturn)
     return await toReturn;
   } catch (error) {
     throw error;

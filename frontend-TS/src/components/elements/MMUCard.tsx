@@ -7,17 +7,16 @@ import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 
 interface IMMUCardProps<T,G,O,X> {
-  name: string;
   id: number;
   rights: ProjectRights;
   description?: string;
   HandleOpenModal: () => void;
   openModal: boolean;
-  DefaultButton: ReactElement;
-  ReaderButton: ReactElement;
-  EditorButton: ReactElement;
+  DefaultButton?: ReactElement;
+  ReaderButton?: ReactElement;
+  EditorButton?: ReactElement;
   itemLabel:string;
-  handleSelectorChange: (itemList: ListItem, eventValue : string, itemId:number, owner :O ) => Promise<void>,
+  handleSelectorChange: (itemList: ListItem, eventValue : string, itemId:number, owner :any ) => Promise<void>,
   listOfItem: ListItem[],
   itemOwner:O,
   deleteItem: (itemId: number) => void,
@@ -26,15 +25,15 @@ interface IMMUCardProps<T,G,O,X> {
   item : T,
   searchModalEditItem: (query: string) => Promise<G[]>,
   setItemToAdd: Dispatch<SetStateAction<G | null>>,
-  updateItem: (itemOwner: O, newItemName: string) => void,
+  updateItem: (itemOwner: any, newItemName: string) => void,
   getAccessToItem:(itemId:number)=> Promise<any>
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
   setItemList:Dispatch<SetStateAction<X[]>>
+  searchBarLabel:string
 }
 
 const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
   {
-    name,
     id,
     rights,
     description,
@@ -56,7 +55,8 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     setItemToAdd,
     searchModalEditItem,
     removeAccessListItemFunction,
-    setItemList
+    setItemList,
+    searchBarLabel
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -93,7 +93,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             <img src={placeholder} alt="placeholder" style={{ height: 100, width: 150 }} />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Typography variant="subtitle1">{name}</Typography>
+            <Typography variant="subtitle1">{itemLabel}</Typography>
           </Grid>
           <Grid item xs={12} sm={3}>
             {description}
@@ -106,9 +106,11 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
                 <CardActions>
                   <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
                     <Grid item>
-                      <Tooltip title={"Open project"}>
-                        {DefaultButton}
-                      </Tooltip>
+                      {DefaultButton &&(
+                        <Tooltip title={"Open project"}>
+                          {DefaultButton}
+                        </Tooltip>
+                      )}
                     </Grid>
                     {id  && (
                       <>
@@ -128,6 +130,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             setOpenModal={HandleOpenModal}
             children={
               <MMUModalEdit
+                searchBarLabel={searchBarLabel}
                 itemLabel={itemLabel}
                 handleSelectorChange={handleChangeSelectedItem}
                 fetchData={fetchData}
