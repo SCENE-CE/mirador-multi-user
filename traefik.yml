@@ -24,17 +24,6 @@ services:
       - "traefik.http.routers.${BACKEND_NAME}.tls.certresolver=myresolver"
       - "traefik.http.routers.${BACKEND_NAME}.entrypoints=web,websecure"
       - "traefik.http.routers.${BACKEND_NAME}.middlewares=hardening@docker"
-  httpd:
-    networks:
-      - default
-      - traefik
-    labels:
-      - "traefik.enable=true"
-      - "traefik.docker.network=traefik"
-      - "traefik.http.routers.${HTTPD_NAME}.rule=Host(`${HTTPD_HOST}`)"
-      - "traefik.http.routers.${HTTPD_NAME}.tls.certresolver=myresolver"
-      - "traefik.http.routers.${HTTPD_NAME}.entrypoints=web,websecure"
-      - "traefik.http.routers.${HTTPD_NAME}.middlewares=hardening@docker"
 
   caddy:
     networks:
