@@ -13,7 +13,7 @@ services:
       - ./mariaDB/data:/var/lib/mysql:rw
 
   frontend:
-    image: drilio/arvest:latest
+    image: tetraslibre/mmu-frontend:latest
     environment:
       VITE_BACKEND_URL: ${BACKEND_URL}
     depends_on:
@@ -22,7 +22,7 @@ services:
 
 
   backend:
-    build: ./backend
+    image: tetraslibre/mmu-backend:latest
     volumes:
       - ./backend/$HTTP_FOLDER:/uploadMedia
     environment:
