@@ -1,8 +1,9 @@
 import storage from "../../../utils/storage.ts";
-import { CreateProjectDto, Project } from "../types/types.ts";
+import { CreateProjectDto, Project, ProjectUser } from "../types/types.ts";
 
 export const createProject = async (project: CreateProjectDto): Promise<Project> => {
   const token = storage.getToken();
+  console.log('CREATE PROJECT', project)
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/project`, {
       method: "POST",
@@ -12,7 +13,8 @@ export const createProject = async (project: CreateProjectDto): Promise<Project>
       },
       body: JSON.stringify(project)
     });
-    return await response.json();
+    const projectUser: ProjectUser   = await response.json();
+    return projectUser.project
   } catch (error) {
     throw error;
   }

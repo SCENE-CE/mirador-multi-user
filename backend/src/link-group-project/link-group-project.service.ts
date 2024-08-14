@@ -185,14 +185,15 @@ export class LinkGroupProjectService {
 
   async removeProjectGroupRelation(projectId: number, group: UserGroup) {
     try {
+
       const done = await this.linkGroupProjectRepository.delete({
         project: { id: projectId },
-        user_group: group,
+        user_group: {id: group.id },
       });
-
       if (done.affected != 1) throw new NotFoundException(projectId);
       return done;
     } catch (error) {
+      console.log(error)
       throw new InternalServerErrorException(
         'An error occurred while removing the linkGroupProject',
         error,

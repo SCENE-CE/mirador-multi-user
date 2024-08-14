@@ -23,10 +23,13 @@ export type ProjectUser = {
 }
 
 export type ProjectGroupUpdateDto = {
-  id:number;
-  name: string;
-  userWorkspace:IState;
-  owner:User;
+  id?:number,
+  project :{
+    id:number;
+    name: string;
+    userWorkspace:IState;
+    owner:User;
+  }
   rights?: ProjectRights;
   group?:UserGroup
 }

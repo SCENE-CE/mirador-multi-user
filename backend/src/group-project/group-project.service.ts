@@ -49,10 +49,13 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
+      console.log('---------------------ENTER UPDATE PROJECT---------------------')
       let projectToReturn;
+      console.log('dto')
+      console.log(dto)
       if (dto.rights && dto.group && dto.rights !== GroupProjectRights.READER) {
-        const updateRelation =
-          await this.linkGroupProjectService.UpdateRelation(
+        console.log('if')
+        const updateRelation = await this.linkGroupProjectService.UpdateRelation(
             dto.id,
             dto.group.id,
             dto.rights,
@@ -60,9 +63,11 @@ export class GroupProjectService {
         projectToReturn =
           await this.linkGroupProjectService.getProjectRelations(dto.id);
       } else {
-        projectToReturn = await this.projectService.update(dto.id, dto);
+        projectToReturn = await this.projectService.update(
+          dto.project.id,
+          dto.project,
+        );
       }
-
       return projectToReturn;
     } catch (error) {
       console.log(error);
@@ -112,7 +117,11 @@ export class GroupProjectService {
     try {
       const projectRelation =
         await this.linkGroupProjectService.getProjectRelations(project_id);
+      console.log('------project_id--------------')
+      console.log(project_id)
       for (const linkGroupProject of projectRelation) {
+        console.log('------userGroupId--------------')
+        console.log(linkGroupProject.user_group.id)
         await this.RemoveProjectToGroup({
           projectId: project_id,
           groupId: linkGroupProject.user_group.id,
@@ -133,20 +142,17 @@ export class GroupProjectService {
         );
 
       const projectId = Number(dto.projectId);
-
       const projectToRemove = linkGroupProjects.find(
-        (project) => project.id == projectId,
+        (linkGroupProject) => linkGroupProject.project.id == projectId,
       );
-
       const groupToRemove = await this.userGroupService.findOne(dto.groupId);
-
       if (!projectToRemove) {
         throw new NotFoundException(
           `No association between Project with ID ${dto.projectId} and group with ID ${dto.groupId}`,
         );
       }
       return await this.linkGroupProjectService.removeProjectGroupRelation(
-        projectToRemove.id,
+        projectToRemove.project.id,
         groupToRemove,
       );
     } catch (error) {
