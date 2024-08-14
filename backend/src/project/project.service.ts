@@ -57,6 +57,7 @@ export class ProjectService {
 
   async update(id: number, dto: UpdateProjectDto) {
     try {
+      console.log('dto',dto)
       const done = await this.projectRepository.update(id, dto);
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(dto.id);

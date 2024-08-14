@@ -1,6 +1,6 @@
 import {  Grid,  Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { Project, ProjectGroup } from "../types/types.ts";
+import { Project, ProjectGroup, ProjectGroupUpdateDto } from "../types/types.ts";
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
 import { deleteProject } from "../api/deleteProject.ts";
@@ -87,14 +87,16 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   //TODO FIX UPDATE
   const updateUserProject = useCallback(async (projectUpdated:Project)=>{
-    const updatedProject : Project = {
-      ...projectUpdated
+   const { rights , ...projectToUpdate } = projectUpdated;
+    const updatedProject : ProjectGroupUpdateDto = {
+      project : { ...projectToUpdate },
+      group:userPersonalGroup
     }
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
-      return p.id != updatedProject.id;
+      return p.id != updatedProject.project.id;
     });
-    updatedListOfProject = [updatedProject,...updatedListOfProject]
+    updatedListOfProject = [projectUpdated,...updatedListOfProject]
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects])
 
