@@ -19,8 +19,7 @@ export class UserGroup {
   @IsNumberString()
   ownerId: number;
 
-  @Column({ default: () => 'Description of the group' })
-  @IsString()
+  @Column({ nullable: true })
   description: string;
 
   @Column({ type: 'enum', enum: UserGroupTypes })

@@ -18,7 +18,10 @@ export class ProjectService {
 
   async create(dto: CreateProjectDto): Promise<Project> {
     try {
-      return this.projectRepository.save(dto);
+      return this.projectRepository.save({
+        ...dto,
+        description: "Your project description here"
+      });
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(

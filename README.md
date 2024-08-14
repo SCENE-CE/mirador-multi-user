@@ -15,7 +15,9 @@ Mirador multi user is a project that aims to create a multi-user environment for
 - `npm install`
 - `cd ..`
 - `docker-compose up --build`
-- 
+- `docker-compose exec backend /bin/sh`
+- `npm run typeorm:generate-migration --name=db-init`
+- `npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
   Now you can access :
 - frontend to `localhost:4000`
 - backend to `localhost:3000`
