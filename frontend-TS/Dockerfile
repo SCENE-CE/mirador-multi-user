@@ -5,6 +5,9 @@ WORKDIR /app
 # Install dependencies
 COPY package*.json ./
 RUN npm ci
+# Build the application if necessary
+ARG VITE_BACKEND_URL
+ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 
 # Copy application code (excluding what's defined in .dockerignore)
 COPY . .
@@ -16,9 +19,7 @@ RUN cp ./src/config/config.sample.ts ./src/config/config.ts
 # install serve to render index.html in ENV=PROD
 RUN npm install --global serve
 
-# Build the application if necessary
-ARG VITE_BACKEND_URL
-ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+
 RUN npm run build
 
 # Change ownership (if necessary) and adjust permissions

@@ -8,6 +8,7 @@ export type RegisterCredentialsDTO = {
 
 export const register = async (data: RegisterCredentialsDTO): Promise<UserResponse> => {
   try {
+    console.log(`${import.meta.env.VITE_BACKEND_URL}`);
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users`, {
       method: "POST",
       headers: {
