@@ -49,6 +49,7 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
+      console.log('---------------------ENTER UPDATE PROJECT---------------------')
       let projectToReturn;
       console.log('dto')
       console.log(dto)

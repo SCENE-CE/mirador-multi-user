@@ -23,6 +23,7 @@ export type ProjectUser = {
 }
 
 export type ProjectGroupUpdateDto = {
+  id?:number,
   project :{
     id:number;
     name: string;

@@ -87,11 +87,21 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   //TODO FIX UPDATE
   const updateUserProject = useCallback(async (projectUpdated:Project)=>{
-   const { rights , ...projectToUpdate } = projectUpdated;
-    const updatedProject : ProjectGroupUpdateDto = {
-      project : { ...projectToUpdate },
-      group:userPersonalGroup
+    const { rights , ...projectToUpdate } = projectUpdated;
+    let updatedProject : ProjectGroupUpdateDto ;
+    if(rights){
+      updatedProject = {
+        project : { ...projectToUpdate },
+        group:userPersonalGroup,
+        rights:rights
+      }
+    }else{
+      updatedProject = {
+        project : { ...projectToUpdate },
+        group:userPersonalGroup,
+      }
     }
+
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
       return p.id != updatedProject.project.id;
@@ -167,7 +177,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
     const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
     await updateProject({
-      ...ProjectUser,
+      project: { ...ProjectUser },
       id: userGroup!.id,
       group: userGroup!.user_group,
       rights: eventValue as ProjectRights
