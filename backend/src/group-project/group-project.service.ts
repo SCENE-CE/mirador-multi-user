@@ -112,7 +112,11 @@ export class GroupProjectService {
     try {
       const projectRelation =
         await this.linkGroupProjectService.getProjectRelations(project_id);
+      console.log('------project_id--------------')
+      console.log(project_id)
       for (const linkGroupProject of projectRelation) {
+        console.log('------userGroupId--------------')
+        console.log(linkGroupProject.user_group.id)
         await this.RemoveProjectToGroup({
           projectId: project_id,
           groupId: linkGroupProject.user_group.id,
@@ -133,20 +137,17 @@ export class GroupProjectService {
         );
 
       const projectId = Number(dto.projectId);
-
       const projectToRemove = linkGroupProjects.find(
-        (project) => project.id == projectId,
+        (linkGroupProject) => linkGroupProject.project.id == projectId,
       );
-
       const groupToRemove = await this.userGroupService.findOne(dto.groupId);
-
       if (!projectToRemove) {
         throw new NotFoundException(
           `No association between Project with ID ${dto.projectId} and group with ID ${dto.groupId}`,
         );
       }
       return await this.linkGroupProjectService.removeProjectGroupRelation(
-        projectToRemove.id,
+        projectToRemove.project.id,
         groupToRemove,
       );
     } catch (error) {
