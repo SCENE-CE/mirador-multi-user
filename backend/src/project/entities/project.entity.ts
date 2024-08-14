@@ -21,8 +21,7 @@ export class Project {
   @IsString()
   name: string;
 
-  @Column({ default: () => 'Description of the project' })
-  @IsString()
+  @Column({ nullable: true })
   description: string;
 
   @ManyToOne(() => User, (user) => user.projects, {

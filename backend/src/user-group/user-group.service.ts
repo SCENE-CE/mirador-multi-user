@@ -24,6 +24,7 @@ export class UserGroupService {
       const groupToCreate = {
         ...createUserGroupDto,
         type: UserGroupTypes.MULTI_USER,
+        description: 'group description here',
       };
       const userGroup = await this.userGroupRepository.save(groupToCreate);
       for (const user of userGroup.users) {
