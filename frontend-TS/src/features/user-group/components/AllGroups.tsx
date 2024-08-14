@@ -32,7 +32,6 @@ interface allGroupsProps {
 }
 export const AllGroups= ({user}:allGroupsProps)=>{
   const [groups, setGroups] = useState<UserGroup[]>([]);
-  const [users, setUsers] = useState<UserGroup[]>([]);
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
   const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(null);
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
@@ -41,18 +40,9 @@ export const AllGroups= ({user}:allGroupsProps)=>{
 
 
   const fetchGroups = async () => {
-    // eslint-disable-next-line no-useless-catch
-    try {
-      let groups = await getAllUserGroups(user.id)
-      const users : UserGroup[] = groups.filter((group:UserGroup)=> group.type === UserGroupTypes.PERSONAL)
-
-      groups = groups.filter((group : UserGroup)=> group.type == UserGroupTypes.MULTI_USER)
-
-      setGroups(groups)
-      setUsers(users)
-    } catch (error) {
-      throw error
-    }
+    let groups = await getAllUserGroups(user.id)
+    groups = groups.filter((group : UserGroup)=> group.type == UserGroupTypes.MULTI_USER)
+    setGroups(groups)
   }
 
   useEffect(
@@ -86,10 +76,22 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     return ''
   };
 
+  const getOptionLabelForEditModal = (option: LinkUserGroup , searchInput: string): string => {
+    const user = option.user;
+    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.mail;
+    }
+    if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
+      return user.name;
+    }
+    return user.mail;
+  };
+
+
   const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number) =>{
     const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
     const changeAccess =await  ChangeAccessToGroup(groupId, {...userToUpdate, rights: eventValue as ProjectRights} );
-    console.log('changeAccess',changeAccess);
+    console.log(changeAccess)
   }
 
   const HandleOpenModal =useCallback ((groupId: number)=>{
@@ -102,10 +104,9 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     setGroups(updateListOfGroup);
   },[groups, setGroups])
 
-  const updateGroup= useCallback(async (group: UserGroup, newGroupName: string) => {
+  const updateGroup= useCallback(async (groupUdated: UserGroup) => {
     const dataForUpdate = {
-      ...group,
-      name: newGroupName,
+      ...groupUdated
     }
 
     const updateGroup =  await UpdateGroup(dataForUpdate);
@@ -117,7 +118,6 @@ export const AllGroups= ({user}:allGroupsProps)=>{
 
   const grantingAccessToGroup = async ( user_group_id: number) => {
     const user_group = groups.find((groups)=> groups.id === user_group_id)
-    console.log('GRANT ACCESS REQUEST',userToAdd, user_group)
     await grantAccessToGroup(ProjectRights.READER, userToAdd!.user, user_group! )
   }
 
@@ -137,10 +137,6 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     return await groups.filter((groups)=>groups.name.startsWith(partialString))
   }
 
-  console.log('groups',groups)
-  console.log("users",users)
-  console.log('item list ALL GROUPS', userPersonalGroupList)
-  console.log('selectedUserGroup',selectedUserGroup);
   return(
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
       <Grid item container direction="row-reverse" spacing={2} alignItems="center">
@@ -157,7 +153,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 rights={group.rights!}
                 itemLabel={group.name}
                 openModal={openModalGroupId === group.id}
-                getOptionLabel={getOptionLabel}
+                getOptionLabel={getOptionLabelForEditModal}
                 deleteItem={handleDeleteGroup}
                 item={group}
                 updateItem={updateGroup}
@@ -173,39 +169,39 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 searchModalEditItem={lookingForUsers}
                 setItemList={setUserPersonalGroupList}
                 setItemToAdd={setUserToAdd}
-                description={"Some description"}
+                description={group.description}
                 handleSelectorChange={handleChangeRights}
               />
             </Grid>
           </>
         ))}
         {selectedUserGroup &&(
-            <Grid item>
-              <MMUCard
-                searchBarLabel={"Search Users"}
-                rights={selectedUserGroup.rights!}
-                itemLabel={selectedUserGroup.name}
-                openModal={openModalGroupId === selectedUserGroup.id}
-                getOptionLabel={getOptionLabel}
-                deleteItem={handleDeleteGroup}
-                item={selectedUserGroup}
-                updateItem={updateGroup}
-                HandleOpenModal={()=>HandleOpenModal(selectedUserGroup.id)}
-                id={selectedUserGroup.id}
-                AddAccessListItemFunction={grantingAccessToGroup}
-                EditorButton={<ModalButton tooltipButton={"Edit"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
-                ReaderButton={<ModalButton tooltipButton={"Open"} disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
-                getAccessToItem={getAllUserGroups}
-                itemOwner={selectedUserGroup}
-                listOfItem={listOfUserPersonalGroup}
-                removeAccessListItemFunction={handleRemoveUser}
-                searchModalEditItem={lookingForUsers}
-                setItemList={setUserPersonalGroupList}
-                setItemToAdd={setUserToAdd}
-                description={"Some description"}
-                handleSelectorChange={handleChangeRights}
-              />
-            </Grid>
+          <Grid item>
+            <MMUCard
+              searchBarLabel={"Search Users"}
+              rights={selectedUserGroup.rights!}
+              itemLabel={selectedUserGroup.name}
+              openModal={openModalGroupId === selectedUserGroup.id}
+              getOptionLabel={getOptionLabel}
+              deleteItem={handleDeleteGroup}
+              item={selectedUserGroup}
+              updateItem={updateGroup}
+              HandleOpenModal={()=>HandleOpenModal(selectedUserGroup.id)}
+              id={selectedUserGroup.id}
+              AddAccessListItemFunction={grantingAccessToGroup}
+              EditorButton={<ModalButton tooltipButton={"Edit"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
+              ReaderButton={<ModalButton tooltipButton={"Open"} disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
+              getAccessToItem={getAllUserGroups}
+              itemOwner={selectedUserGroup}
+              listOfItem={listOfUserPersonalGroup}
+              removeAccessListItemFunction={handleRemoveUser}
+              searchModalEditItem={lookingForUsers}
+              setItemList={setUserPersonalGroupList}
+              setItemToAdd={setUserToAdd}
+              description={selectedUserGroup.description}
+              handleSelectorChange={handleChangeRights}
+            />
+          </Grid>
         )}
       </Grid>
       <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />

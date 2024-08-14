@@ -37,6 +37,11 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.searchForUserGroup(partialString);
   }
 
+  @Get('/looking-for-userGroups/:partialString')
+  lookingForUserGroups(@Param('partialString') partialString: string) {
+    return this.linkUserGroupService.searchForGroups(partialString);
+  }
+
   @Get('/user-personal-groups/:userId')
   getUserPersonalGroup(@Param('userId') userId: number) {
     return this.linkUserGroupService.findUserPersonalGroup(userId);

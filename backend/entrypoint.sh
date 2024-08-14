@@ -6,4 +6,4 @@ npm install bcrypt
 #
 ## Start the application
 echo "Starting the application..."
-npm run start:debug
+npm run start:prod

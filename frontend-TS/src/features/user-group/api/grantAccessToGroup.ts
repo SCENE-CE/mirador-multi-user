@@ -11,8 +11,6 @@ export const grantAccessToGroup = async (rights: ProjectRights, user : User, use
       user_group: user_group
     };
 
-    console.log("Payload being sent:", JSON.stringify(payload, null, 2));
-
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/access/`, {
       method: 'POST',
       headers: {
