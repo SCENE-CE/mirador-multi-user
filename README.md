@@ -28,12 +28,12 @@ Mirador multi user is a project that aims to create a multi-user environment for
 - Clone this repo : `git clone git@github.com:SCENE-CE/mirador-multi-user.git`
 - `cd mirador-multi-user`
 - `cp .env.prod.sample .env`. Change password stuff
+- change db password and JWT secret into .env file.
 - `cp frontend/src/config/config.sample.ts frontend/src/config/config.ts`
 - `docker-compose up --build`
 - generate db : 
   - `npm run typeorm:generate-migration --name=create-db`
   - `npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
-- change db password and JWT secret into .env file.
 
 
 
