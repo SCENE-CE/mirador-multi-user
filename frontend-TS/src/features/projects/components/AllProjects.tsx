@@ -101,7 +101,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
         group:userPersonalGroup,
       }
     }
-
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
       return p.id != updatedProject.project.id;

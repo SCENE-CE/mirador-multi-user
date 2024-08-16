@@ -49,25 +49,28 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
-      console.log('---------------------ENTER UPDATE PROJECT---------------------')
+      console.log(
+        '---------------------ENTER UPDATE PROJECT---------------------',
+      );
       let projectToReturn;
-      console.log('dto')
-      console.log(dto)
+      console.log('dto');
+      console.log(dto);
       if (dto.rights && dto.group && dto.rights !== GroupProjectRights.READER) {
-        console.log('if')
-        const updateRelation = await this.linkGroupProjectService.UpdateRelation(
+        console.log('if');
+        const updateRelation =
+          await this.linkGroupProjectService.UpdateRelation(
             dto.id,
             dto.group.id,
             dto.rights,
           );
         projectToReturn =
           await this.linkGroupProjectService.getProjectRelations(dto.id);
-      } else {
-        projectToReturn = await this.projectService.update(
-          dto.project.id,
-          dto.project,
-        );
       }
+      projectToReturn = await this.projectService.update(
+        dto.project.id,
+        dto.project,
+      );
+
       return projectToReturn;
     } catch (error) {
       console.log(error);
@@ -117,11 +120,11 @@ export class GroupProjectService {
     try {
       const projectRelation =
         await this.linkGroupProjectService.getProjectRelations(project_id);
-      console.log('------project_id--------------')
-      console.log(project_id)
+      console.log('------project_id--------------');
+      console.log(project_id);
       for (const linkGroupProject of projectRelation) {
-        console.log('------userGroupId--------------')
-        console.log(linkGroupProject.user_group.id)
+        console.log('------userGroupId--------------');
+        console.log(linkGroupProject.user_group.id);
         await this.RemoveProjectToGroup({
           projectId: project_id,
           groupId: linkGroupProject.user_group.id,

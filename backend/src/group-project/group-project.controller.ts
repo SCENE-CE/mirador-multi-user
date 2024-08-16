@@ -59,6 +59,7 @@ export class GroupProjectController {
     return this.groupProjectService.createProject(createProjectDto);
   }
 
+
   @Patch('/updateProject/')
   @UseGuards(AuthGuard)
   update(@Body() UpdateProjectGroupDto: UpdateProjectGroupDto) {
