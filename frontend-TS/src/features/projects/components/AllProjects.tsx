@@ -88,6 +88,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   //TODO FIX UPDATE
   const updateUserProject = useCallback(async (projectUpdated:Project)=>{
     const { rights , ...projectToUpdate } = projectUpdated;
+    console.log('projectUpdated',projectUpdated)
     let updatedProject : ProjectGroupUpdateDto ;
     if(rights){
       updatedProject = {
@@ -101,7 +102,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
         group:userPersonalGroup,
       }
     }
-
+    console.log('updatedProject',updatedProject)
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
       return p.id != updatedProject.project.id;
@@ -173,11 +174,16 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   };
 
   const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:Project) => {
+    console.log('HANDLE CHANGE RIGHTS')
     const groups:ProjectGroup[] = await getGroupsAccessToProject(projectId);
-
+    console.log('groups',groups)
     const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
+    console.log('userGroup',userGroup)
+    console.log('ProjectUser',ProjectUser)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {rights, ...project } = ProjectUser
     await updateProject({
-      project: { ...ProjectUser },
+      project: { ...project},
       id: userGroup!.id,
       group: userGroup!.user_group,
       rights: eventValue as ProjectRights
@@ -207,6 +213,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     setUserGroupSearch(linkUserGroups);
     return uniqueUserGroups
   }
+
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
