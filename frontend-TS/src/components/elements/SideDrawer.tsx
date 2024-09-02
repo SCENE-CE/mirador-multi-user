@@ -133,7 +133,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     if (selectedProjectId){
       saveProject()
     }
-    console.log('SAVE PROJEEEEEEEEEEEECT')
     setSelectedProjectId(undefined);
     setSelectedContent(content);
   }

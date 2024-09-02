@@ -3,3 +3,4 @@
 frontend-TS/src/config/config.ts
 backend/uploadMedia/
 backend/migrations/*
+mariaDB/data/*
