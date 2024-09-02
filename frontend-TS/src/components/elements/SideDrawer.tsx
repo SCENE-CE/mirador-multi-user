@@ -138,7 +138,12 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }
 
   const HandleSetUserProjects=(userProjects:Project[])=>{
-    setUserProjects(userProjects)
+    const uniqueProjects = Array.from(new Set(userProjects.map((project:Project) => project.id)))
+      .map(id => {
+        return userProjects.find((project:Project) => project.id === id);
+      }) as Project[];
+    console.log('uniqueProjects',uniqueProjects);
+    setUserProjects(uniqueProjects);
   }
 
   const HandleSetMiradorState =(state:IState | undefined)=>{
@@ -209,12 +214,10 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const fetchProjects = async () => {
     try {
       const projects = await getUserAllProjects(user.id);
-      console.log('projects',projects)
       const uniqueProjects = Array.from(new Set(projects.map((project:Project) => project.id)))
         .map(id => {
           return projects.find((project:Project) => project.id === id);
         });
-      console.log('uniqueProjects',uniqueProjects);
       setUserProjects(uniqueProjects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
