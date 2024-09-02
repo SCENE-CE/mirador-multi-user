@@ -237,9 +237,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     return null;
   }, [userProjects, selectedProjectId]);
 
-  const handleSetMedia = useCallback((newMedia:Media)=>{
-    setMedias([...medias, newMedia])
-  },[setMedias,medias])
 
   return(
     <>
@@ -303,7 +300,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
               user={user}
               userPersonalGroup={userPersonalGroup!}
               medias={medias}
-              handleSetMedia={handleSetMedia}
+              fetchMediaForUser={fetchMediaForUser}
             />
           )
         }
