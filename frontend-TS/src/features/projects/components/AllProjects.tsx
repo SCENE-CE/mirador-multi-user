@@ -52,7 +52,7 @@ const emptyWorkspace: IState = {
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<Project|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
-  const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(null); // Updated state
+  const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(null);
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
@@ -154,7 +154,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   }
 
   const HandleOpenModal =useCallback ((projectId: number)=>{
-    setOpenModalProjectId(openModalProjectId === projectId ? null : projectId); // Updated logic
+    setOpenModalProjectId(openModalProjectId === projectId ? null : projectId);
   },[setOpenModalProjectId, openModalProjectId])
 
 

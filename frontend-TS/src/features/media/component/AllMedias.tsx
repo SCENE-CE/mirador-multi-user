@@ -1,11 +1,17 @@
-import { Button, Grid, ImageList, ImageListItem, styled, Typography } from "@mui/material";
-import { ChangeEvent, useCallback } from "react";
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { Button, Grid, styled } from "@mui/material";
+import { ChangeEvent, useCallback, useState } from "react";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
-import { UserGroup } from "../../user-group/types/types.ts";
+import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { Media } from "../types/types.ts";
 import toast from "react-hot-toast";
+import MMUCard from "../../../components/elements/MMUCard.tsx";
+import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
+import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
+import { getAccessToGroup } from "../../user-group/api/getAccessToGroup.ts";
+import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
+import { ProjectGroup } from "../../projects/types/types.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -19,36 +25,6 @@ const VisuallyHiddenInput = styled('input')({
   width: 1,
 });
 
-const CustomImageItem = styled(ImageListItem)({
-  position: 'relative',
-  "&:hover img": {
-    opacity: 0.4,
-  },
-  "&:hover .text": {
-    opacity: 1,
-  }
-});
-
-const CustomButton = styled(Button)({
-  position: 'absolute',
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  textAlign: "center",
-})
-
-const CustomText = styled(Typography)({
-  color: "black",
-  fontSize: "20px",
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-  textAlign: "center",
-  opacity: 0,
-  transition: 'opacity 0.3s ease',
-});
-
 interface IAllMediasProps{
   user:User
   userPersonalGroup:UserGroup
@@ -57,6 +33,10 @@ interface IAllMediasProps{
 }
 
 export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAllMediasProps) => {
+  const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
+  const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
+  const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
+  const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
@@ -77,39 +57,84 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
     toast.success('path copied to clipboard');
   }
 
+  const HandleOpenModal =useCallback ((mediaId: number)=>{
+    setOpenModalMediaId(openModalMediaId === mediaId ? null : mediaId);
+  },[setOpenModalMediaId, openModalMediaId]);
+
+  const getOptionLabel = (option: UserGroup): string => {
+    return option.name
+  };
+  //TODO PLACEHOLDER FUNCTION TO REMOVE
+  const handleAddUser = async ( mediaId: number) => {
+    console.log('userToAdd',userToAdd)
+    const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
+    console.log('linkUserGroupToAdd',linkUserGroupToAdd)
+    await addProjectToGroup({ projectsId: [mediaId], groupId:linkUserGroupToAdd!.user_group.id });
+  };
+
+  const handleLookingForUserGroups = async (partialString: string) => {
+    const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
+    console.log('linkUserGroups', linkUserGroups)
+    const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
+      .filter(
+        (group, index, self) =>
+          index === self.findIndex((g) => g.id === group.id),
+      );
+    setUserGroupSearch(linkUserGroups);
+    return uniqueUserGroups
+  }
+
+  const handleRemoveUser = async ( projectId: number, userToRemoveId: number) =>{
+    await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
+  }
   console.log('medias',medias)
+
   return(
     <Grid item container flexDirection="column">
-        <Grid item>
-          <Button
-            component="label"
-            variant="contained"
-            startIcon={<CloudUploadIcon />}
-          >
-            Upload file
-            <VisuallyHiddenInput
-              type="file"
-              onChange={handleCreateMedia}
-            />
-          </Button>
-        </Grid>
-        <Grid item>
-          <ImageList cols={5}>
-            {(medias ?? []).map((media) => (
-              <CustomImageItem key={media.path}>
-                <img
-                  srcSet={`${media.path}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                  src={`${media.path}?w=164&h=164&fit=crop&auto=format`}
-                  alt="media-img"
-                  loading="lazy"
-                />
-                <CustomButton disableRipple onClick={() => handleCopyToClipBoard(media.path)}>
-                  <CustomText>Copy path to clipboard</CustomText>
-                </CustomButton>
-              </CustomImageItem>
-            ))}
-          </ImageList>
-        </Grid>
+      <Grid item>
+        <Button
+          component="label"
+          variant="contained"
+          startIcon={<CloudUploadIcon />}
+        >
+          Upload file
+          <VisuallyHiddenInput
+            type="file"
+            onChange={handleCreateMedia}
+          />
+        </Button>
+      </Grid>
+      <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+        {
+          medias.map((media)=>(
+            <Grid item>
+              <MMUCard
+                id={media.id}
+                rights={ProjectRights.ADMIN}
+                description={"some description"}
+                HandleOpenModal={()=>HandleOpenModal(media.id)}
+                openModal={openModalMediaId === media.id}
+                itemLabel={"media name"}
+                handleSelectorChange={()=> console.log('HANDLE SELECTOR CHANGE')}
+                listOfItem={['toto','tata']}
+                itemOwner={user}
+                deleteItem={()=>console.log('DELETE ITEM')}
+                getOptionLabel={getOptionLabel}
+                AddAccessListItemFunction={handleAddUser}
+                item={media}
+                searchModalEditItem={handleLookingForUserGroups}
+                setItemToAdd={setUserToAdd}
+                updateItem={()=>console.log('UPDATE MEDIA')}
+                getAccessToItem={(id)=>getAccessToGroup(id,media.id)}
+                removeAccessListItemFunction={handleRemoveUser}
+                setItemList={setGroupList}
+                searchBarLabel={"SEARCH BAR LABEL"}
+                imagePath={media.path}
+              />
+            </Grid>
+          ))
+        }
+      </Grid>
     </Grid>
   )
 }
