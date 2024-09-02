@@ -209,7 +209,13 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const fetchProjects = async () => {
     try {
       const projects = await getUserAllProjects(user.id);
-      setUserProjects(projects);
+      console.log('projects',projects)
+      const uniqueProjects = Array.from(new Set(projects.map((project:Project) => project.id)))
+        .map(id => {
+          return projects.find((project:Project) => project.id === id);
+        });
+      console.log('uniqueProjects',uniqueProjects);
+      setUserProjects(uniqueProjects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
     }
