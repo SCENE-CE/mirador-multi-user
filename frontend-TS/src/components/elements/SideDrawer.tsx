@@ -129,7 +129,10 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setOpen(false);
   };
 
-  const handleChangeContent = (content:string)=>{
+  const handleChangeContent = (content: string) => {
+    if (selectedProjectId){
+      saveProject()
+    }
     setSelectedProjectId(undefined);
     setSelectedContent(content);
   }
@@ -256,7 +259,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             </>
           )
         }
-
         <List>
           <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{console.log('settings')}}/>
           <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleSetDisconnectModalOpen}/>
