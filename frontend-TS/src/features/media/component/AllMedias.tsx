@@ -53,29 +53,31 @@ interface IAllMediasProps{
   user:User
   userPersonalGroup:UserGroup
   medias:Media[]
-  handleSetMedia: (newMedia:Media)=>void
+  fetchMediaForUser:()=>void
 }
 
-export const AllMedias = ({user,userPersonalGroup,medias,handleSetMedia}:IAllMediasProps) => {
+export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAllMediasProps) => {
 
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
     if (event.target.files) {
       console.log(userPersonalGroup)
-      const newMedia = await createMedia({
+      await createMedia({
         idCreator: user.id,
         user_group: userPersonalGroup!,
         file: event.target.files[0],
       });
-      handleSetMedia(newMedia)
+      fetchMediaForUser()
     }
-  },[handleSetMedia, medias])
+  },[fetchMediaForUser, medias])
 
   const handleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
     toast.success('path copied to clipboard');
   }
+
+  console.log('medias',medias)
   return(
     <Grid item container flexDirection="column">
         <Grid item>
