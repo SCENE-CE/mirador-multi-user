@@ -139,28 +139,31 @@ export class LinkGroupProjectService {
     updatedRights: GroupProjectRights,
   ) {
     try {
-      console.log('---------------------------ENTER UPDATE REALTION ---------------------------')
-      const linkGroupToUpdate = await this.linkGroupProjectRepository.find({
+      console.log('---------------------------ENTER UPDATE RELATION ---------------------------');
+
+      // Fetch the LinkGroupProject entity
+      const linkGroupToUpdate = await this.linkGroupProjectRepository.findOne({
         where: {
           user_group: { id: user_group_Id },
           project: { id: project_Id },
         },
       });
-      console.log('linkGroupToUpdate',linkGroupToUpdate)
-      const updatedData = await this.linkGroupProjectRepository.update(
-        linkGroupToUpdate[0].id,
-        { rights: updatedRights },
-      );
-      const dataToReturn = await this.linkGroupProjectRepository.find({
-        where: {
-          user_group: { id: user_group_Id },
-          project: { id: project_Id },
-        },
-      })
-      console.log('dataToReturn',dataToReturn)
-      return dataToReturn;
+
+      // Ensure that the entity exists
+      if (!linkGroupToUpdate) {
+        throw new NotFoundException('No matching LinkGroupProject found');
+      }
+
+console.log('before update ')
+      linkGroupToUpdate.rights = updatedRights;
+      const updatedData = await this.linkGroupProjectRepository.save(linkGroupToUpdate);
+
+      console.log('--------------------UPDATED DATA-------------------------');
+      console.log(updatedData);
+
+      return updatedData;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       throw new InternalServerErrorException(error);
     }
   }

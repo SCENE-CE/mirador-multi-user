@@ -80,7 +80,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
 
   const handleChangeSelectedItem = (itemSelected: ListItem) => async (event: SelectChangeEvent) => {
 
-    await handleSelectorChange( itemSelected, event.target.value, item.id, itemOwner);
+    await handleSelectorChange( itemSelected, event.target.value, item.id, item);
     await fetchData();
   };
 
