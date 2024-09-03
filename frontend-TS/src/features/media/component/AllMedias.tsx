@@ -115,10 +115,10 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
               <MMUCard
                 id={media.id}
                 rights={ProjectRights.ADMIN}
-                description={"some description"}
+                description={media.description}
                 HandleOpenModal={()=>HandleOpenModal(media.id)}
                 openModal={openModalMediaId === media.id}
-                itemLabel={"media name"}
+                itemLabel={media.name}
                 DefaultButton={<ModalButton tooltipButton={"Copy link to media"} onClickFunction={()=>handleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
                 handleSelectorChange={()=> console.log('HANDLE SELECTOR CHANGE')}
