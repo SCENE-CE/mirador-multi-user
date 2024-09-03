@@ -17,15 +17,6 @@ export class GroupMediaService {
   async createMedia(mediaDto: CreateMediaDto) {
     try {
       const { idCreator, path, user_group } = mediaDto;
-      console.log(
-        '-------------------------------user_group-------------------------------',
-        user_group,
-      );
-      console.log(
-        '-------------------------------user_groupId-------------------------------',
-        user_group.id,
-      );
-
       const media = await this.mediaService.create(mediaDto);
       await this.addMediaToGroup({
         userGroup: user_group,

@@ -17,7 +17,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName } from './utils/editFileName';
 import { fileFilter } from './utils/fileFilter';
-import { CreateMediaDto } from './dto/create-media.dto';
 
 @Controller('media')
 export class MediaController {
@@ -45,8 +44,6 @@ export class MediaController {
       user_group: userGroup,
       path: `http://localhost:9000/${file.filename}`,
     };
-    console.log('----------------------------mediaToCreate----------------------------')
-    console.log(mediaToCreate)
     return await this.mediaService.create(mediaToCreate);
   }
 

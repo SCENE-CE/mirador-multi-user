@@ -18,10 +18,6 @@ export class MediaService {
 
   async create(createMediaDto: CreateMediaDto) {
     try {
-      console.log(
-        '------------------Create Media DTO-----------------------------',
-      );
-      console.log(createMediaDto);
       const media = this.mediaRepository.create({ ...createMediaDto });
       return await this.mediaRepository.save(media);
     } catch (error) {
