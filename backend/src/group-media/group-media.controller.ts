@@ -6,16 +6,14 @@ import {
   Patch,
   Param,
   UseInterceptors,
-  UploadedFile, Req
+  UploadedFile, Req, Delete
 } from "@nestjs/common";
 import { GroupMediaService } from './group-media.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { fileFilter } from '../media/utils/fileFilter';
 import * as fs from 'node:fs';
-import { extname } from 'path';
 import { generateAlphanumericSHA1Hash } from '../utils/hashGenerator';
-import { timestamp } from "rxjs";
 
 @Controller('group-media')
 export class GroupMediaController {
@@ -35,7 +33,7 @@ export class GroupMediaController {
           callback(null, uploadPath);
         },
         filename: (req, file, cb) => {
-          const fileName = file.originalname;
+          const fileName = file.originalname.replace(/\//g, "");
           cb(null, fileName);
         },
       }),
@@ -57,5 +55,10 @@ export class GroupMediaController {
   @Get('/media/:userGroupId')
   async getMediaByUserGroupId(@Param('userGroupId') userGroupId: number) {
     return this.groupMediaService.getAllMediasForUserGroup(userGroupId);
+  }
+
+  @Delete('/media/:mediaId')
+  async deleteMedia(@Param('mediaId') mediaId: number) {
+    return this.groupMediaService.removeMedia(mediaId)
   }
 }

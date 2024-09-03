@@ -130,7 +130,9 @@ export class LinkMediaGroupService {
 
   async remove(id: number) {
     try {
+      console.log(' link media group id',id)
       const done = await this.linkMediaGroupRepository.delete(id);
+      console.log(done)
       if (done.affected != 1) throw new NotFoundException(id);
       return done;
     } catch (error) {
