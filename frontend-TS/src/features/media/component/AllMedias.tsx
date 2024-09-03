@@ -12,6 +12,10 @@ import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.
 import { getAccessToGroup } from "../../user-group/api/getAccessToGroup.ts";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 import { ProjectGroup } from "../../projects/types/types.ts";
+import { ModalButton } from "../../../components/elements/ModalButton.tsx";
+import OpenInNewIcon from "@mui/icons-material/OpenInNew";
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -51,6 +55,11 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
       fetchMediaForUser()
     }
   },[fetchMediaForUser, medias])
+
+  const handleCopyToClipBoard = async (path: string) => {
+    await navigator.clipboard.writeText(path);
+    toast.success('path copied to clipboard');
+  }
 
   const HandleOpenModal =useCallback ((mediaId: number)=>{
     setOpenModalMediaId(openModalMediaId === mediaId ? null : mediaId);
@@ -110,6 +119,8 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
                 HandleOpenModal={()=>HandleOpenModal(media.id)}
                 openModal={openModalMediaId === media.id}
                 itemLabel={"media name"}
+                DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>handleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                EditorButton={<ModalButton  tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
                 handleSelectorChange={()=> console.log('HANDLE SELECTOR CHANGE')}
                 listOfItem={['toto','tata']}
                 itemOwner={user}
