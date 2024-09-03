@@ -107,42 +107,22 @@ export class GroupMediaService {
   async removeMedia(mediaId: number) {
     try {
       const mediaToRemove = await this.mediaService.findOne(mediaId);
-      console.log('-------------------mediaToRemove-------------------')
-      console.log(mediaToRemove)
       if (!mediaToRemove) {
-        console.log('into error media not found')
         throw new HttpException('Media not found', HttpStatus.NOT_FOUND);
       }
 
       const mediaGroups = await this.getAllMediaGroup(mediaId);
-      console.log('-----------------mediaGroups-----------------')
-      console.log(mediaGroups)
       const hash = mediaToRemove.path.split('/')[3];
       const filename = mediaToRemove.path.split('/')[4];
       const filePath = join(__dirname, '..', '..', '..', 'uploadMedia', hash, filename);
-      console.log(fs.existsSync(filePath))
       if (fs.existsSync(filePath)) {
-        // Delete the file
-        console.log('deleteFile')
         fs.unlinkSync(filePath);
 
-        // Optionally, delete the directory if it's empty
         const dirPath = join(__dirname, '..', '..', '..', 'uploadMedia', hash);
         if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
           fs.rmdirSync(dirPath);
         }
-        console.log('beforeMediaRemove')
-        // Remove the media record from the database
         await this.mediaService.remove(mediaId);
-
-        // Remove associated media groups
-        for (const mediaGroup of mediaGroups) {
-          console.log('--------mediaGr)up-------------')
-          console.log(mediaGroup)
-          // await this.linkMediaGroupService.remove(mediaGroup.id);
-          console.log('AFTER linkMediaGroupService')
-        }
-
         return {
           status: HttpStatus.OK,
           message: 'File and associated records deleted successfully',
