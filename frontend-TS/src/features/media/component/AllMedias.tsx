@@ -94,7 +94,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
   console.log('medias',medias)
 
   return(
-    <Grid item container flexDirection="column">
+    <Grid item container flexDirection="column" spacing={1}>
       <Grid item>
         <Button
           component="label"
@@ -119,8 +119,8 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
                 HandleOpenModal={()=>HandleOpenModal(media.id)}
                 openModal={openModalMediaId === media.id}
                 itemLabel={"media name"}
-                DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>handleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                EditorButton={<ModalButton  tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                DefaultButton={<ModalButton tooltipButton={"Copy link to media"} onClickFunction={()=>handleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
                 handleSelectorChange={()=> console.log('HANDLE SELECTOR CHANGE')}
                 listOfItem={['toto','tata']}
                 itemOwner={user}

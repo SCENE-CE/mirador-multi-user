@@ -92,7 +92,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
         <Grid item container flexDirection="row" alignItems="center" justifyContent="flex-start" spacing={2}>
           <Grid item xs={12} sm={4}>
-            <img src={imagePath? imagePath : placeholder} alt="cardImage" style={{ height: 100, width: 150 }} />
+            <img src={imagePath? imagePath : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain"}} />
           </Grid>
           <Grid item xs={12} sm={4}>
             <Typography variant="subtitle1">{itemLabel}</Typography>
