@@ -28,6 +28,8 @@ export class MediaGroupService {
       const media = await this.mediaService.create({
         path: mediaInformation.path,
         idCreator: mediaInformation.idCreator,
+        description: mediaInformation.description,
+        name: mediaInformation.name,
         user_group: mediaInformation.user_group,
       });
 

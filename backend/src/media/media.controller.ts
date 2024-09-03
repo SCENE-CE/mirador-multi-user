@@ -40,9 +40,13 @@ export class MediaController {
 
     const mediaToCreate = {
       ...CreateMediaDto,
+      name: file.orginalname,
+      description: 'your media description',
       user_group: userGroup,
       path: `http://localhost:9000/${file.filename}`,
     };
+    console.log('----------------------------mediaToCreate----------------------------')
+    console.log(mediaToCreate)
     return await this.mediaService.create(mediaToCreate);
   }
 
