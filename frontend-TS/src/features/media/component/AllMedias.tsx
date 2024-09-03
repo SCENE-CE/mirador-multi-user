@@ -52,11 +52,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
     }
   },[fetchMediaForUser, medias])
 
-  const handleCopyToClipBoard = async (path: string) => {
-    await navigator.clipboard.writeText(path);
-    toast.success('path copied to clipboard');
-  }
-
   const HandleOpenModal =useCallback ((mediaId: number)=>{
     setOpenModalMediaId(openModalMediaId === mediaId ? null : mediaId);
   },[setOpenModalMediaId, openModalMediaId]);
