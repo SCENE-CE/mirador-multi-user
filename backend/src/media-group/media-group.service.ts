@@ -52,4 +52,8 @@ export class MediaGroupService {
       );
     }
   }
+
+  deleteMedia(id:number){
+    console.log('delete')
+  }
 }
