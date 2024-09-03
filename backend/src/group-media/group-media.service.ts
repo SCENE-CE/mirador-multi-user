@@ -6,8 +6,7 @@ import { CreateMediaDto } from '../media/dto/create-media.dto';
 import { addMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { MediaGroupRights } from '../enum/media-group-rights';
 import { join } from 'path';
-import * as fs from "node:fs";
-import { response } from "express";
+import * as fs from 'node:fs';
 
 @Injectable()
 export class GroupMediaService {
@@ -114,7 +113,15 @@ export class GroupMediaService {
       const mediaGroups = await this.getAllMediaGroup(mediaId);
       const hash = mediaToRemove.path.split('/')[3];
       const filename = mediaToRemove.path.split('/')[4];
-      const filePath = join(__dirname, '..', '..', '..', 'uploadMedia', hash, filename);
+      const filePath = join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'uploadMedia',
+        hash,
+        filename,
+      );
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
 
