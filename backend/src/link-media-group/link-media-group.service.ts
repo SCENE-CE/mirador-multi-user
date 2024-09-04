@@ -96,17 +96,18 @@ export class LinkMediaGroupService {
     }
   }
 
-  async findAllMediaGroupByUserGroupId(userGroupId: number){
-    try{
-      const request = await this.linkMediaGroupRepository.find(
-        {
-          where: { user_group: { id: userGroupId } },
-          relations: ['media'],
-        }
-      )
-        return request
-    }catch(error){
-      throw new InternalServerErrorException(`an error occurred whild finding all MediaGroup for this userGroup : ${userGroupId}`, error);
+  async findAllMediaGroupByUserGroupId(userGroupId: number) {
+    try {
+      const request = await this.linkMediaGroupRepository.find({
+        where: { user_group: { id: userGroupId } },
+        relations: ['media'],
+      });
+      return request;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `an error occurred whild finding all MediaGroup for this userGroup : ${userGroupId}`,
+        error,
+      );
     }
   }
 
@@ -130,9 +131,9 @@ export class LinkMediaGroupService {
 
   async remove(id: number) {
     try {
-      console.log(' link media group id',id)
+      console.log(' link media group id', id);
       const done = await this.linkMediaGroupRepository.delete(id);
-      console.log(done)
+      console.log(done);
       if (done.affected != 1) throw new NotFoundException(id);
       return done;
     } catch (error) {
