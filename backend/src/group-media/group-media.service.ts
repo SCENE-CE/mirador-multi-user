@@ -3,6 +3,7 @@ import {
   HttpStatus,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common';
 import { LinkMediaGroupService } from '../link-media-group/link-media-group.service';
 import { UserGroupService } from '../user-group/user-group.service';
@@ -70,9 +71,12 @@ export class GroupMediaService {
 
   async getAllMediaGroup(mediaId: number) {
     try {
-      return await this.linkMediaGroupService.findAllUserGroupByMediaId(
+      const toReturn = await this.linkMediaGroupService.findAllUserGroupByMediaId(
         mediaId,
       );
+      console.log('----------------toReturn----------------')
+      console.log(toReturn)
+      return toReturn
     } catch (error) {
       throw new InternalServerErrorException(
         `an error occurred while getting all group for media : ${mediaId}`,
@@ -163,5 +167,25 @@ export class GroupMediaService {
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
+  }
+
+  async removeAccesToMedia(mediaId: number, userGroupId: number) {
+    try {
+      console.log(mediaId, userGroupId)
+      const userGroupMedias =
+        await this.linkMediaGroupService.findAllMediaByUserGroupId(userGroupId);
+      const mediaToRemove = userGroupMedias.find(
+        (userGroupMedia) => userGroupMedia.id == mediaId,
+      );
+      if (!mediaToRemove) {
+        throw new NotFoundException(
+          `No association between Project with ID ${mediaId} and group with ID ${userGroupId}`,
+        );
+      }
+      return await this.linkMediaGroupService.removeMediaGroupRelation(
+        mediaToRemove.id,
+        userGroupId,
+      );
+    } catch (error) {}
   }
 }

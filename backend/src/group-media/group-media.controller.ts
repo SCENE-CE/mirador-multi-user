@@ -60,9 +60,14 @@ export class GroupMediaController {
     return await this.groupMediaService.createMedia(mediaToCreate);
   }
 
-  @Get('/media/:userGroupId')
+  @Get('/group/:userGroupId')
   async getMediaByUserGroupId(@Param('userGroupId') userGroupId: number) {
     return this.groupMediaService.getAllMediasForUserGroup(userGroupId);
+  }
+
+  @Get('/media/:mediaId')
+  async getMediaById(@Param('mediaId') mediaId: number) {
+    return this.groupMediaService.getAllMediaGroup(mediaId);
   }
 
   @Delete('/media/:mediaId')
@@ -81,5 +86,11 @@ export class GroupMediaController {
     return this.groupMediaService.addMediaToGroup(addMediaToGroupDto);
   }
 
-
+  @Delete('/media/:mediaId/:groupId')
+  async deleteMediaById(
+    @Param('mediaId') mediaId: number,
+    @Param('groupId') groupId: number,
+  ) {
+    return await this.groupMediaService.removeAccesToMedia(mediaId, groupId);
+  }
 }

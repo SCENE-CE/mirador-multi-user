@@ -85,10 +85,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects]);
 
-  //TODO FIX UPDATE
   const updateUserProject = useCallback(async (projectUpdated:Project)=>{
     const { rights , ...projectToUpdate } = projectUpdated;
-    console.log('projectUpdated',projectUpdated)
     let updatedProject : ProjectGroupUpdateDto ;
     if(rights){
       updatedProject = {
@@ -102,7 +100,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
         group:userPersonalGroup,
       }
     }
-    console.log('updatedProject',updatedProject)
     await updateProject({...updatedProject})
     let updatedListOfProject = userProjects.filter(function(p) {
       return p.id != updatedProject.project.id;

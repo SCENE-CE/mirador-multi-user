@@ -168,35 +168,17 @@ console.log('before update ')
     }
   }
 
-  async getUserGroupForProjectIdRelation(
-    projectId: number,
-    linkGroupProjectId,
-  ) {
-    try {
-      const dataToReturn = await this.linkGroupProjectRepository.find({
-        where: {
-          id: linkGroupProjectId,
-          project: { id: projectId },
-        },
-        relations: ['user_group'],
-      });
-      return dataToReturn[0];
-    } catch (error) {
-      throw new InternalServerErrorException(error);
-    }
-  }
-
   async removeProjectGroupRelation(projectId: number, group: UserGroup) {
     try {
 
       const done = await this.linkGroupProjectRepository.delete({
         project: { id: projectId },
-        user_group: {id: group.id },
+        user_group: { id: group.id },
       });
       if (done.affected != 1) throw new NotFoundException(projectId);
       return done;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new InternalServerErrorException(
         'An error occurred while removing the linkGroupProject',
         error,

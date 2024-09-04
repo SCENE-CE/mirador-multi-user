@@ -17,18 +17,18 @@ interface IMMUCardProps<T,G,O,X> {
   EditorButton?: ReactElement;
   itemLabel:string;
   handleSelectorChange?: (itemList: ListItem, eventValue : string, itemId:number, owner :any ) => Promise<void>,
-  listOfItem?: ListItem[],
+  listOfItem: ListItem[],
   itemOwner:O,
   deleteItem: (itemId: number) => void,
-  getOptionLabel?: (option: any, searchInput: string) => string,
-  AddAccessListItemFunction?: (itemId: number ) => Promise<void>,
+  getOptionLabel: (option: any, searchInput: string) => string,
+  AddAccessListItemFunction: (itemId: number ) => Promise<void>,
   item : T,
-  searchModalEditItem?: (query: string) => Promise<any[]>,
-  setItemToAdd?: Dispatch<SetStateAction<G | null>>,
+  searchModalEditItem: (query: string) => Promise<any[]>,
+  setItemToAdd: Dispatch<SetStateAction<G | null>>,
   updateItem: (item: T) => void,
   getAccessToItem?:(itemId:number)=> Promise<any>
-  removeAccessListItemFunction?:(itemId:number, accessItemId:number )=>Promise<void>
-  setItemList?:Dispatch<SetStateAction<X[]>>
+  removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
+  setItemList:Dispatch<SetStateAction<X[]>>
   searchBarLabel?:string
   imagePath?:string
 }
@@ -82,7 +82,10 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
   const fetchData = useCallback(async () => {
     let list;
     if (getAccessToItem && setItemList) {
+      console.log("getAccessToItem",getAccessToItem)
+      console.log('item',item)
       list = await getAccessToItem(item.id);
+      console.log('LIST ', list)
       setItemList(list);
     }
   }, [getAccessToItem, item.id, setItemList]);
