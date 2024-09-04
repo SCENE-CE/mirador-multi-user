@@ -12,6 +12,7 @@ import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { deleteMedia } from "../api/deleteMedia.ts";
+import { updateMedia } from "../api/updateMedia.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -68,6 +69,15 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     },[medias, setMedias]
   )
 
+  const handleUpdateMedia = useCallback(async(mediaToUpdate:Media)=>{
+    await updateMedia(mediaToUpdate)
+    const updatedListOfMedias = medias.filter(function(media) {
+      return media.id != mediaToUpdate.id;
+    });
+    updatedListOfMedias.push(mediaToUpdate);
+    setMedias(updatedListOfMedias);
+  },[medias, setMedias])
+
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item>
@@ -99,7 +109,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                 itemOwner={user}
                 deleteItem={()=>handleDeleteMedia(media.id)}
                 item={media}
-                updateItem={()=>console.log('UPDATE MEDIA')}
+                updateItem={handleUpdateMedia}
                 imagePath={media.path}
               />
             </Grid>
