@@ -7,6 +7,8 @@ import { addMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { MediaGroupRights } from '../enum/media-group-rights';
 import { join } from 'path';
 import * as fs from 'node:fs';
+import { UpdateGroupMediaDto } from "./dto/update-group-media.dto";
+import { UpdateMediaDto } from "../media/dto/update-media.dto";
 
 @Injectable()
 export class GroupMediaService {
@@ -140,6 +142,20 @@ export class GroupMediaService {
     } catch (error) {
       throw new HttpException(
         `An error occurred while removing media with id: ${mediaId}: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async updateMedia(updateGroupMediaDto: UpdateMediaDto) {
+    try {
+      return await this.mediaService.update(
+        updateGroupMediaDto.id,
+        updateGroupMediaDto,
+      );
+    } catch (error) {
+      throw new HttpException(
+        `An error occurred while updating media with id: ${updateGroupMediaDto.id}: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }
