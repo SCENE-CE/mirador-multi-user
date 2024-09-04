@@ -1,21 +1,18 @@
 import { Button, Grid, styled } from "@mui/material";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useCallback, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
-import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { Media } from "../types/types.ts";
 import toast from "react-hot-toast";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
-import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
-import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
-import { getAccessToGroup } from "../../user-group/api/getAccessToGroup.ts";
-import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
-import { ProjectGroup } from "../../projects/types/types.ts";
+
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
-import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { deleteMedia } from "../api/deleteMedia.ts";
+import { updateMedia } from "../api/updateMedia.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -34,14 +31,11 @@ interface IAllMediasProps{
   userPersonalGroup:UserGroup
   medias:Media[]
   fetchMediaForUser:()=>void
+  setMedias:Dispatch<SetStateAction<Media[]>>
 }
 
-export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAllMediasProps) => {
+export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMedias}:IAllMediasProps) => {
   const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
-  const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
-  const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
-  const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
@@ -65,33 +59,24 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
     setOpenModalMediaId(openModalMediaId === mediaId ? null : mediaId);
   },[setOpenModalMediaId, openModalMediaId]);
 
-  const getOptionLabel = (option: UserGroup): string => {
-    return option.name
-  };
-  //TODO PLACEHOLDER FUNCTION TO REMOVE
-  const handleAddUser = async ( mediaId: number) => {
-    console.log('userToAdd',userToAdd)
-    const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
-    console.log('linkUserGroupToAdd',linkUserGroupToAdd)
-    await addProjectToGroup({ projectsId: [mediaId], groupId:linkUserGroupToAdd!.user_group.id });
-  };
+  const handleDeleteMedia = useCallback(
+    async (mediaId: number) => {
+      await deleteMedia(mediaId);
+      const updatedListOfMedias = medias.filter(function(media) {
+        return media.id != mediaId;
+      });
+      setMedias(updatedListOfMedias);
+    },[medias, setMedias]
+  )
 
-  const handleLookingForUserGroups = async (partialString: string) => {
-    const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
-    console.log('linkUserGroups', linkUserGroups)
-    const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
-      .filter(
-        (group, index, self) =>
-          index === self.findIndex((g) => g.id === group.id),
-      );
-    setUserGroupSearch(linkUserGroups);
-    return uniqueUserGroups
-  }
-
-  const handleRemoveUser = async ( projectId: number, userToRemoveId: number) =>{
-    await removeProjectToGroup({ groupId: userToRemoveId, projectId:projectId })
-  }
-  console.log('medias',medias)
+  const handleUpdateMedia = useCallback(async(mediaToUpdate:Media)=>{
+    await updateMedia(mediaToUpdate)
+    const updatedListOfMedias = medias.filter(function(media) {
+      return media.id != mediaToUpdate.id;
+    });
+    updatedListOfMedias.push(mediaToUpdate);
+    setMedias(updatedListOfMedias);
+  },[medias, setMedias])
 
   return(
     <Grid item container flexDirection="column" spacing={1}>
@@ -111,7 +96,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
       <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
         {
           medias.map((media)=>(
-            <Grid item>
+            <Grid item key={media.id}>
               <MMUCard
                 id={media.id}
                 rights={ProjectRights.ADMIN}
@@ -121,20 +106,10 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
                 itemLabel={media.name}
                 DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>handleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                handleSelectorChange={()=> console.log('HANDLE SELECTOR CHANGE')}
-                listOfItem={['toto','tata']}
                 itemOwner={user}
-                deleteItem={()=>console.log('DELETE ITEM')}
-                getOptionLabel={getOptionLabel}
-                AddAccessListItemFunction={handleAddUser}
+                deleteItem={()=>handleDeleteMedia(media.id)}
                 item={media}
-                searchModalEditItem={handleLookingForUserGroups}
-                setItemToAdd={setUserToAdd}
-                updateItem={()=>console.log('UPDATE MEDIA')}
-                getAccessToItem={(id)=>getAccessToGroup(id,media.id)}
-                removeAccessListItemFunction={handleRemoveUser}
-                setItemList={setGroupList}
-                searchBarLabel={"SEARCH BAR LABEL"}
+                updateItem={handleUpdateMedia}
                 imagePath={media.path}
               />
             </Grid>

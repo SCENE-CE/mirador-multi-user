@@ -146,8 +146,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
         {groups && !selectedUserGroup && groups.map((group) => (
-          <>
-            <Grid item>
+            <Grid item key={group.id}>
               <MMUCard
                 searchBarLabel={"Search Users"}
                 rights={group.rights!}
@@ -173,7 +172,6 @@ export const AllGroups= ({user}:allGroupsProps)=>{
                 handleSelectorChange={handleChangeRights}
               />
             </Grid>
-          </>
         ))}
         {selectedUserGroup &&(
           <Grid item>

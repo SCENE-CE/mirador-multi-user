@@ -16,20 +16,20 @@ interface IMMUCardProps<T,G,O,X> {
   ReaderButton?: ReactElement;
   EditorButton?: ReactElement;
   itemLabel:string;
-  handleSelectorChange: (itemList: ListItem, eventValue : string, itemId:number, owner :any ) => Promise<void>,
-  listOfItem: ListItem[],
+  handleSelectorChange?: (itemList: ListItem, eventValue : string, itemId:number, owner :any ) => Promise<void>,
+  listOfItem?: ListItem[],
   itemOwner:O,
   deleteItem: (itemId: number) => void,
-  getOptionLabel: (option: any, searchInput: string) => string,
-  AddAccessListItemFunction: (itemId: number ) => Promise<void>,
+  getOptionLabel?: (option: any, searchInput: string) => string,
+  AddAccessListItemFunction?: (itemId: number ) => Promise<void>,
   item : T,
-  searchModalEditItem: (query: string) => Promise<any[]>,
-  setItemToAdd: Dispatch<SetStateAction<G | null>>,
+  searchModalEditItem?: (query: string) => Promise<any[]>,
+  setItemToAdd?: Dispatch<SetStateAction<G | null>>,
   updateItem: (item: T) => void,
-  getAccessToItem:(itemId:number)=> Promise<any>
-  removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
-  setItemList:Dispatch<SetStateAction<X[]>>
-  searchBarLabel:string
+  getAccessToItem?:(itemId:number)=> Promise<any>
+  removeAccessListItemFunction?:(itemId:number, accessItemId:number )=>Promise<void>
+  setItemList?:Dispatch<SetStateAction<X[]>>
+  searchBarLabel?:string
   imagePath?:string
 }
 
@@ -64,25 +64,34 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
   const [searchInput, setSearchInput] = useState<string>('');
 
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
-    await removeAccessListItemFunction(item.id, accessItemId)
+    if (removeAccessListItemFunction) {
+      await removeAccessListItemFunction(item.id, accessItemId);
+    }
     fetchData(); // Refresh the list after removing an item
   }
 
 
   const handleAddAccessListItem = async () =>{
-    await AddAccessListItemFunction(item.id)
+    if (AddAccessListItemFunction) {
+      await AddAccessListItemFunction(item.id);
+    }
     fetchData(); // Refresh the list after removing an item
   }
 
 
   const fetchData = useCallback(async () => {
-    const list = await getAccessToItem(item.id);
-    setItemList(list);
+    let list;
+    if (getAccessToItem && setItemList) {
+      list = await getAccessToItem(item.id);
+      setItemList(list);
+    }
   }, [getAccessToItem, item.id, setItemList]);
 
   const handleChangeSelectedItem = (itemSelected: ListItem) => async (event: SelectChangeEvent) => {
 
-    await handleSelectorChange( itemSelected, event.target.value, item.id, item);
+    if (handleSelectorChange) {
+      await handleSelectorChange(itemSelected, event.target.value, item.id, item);
+    }
     await fetchData();
   };
 
@@ -133,7 +142,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             children={
               <MMUModalEdit
                 description={description}
-                searchBarLabel={searchBarLabel}
+                searchBarLabel={searchBarLabel ? searchBarLabel : ""}
                 itemLabel={itemLabel}
                 handleSelectorChange={handleChangeSelectedItem}
                 fetchData={fetchData}

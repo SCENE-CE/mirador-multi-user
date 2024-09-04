@@ -142,7 +142,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       .map(id => {
         return userProjects.find((project:Project) => project.id === id);
       }) as Project[];
-    console.log('uniqueProjects',uniqueProjects);
     setUserProjects(uniqueProjects);
   }
 
@@ -301,6 +300,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
               userPersonalGroup={userPersonalGroup!}
               medias={medias}
               fetchMediaForUser={fetchMediaForUser}
+              setMedias={setMedias}
             />
           )
         }
