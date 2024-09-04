@@ -238,8 +238,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           {!selectedProjectId && !searchedProject && userProjects && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((projectUser) => (
-                  <>
-                    <Grid item>
+                    <Grid item key={projectUser.id}>
                       <MMUCard
                         searchBarLabel={"Search"}
                         description={projectUser.description}
@@ -266,7 +265,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         setItemList={setGroupList}
                       />
                     </Grid>
-                  </>
                 )
               )}
               <Grid item>

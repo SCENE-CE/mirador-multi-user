@@ -96,7 +96,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
         {
           medias.map((media)=>(
-            <Grid item>
+            <Grid item key={media.id}>
               <MMUCard
                 id={media.id}
                 rights={ProjectRights.ADMIN}
