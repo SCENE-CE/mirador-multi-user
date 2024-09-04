@@ -1,5 +1,5 @@
 import { Button, Grid, styled } from "@mui/material";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useCallback, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
@@ -11,6 +11,7 @@ import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
+import { deleteMedia } from "../api/deleteMedia.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -29,9 +30,10 @@ interface IAllMediasProps{
   userPersonalGroup:UserGroup
   medias:Media[]
   fetchMediaForUser:()=>void
+  setMedias:Dispatch<SetStateAction<Media[]>>
 }
 
-export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAllMediasProps) => {
+export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMedias}:IAllMediasProps) => {
   const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
@@ -56,6 +58,15 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
     setOpenModalMediaId(openModalMediaId === mediaId ? null : mediaId);
   },[setOpenModalMediaId, openModalMediaId]);
 
+  const handleDeleteMedia = useCallback(
+    async (mediaId: number) => {
+      await deleteMedia(mediaId);
+      const updatedListOfMedias = medias.filter(function(media) {
+        return media.id != mediaId;
+      });
+      setMedias(updatedListOfMedias);
+    },[medias, setMedias]
+  )
 
   return(
     <Grid item container flexDirection="column" spacing={1}>
@@ -86,7 +97,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser}:IAll
                 DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>handleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
                 itemOwner={user}
-                deleteItem={()=>console.log('DELETE ITEM')}
+                deleteItem={()=>handleDeleteMedia(media.id)}
                 item={media}
                 updateItem={()=>console.log('UPDATE MEDIA')}
                 imagePath={media.path}

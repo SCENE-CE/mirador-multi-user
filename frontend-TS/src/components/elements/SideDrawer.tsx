@@ -301,6 +301,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
               userPersonalGroup={userPersonalGroup!}
               medias={medias}
               fetchMediaForUser={fetchMediaForUser}
+              setMedias={setMedias}
             />
           )
         }
