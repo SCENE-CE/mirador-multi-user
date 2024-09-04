@@ -30,6 +30,7 @@ interface IMMUCardProps<T,G,O,X> {
   removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
   setItemList:Dispatch<SetStateAction<X[]>>
   searchBarLabel:string
+  imagePath?:string
 }
 
 const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
@@ -56,7 +57,8 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     searchModalEditItem,
     removeAccessListItemFunction,
     setItemList,
-    searchBarLabel
+    searchBarLabel,
+    imagePath
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -90,7 +92,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
         <Grid item container flexDirection="row" alignItems="center" justifyContent="flex-start" spacing={2}>
           <Grid item xs={12} sm={4}>
-            <img src={placeholder} alt="placeholder" style={{ height: 100, width: 150 }} />
+            <img src={imagePath? imagePath : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain"}} />
           </Grid>
           <Grid item xs={12} sm={4}>
             <Typography variant="subtitle1">{itemLabel}</Typography>

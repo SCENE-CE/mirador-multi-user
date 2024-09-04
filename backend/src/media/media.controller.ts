@@ -17,7 +17,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { editFileName } from './utils/editFileName';
 import { fileFilter } from './utils/fileFilter';
-import { CreateMediaDto } from './dto/create-media.dto';
 
 @Controller('media')
 export class MediaController {
@@ -40,6 +39,8 @@ export class MediaController {
 
     const mediaToCreate = {
       ...CreateMediaDto,
+      name: file.orginalname,
+      description: 'your media description',
       user_group: userGroup,
       path: `http://localhost:9000/${file.filename}`,
     };

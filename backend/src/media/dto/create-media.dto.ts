@@ -6,6 +6,9 @@ export class CreateMediaDto {
 
   idCreator: number;
 
+  name: string;
+
+  description: string;
   @IsOptional()
   user_group: UserGroup;
 }
