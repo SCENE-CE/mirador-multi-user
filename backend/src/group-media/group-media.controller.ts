@@ -91,6 +91,7 @@ export class GroupMediaController {
     @Param('mediaId') mediaId: number,
     @Param('groupId') groupId: number,
   ) {
-    return await this.groupMediaService.removeAccesToMedia(mediaId, groupId);
+    console.log('DELETE MEDIA GROUP RELATION')
+    return await this.groupMediaService.removeAccesToMedia(groupId,mediaId);
   }
 }

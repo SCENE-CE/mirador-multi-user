@@ -171,21 +171,28 @@ export class GroupMediaService {
 
   async removeAccesToMedia(mediaId: number, userGroupId: number) {
     try {
-      console.log(mediaId, userGroupId)
+      console.log("media",mediaId,"group", userGroupId)
       const userGroupMedias =
         await this.linkMediaGroupService.findAllMediaByUserGroupId(userGroupId);
+      console.log('------------userGroupMedias------------')
+      console.log(userGroupMedias)
       const mediaToRemove = userGroupMedias.find(
         (userGroupMedia) => userGroupMedia.id == mediaId,
       );
+      console.log('------------mediaToRemove------------')
+      console.log(mediaToRemove)
       if (!mediaToRemove) {
         throw new NotFoundException(
-          `No association between Project with ID ${mediaId} and group with ID ${userGroupId}`,
+          `No association between Media with ID ${mediaId} and group with ID ${userGroupId}`,
         );
       }
       return await this.linkMediaGroupService.removeMediaGroupRelation(
         mediaToRemove.id,
         userGroupId,
       );
-    } catch (error) {}
+    } catch (error) {
+      console.log(error)
+      throw new InternalServerErrorException(`an error occured while removing link between media and group : ${error.message}`)
+    }
   }
 }

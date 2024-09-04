@@ -65,10 +65,13 @@ export class LinkMediaGroupService {
 
   async findAllMediaByUserGroupId(id: number) {
     try {
+      console.log(id)
       const request = await this.linkMediaGroupRepository.find({
         where: { user_group: { id } },
         relations: ['user_group'],
       });
+      console.log('------------linkMediaGroup------------')
+      console.log(request)
       return request.map((linkGroup: LinkMediaGroup) => linkGroup.media);
     } catch (error) {
       console.log(error);
