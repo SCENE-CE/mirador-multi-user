@@ -87,24 +87,20 @@ export class MediaService {
       const partialStringLength = partialString.length;
       return await this.mediaRepository
         .createQueryBuilder('media')
-        .innerJoin('media.linkGroupProjects', 'linkGroupProject')
-        .innerJoin('linkGroup.user_group', 'userGroup')
+        .innerJoin('media.linkMediaGroup', 'linkMediaGroup')
+        .innerJoin('linkMediaGroup.user_group', 'userGroup')
         .where('userGroup.id = :id', { id: userGroupId })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where('LEFT(media.name, :length) = :partialMediaName', {
-              length: partialStringLength,
-              partialString,
-            });
-          }),
-        )
+        .andWhere('LEFT(media.name, :length) = :partialString', {
+          length: partialStringLength,
+          partialString,
+        })
         .distinct(true)
         .limit(3)
         .getMany();
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        `an error occured : ${error.message}`,
+        `An error occurred: ${error.message}`,
       );
     }
   }

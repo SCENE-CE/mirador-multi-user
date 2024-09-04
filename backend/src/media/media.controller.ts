@@ -37,4 +37,15 @@ export class MediaController {
   remove(@Param('id') id: string) {
     return this.mediaService.remove(+id);
   }
+
+  @Get('/search/:UserGroupId/:partialString')
+  lookingForMedia(
+    @Param('UserGroupId') userGroupId: number,
+    @Param('partialString') partialString: string,
+  ) {
+    return this.mediaService.findMediasByPartialStringAndUserGroup(
+      partialString,
+      userGroupId,
+    );
+  }
 }

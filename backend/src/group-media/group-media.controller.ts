@@ -81,11 +81,5 @@ export class GroupMediaController {
     return this.groupMediaService.addMediaToGroup(addMediaToGroupDto);
   }
 
-  @Get('/search/:UserGroupId/:partialString')
-  lookingForMedia(
-    @Param('UserGroupId') UserGroupId: string,
-    @Param('partialString') partialString: string,
-  ){
-    return this.groupMediaService
-  }
+
 }
