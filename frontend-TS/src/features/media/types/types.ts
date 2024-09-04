@@ -15,3 +15,4 @@ export type Media={
   created_at:Date,
   updated_at:Date,
 }
+
