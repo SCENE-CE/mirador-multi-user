@@ -8,7 +8,7 @@ import { LinkMediaGroupService } from '../link-media-group/link-media-group.serv
 import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';
 import { CreateMediaDto } from '../media/dto/create-media.dto';
-import { addMediaToGroupDto } from './dto/addMediaToGroupDto';
+import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { MediaGroupRights } from '../enum/media-group-rights';
 import { join } from 'path';
 import * as fs from 'node:fs';
@@ -40,7 +40,7 @@ export class GroupMediaService {
     }
   }
 
-  async addMediaToGroup(dto: addMediaToGroupDto) {
+  async addMediaToGroup(dto: AddMediaToGroupDto) {
     const { userGroup, mediasId } = dto;
     try {
       const mediasForGroup = [];

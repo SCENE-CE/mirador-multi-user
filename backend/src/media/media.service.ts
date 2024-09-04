@@ -7,7 +7,7 @@ import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from './entities/media.entity';
-import { Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 
 @Injectable()
 export class MediaService {
@@ -75,6 +75,36 @@ export class MediaService {
       throw new InternalServerErrorException(
         'An error occurred while removing the media',
         error,
+      );
+    }
+  }
+
+  async findMediasByPartialStringAndUserGroup(
+    partialString: string,
+    userGroupId: number,
+  ) {
+    try {
+      const partialStringLength = partialString.length;
+      return await this.mediaRepository
+        .createQueryBuilder('media')
+        .innerJoin('media.linkGroupProjects', 'linkGroupProject')
+        .innerJoin('linkGroup.user_group', 'userGroup')
+        .where('userGroup.id = :id', { id: userGroupId })
+        .andWhere(
+          new Brackets((qb) => {
+            qb.where('LEFT(media.name, :length) = :partialMediaName', {
+              length: partialStringLength,
+              partialString,
+            });
+          }),
+        )
+        .distinct(true)
+        .limit(3)
+        .getMany();
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occured : ${error.message}`,
       );
     }
   }

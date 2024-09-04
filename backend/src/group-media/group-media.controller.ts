@@ -17,6 +17,7 @@ import { fileFilter } from '../media/utils/fileFilter';
 import * as fs from 'node:fs';
 import { generateAlphanumericSHA1Hash } from '../utils/hashGenerator';
 import { UpdateMediaDto } from '../media/dto/update-media.dto';
+import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 
 @Controller('group-media')
 export class GroupMediaController {
@@ -72,5 +73,11 @@ export class GroupMediaController {
   @Patch('/media')
   async updateMedia(@Body() updateGroupMediaDto: UpdateMediaDto) {
     return this.groupMediaService.updateMedia(updateGroupMediaDto);
+  }
+
+  @Post('/media/add')
+  addMediaToGroup(@Body() addMediaToGroupDto: AddMediaToGroupDto) {
+    console.log('ON THE ROAD ADD MEDIA TO GROUP');
+    return this.groupMediaService.addMediaToGroup(addMediaToGroupDto);
   }
 }

@@ -1,6 +1,6 @@
-import { UserGroup } from '../../user-group/entities/user-group.entity';
+import { UserGroup } from "../../user-group/entities/user-group.entity";
 
-export class addMediaToGroupDto {
+export class AddMediaToGroupDto {
   userGroup: UserGroup;
 
   mediasId: number[];
