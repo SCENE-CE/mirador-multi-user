@@ -159,9 +159,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
 
   const handleAddUser = async ( projectId: number) => {
-    console.log('userToAdd',userToAdd)
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
-    console.log('linkUserGroupToAdd',linkUserGroupToAdd)
     await addProjectToGroup({ projectsId: [projectId], groupId:linkUserGroupToAdd!.user_group.id });
   };
 
@@ -174,12 +172,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   };
 
   const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:Project) => {
-    console.log('HANDLE CHANGE RIGHTS')
     const groups:ProjectGroup[] = await getGroupsAccessToProject(projectId);
-    console.log('groups',groups)
     const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
-    console.log('userGroup',userGroup)
-    console.log('ProjectUser',ProjectUser)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {rights, ...project } = ProjectUser
     await updateProject({
@@ -204,7 +198,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   const handleLookingForUserGroups = async (partialString: string) => {
     const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
-    console.log('linkUserGroups', linkUserGroups)
     const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
       .filter(
         (group, index, self) =>
@@ -309,7 +302,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     setItemList={setGroupList}
                   />
                 </Grid>
-
               </Grid>
             )
           }
