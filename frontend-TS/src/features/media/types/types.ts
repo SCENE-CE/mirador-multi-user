@@ -15,3 +15,9 @@ export type Media={
   created_at:Date,
   updated_at:Date,
 }
+
+export enum MediaGroupRights {
+  ADMIN = 'admin',
+  READER = 'reader',
+  EDITOR = 'editor',
+}

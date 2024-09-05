@@ -18,6 +18,8 @@ import * as fs from 'node:fs';
 import { generateAlphanumericSHA1Hash } from '../utils/hashGenerator';
 import { UpdateMediaDto } from '../media/dto/update-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
+import { MediaGroupRights } from '../enum/media-group-rights';
+import { UpdateMediaGroupRelationDto } from "./dto/updateMediaGroupRelationDto";
 
 @Controller('group-media')
 export class GroupMediaController {
@@ -60,9 +62,14 @@ export class GroupMediaController {
     return await this.groupMediaService.createMedia(mediaToCreate);
   }
 
-  @Get('/media/:userGroupId')
+  @Get('/group/:userGroupId')
   async getMediaByUserGroupId(@Param('userGroupId') userGroupId: number) {
     return this.groupMediaService.getAllMediasForUserGroup(userGroupId);
+  }
+
+  @Get('/media/:mediaId')
+  async getMediaById(@Param('mediaId') mediaId: number) {
+    return this.groupMediaService.getAllMediaGroup(mediaId);
   }
 
   @Delete('/media/:mediaId')
@@ -75,11 +82,30 @@ export class GroupMediaController {
     return this.groupMediaService.updateMedia(updateGroupMediaDto);
   }
 
+  @Patch('/relation')
+  async updateMediaGroupRelation(
+    @Body() updateMediaGroupRelationDto: UpdateMediaGroupRelationDto,
+  ) {
+    const { mediaId, userGroupId, rights } = updateMediaGroupRelationDto;
+    return this.groupMediaService.updateAccessToMedia(
+      mediaId,
+      userGroupId,
+      rights,
+    );
+  }
+
   @Post('/media/add')
   addMediaToGroup(@Body() addMediaToGroupDto: AddMediaToGroupDto) {
     console.log('ON THE ROAD ADD MEDIA TO GROUP');
     return this.groupMediaService.addMediaToGroup(addMediaToGroupDto);
   }
 
-
+  @Delete('/media/:mediaId/:groupId')
+  async deleteMediaById(
+    @Param('mediaId') mediaId: number,
+    @Param('groupId') groupId: number,
+  ) {
+    console.log('DELETE MEDIA GROUP RELATION');
+    return await this.groupMediaService.removeAccesToMedia(groupId, mediaId);
+  }
 }

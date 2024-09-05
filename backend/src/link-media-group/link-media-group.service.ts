@@ -12,6 +12,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';
+import { MediaGroupRights } from "../enum/media-group-rights";
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -26,7 +27,6 @@ export class LinkMediaGroupService {
     try {
       const linkMediaGroup: LinkMediaGroup =
         this.linkMediaGroupRepository.create({ ...createLinkMediaGroupDto });
-
       return await this.linkMediaGroupRepository.upsert(linkMediaGroup, {
         conflictPaths: ['rights', 'media', 'user_group'],
       });
@@ -66,10 +66,13 @@ export class LinkMediaGroupService {
 
   async findAllMediaByUserGroupId(id: number) {
     try {
+      console.log(id);
       const request = await this.linkMediaGroupRepository.find({
         where: { user_group: { id } },
         relations: ['user_group'],
       });
+      console.log('------------linkMediaGroup------------');
+      console.log(request);
       return request.map((linkGroup: LinkMediaGroup) => linkGroup.media);
     } catch (error) {
       console.log(error);
@@ -86,7 +89,7 @@ export class LinkMediaGroupService {
         where: { media: { id } },
         relations: ['user_group', 'media'],
       });
-      return request.map((linkGroup: LinkMediaGroup) => linkGroup.media);
+      return request.map((linkGroup: LinkMediaGroup) => linkGroup);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -106,6 +109,34 @@ export class LinkMediaGroupService {
     } catch (error) {
       throw new InternalServerErrorException(
         `an error occurred whild finding all MediaGroup for this userGroup : ${userGroupId}`,
+        error,
+      );
+    }
+  }
+
+  async updateMediaGroupRelation(
+    mediaId: number,
+    groupId: number,
+    rights: MediaGroupRights,
+  ) {
+    try {
+      const linkMediaGroupToUpdate = await this.linkMediaGroupRepository.find({
+        where: {
+          media: { id: mediaId },
+          user_group: { id: groupId },
+        },
+      });
+      const linkMediaGroup = this.linkMediaGroupRepository.create({
+        ...linkMediaGroupToUpdate[0],
+        rights: rights,
+      });
+      return await this.linkMediaGroupRepository.upsert(linkMediaGroup, {
+        conflictPaths: ['rights', 'media', 'user_group'],
+      });
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        'An error occurred while updating the linkMediaGroup',
         error,
       );
     }
@@ -137,6 +168,23 @@ export class LinkMediaGroupService {
       if (done.affected != 1) throw new NotFoundException(id);
       return done;
     } catch (error) {
+      throw new InternalServerErrorException(
+        'An error occurred while removing the linkMediaGroup',
+        error,
+      );
+    }
+  }
+
+  async removeMediaGroupRelation(mediaId: number, groupId) {
+    try {
+      const done = await this.linkMediaGroupRepository.delete({
+        media: { id: mediaId },
+        user_group: { id: groupId },
+      });
+      if (done.affected != 1) throw new NotFoundException(mediaId);
+      return done;
+    } catch (error) {
+      console.log(error);
       throw new InternalServerErrorException(
         'An error occurred while removing the linkMediaGroup',
         error,

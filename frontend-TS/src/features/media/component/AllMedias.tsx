@@ -1,10 +1,10 @@
 import { Button, Grid, styled } from "@mui/material";
-import { ChangeEvent, Dispatch, SetStateAction, useCallback, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
-import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
-import { Media } from "../types/types.ts";
+import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { Media, MediaGroupRights} from "../types/types.ts";
 import toast from "react-hot-toast";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 
@@ -15,6 +15,13 @@ import { deleteMedia } from "../api/deleteMedia.ts";
 import { updateMedia } from "../api/updateMedia.ts";
 import { lookingForMedias } from "../api/lookingForMedias.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
+import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
+import { addMediaToGroup } from "../api/AddMediaToGroup.ts";
+import { ListItem } from "../../../components/types.ts";
+import {  ProjectGroup } from "../../projects/types/types.ts";
+import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
+import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
+import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -39,6 +46,9 @@ interface IAllMediasProps{
 export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMedias}:IAllMediasProps) => {
   const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
+  const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
+  const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
+  const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
@@ -98,6 +108,42 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     }
   }
 
+  const handleGrantAccess = async (mediaId:number) =>{
+    const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
+    await addMediaToGroup(mediaId, linkUserGroupToAdd!.user_group)
+  }
+
+  const getOptionLabel = (option: UserGroup): string => {
+    return option.name
+  };
+  const listOfGroup: ListItem[] = useMemo(() => {
+    return groupList.map((projectGroup) => ({
+      id: projectGroup.user_group.id,
+      name: projectGroup.user_group.name,
+      rights: projectGroup.rights
+    }));
+  }, [groupList]);
+
+  const handleLookingForUserGroups = async (partialString: string) => {
+    const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
+    const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
+      .filter(
+        (group, index, self) =>
+          index === self.findIndex((g) => g.id === group.id),
+      );
+    setUserGroupSearch(linkUserGroups);
+    return uniqueUserGroups
+  }
+
+  const handleRemoveAccessToMedia= async (userGroupId:number, mediaId:number) => {
+    await removeAccessToMedia(mediaId, userGroupId);
+  }
+//TODO handleChange rights must be adapt to Media Entity
+  const handleChangeRights = async (group: ListItem, eventValue: string, mediaId: number) => {
+    await updateAccessToMedia(mediaId, group.id, eventValue as MediaGroupRights)
+  };
+  console.log('groupList',groupList)
+  console.log(medias)
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
@@ -138,6 +184,15 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     item={media}
                     updateItem={HandleUpdateMedia}
                     imagePath={media.path}
+                    AddAccessListItemFunction={handleGrantAccess}
+                    getOptionLabel={getOptionLabel}
+                    listOfItem={listOfGroup}
+                    removeAccessListItemFunction={handleRemoveAccessToMedia}
+                    searchModalEditItem={handleLookingForUserGroups}
+                    setItemList={setGroupList}
+                    setItemToAdd={setUserToAdd}
+                    getAccessToItem={getAllMediaGroups}
+                    handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
               ))
@@ -164,6 +219,15 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     item={searchedMedia}
                     updateItem={HandleUpdateMedia}
                     imagePath={searchedMedia.path}
+                    AddAccessListItemFunction={handleGrantAccess}
+                    getOptionLabel={getOptionLabel}
+                    listOfItem={listOfGroup}
+                    removeAccessListItemFunction={handleRemoveAccessToMedia}
+                    searchModalEditItem={handleLookingForUserGroups}
+                    setItemList={setGroupList}
+                    setItemToAdd={setUserToAdd}
+                    getAccessToItem={getAllMediaGroups}
+                    handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
             }
