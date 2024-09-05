@@ -73,8 +73,6 @@ export class GroupMediaService {
     try {
       const toReturn =
         await this.linkMediaGroupService.findAllUserGroupByMediaId(mediaId);
-      console.log('----------------toReturn----------------');
-      console.log(toReturn);
       return toReturn;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -192,13 +190,9 @@ export class GroupMediaService {
       console.log('media', mediaId, 'group', userGroupId);
       const userGroupMedias =
         await this.linkMediaGroupService.findAllMediaByUserGroupId(userGroupId);
-      console.log('------------userGroupMedias------------');
-      console.log(userGroupMedias);
       const mediaToRemove = userGroupMedias.find(
         (userGroupMedia) => userGroupMedia.id == mediaId,
       );
-      console.log('------------mediaToRemove------------');
-      console.log(mediaToRemove);
       if (!mediaToRemove) {
         throw new NotFoundException(
           `No association between Media with ID ${mediaId} and group with ID ${userGroupId}`,

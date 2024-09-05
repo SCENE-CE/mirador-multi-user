@@ -71,8 +71,6 @@ export class LinkMediaGroupService {
         where: { user_group: { id } },
         relations: ['user_group'],
       });
-      console.log('------------linkMediaGroup------------');
-      console.log(request);
       return request.map((linkGroup: LinkMediaGroup) => linkGroup.media);
     } catch (error) {
       console.log(error);
@@ -162,9 +160,7 @@ export class LinkMediaGroupService {
 
   async remove(id: number) {
     try {
-      console.log(' link media group id', id);
       const done = await this.linkMediaGroupRepository.delete(id);
-      console.log(done);
       if (done.affected != 1) throw new NotFoundException(id);
       return done;
     } catch (error) {
