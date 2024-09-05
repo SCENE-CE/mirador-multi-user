@@ -4,7 +4,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
 import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
-import { Media } from "../types/types.ts";
+import { Media, MediaGroupRights} from "../types/types.ts";
 import toast from "react-hot-toast";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 
@@ -18,11 +18,10 @@ import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 import { addMediaToGroup } from "../api/AddMediaToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
-import { Project, ProjectGroup } from "../../projects/types/types.ts";
+import {  ProjectGroup } from "../../projects/types/types.ts";
 import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
 import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
-import { getGroupsAccessToProject } from "../../projects/api/getGroupsAccessToProject.ts";
-import { updateProject } from "../../projects/api/updateProject.ts";
+import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -140,17 +139,8 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     await removeAccessToMedia(mediaId, userGroupId);
   }
 //TODO handleChange rights must be adapt to Media Entity
-  const handleChangeRights = async (group: ListItem, eventValue: string, mediaId: number,ProjectUser:Project) => {
-    const groups:ProjectGroup[] = await getGroupsAccessToProject(mediaId);
-    const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {rights, ...project } = ProjectUser
-    await updateProject({
-      project: { ...project},
-      id: userGroup!.id,
-      group: userGroup!.user_group,
-      rights: eventValue as ProjectRights
-    });
+  const handleChangeRights = async (group: ListItem, eventValue: string, mediaId: number) => {
+    await updateAccessToMedia(mediaId, group.id, eventValue as MediaGroupRights)
   };
   console.log('groupList',groupList)
   console.log(medias)
@@ -202,7 +192,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     setItemList={setGroupList}
                     setItemToAdd={setUserToAdd}
                     getAccessToItem={getAllMediaGroups}
-                    handleSelectorChange={}
+                    handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
               ))
@@ -237,7 +227,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     setItemList={setGroupList}
                     setItemToAdd={setUserToAdd}
                     getAccessToItem={getAllMediaGroups}
-                    handleSelectorChange={}
+                    handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
             }

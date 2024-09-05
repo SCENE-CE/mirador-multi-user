@@ -71,12 +71,11 @@ export class GroupMediaService {
 
   async getAllMediaGroup(mediaId: number) {
     try {
-      const toReturn = await this.linkMediaGroupService.findAllUserGroupByMediaId(
-        mediaId,
-      );
-      console.log('----------------toReturn----------------')
-      console.log(toReturn)
-      return toReturn
+      const toReturn =
+        await this.linkMediaGroupService.findAllUserGroupByMediaId(mediaId);
+      console.log('----------------toReturn----------------');
+      console.log(toReturn);
+      return toReturn;
     } catch (error) {
       throw new InternalServerErrorException(
         `an error occurred while getting all group for media : ${mediaId}`,
@@ -169,18 +168,37 @@ export class GroupMediaService {
     }
   }
 
+  async updateAccessToMedia(
+    mediaId: number,
+    userGroupId: number,
+    rights: MediaGroupRights,
+  ) {
+    try {
+      return await this.linkMediaGroupService.updateMediaGroupRelation(
+        mediaId,
+        userGroupId,
+        rights,
+      );
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occured while updating link between media and group : ${error.message}`,
+      );
+    }
+  }
+
   async removeAccesToMedia(mediaId: number, userGroupId: number) {
     try {
-      console.log("media",mediaId,"group", userGroupId)
+      console.log('media', mediaId, 'group', userGroupId);
       const userGroupMedias =
         await this.linkMediaGroupService.findAllMediaByUserGroupId(userGroupId);
-      console.log('------------userGroupMedias------------')
-      console.log(userGroupMedias)
+      console.log('------------userGroupMedias------------');
+      console.log(userGroupMedias);
       const mediaToRemove = userGroupMedias.find(
         (userGroupMedia) => userGroupMedia.id == mediaId,
       );
-      console.log('------------mediaToRemove------------')
-      console.log(mediaToRemove)
+      console.log('------------mediaToRemove------------');
+      console.log(mediaToRemove);
       if (!mediaToRemove) {
         throw new NotFoundException(
           `No association between Media with ID ${mediaId} and group with ID ${userGroupId}`,
@@ -191,8 +209,10 @@ export class GroupMediaService {
         userGroupId,
       );
     } catch (error) {
-      console.log(error)
-      throw new InternalServerErrorException(`an error occured while removing link between media and group : ${error.message}`)
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occured while removing link between media and group : ${error.message}`,
+      );
     }
   }
 }
