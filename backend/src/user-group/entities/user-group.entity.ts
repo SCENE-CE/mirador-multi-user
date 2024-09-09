@@ -4,6 +4,7 @@ import { LinkGroupProject } from '../../link-group-project/entities/link-group-p
 import { LinkMediaGroup } from '../../link-media-group/entities/link-media-group.entity';
 import { UserGroupTypes } from '../../enum/user-group-types';
 import { LinkUserGroup } from '../../link-user-group/entities/link-user-group.entity';
+import { LinkManifestGroup } from "../../link-manifest-group/entities/link-manifest-group.entity";
 
 @Entity()
 export class UserGroup {
@@ -37,4 +38,7 @@ export class UserGroup {
 
   @OneToMany(() => LinkUserGroup, (linkUserGroup) => linkUserGroup.user_group)
   linkUserGroups: LinkUserGroup[];
+
+  @OneToMany(() => LinkManifestGroup, (linkManifestGroup) => linkManifestGroup.user_group)
+  linkManifestGroup: LinkManifestGroup[];
 }

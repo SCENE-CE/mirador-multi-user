@@ -18,7 +18,6 @@ import * as fs from 'node:fs';
 import { generateAlphanumericSHA1Hash } from '../utils/hashGenerator';
 import { UpdateMediaDto } from '../media/dto/update-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
-import { MediaGroupRights } from '../enum/media-group-rights';
 import { UpdateMediaGroupRelationDto } from "./dto/updateMediaGroupRelationDto";
 
 @Controller('group-media')

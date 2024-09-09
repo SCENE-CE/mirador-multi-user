@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
   Unique
 } from 'typeorm';
-import { User_UserGroupRights } from '../../enum/user-user_group-rights';
+import { User_UserGroupRights } from '../../enum/rights';
 import { User } from '../../users/entities/user.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
 

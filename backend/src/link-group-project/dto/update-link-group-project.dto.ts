@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { GroupProjectRights } from '../../enum/group-project-rights';
+import { GroupProjectRights } from '../../enum/rights';
 import { Project } from '../../project/entities/project.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
 

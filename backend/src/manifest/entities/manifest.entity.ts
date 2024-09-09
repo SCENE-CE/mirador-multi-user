@@ -1,5 +1,7 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { IsNumberString, IsString } from "class-validator";
+import { LinkMediaGroup } from "../../link-media-group/entities/link-media-group.entity";
+import { LinkManifestGroup } from "../../link-manifest-group/entities/link-manifest-group.entity";
 
 @Entity()
 export class Manifest {
@@ -34,4 +36,8 @@ export class Manifest {
     onUpdate: 'CURRENT_TIMESTAMP(6)',
   })
   public updated_at: Date;
+
+
+  @OneToMany(() => LinkManifestGroup, (linkManifestGroup) => linkManifestGroup.manifest)
+  linkManifestGroup: LinkManifestGroup;
 }

@@ -1,5 +1,5 @@
 import { IsNumber, IsEnum } from 'class-validator';
-import { MediaGroupRights } from '../../enum/media-group-rights';
+import { MediaGroupRights } from '../../enum/rights';
 
 export class UpdateMediaGroupRelationDto {
   @IsNumber()
