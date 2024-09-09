@@ -1,10 +1,9 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
-import { UpdateGroupManifestDto } from './dto/update-group-manifest.dto';
 import { ManifestService } from '../manifest/manifest.service';
 import { LinkManifestGroupService } from '../link-manifest-group/link-manifest-group.service';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
-import { GroupProjectRights, ManifestGroupRights } from '../enum/rights';
+import { ManifestGroupRights } from '../enum/rights';
 
 @Injectable()
 export class GroupManifestService {
