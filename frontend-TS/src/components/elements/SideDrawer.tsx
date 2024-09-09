@@ -15,7 +15,6 @@ import MuiDrawer from "@mui/material/Drawer";
 import WorkIcon from "@mui/icons-material/Work";
 import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import GroupsIcon from "@mui/icons-material/Groups";
-import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ItemButton } from "./SideBar/ItemButton.tsx";
@@ -37,6 +36,8 @@ import { Media } from "../../features/media/types/types.ts";
 import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias.ts";
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
 import { UserGroup } from "../../features/user-group/types/types.ts";
+import { AllManifests } from "../../features/manifest/component/AllManifests.tsx";
+import ArticleIcon from '@mui/icons-material/Article';
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -104,7 +105,7 @@ const CONTENT = {
   PROJECTS:'PROJECT',
   GROUPS:'GROUPS',
   MEDIA:'MEDIA',
-  EDITOR:'EDITOR'
+  MANIFEST:'MANIFEST'
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
@@ -252,7 +253,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
           <Tooltip title="My Media"><ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="EDITOR" action={()=>handleChangeContent(CONTENT.EDITOR)}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} selected={false} icon={<ArticleIcon />} text="Manifests" action={()=>handleChangeContent(CONTENT.MANIFEST)}/></Tooltip>
         </List>
         <Divider/>
         {
@@ -310,6 +311,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             <AllGroups
               user={user}
             />
+          )
+        }
+        {
+          user && user.id && selectedContent === CONTENT.MANIFEST &&(
+            <AllManifests/>
           )
         }
         {modalDisconectIsOpen &&(
