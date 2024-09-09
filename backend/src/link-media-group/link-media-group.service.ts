@@ -171,7 +171,7 @@ export class LinkMediaGroupService {
     }
   }
 
-  async removeMediaGroupRelation(mediaId: number, groupId) {
+  async removeMediaGroupRelation(mediaId: number, groupId: number) {
     try {
       const done = await this.linkMediaGroupRepository.delete({
         media: { id: mediaId },

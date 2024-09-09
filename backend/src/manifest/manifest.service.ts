@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateManifestDto } from './dto/create-manifest.dto';
 import { UpdateManifestDto } from './dto/update-manifest.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -27,18 +31,66 @@ export class ManifestService {
   }
 
   async findOne(manifestId: number) {
-    try{
-    return await this.manifestRepository.findOneBy({id:manifestId});
-    } catch(error){
+    try {
+      return await this.manifestRepository.findOneBy({ id: manifestId });
+    } catch (error) {
       console.log(error);
-      throw new InternalServerErrorException(`an error occurred while finding manifest with id ${manifestId}`, error.message);
-    } }
-
-  update(id: number, updateManifestDto: UpdateManifestDto) {
-    return `This action updates a #${id} manifest`;
+      throw new InternalServerErrorException(
+        `an error occurred while finding manifest with id ${manifestId}`,
+        error.message,
+      );
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} manifest`;
+  async update(id: number, updateManifestDto: UpdateManifestDto) {
+    try {
+      const done = await this.manifestRepository.update(id, updateManifestDto);
+      if (done.affected != 1) throw new NotFoundException(id);
+      return this.findOne(id);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `An error occurred while updating the manifest with id ${id}`,
+        error.message,
+      );
+    }
   }
-}
+
+  async remove(id: number) {
+    try {
+      const done = await this.manifestRepository.delete(id);
+      if (done.affected != 1) throw new NotFoundException(id);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `An error occured while removing manifest with id : ${id}`,
+        error.message,
+      );
+    }
+  }
+
+  async findManifestsByPartialStringAndUserGroup(
+    partialString: string,
+    userGroupId: number,
+  ) {
+    try {
+      const partialStringLength = partialString.length;
+      return await this.manifestRepository
+        .createQueryBuilder('manifest')
+        .innerJoin('manifest.linkManifestGroup', 'linkManifestGroup')
+        .innerJoin('linkManifestGroup.user_group', 'userGroup')
+        .where('userGroup.id = :id', { id: userGroupId })
+        .andWhere('LEFT(manifest.name, :length) = :partialString', {
+          length: partialStringLength,
+          partialString,
+        })
+        .distinct(true)
+        .limit(3)
+        .getMany();
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `An error occurred: ${error.message}`,
+      );
+    }
+  }}

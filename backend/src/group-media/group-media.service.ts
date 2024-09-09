@@ -205,7 +205,7 @@ export class GroupMediaService {
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        `an error occured while removing link between media and group : ${error.message}`,
+        `an error occurred while removing link between media and group : ${error.message}`,
       );
     }
   }
