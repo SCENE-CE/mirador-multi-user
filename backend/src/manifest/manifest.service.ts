@@ -13,7 +13,7 @@ export class ManifestService {
   ) {}
   async create(createManifestDto: CreateManifestDto) {
     try {
-      const manifest = this.manifestRepository.create(createManifestDto);
+      const manifest = this.manifestRepository.create({ ...createManifestDto });
       return await this.manifestRepository.save(manifest);
     } catch (error) {
       throw new InternalServerErrorException(
@@ -26,9 +26,13 @@ export class ManifestService {
     return `This action returns all manifest`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} manifest`;
-  }
+  async findOne(manifestId: number) {
+    try{
+    return await this.manifestRepository.findOneBy({id:manifestId});
+    } catch(error){
+      console.log(error);
+      throw new InternalServerErrorException(`an error occurred while finding manifest with id ${manifestId}`, error.message);
+    } }
 
   update(id: number, updateManifestDto: UpdateManifestDto) {
     return `This action updates a #${id} manifest`;

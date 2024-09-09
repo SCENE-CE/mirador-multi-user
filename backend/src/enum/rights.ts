@@ -13,7 +13,7 @@ export enum GroupProjectRights {
 export enum User_UserGroupRights {
   ADMIN = 'admin',
   READER = 'reader',
-  WRITER = 'writer',
+  EDITOR = 'editor',
 }
 
 export enum ManifestGroupRights {

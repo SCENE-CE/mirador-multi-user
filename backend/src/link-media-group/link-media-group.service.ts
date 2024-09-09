@@ -81,17 +81,17 @@ export class LinkMediaGroupService {
     }
   }
 
-  async findAllUserGroupByMediaId(id: number) {
+  async findAllUserGroupByMediaId(mediaId: number) {
     try {
       const request = await this.linkMediaGroupRepository.find({
-        where: { media: { id } },
+        where: { media: { id: mediaId } },
         relations: ['user_group', 'media'],
       });
       return request.map((linkGroup: LinkMediaGroup) => linkGroup);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        `An error occurred while finding all Group for this media id : ${id}`,
+        `An error occurred while finding all Group for this media id : ${mediaId}`,
         error,
       );
     }
