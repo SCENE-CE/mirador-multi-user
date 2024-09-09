@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty } from 'class-validator';
-import { MediaGroupRights } from '../../enum/media-group-rights';
+import { MediaGroupRights } from '../../enum/rights';
 import { Media } from '../../media/entities/media.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
 

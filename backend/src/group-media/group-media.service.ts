@@ -10,7 +10,7 @@ import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';
 import { CreateMediaDto } from '../media/dto/create-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
-import { MediaGroupRights } from '../enum/media-group-rights';
+import { MediaGroupRights } from '../enum/rights';
 import { join } from 'path';
 import * as fs from 'node:fs';
 import { UpdateMediaDto } from '../media/dto/update-media.dto';

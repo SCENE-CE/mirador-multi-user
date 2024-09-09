@@ -12,7 +12,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';
-import { MediaGroupRights } from "../enum/media-group-rights";
+import { MediaGroupRights } from "../enum/rights";
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -81,17 +81,17 @@ export class LinkMediaGroupService {
     }
   }
 
-  async findAllUserGroupByMediaId(id: number) {
+  async findAllUserGroupByMediaId(mediaId: number) {
     try {
       const request = await this.linkMediaGroupRepository.find({
-        where: { media: { id } },
+        where: { media: { id: mediaId } },
         relations: ['user_group', 'media'],
       });
       return request.map((linkGroup: LinkMediaGroup) => linkGroup);
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
-        `An error occurred while finding all Group for this media id : ${id}`,
+        `An error occurred while finding all Group for this media id : ${mediaId}`,
         error,
       );
     }

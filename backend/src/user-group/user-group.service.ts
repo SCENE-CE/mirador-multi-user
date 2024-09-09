@@ -9,7 +9,7 @@ import { UserGroup } from './entities/user-group.entity';
 import { Brackets, Repository } from 'typeorm';
 import { UserGroupTypes } from '../enum/user-group-types';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
-import { User_UserGroupRights } from '../enum/user-user_group-rights';
+import { User_UserGroupRights } from '../enum/rights';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 
 @Injectable()

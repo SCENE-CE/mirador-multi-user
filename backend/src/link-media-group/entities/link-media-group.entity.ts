@@ -8,7 +8,7 @@ import {
 } from 'typeorm';
 import { Media } from '../../media/entities/media.entity';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
-import { MediaGroupRights } from '../../enum/media-group-rights';
+import { MediaGroupRights } from '../../enum/rights';
 
 @Entity()
 @Unique('constraint_right_media_userGroup', ['rights', 'media', 'user_group'])
