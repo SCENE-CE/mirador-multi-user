@@ -104,6 +104,7 @@ const CONTENT = {
   PROJECTS:'PROJECT',
   GROUPS:'GROUPS',
   MEDIA:'MEDIA',
+  EDITOR:'EDITOR'
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
@@ -251,7 +252,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
           <Tooltip title="My Media"><ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
           <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
+          <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="EDITOR" action={()=>handleChangeContent(CONTENT.EDITOR)}/></Tooltip>
         </List>
         <Divider/>
         {
