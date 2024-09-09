@@ -1,9 +1,18 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException, NotFoundException
+} from "@nestjs/common";
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
 import { ManifestService } from '../manifest/manifest.service';
 import { LinkManifestGroupService } from '../link-manifest-group/link-manifest-group.service';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ManifestGroupRights } from '../enum/rights';
+import { join } from 'path';
+import * as fs from 'node:fs';
+import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
+import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 
 @Injectable()
 export class GroupManifestService {
@@ -84,6 +93,126 @@ export class GroupManifestService {
       return new InternalServerErrorException(
         'An error occurred while getting manifest for user group',
         error.message,
+      );
+    }
+  }
+
+  async getAllManifestsForUserGroup(userGroupId: number) {
+    try {
+      return await this.linkGroupManifestService.findAllManifestByUserGroupId(
+        userGroupId,
+      );
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `an error occurred while getting all manifests for groups with id ${userGroupId}`,
+        error.message,
+      );
+    }
+  }
+
+  async removeManifest(manifestId: number) {
+    try {
+      const manifestToRemove = await this.manifestService.findOne(manifestId);
+      if (!manifestToRemove) {
+        throw new HttpException('Manifest not found', HttpStatus.NOT_FOUND);
+      }
+      const manifestGroups = await this.getAllManifestsGroup(manifestId);
+      const hash = manifestToRemove.path.split('/')[3];
+      const filename = manifestToRemove.path.split('/')[4];
+      const filePath = join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'uploadManifest',
+        hash,
+        filename,
+      );
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+        const dirPath = join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          'uploadManifest',
+          hash,
+        );
+        if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
+          fs.rmdirSync(dirPath);
+        }
+        await this.manifestService.remove(manifestId);
+        return {
+          status: HttpStatus.OK,
+          message: 'File and associated records deleted successfully',
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occurred while removing manifest with id ${manifestId}`,
+        error.message,
+      );
+    }
+  }
+
+  async updateManifest(updateManifestDto: UpdateManifestDto) {
+    try {
+      return await this.manifestService.update(
+        updateManifestDto.id,
+        updateManifestDto,
+      );
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occurred while updating manifest with id ${updateManifestDto.id}`,
+        error.message,
+      );
+    }
+  }
+
+  async updateAccessToManifest(
+    updateManifestGroupRelation: UpdateManifestGroupRelation,
+  ) {
+    try {
+      const { manifestId, userGroupId, rights } = updateManifestGroupRelation;
+      return this.linkGroupManifestService.updateManifestGroupRelation(
+        manifestId,
+        userGroupId,
+        rights,
+      )
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occurred while updating access to manifest with id ${updateManifestGroupRelation.manifestId}, for the group with id ${updateManifestGroupRelation.userGroupId}`,
+        error.message,
+      );
+    }
+  }
+
+  async removeAccesToManifest(manifestId: number, userGroupId: number) {
+    try {
+      console.log('manifestId', manifestId, 'group', userGroupId);
+      const userGroupManifests =
+        await this.linkGroupManifestService.findAllManifestByUserGroupId(
+          userGroupId,
+        );
+      const manifestToRemove = userGroupManifests.find(
+        (userGroupManifest) => userGroupManifest.id == manifestId,
+      );
+      if (!manifestToRemove) {
+        throw new NotFoundException(
+          `No association between Manifest with ID ${manifestId} and group with ID ${userGroupId}`,
+        );
+      }
+      return await this.linkGroupManifestService.removeManifestGroupRelation(
+        manifestToRemove.id,
+        userGroupId,
+      );
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occurred while removing link between manifest and group : ${error.message}`,
       );
     }
   }

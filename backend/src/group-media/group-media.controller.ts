@@ -13,12 +13,12 @@ import {
 import { GroupMediaService } from './group-media.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import { fileFilter } from '../media/utils/fileFilter';
+import { fileFilterMedia } from '../media/utils/fileFilterMedia';
 import * as fs from 'node:fs';
 import { generateAlphanumericSHA1Hash } from '../utils/hashGenerator';
 import { UpdateMediaDto } from '../media/dto/update-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
-import { UpdateMediaGroupRelationDto } from "./dto/updateMediaGroupRelationDto";
+import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 
 @Controller('group-media')
 export class GroupMediaController {
@@ -42,7 +42,7 @@ export class GroupMediaController {
           cb(null, fileName);
         },
       }),
-      fileFilter: fileFilter,
+      fileFilter: fileFilterMedia,
     }),
   )
   async uploadSingleFile(
