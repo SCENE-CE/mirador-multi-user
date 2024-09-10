@@ -2,8 +2,9 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException, NotFoundException
-} from "@nestjs/common";
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
 import { ManifestService } from '../manifest/manifest.service';
 import { LinkManifestGroupService } from '../link-manifest-group/link-manifest-group.service';
@@ -180,7 +181,7 @@ export class GroupManifestService {
         manifestId,
         userGroupId,
         rights,
-      )
+      );
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
