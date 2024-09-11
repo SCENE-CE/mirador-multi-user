@@ -28,7 +28,7 @@ interface IMMUCardProps<T,G,O,X> {
   updateItem?: (item: T) => void,
   getAccessToItem?:(itemId:number)=> Promise<any>
   removeAccessListItemFunction?:(itemId:number, accessItemId:number )=>Promise<void>
-  setItemList:Dispatch<SetStateAction<X[]>>
+  setItemList?:Dispatch<SetStateAction<X[]>>
   searchBarLabel?:string
   imagePath?:string
   manifest?:boolean

@@ -1,10 +1,11 @@
 import { Button, Grid, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { ChangeEvent, useCallback, useState } from "react";
-import { UserGroup } from "../../user-group/types/types.ts";
+import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
 import { Manifest } from "../types/types.ts";
 import { createManifest } from "../api/createManifest.ts";
+import MMUCard from "../../../components/elements/MMUCard.tsx";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -26,12 +27,11 @@ interface IAllManifests{
 }
 export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
+  const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
 
 
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.files);
     if (event.target.files) {
-      console.log(userPersonalGroup)
       await createManifest({
         idCreator: user.id,
         user_group: userPersonalGroup!,
@@ -41,6 +41,11 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     }
   },[fetchManifestForUser, manifests])
 
+  const HandleOpenModal =useCallback ((manifestId: number)=>{
+    setOpenModalManifestId(openModalManifestId === manifestId ? null : manifestId);
+  },[setOpenModalManifestId, openModalManifestId]);
+
+  console.log(manifests)
   return (
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
@@ -73,7 +78,15 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
           {manifests.map((manifest) => (
             <Grid item key={manifest.id}>
-              <p>{manifest.name}</p>
+              <MMUCard
+                id={manifest.id}
+                rights={ProjectRights.ADMIN}
+                description={manifest.description}
+                HandleOpenModal={()=>HandleOpenModal(manifest.id)}
+                openModal={openModalManifestId === manifest.id}
+                itemLabel={manifest.name}
+                itemOwner={user}
+                item={manifest} />
             </Grid>
           ))}
         </Grid>

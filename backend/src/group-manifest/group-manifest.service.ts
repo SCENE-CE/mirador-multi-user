@@ -1,19 +1,13 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
-import { ManifestService } from '../manifest/manifest.service';
-import { LinkManifestGroupService } from '../link-manifest-group/link-manifest-group.service';
-import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
-import { ManifestGroupRights } from '../enum/rights';
-import { join } from 'path';
-import * as fs from 'node:fs';
-import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
-import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateGroupManifestDto } from "./dto/create-group-manifest.dto";
+import { ManifestService } from "../manifest/manifest.service";
+import { LinkManifestGroupService } from "../link-manifest-group/link-manifest-group.service";
+import { AddManifestToGroupDto } from "./dto/add-manifest-to-group.dto";
+import { ManifestGroupRights } from "../enum/rights";
+import { join } from "path";
+import * as fs from "node:fs";
+import { UpdateManifestDto } from "../manifest/dto/update-manifest.dto";
+import { UpdateManifestGroupRelation } from "./dto/update-manifest-group-Relation";
 
 @Injectable()
 export class GroupManifestService {
@@ -73,12 +67,9 @@ export class GroupManifestService {
 
   async getAllManifestsGroup(manifestId: number) {
     try {
-      console.log('-------------getAllManifestsGroup-------------')
-      const toReturn = await this.linkGroupManifestService.findAllUserGroupByManifestId(
+      return await this.linkGroupManifestService.findAllUserGroupByManifestId(
         manifestId,
       );
-      console.log(toReturn);
-      return toReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -132,7 +123,7 @@ export class GroupManifestService {
         '..',
         '..',
         '..',
-        'uploadManifest',
+        'upload',
         hash,
         filename,
       );
@@ -143,7 +134,7 @@ export class GroupManifestService {
           '..',
           '..',
           '..',
-          'uploadManifest',
+          'upload',
           hash,
         );
         if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {

@@ -31,7 +31,7 @@ export class GroupManifestController {
           const hash = generateAlphanumericSHA1Hash(
             `${file.originalname}${Date.now().toString()}`,
           );
-          const uploadPath = `./uploadManifest/${hash}`;
+          const uploadPath = `./upload/${hash}`;
           fs.mkdirSync(uploadPath, { recursive: true });
           (req as any).generatedHash = hash;
           callback(null, uploadPath);
