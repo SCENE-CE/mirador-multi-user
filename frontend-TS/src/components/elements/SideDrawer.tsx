@@ -38,6 +38,8 @@ import { getUserPersonalGroup } from "../../features/projects/api/getUserPersona
 import { UserGroup } from "../../features/user-group/types/types.ts";
 import { AllManifests } from "../../features/manifest/component/AllManifests.tsx";
 import ArticleIcon from '@mui/icons-material/Article';
+import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests.ts";
+import { Manifest } from "../../features/manifest/types/types.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -115,6 +117,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [miradorState, setMiradorState] = useState<IState | undefined>();
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [medias, setMedias] = useState<Media[]>([])
+  const [manifests, setManifests] = useState<Manifest[]>([])
 
 
   const myRef = useRef<MiradorViewerHandle>(null);
@@ -158,9 +161,13 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }
 
   const fetchMediaForUser = async()=>{
-    const userPersonalGroup= await fetchUserPersonalGroup()
     const medias = await getUserGroupMedias(userPersonalGroup!.id)
     setMedias(medias);
+  }
+
+  const fetchManifestForUser = async()=>{
+    const manifest = await getUserGroupManifests(userPersonalGroup!.id)
+    setManifests(manifest)
   }
 
   const saveMiradorState = useCallback(async () => {
@@ -226,8 +233,10 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   };
   //UseEffect is necessary cause in some case selectedProjectId is undefined and made save bug
   useEffect(()=>{
+    fetchUserPersonalGroup()
     fetchProjects();
     fetchMediaForUser();
+    fetchManifestForUser()
   },[selectedProjectId])
 
   const projectSelected = useMemo(() => {
@@ -314,8 +323,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           )
         }
         {
-          user && user.id && selectedContent === CONTENT.MANIFEST &&(
-            <AllManifests/>
+          user && user.id && selectedContent === CONTENT.MANIFEST && userPersonalGroup &&(
+            <AllManifests manifests={manifests} fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup}/>
           )
         }
         {modalDisconectIsOpen &&(

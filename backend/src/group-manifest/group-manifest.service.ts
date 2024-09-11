@@ -22,6 +22,8 @@ export class GroupManifestService {
     private readonly linkGroupManifestService: LinkManifestGroupService,
   ) {}
   async create(createGroupManifestDto: CreateGroupManifestDto) {
+    console.log('-------------createGroupManifestDto-------------')
+    console.log(createGroupManifestDto)
     try {
       const { idCreator, path, user_group } = createGroupManifestDto;
       const manifest = await this.manifestService.create(
@@ -40,8 +42,10 @@ export class GroupManifestService {
     }
   }
 
-  async addManifestToGroup(AddManifestToGroupDto: AddManifestToGroupDto) {
-    const { userGroup, manifestsId } = AddManifestToGroupDto;
+  async addManifestToGroup(addManifestToGroupDto: AddManifestToGroupDto) {
+    console.log('-------------addManifestToGroupDto-------------')
+    console.log(addManifestToGroupDto)
+    const { userGroup, manifestsId } = addManifestToGroupDto;
     try {
       const manifestsForGroup = [];
       for (const manifestId of manifestsId) {
@@ -69,9 +73,12 @@ export class GroupManifestService {
 
   async getAllManifestsGroup(manifestId: number) {
     try {
-      return await this.linkGroupManifestService.findAllUserGroupByManifestId(
+      console.log('-------------getAllManifestsGroup-------------')
+      const toReturn = await this.linkGroupManifestService.findAllUserGroupByManifestId(
         manifestId,
       );
+      console.log(toReturn);
+      return toReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(

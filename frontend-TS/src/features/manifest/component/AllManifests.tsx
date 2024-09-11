@@ -1,6 +1,6 @@
 import { Button, Grid, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { ChangeEvent, useCallback } from "react";
+import { ChangeEvent, useCallback, useState } from "react";
 import { UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
 import { Manifest } from "../types/types.ts";
@@ -25,6 +25,7 @@ interface IAllManifests{
   manifests:Manifest[]
 }
 export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests}:IAllManifests) => {
+  const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
 
 
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
@@ -68,7 +69,15 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           </Grid>
         </Grid>
       </Grid>
-      <p>All Manifest</p>
+      {!searchedManifest &&(
+        <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+          {manifests.map((manifest) => (
+            <Grid item key={manifest.id}>
+              <p>{manifest.name}</p>
+            </Grid>
+          ))}
+        </Grid>
+        )}
     </Grid>
   )
 }

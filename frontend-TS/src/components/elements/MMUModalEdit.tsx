@@ -20,8 +20,8 @@ interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
   itemLabel: string,
-  updateItem: (newItem: T) => void,
-  deleteItem: (itemId: number) => void,
+  updateItem?: (newItem: T) => void,
+  deleteItem?: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem?: (query: string) => Promise<G[]>,
   getOptionLabel?: (option: G, searchInput: string) => string,
@@ -69,7 +69,9 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
       name:newItemName,
       description:newItemDescription,
     }
+    if(updateItem){
     updateItem(itemToUpdate);
+    }
     setEditName(false);
     setEditDescription(false)
   }, [item, newItemName, newItemDescription, updateItem, itemOwner, editName, editDescription]);
