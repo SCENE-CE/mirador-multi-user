@@ -1,13 +1,4 @@
-import {
-  Box,
-  CSSObject,
-  Divider,
-  IconButton,
-  List,
-  styled,
-  Theme,
-  Tooltip
-} from "@mui/material";
+import { Box, CSSObject, Divider, IconButton, List, styled, Theme, Tooltip } from "@mui/material";
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -37,7 +28,7 @@ import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias.
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
 import { UserGroup } from "../../features/user-group/types/types.ts";
 import { AllManifests } from "../../features/manifest/component/AllManifests.tsx";
-import ArticleIcon from '@mui/icons-material/Article';
+import ArticleIcon from "@mui/icons-material/Article";
 import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests.ts";
 import { Manifest } from "../../features/manifest/types/types.ts";
 
@@ -161,14 +152,32 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }
 
   const fetchMediaForUser = async()=>{
-    const medias = await getUserGroupMedias(userPersonalGroup!.id)
+    const personnalGroup = await fetchUserPersonalGroup()
+    const medias = await getUserGroupMedias(personnalGroup!.id)
     setMedias(medias);
   }
-
-  const fetchManifestForUser = async()=>{
-    const manifest = await getUserGroupManifests(userPersonalGroup!.id)
-    setManifests(manifest)
+  const getManifestFromUrl = async (manifestUrl:string) => {
+    try{
+      const response = await fetch(manifestUrl);
+      return await response.json();
+    }catch(error){
+      console.error(error)
+    }
   }
+
+  const fetchManifestForUser = async () => {
+    const personnalGroup = await fetchUserPersonalGroup()
+    const userManifests = await getUserGroupManifests(personnalGroup!.id);
+    const updatedManifests = await Promise.all(
+      userManifests.map(async (manifest) => {
+        const manifestUrl = manifest.path;
+        const manifestJson = await getManifestFromUrl(manifestUrl);
+        return { ...manifest, json: manifestJson };
+      })
+    );
+
+    setManifests(updatedManifests);
+  };
 
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = myRef.current?.setViewer();
@@ -233,7 +242,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   };
   //UseEffect is necessary cause in some case selectedProjectId is undefined and made save bug
   useEffect(()=>{
-    fetchUserPersonalGroup()
     fetchProjects();
     fetchMediaForUser();
     fetchManifestForUser()

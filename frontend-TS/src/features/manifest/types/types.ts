@@ -8,6 +8,7 @@ export type Manifest = {
   idCreator:number,
   created_at:Date,
   updated_at:Date,
+  json?:any
 }
 
 export type CreateManifestDto = {

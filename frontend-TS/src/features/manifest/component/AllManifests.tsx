@@ -44,8 +44,15 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const HandleOpenModal =useCallback ((manifestId: number)=>{
     setOpenModalManifestId(openModalManifestId === manifestId ? null : manifestId);
   },[setOpenModalManifestId, openModalManifestId]);
-
+//TODO: Finding a way to have a presentation image for every manifest IIIF
   console.log(manifests)
+  for (const manifest of manifests) {
+    console.log('loop manifest');
+    if (manifest.json) {
+      console.log('thumbnail');
+      console.log(manifest.json.sequences[0].canvases[0].images[0].on);
+    }
+  }
   return (
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
@@ -86,11 +93,13 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 openModal={openModalManifestId === manifest.id}
                 itemLabel={manifest.name}
                 itemOwner={user}
-                item={manifest} />
+                item={manifest}
+                imagePath={manifest.json.sequences[0].canvases[0].images[0].on ? manifest.json.sequences[0].canvases[0].images[0].on : undefined}
+              />
             </Grid>
           ))}
         </Grid>
-        )}
+      )}
     </Grid>
   )
 }
