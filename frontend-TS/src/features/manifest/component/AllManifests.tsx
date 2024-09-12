@@ -9,6 +9,10 @@ import MMUCard from "../../../components/elements/MMUCard.tsx";
 import placeholder from '../../../assets/Placeholder.svg';
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForManifests } from "../api/loonkingForManifests.ts";
+import { ModalButton } from "../../../components/elements/ModalButton.tsx";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+import toast from "react-hot-toast";
+import ModeEditIcon from "@mui/icons-material/ModeEdit";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -104,6 +108,11 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     }
   };
 
+  const HandleCopyToClipBoard = async (path: string) => {
+    await navigator.clipboard.writeText(path);
+    toast.success('path copied to clipboard');
+  }
+
   return (
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
@@ -140,6 +149,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           {manifests.map((manifest, index) => (
             <Grid item key={manifest.id}>
               <MMUCard
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 id={manifest.id}
                 rights={ProjectRights.ADMIN}
                 description={manifest.description}
@@ -149,6 +159,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 itemOwner={user}
                 item={manifest}
                 imagePath={thumbnailUrls[index]}
+                manifest={true}
+                EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
               />
             </Grid>
           ))}
@@ -159,6 +171,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             <Grid item key={searchedManifest.id}>
               <MMUCard
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 id={searchedManifest.id}
                 rights={ProjectRights.ADMIN}
                 description={searchedManifest.description}
@@ -168,6 +181,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 itemOwner={user}
                 item={searchedManifest}
                 imagePath={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}
+                manifest={true}
               />
             </Grid>
           </Grid>
