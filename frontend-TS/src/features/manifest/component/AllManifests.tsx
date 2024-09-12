@@ -1,11 +1,12 @@
 import { Button, Grid, styled } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, useCallback, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
 import { Manifest } from "../types/types.ts";
 import { createManifest } from "../api/createManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
+import placeholder from '../../../assets/Placeholder.svg';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -44,15 +45,39 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const HandleOpenModal =useCallback ((manifestId: number)=>{
     setOpenModalManifestId(openModalManifestId === manifestId ? null : manifestId);
   },[setOpenModalManifestId, openModalManifestId]);
-//TODO: Finding a way to have a presentation image for every manifest IIIF
-  console.log(manifests)
-  for (const manifest of manifests) {
-    console.log('loop manifest');
-    if (manifest.json) {
-      console.log('thumbnail');
-      console.log(manifest.json.sequences[0].canvases[0].images[0].on);
+
+
+  const thumbnailUrls = useMemo(() => {
+    const thumbailUrls = [];
+
+    for (const manifest of manifests) {
+
+      if (manifest.json) {
+        const thumbnailUrl = manifest.json.thumbnail?.['@id'];
+
+        if (thumbnailUrl) {
+          thumbailUrls.push(thumbnailUrl);
+        } else if (manifest.json.sequences) {
+          const canvases = manifest.json.sequences[0].canvases;
+
+          for (const canvas of canvases) {
+            const images = canvas.images;
+
+            for (const image of images) {
+              if (image.on) {
+                thumbailUrls.push(image.on);
+              }
+            }
+          }
+        } else {
+          thumbailUrls.push(placeholder);
+        }
+      }
     }
-  }
+    return thumbailUrls;
+  }, [manifests]);
+
+
   return (
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
@@ -83,7 +108,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       </Grid>
       {!searchedManifest &&(
         <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
-          {manifests.map((manifest) => (
+          {manifests.map((manifest, index) => (
             <Grid item key={manifest.id}>
               <MMUCard
                 id={manifest.id}
@@ -94,7 +119,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 itemLabel={manifest.name}
                 itemOwner={user}
                 item={manifest}
-                imagePath={manifest.json.sequences[0].canvases[0].images[0].on ? manifest.json.sequences[0].canvases[0].images[0].on : undefined}
+                imagePath={thumbnailUrls[index]}
               />
             </Grid>
           ))}
