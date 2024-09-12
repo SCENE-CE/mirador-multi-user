@@ -7,6 +7,8 @@ import { Manifest } from "../types/types.ts";
 import { createManifest } from "../api/createManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import placeholder from '../../../assets/Placeholder.svg';
+import { SearchBar } from "../../../components/elements/SearchBar.tsx";
+import { lookingForManifests } from "../api/loonkingForManifests.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -29,7 +31,7 @@ interface IAllManifests{
 export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
-
+  const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
 
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -77,6 +79,30 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     return thumbailUrls;
   }, [manifests]);
 
+  const HandleLookingForManifests = async (partialString : string) =>{
+    return await lookingForManifests(partialString, userPersonalGroup.id)
+  }
+
+  const getOptionLabelForManifestSearchBar = (option:Manifest): string => {
+    return option.name;
+  };
+
+
+  const handleSetSearchManifest = (manifestQuery: Manifest) => {
+    if (manifestQuery) {
+      const manifestIndex = manifests.findIndex((manifest: Manifest) => manifest.id === manifestQuery.id);
+      if (manifestIndex !== -1) {
+        setSearchedManifest(manifests[manifestIndex]); // Set the searched manifest
+        setSearchedManifestIndex(manifestIndex); // Set the index
+      } else {
+        setSearchedManifest(null); // Clear if not found
+        setSearchedManifestIndex(null); // Clear index if not found
+      }
+    } else {
+      setSearchedManifest(null); // Clear if no query
+      setSearchedManifestIndex(null); // Clear index if no query
+    }
+  };
 
   return (
     <Grid item container flexDirection="column" spacing={1}>
@@ -104,6 +130,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
               Create Manifest
             </Button>
           </Grid>
+          <Grid item>
+              <SearchBar fetchFunction={HandleLookingForManifests} getOptionLabel={getOptionLabelForManifestSearchBar} label={"Search Manifest"} setSearchedData={handleSetSearchManifest}/>
+          </Grid>
         </Grid>
       </Grid>
       {!searchedManifest &&(
@@ -125,6 +154,26 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           ))}
         </Grid>
       )}
+      {
+        searchedManifest &&(
+          <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+            <Grid item key={searchedManifest.id}>
+              <MMUCard
+                id={searchedManifest.id}
+                rights={ProjectRights.ADMIN}
+                description={searchedManifest.description}
+                HandleOpenModal={()=>HandleOpenModal(searchedManifest.id)}
+                openModal={openModalManifestId === searchedManifest.id}
+                itemLabel={searchedManifest.name}
+                itemOwner={user}
+                item={searchedManifest}
+                imagePath={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}
+              />
+            </Grid>
+          </Grid>
+
+          )
+      }
     </Grid>
   )
 }
