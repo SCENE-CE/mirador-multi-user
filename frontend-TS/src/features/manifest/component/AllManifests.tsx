@@ -13,7 +13,8 @@ import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import toast from "react-hot-toast";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-
+import CreateIcon from '@mui/icons-material/Create';
+import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -36,7 +37,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
-
+  const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       await createManifest({
@@ -113,6 +114,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     toast.success('path copied to clipboard');
   }
 
+  const HandleCreateManifestIsOpen = ()=>{
+    setCreateManifestIsOpen(!createManifestIsOpen)
+  }
   return (
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
@@ -134,17 +138,22 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
             <Button
               component="label"
               variant="contained"
-              startIcon={<CloudUploadIcon />}
+              startIcon={<CreateIcon />}
+              onClick={HandleCreateManifestIsOpen }
             >
               Create Manifest
             </Button>
           </Grid>
-          <Grid item>
-              <SearchBar fetchFunction={HandleLookingForManifests} getOptionLabel={getOptionLabelForManifestSearchBar} label={"Search Manifest"} setSearchedData={handleSetSearchManifest}/>
-          </Grid>
+          {
+            !createManifestIsOpen &&(
+              <Grid item>
+                <SearchBar fetchFunction={HandleLookingForManifests} getOptionLabel={getOptionLabelForManifestSearchBar} label={"Search Manifest"} setSearchedData={handleSetSearchManifest}/>
+              </Grid>
+            )
+          }
         </Grid>
       </Grid>
-      {!searchedManifest &&(
+      {!searchedManifest && !createManifestIsOpen &&(
         <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
           {manifests.map((manifest, index) => (
             <Grid item key={manifest.id}>
@@ -167,7 +176,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         </Grid>
       )}
       {
-        searchedManifest &&(
+        searchedManifest && !createManifestIsOpen &&(
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             <Grid item key={searchedManifest.id}>
               <MMUCard
@@ -186,7 +195,16 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
             </Grid>
           </Grid>
 
-          )
+        )
+      }
+      {
+        createManifestIsOpen &&(
+          <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px"}}>
+            <Grid item container>
+              <ManifestCreationForm/>
+            </Grid>
+          </Grid>
+        )
       }
     </Grid>
   )
