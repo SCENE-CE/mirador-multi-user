@@ -15,6 +15,8 @@ import toast from "react-hot-toast";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import CreateIcon from '@mui/icons-material/Create';
 import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
+import { PopUpMedia } from "../../media/component/PopUpMedia.tsx";
+import { Media } from "../../media/types/types.ts";
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -32,8 +34,9 @@ interface IAllManifests{
   user:User
   fetchManifestForUser:()=>void
   manifests:Manifest[]
+  medias:Media[]
 }
-export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests}:IAllManifests) => {
+export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
@@ -201,7 +204,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         createManifestIsOpen &&(
           <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px"}}>
             <Grid item container>
-              <ManifestCreationForm/>
+              <PopUpMedia medias={medias}>
+                <ManifestCreationForm/>
+              </PopUpMedia>
             </Grid>
           </Grid>
         )
