@@ -20,6 +20,7 @@ import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
+import { linkManifest } from "../api/linkManifest.ts";
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -123,10 +124,27 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     await navigator.clipboard.writeText(path);
     toast.success('path copied to clipboard');
   }
-  const handleLinkManifest = async ()=>{
-    console.log('manifest Link')
+
+  const handleLinkManifest = useCallback (async (path: string) => {
+    const response = await fetch(path,{
+      method:"GET"
+    })
+
+    if(response){
+      const manifest = await response.json()
+      await linkManifest({
+        idCreator: user.id,
+        user_group: userPersonalGroup!,
+        path: path,
+        name: manifest.label && manifest.label.type == 'string' ? manifest.label : "new Manifest",
+      });
+    fetchManifestForUser()
     setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)
-  }
+      return toast.success('manifest created')
+    }
+    return toast.error('manifest could not be created')
+
+  },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
   return (
     <Grid item container flexDirection="column" spacing={1}>
@@ -207,7 +225,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         )
       }
       <Grid>
-        <DrawerLinkManifest linkingManifest={(link)=>console.log(link)} modalCreateManifestIsOpen={modalLinkManifestIsOpen} toggleModalManifestCreation={handleLinkManifest} />
+        <DrawerLinkManifest linkingManifest={handleLinkManifest} modalCreateManifestIsOpen={modalLinkManifestIsOpen} toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
       </Grid>
     </Grid>
   )

@@ -6,7 +6,7 @@ import { ChangeEvent, useCallback, useState } from "react";
 interface IDrawerCreateManifestProps{
   modalCreateManifestIsOpen: boolean
   toggleModalManifestCreation:()=>void
-  linkingManifest:(link:string)=>void
+  linkingManifest:(link:string)=>Promise<string>
 }
 
 export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManifestIsOpen,linkingManifest}:IDrawerCreateManifestProps) =>{

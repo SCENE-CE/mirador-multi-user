@@ -12,7 +12,9 @@ export type Manifest = {
 }
 
 export type CreateManifestDto = {
+  name?:string
   idCreator:number
   user_group:UserGroup;
-  file:File;
+  file?:File;
+  path?:string;
 }

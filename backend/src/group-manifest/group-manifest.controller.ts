@@ -59,6 +59,15 @@ export class GroupManifestController {
     return this.groupManifestService.create(manifestToCreate);
   }
 
+  @Post('/manifest/link')
+  linkManifest(@Body() createLinkDto) {
+    const manifestToCreate = {
+      ...createLinkDto,
+      description: 'your manifest description',
+    };
+    return this.groupManifestService.create(manifestToCreate);
+  }
+
   @Get('/group/:userGroupId')
   async getManifestByUserGroupId(@Param('userGroupId') userGroupId: number) {
     return this.groupManifestService.getAllManifestsForUserGroup(userGroupId);
@@ -95,7 +104,6 @@ export class GroupManifestController {
   addManifestToGroup(@Body() addManifestToGroup: AddManifestToGroupDto) {
     return this.groupManifestService.addManifestToGroup(addManifestToGroup);
   }
-
 
   @Delete('/manifest/:manifestId/:groupId')
   async deleteManifestById(

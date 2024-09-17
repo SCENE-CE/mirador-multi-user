@@ -3,7 +3,6 @@ import storage from "../../../utils/storage.ts";
 
 export const getAllManifestGroups = async (manifestId: number): Promise<ProjectGroup[]> => {
   const token = storage.getToken();
-  console.log('CONSOLE LOG GET GROUP ACCESS TO Manifest')
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/${manifestId}`, {
       method: "GET",

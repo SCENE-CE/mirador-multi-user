@@ -1,13 +1,19 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateGroupManifestDto } from "./dto/create-group-manifest.dto";
-import { ManifestService } from "../manifest/manifest.service";
-import { LinkManifestGroupService } from "../link-manifest-group/link-manifest-group.service";
-import { AddManifestToGroupDto } from "./dto/add-manifest-to-group.dto";
-import { ManifestGroupRights } from "../enum/rights";
-import { join } from "path";
-import * as fs from "node:fs";
-import { UpdateManifestDto } from "../manifest/dto/update-manifest.dto";
-import { UpdateManifestGroupRelation } from "./dto/update-manifest-group-Relation";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
+import { ManifestService } from '../manifest/manifest.service';
+import { LinkManifestGroupService } from '../link-manifest-group/link-manifest-group.service';
+import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
+import { ManifestGroupRights } from '../enum/rights';
+import { join } from 'path';
+import * as fs from 'node:fs';
+import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
+import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 
 @Injectable()
 export class GroupManifestService {
@@ -16,10 +22,11 @@ export class GroupManifestService {
     private readonly linkGroupManifestService: LinkManifestGroupService,
   ) {}
   async create(createGroupManifestDto: CreateGroupManifestDto) {
-    console.log('-------------createGroupManifestDto-------------')
-    console.log(createGroupManifestDto)
+    console.log('-------------createGroupManifestDto-------------');
+    console.log(createGroupManifestDto);
     try {
       const { idCreator, path, user_group } = createGroupManifestDto;
+      console.log(path)
       const manifest = await this.manifestService.create(
         createGroupManifestDto,
       );
@@ -37,8 +44,8 @@ export class GroupManifestService {
   }
 
   async addManifestToGroup(addManifestToGroupDto: AddManifestToGroupDto) {
-    console.log('-------------addManifestToGroupDto-------------')
-    console.log(addManifestToGroupDto)
+    console.log('-------------addManifestToGroupDto-------------');
+    console.log(addManifestToGroupDto);
     const { userGroup, manifestsId } = addManifestToGroupDto;
     try {
       const manifestsForGroup = [];
@@ -129,14 +136,7 @@ export class GroupManifestService {
       );
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
-        const dirPath = join(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          'upload',
-          hash,
-        );
+        const dirPath = join(__dirname, '..', '..', '..', 'upload', hash);
         if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
           fs.rmdirSync(dirPath);
         }
