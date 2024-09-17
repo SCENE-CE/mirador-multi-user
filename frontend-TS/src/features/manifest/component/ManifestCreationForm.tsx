@@ -64,70 +64,63 @@ export const ManifestCreationForm = () => {
       items: items.map(() => []),
     };
 
+    const fetchMediaForItem = async (media: any, index: number): Promise<void> => {
+      try {
+        const response = await fetch(media.value, { method: "GET" });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const mediaBlob = await response.blob();
+        const mediaUrl = URL.createObjectURL(mediaBlob);
+        const contentType = response.headers.get("Content-Type");
+
+        if (contentType && contentType.startsWith("image")) {
+          const img = new Image();
+          img.src = mediaUrl;
+
+          await new Promise<void>((resolve, reject) => {
+            img.onload = () => {
+              manifestToCreate.items[index].push({
+                id: media.value,
+                type: "Canvas",
+                height: img.height,
+                width: img.width,
+              });
+              resolve();
+            };
+            img.onerror = reject;
+          });
+        } else if (contentType && contentType.startsWith("video")) {
+          const video = document.createElement("video");
+          video.src = mediaUrl;
+
+          await new Promise<void>((resolve, reject) => {
+            video.onloadedmetadata = () => {
+              manifestToCreate.items[index].push({
+                id: media.value,
+                type: "Canvas",
+                height: video.videoHeight,
+                width: video.videoWidth,
+                duration: video.duration,
+              });
+              resolve();
+            };
+            video.onerror = reject;
+          });
+        } else {
+          console.log("Unsupported media type:", contentType);
+        }
+      } catch (error) {
+        console.log("Error fetching media:", error);
+        throw error;
+      }
+    };
+
     const fetchMediaPromises = items.flatMap((item, index) =>
       item.media.map((media) => {
-        return new Promise<void>(async (resolve, reject) => {
-          try {
-            const response = await fetch(media.value, {
-              method: "GET",
-            });
-
-            if (!response.ok) {
-              throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const mediaBlob = await response.blob();
-            const mediaUrl = URL.createObjectURL(mediaBlob);
-            const contentType = response.headers.get("Content-Type");
-
-            if (contentType && contentType.startsWith("image")) {
-              console.log("Image detected");
-              const img = new Image();
-              img.src = mediaUrl;
-
-              img.onload = () => {
-                console.log("Image Width:", img.width);
-                console.log("Image Height:", img.height);
-                // Push the image data into the correct index in manifestToCreate.items
-                manifestToCreate.items[index].push({
-                  id: media.value,
-                  type: "Canvas",
-                  height: img.height,
-                  width: img.width,
-                });
-                resolve();
-              };
-
-              img.onerror = (error) => reject(error);
-            } else if (contentType && contentType.startsWith("video")) {
-              console.log("Video detected");
-              const video = document.createElement("video");
-              video.src = mediaUrl;
-
-              video.onloadedmetadata = () => {
-                console.log("Video Width:", video.videoWidth);
-                console.log("Video Height:", video.videoHeight);
-                console.log("Video Duration:", video.duration);
-                manifestToCreate.items[index].push({
-                  id: media.value,
-                  type: "Canvas",
-                  height: video.videoHeight,
-                  width: video.videoWidth,
-                  duration: video.duration,
-                });
-                resolve();
-              };
-
-              video.onerror = (error) => reject(error);
-            } else {
-              console.log("Unsupported media type:", contentType);
-              resolve();
-            }
-          } catch (error) {
-            console.log("Error fetching media:", error);
-            reject(error);
-          }
-        });
+        return fetchMediaForItem(media, index);
       })
     );
 
@@ -139,6 +132,7 @@ export const ManifestCreationForm = () => {
       console.error("Error processing media", error);
     }
   };
+
 
   return (
     <Grid container direction="column" spacing={4}>
