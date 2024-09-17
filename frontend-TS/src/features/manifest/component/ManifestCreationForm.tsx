@@ -60,7 +60,12 @@ export const ManifestCreationForm = () => {
       items: items,
     };
 
-    const manifestToCreate: { items: ManifestItem[][] } = {
+    const manifestToCreate: { ['@Context']:string,type:string,label:{en:string[]},items: ManifestItem[][] } = {
+      ['@Context']:'https://iiif.io/api/presentation/3/context.json',
+      type:"manifest",
+      label:{
+        en:[manifestTitle]
+      },
       items: items.map(() => []),
     };
 
@@ -79,7 +84,7 @@ export const ManifestCreationForm = () => {
         if (contentType && contentType.startsWith("image")) {
           const img = new Image();
           img.src = mediaUrl;
-
+          console.log('img',img)
           await new Promise<void>((resolve, reject) => {
             img.onload = () => {
               manifestToCreate.items[index].push({
@@ -87,6 +92,7 @@ export const ManifestCreationForm = () => {
                 type: "Canvas",
                 height: img.height,
                 width: img.width,
+                label:"image"
               });
               resolve();
             };
@@ -104,6 +110,7 @@ export const ManifestCreationForm = () => {
                 height: video.videoHeight,
                 width: video.videoWidth,
                 duration: video.duration,
+                label:"video"
               });
               resolve();
             };

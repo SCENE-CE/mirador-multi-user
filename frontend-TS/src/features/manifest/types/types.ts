@@ -24,6 +24,7 @@ export type ManifestItem = {
   type: "Canvas";
   height: number;
   width: number;
-  duration?: number; // Optional because only videos have a duration
+  duration?: number;
+  label:string
 };
 
