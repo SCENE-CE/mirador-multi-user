@@ -69,7 +69,7 @@ export const PopUpMedia = ({ medias, children }: PopUpMediaProps) => {
             style: { backgroundColor: 'transparent' },
           },
         }}>
-        <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
+        <ImageList sx={{ width: 500, height: 450, padding: 1 }} cols={3} rowHeight={164}>
           {medias.map((media) => (
             <CustomImageItem key={media.path}>
               <img

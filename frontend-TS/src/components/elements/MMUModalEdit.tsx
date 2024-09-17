@@ -99,7 +99,6 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
 
   useEffect(() => {
     fetchData();
-    console.log('editModal rerender')
   }, [fetchData, item, itemOwner]);
 
   const rightsSelectorItems: SelectorItem[] = Object.values(ProjectRights).map((right) => ({
@@ -113,7 +112,6 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   const handleSearchModalEditItem = (query: string)=>{
     return searchModalEditItem ? searchModalEditItem(query) : [""] as unknown as Promise<string[]>
   }
-
   return (
     <Grid container>
       <Grid item container flexDirection="column">

@@ -69,7 +69,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     if (removeAccessListItemFunction) {
       await removeAccessListItemFunction(item.id, accessItemId);
     }
-    fetchData(); // Refresh the list after removing an item
+    fetchData();
   }
 
 
@@ -77,7 +77,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     if (AddAccessListItemFunction) {
       await AddAccessListItemFunction(item.id);
     }
-    fetchData(); // Refresh the list after removing an item
+    fetchData();
   }
 
 
@@ -99,7 +99,6 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     }
     await fetchData();
   };
-
 
   return (
     <Card>
@@ -144,7 +143,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             width={500}
             openModal={openModal}
             setOpenModal={HandleOpenModal}
-            children={ manifest ?
+            children={ !manifest ?
               <MMUModalEdit
                 description={description}
                 searchBarLabel={searchBarLabel ? searchBarLabel : ""}

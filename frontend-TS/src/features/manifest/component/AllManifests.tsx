@@ -67,18 +67,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
         if (thumbnailUrl) {
           thumbailUrls.push(thumbnailUrl);
-        } else if (manifest.json.sequences) {
-          const canvases = manifest.json.sequences[0].canvases;
-
-          for (const canvas of canvases) {
-            const images = canvas.images;
-
-            for (const image of images) {
-              if (image.on) {
-                thumbailUrls.push(image.on);
-              }
-            }
-          }
         } else {
           thumbailUrls.push(placeholder);
         }
