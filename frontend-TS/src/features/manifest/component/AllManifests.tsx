@@ -1,6 +1,5 @@
-import { Button, Grid, styled } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import { ChangeEvent, useCallback, useMemo, useState } from "react";
+import { Grid, styled } from "@mui/material";
+import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
 import { Manifest } from "../types/types.ts";
@@ -17,6 +16,9 @@ import CreateIcon from '@mui/icons-material/Create';
 import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
 import { PopUpMedia } from "../../media/component/PopUpMedia.tsx";
 import { Media } from "../../media/types/types.ts";
+import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
+import UploadFileIcon from '@mui/icons-material/UploadFile';
+import AddLinkIcon from '@mui/icons-material/AddLink';
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -36,11 +38,13 @@ interface IAllManifests{
   manifests:Manifest[]
   medias:Media[]
 }
+
 export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
   const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
+
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       await createManifest({
@@ -56,6 +60,19 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     setOpenModalManifestId(openModalManifestId === manifestId ? null : manifestId);
   },[setOpenModalManifestId, openModalManifestId]);
 
+  const HandleCreateManifestIsOpen = ()=>{
+    console.log("toto")
+    setCreateManifestIsOpen(!createManifestIsOpen)
+  }
+
+  const actions = [
+    { icon: <CreateIcon /> as ReactNode, name: 'Create',onClick: HandleCreateManifestIsOpen},
+    { icon: <UploadFileIcon /> as ReactNode, name: 'Upload' , onClick: () => {
+      console.log(document.getElementById("hiddenFileInput"))
+        document.getElementById("hiddenFileInput")?.click();
+      }},
+    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:() => console.log('link Manifest')},
+];
 
   const thumbnailUrls = useMemo(() => {
     const thumbailUrls = [];
@@ -105,35 +122,20 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     toast.success('path copied to clipboard');
   }
 
-  const HandleCreateManifestIsOpen = ()=>{
-    setCreateManifestIsOpen(!createManifestIsOpen)
-  }
+
   return (
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
         <Grid item container spacing={2}>
+          <Grid item sx={{position:'absolute', right:'10px', bottom:'10px'}}>
+            <SpeedDialTooltipOpen actions={actions}/>
+          </Grid>
           <Grid item>
-            <Button
-              component="label"
-              variant="contained"
-              startIcon={<CloudUploadIcon />}
-            >
-              Upload Manifest
               <VisuallyHiddenInput
+                id="hiddenFileInput"
                 type="file"
                 onChange={handleCreateManifest}
               />
-            </Button>
-          </Grid>
-          <Grid item>
-            <Button
-              component="label"
-              variant="contained"
-              startIcon={<CreateIcon />}
-              onClick={HandleCreateManifestIsOpen }
-            >
-              Create Manifest
-            </Button>
           </Grid>
           {
             !createManifestIsOpen &&(
