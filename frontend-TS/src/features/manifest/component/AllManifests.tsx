@@ -19,6 +19,7 @@ import { Media } from "../../media/types/types.ts";
 import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddLinkIcon from '@mui/icons-material/AddLink';
+import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -44,6 +45,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
   const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
+  const [modalLinkManifestIsOpen, setModalLinkManifestSIsOpen] = useState(false)
 
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -68,11 +70,11 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const actions = [
     { icon: <CreateIcon /> as ReactNode, name: 'Create',onClick: HandleCreateManifestIsOpen},
     { icon: <UploadFileIcon /> as ReactNode, name: 'Upload' , onClick: () => {
-      console.log(document.getElementById("hiddenFileInput"))
+        console.log(document.getElementById("hiddenFileInput"))
         document.getElementById("hiddenFileInput")?.click();
       }},
-    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:() => console.log('link Manifest')},
-];
+    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:() => setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)},
+  ];
 
   const thumbnailUrls = useMemo(() => {
     const thumbailUrls = [];
@@ -121,7 +123,10 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     await navigator.clipboard.writeText(path);
     toast.success('path copied to clipboard');
   }
-
+  const handleLinkManifest = async ()=>{
+    console.log('manifest Link')
+    setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)
+  }
 
   return (
     <Grid item container flexDirection="column" spacing={1}>
@@ -131,11 +136,11 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
             <SpeedDialTooltipOpen actions={actions}/>
           </Grid>
           <Grid item>
-              <VisuallyHiddenInput
-                id="hiddenFileInput"
-                type="file"
-                onChange={handleCreateManifest}
-              />
+            <VisuallyHiddenInput
+              id="hiddenFileInput"
+              type="file"
+              onChange={handleCreateManifest}
+            />
           </Grid>
           {
             !createManifestIsOpen &&(
@@ -201,6 +206,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           </Grid>
         )
       }
+      <Grid>
+        <DrawerLinkManifest linkingManifest={(link)=>console.log(link)} modalCreateManifestIsOpen={modalLinkManifestIsOpen} toggleModalManifestCreation={handleLinkManifest} />
+      </Grid>
     </Grid>
   )
 }

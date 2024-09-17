@@ -136,6 +136,8 @@ export const ManifestCreationForm = () => {
           Create
         </Button>
       </Grid>
+      <Grid>
+      </Grid>
     </Grid>
   );
 };
