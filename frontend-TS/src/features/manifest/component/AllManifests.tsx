@@ -150,7 +150,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
         <Grid item container spacing={2}>
-          <Grid item sx={{position:'absolute', right:'10px', bottom:'10px'}}>
+          <Grid item sx={{position:'fixed', right:'10px', bottom:'10px', zIndex:999}}>
             <SpeedDialTooltipOpen actions={actions}/>
           </Grid>
           <Grid item>
