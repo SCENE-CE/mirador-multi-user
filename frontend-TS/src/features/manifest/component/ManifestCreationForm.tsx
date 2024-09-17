@@ -3,6 +3,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { FieldForm } from "../../../components/elements/FieldForm.tsx";
+import { ManifestItem } from "../types/types.ts";
 
 interface MediaField {
   name: string;
@@ -53,13 +54,90 @@ export const ManifestCreationForm = () => {
     setItems(updatedItems);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const manifestData = {
       title: manifestTitle,
       items: items,
     };
-    console.log("Manifest Data: ", manifestData);
-    // Add your submit logic here (e.g., send to an API or further processing)
+
+    const manifestToCreate: { items: ManifestItem[][] } = {
+      items: items.map(() => []),
+    };
+
+    const fetchMediaPromises = items.flatMap((item, index) =>
+      item.media.map((media) => {
+        return new Promise<void>(async (resolve, reject) => {
+          try {
+            const response = await fetch(media.value, {
+              method: "GET",
+            });
+
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const mediaBlob = await response.blob();
+            const mediaUrl = URL.createObjectURL(mediaBlob);
+            const contentType = response.headers.get("Content-Type");
+
+            if (contentType && contentType.startsWith("image")) {
+              console.log("Image detected");
+              const img = new Image();
+              img.src = mediaUrl;
+
+              img.onload = () => {
+                console.log("Image Width:", img.width);
+                console.log("Image Height:", img.height);
+                // Push the image data into the correct index in manifestToCreate.items
+                manifestToCreate.items[index].push({
+                  id: media.value,
+                  type: "Canvas",
+                  height: img.height,
+                  width: img.width,
+                });
+                resolve();
+              };
+
+              img.onerror = (error) => reject(error);
+            } else if (contentType && contentType.startsWith("video")) {
+              console.log("Video detected");
+              const video = document.createElement("video");
+              video.src = mediaUrl;
+
+              video.onloadedmetadata = () => {
+                console.log("Video Width:", video.videoWidth);
+                console.log("Video Height:", video.videoHeight);
+                console.log("Video Duration:", video.duration);
+                manifestToCreate.items[index].push({
+                  id: media.value,
+                  type: "Canvas",
+                  height: video.videoHeight,
+                  width: video.videoWidth,
+                  duration: video.duration,
+                });
+                resolve();
+              };
+
+              video.onerror = (error) => reject(error);
+            } else {
+              console.log("Unsupported media type:", contentType);
+              resolve();
+            }
+          } catch (error) {
+            console.log("Error fetching media:", error);
+            reject(error);
+          }
+        });
+      })
+    );
+
+    try {
+      await Promise.all(fetchMediaPromises);
+      console.log("All media fetched and manifestToCreate:", manifestToCreate);
+      console.log("All media fetched, Manifest Data: ", manifestData);
+    } catch (error) {
+      console.error("Error processing media", error);
+    }
   };
 
   return (
@@ -107,7 +185,7 @@ export const ManifestCreationForm = () => {
                   color="secondary"
                   onClick={() => handleNewMediaField(itemIndex)}
                 >
-                  Add Media to Item {itemIndex + 1}
+                  Add Media to canvas {itemIndex + 1}
                 </Button>
               </Grid>
 
@@ -117,7 +195,7 @@ export const ManifestCreationForm = () => {
                   color="error"
                   onClick={() => handleRemoveItem(itemIndex)}
                 >
-                  Remove Item {itemIndex + 1}
+                  Remove canvas {itemIndex + 1}
                 </Button>
               </Grid>
             </Grid>
@@ -127,7 +205,7 @@ export const ManifestCreationForm = () => {
 
       <Grid item>
         <Button variant="contained" color="primary" onClick={handleNewItemGroup}>
-          Add New Item
+          Add New canvas
         </Button>
       </Grid>
 

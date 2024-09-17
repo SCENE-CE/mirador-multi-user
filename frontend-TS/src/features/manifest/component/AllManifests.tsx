@@ -1,4 +1,4 @@
-import { Grid, styled } from "@mui/material";
+import { Box, Grid, styled } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
@@ -14,7 +14,7 @@ import toast from "react-hot-toast";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import CreateIcon from '@mui/icons-material/Create';
 import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
-import { PopUpMedia } from "../../media/component/PopUpMedia.tsx";
+import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
 import UploadFileIcon from '@mui/icons-material/UploadFile';
@@ -69,12 +69,12 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }
 
   const actions = [
+    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:() => setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)},
     { icon: <CreateIcon /> as ReactNode, name: 'Create',onClick: HandleCreateManifestIsOpen},
     { icon: <UploadFileIcon /> as ReactNode, name: 'Upload' , onClick: () => {
         console.log(document.getElementById("hiddenFileInput"))
         document.getElementById("hiddenFileInput")?.click();
       }},
-    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:() => setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)},
   ];
 
   const thumbnailUrls = useMemo(() => {
@@ -150,7 +150,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
         <Grid item container spacing={2}>
-          <Grid item sx={{position:'fixed', right:'10px', bottom:'10px', zIndex:999}}>
+          <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
             <SpeedDialTooltipOpen actions={actions}/>
           </Grid>
           <Grid item>
@@ -215,18 +215,24 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       }
       {
         createManifestIsOpen &&(
-          <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px"}}>
-            <Grid item container>
-              <PopUpMedia medias={medias}>
+          <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
+              <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup}>
                 <ManifestCreationForm/>
-              </PopUpMedia>
-            </Grid>
+              </SidePanelMedia>
           </Grid>
         )
       }
       <Grid>
         <DrawerLinkManifest linkingManifest={handleLinkManifest} modalCreateManifestIsOpen={modalLinkManifestIsOpen} toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
       </Grid>
+      {
+        !createManifestIsOpen && (
+          <Grid item sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%', backgroundColor: '#fff', zIndex: 998}}>
+            <Box sx={{ padding: '40px', textAlign: 'center'}}>
+            </Box>
+          </Grid>
+        )
+      }
     </Grid>
   )
 }

@@ -4,7 +4,6 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MuiDrawer from "@mui/material/Drawer";
 import WorkIcon from "@mui/icons-material/Work";
-import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import GroupsIcon from "@mui/icons-material/Groups";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
@@ -31,6 +30,7 @@ import { AllManifests } from "../../features/manifest/component/AllManifests.tsx
 import ArticleIcon from "@mui/icons-material/Article";
 import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests.ts";
 import { Manifest } from "../../features/manifest/types/types.ts";
+import PermMediaIcon from '@mui/icons-material/PermMedia';
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -269,7 +269,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         <List sx={{minHeight:'70vh'}}>
           <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
           <Tooltip title="My Manifests"><ItemButton open={open} selected={false} icon={<ArticleIcon />} text="Manifests" action={()=>handleChangeContent(CONTENT.MANIFEST)}/></Tooltip>
-          <Tooltip title="My Media"><ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<SubscriptionsIcon />} text="Medias" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
+          <Tooltip title="My Media"><ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<PermMediaIcon />} text="Medias" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
           <Tooltip title="My Groups"><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
         </List>
         <Divider/>

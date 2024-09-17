@@ -18,3 +18,12 @@ export type CreateManifestDto = {
   file?:File;
   path?:string;
 }
+
+export type ManifestItem = {
+  id: string;
+  type: "Canvas";
+  height: number;
+  width: number;
+  duration?: number; // Optional because only videos have a duration
+};
+
