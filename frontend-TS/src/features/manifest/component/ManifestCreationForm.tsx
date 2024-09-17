@@ -4,6 +4,9 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { FieldForm } from "../../../components/elements/FieldForm.tsx";
 import { ManifestItem } from "../types/types.ts";
+import { createManifest } from "../api/createManifest.ts";
+import { UserGroup } from "../../user-group/types/types.ts";
+import { User } from "../../auth/types/types.ts";
 
 interface MediaField {
   name: string;
@@ -14,7 +17,12 @@ interface ItemGroup {
   media: MediaField[];
 }
 
-export const ManifestCreationForm = () => {
+interface IManifestCreationFormProps{
+  userPersonalGroup:UserGroup
+  user:User
+
+}
+export const ManifestCreationForm = ({userPersonalGroup,user}:IManifestCreationFormProps) => {
   const [manifestTitle, setManifestTitle] = useState<string>(""); // For manifest title
   const [items, setItems] = useState<ItemGroup[]>([]);
 
@@ -60,13 +68,14 @@ export const ManifestCreationForm = () => {
       items: items,
     };
 
-    const manifestToCreate: { ['@Context']:string,type:string,label:{en:string[]},items: ManifestItem[][] } = {
+    const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
       ['@Context']:'https://iiif.io/api/presentation/3/context.json',
-      type:"manifest",
+      id:"",
+      type:"Manifest",
       label:{
         en:[manifestTitle]
       },
-      items: items.map(() => []),
+      items: [],
     };
 
     const fetchMediaForItem = async (media: any, index: number): Promise<void> => {
@@ -87,7 +96,7 @@ export const ManifestCreationForm = () => {
           console.log('img',img)
           await new Promise<void>((resolve, reject) => {
             img.onload = () => {
-              manifestToCreate.items[index].push({
+              manifestToCreate.items.push({
                 id: media.value,
                 type: "Canvas",
                 height: img.height,
@@ -104,7 +113,7 @@ export const ManifestCreationForm = () => {
 
           await new Promise<void>((resolve, reject) => {
             video.onloadedmetadata = () => {
-              manifestToCreate.items[index].push({
+              manifestToCreate.items.push({
                 id: media.value,
                 type: "Canvas",
                 height: video.videoHeight,
@@ -133,6 +142,13 @@ export const ManifestCreationForm = () => {
 
     try {
       await Promise.all(fetchMediaPromises);
+      const manifestCreation = createManifest({
+        manifest : manifestToCreate,
+        name: manifestToCreate.label,
+        user_group: userPersonalGroup,
+        idCreator:user.id
+      });
+      console.log(manifestCreation);
       console.log("All media fetched and manifestToCreate:", manifestToCreate);
       console.log("All media fetched, Manifest Data: ", manifestData);
     } catch (error) {

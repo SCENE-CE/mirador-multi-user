@@ -3,7 +3,7 @@ import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
 import { Manifest } from "../types/types.ts";
-import { createManifest } from "../api/createManifest.ts";
+import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import placeholder from '../../../assets/Placeholder.svg';
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
@@ -50,7 +50,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
-      await createManifest({
+      await uploadManifest({
         idCreator: user.id,
         user_group: userPersonalGroup!,
         file: event.target.files[0],
@@ -217,7 +217,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         createManifestIsOpen &&(
           <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
               <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup}>
-                <ManifestCreationForm/>
+                <ManifestCreationForm userPersonalGroup={userPersonalGroup} user={user}/>
               </SidePanelMedia>
           </Grid>
         )
