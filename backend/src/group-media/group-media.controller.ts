@@ -56,7 +56,7 @@ export class GroupMediaController {
       name: file.originalname,
       description: 'your media description',
       user_group: userGroup,
-      path: `http://localhost:9000/${(req as any).generatedHash}/${file.filename}`,
+      path: `${process.env.CADDY_HOST}/${(req as any).generatedHash}/${file.filename}`,
     };
     return await this.groupMediaService.createMedia(mediaToCreate);
   }

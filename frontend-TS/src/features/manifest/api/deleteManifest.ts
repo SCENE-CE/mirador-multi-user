@@ -4,8 +4,10 @@ import { CreateManifestDto } from "../types/types.ts";
 export const createManifest = async (manifestDto: CreateManifestDto) => {
   const token = storage.getToken();
   const formData = new FormData();
+if(manifestDto.file){
 
   formData.append('file', manifestDto.file);
+}
   formData.append('idCreator', manifestDto.idCreator.toString());
   formData.append('user_group', JSON.stringify(manifestDto.user_group));
 

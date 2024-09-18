@@ -7,6 +7,7 @@ import { ManifestItem } from "../types/types.ts";
 import { createManifest } from "../api/createManifest.ts";
 import { UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
+import toast from "react-hot-toast";
 
 interface MediaField {
   name: string;
@@ -78,7 +79,7 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup
       items: [],
     };
 
-    const fetchMediaForItem = async (media: any, index: number): Promise<void> => {
+    const fetchMediaForItem = async (media: any): Promise<void> => {
       try {
         const response = await fetch(media.value, { method: "GET" });
 
@@ -127,23 +128,24 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup
             img.onerror = reject;
           });
         } else if (contentType && contentType.startsWith("video")) {
-          const video = document.createElement("video");
-          video.src = mediaUrl;
-
-          await new Promise<void>((resolve, reject) => {
-            video.onloadedmetadata = () => {
-              manifestToCreate.items.push({
-                id: media.value,
-                type: "Canvas",
-                height: video.videoHeight,
-                width: video.videoWidth,
-                duration: video.duration,
-                label:"video"
-              });
-              resolve();
-            };
-            video.onerror = reject;
-          });
+          // const video = document.createElement("video");
+          // video.src = mediaUrl;
+          //
+          // await new Promise<void>((resolve, reject) => {
+          //   video.onloadedmetadata = () => {
+          //     manifestToCreate.items.push({
+          //       id: media.value,
+          //       type: "Canvas",
+          //       height: video.videoHeight,
+          //       width: video.videoWidth,
+          //       duration: video.duration,
+          //       label:"video"
+          //     });
+          //     resolve();
+          //   };
+          //   video.onerror = reject;
+          // });
+          toast.error('video will be handle in a future release')
         } else {
           console.log("Unsupported media type:", contentType);
         }
@@ -153,9 +155,9 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup
       }
     };
 
-    const fetchMediaPromises = items.flatMap((item, index) =>
+    const fetchMediaPromises = items.flatMap((item) =>
       item.media.map((media) => {
-        return fetchMediaForItem(media, index);
+        return fetchMediaForItem(media);
       })
     );
 
