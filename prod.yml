@@ -3,3 +3,6 @@ services:
     frontend:
       environment:
         - ENV=PROD
+    caddy:
+      volumes:
+        - ./backend/upload/.:/app/upload/
