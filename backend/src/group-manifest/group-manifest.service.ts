@@ -2,8 +2,9 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
-  InternalServerErrorException, NotFoundException
-} from "@nestjs/common";
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
 import { ManifestService } from '../manifest/manifest.service';
 import { LinkManifestGroupService } from '../link-manifest-group/link-manifest-group.service';
@@ -21,8 +22,11 @@ export class GroupManifestService {
     private readonly linkGroupManifestService: LinkManifestGroupService,
   ) {}
   async create(createGroupManifestDto: CreateGroupManifestDto) {
+    console.log('-------------createGroupManifestDto-------------');
+    console.log(createGroupManifestDto);
     try {
       const { idCreator, path, user_group } = createGroupManifestDto;
+      console.log(path)
       const manifest = await this.manifestService.create(
         createGroupManifestDto,
       );
@@ -39,8 +43,10 @@ export class GroupManifestService {
     }
   }
 
-  async addManifestToGroup(AddManifestToGroupDto: AddManifestToGroupDto) {
-    const { userGroup, manifestsId } = AddManifestToGroupDto;
+  async addManifestToGroup(addManifestToGroupDto: AddManifestToGroupDto) {
+    console.log('-------------addManifestToGroupDto-------------');
+    console.log(addManifestToGroupDto);
+    const { userGroup, manifestsId } = addManifestToGroupDto;
     try {
       const manifestsForGroup = [];
       for (const manifestId of manifestsId) {
@@ -124,20 +130,13 @@ export class GroupManifestService {
         '..',
         '..',
         '..',
-        'uploadManifest',
+        'upload',
         hash,
         filename,
       );
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
-        const dirPath = join(
-          __dirname,
-          '..',
-          '..',
-          '..',
-          'uploadManifest',
-          hash,
-        );
+        const dirPath = join(__dirname, '..', '..', '..', 'upload', hash);
         if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
           fs.rmdirSync(dirPath);
         }
@@ -180,7 +179,7 @@ export class GroupManifestService {
         manifestId,
         userGroupId,
         rights,
-      )
+      );
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(

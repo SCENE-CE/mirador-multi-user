@@ -142,8 +142,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const handleChangeRights = async (group: ListItem, eventValue: string, mediaId: number) => {
     await updateAccessToMedia(mediaId, group.id, eventValue as MediaGroupRights)
   };
-  console.log('groupList',groupList)
-  console.log(medias)
+
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between">

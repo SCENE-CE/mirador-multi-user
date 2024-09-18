@@ -20,8 +20,8 @@ interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
   itemLabel: string,
-  updateItem: (newItem: T) => void,
-  deleteItem: (itemId: number) => void,
+  updateItem?: (newItem: T) => void,
+  deleteItem?: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem?: (query: string) => Promise<G[]>,
   getOptionLabel?: (option: G, searchInput: string) => string,
@@ -69,7 +69,9 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
       name:newItemName,
       description:newItemDescription,
     }
+    if(updateItem){
     updateItem(itemToUpdate);
+    }
     setEditName(false);
     setEditDescription(false)
   }, [item, newItemName, newItemDescription, updateItem, itemOwner, editName, editDescription]);
@@ -97,7 +99,6 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
 
   useEffect(() => {
     fetchData();
-    console.log('editModal rerender')
   }, [fetchData, item, itemOwner]);
 
   const rightsSelectorItems: SelectorItem[] = Object.values(ProjectRights).map((right) => ({
@@ -111,7 +112,6 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   const handleSearchModalEditItem = (query: string)=>{
     return searchModalEditItem ? searchModalEditItem(query) : [""] as unknown as Promise<string[]>
   }
-
   return (
     <Grid container>
       <Grid item container flexDirection="column">

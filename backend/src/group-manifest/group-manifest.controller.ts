@@ -9,6 +9,8 @@ import {
   Param,
   Delete,
   Patch,
+  InternalServerErrorException,
+  BadRequestException,
 } from '@nestjs/common';
 import { GroupManifestService } from './group-manifest.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -18,6 +20,7 @@ import * as fs from 'node:fs';
 import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
+import { ManifestGroupRights } from "../enum/rights";
 
 @Controller('group-manifest')
 export class GroupManifestController {
@@ -31,7 +34,7 @@ export class GroupManifestController {
           const hash = generateAlphanumericSHA1Hash(
             `${file.originalname}${Date.now().toString()}`,
           );
-          const uploadPath = `./uploadManifest/${hash}`;
+          const uploadPath = `./upload/${hash}`;
           fs.mkdirSync(uploadPath, { recursive: true });
           (req as any).generatedHash = hash;
           callback(null, uploadPath);
@@ -55,9 +58,62 @@ export class GroupManifestController {
       description: 'your manifest description',
       user_group: userGroup,
       path: `http://localhost:9000/${(req as any).generatedHash}/${file.filename}`,
+      rights: ManifestGroupRights.ADMIN,
     };
     return this.groupManifestService.create(manifestToCreate);
   }
+
+  @Post('/manifest/link')
+  linkManifest(@Body() createLinkDto) {
+    const manifestToCreate = {
+      ...createLinkDto,
+      description: 'your manifest description',
+    };
+    return this.groupManifestService.create(manifestToCreate);
+  }
+
+  @Post('/manifest/creation')
+  async createManifest(@Body() createManifestDto) {
+    console.log('createManifestDto:', createManifestDto);
+
+    const label = createManifestDto.name?.en[0];
+    if (!label) {
+      throw new BadRequestException('Manifest label is required');
+    }
+
+    const hash = generateAlphanumericSHA1Hash(
+      `${label}${Date.now().toString()}`,
+    );
+    console.log('hash:', hash);
+    const uploadPath = `./upload/${hash}`;
+    fs.mkdirSync(uploadPath, { recursive: true });
+
+    try {
+      const manifestData = { ...createManifestDto.manifest, id: `${uploadPath}/${label}.json` };
+      const manifestJson = JSON.stringify(manifestData);
+      const filePath = `${uploadPath}/${label}.json`;
+      console.log(`Writing to: ${filePath}`);
+      await fs.promises.writeFile(filePath, manifestJson);
+
+      const manifestToCreate = {
+        name: label,
+        description: 'your manifest description',
+        user_group: createManifestDto.user_group,
+        path: `http://localhost:9000/${hash}/${label}.json`, // consider using env variables
+        idCreator: createManifestDto.idCreator,
+        rights: ManifestGroupRights.ADMIN,
+      };
+
+      return await this.groupManifestService.create(manifestToCreate);
+    } catch (error) {
+      console.error(`Error occurred while creating manifest: ${error.message}`);
+      throw new InternalServerErrorException(
+        `An error occurred: ${error.message}`,
+      );
+    }
+  }
+
+
 
   @Get('/group/:userGroupId')
   async getManifestByUserGroupId(@Param('userGroupId') userGroupId: number) {
@@ -95,7 +151,6 @@ export class GroupManifestController {
   addManifestToGroup(@Body() addManifestToGroup: AddManifestToGroupDto) {
     return this.groupManifestService.addManifestToGroup(addManifestToGroup);
   }
-
 
   @Delete('/manifest/:manifestId/:groupId')
   async deleteManifestById(

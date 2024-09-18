@@ -46,7 +46,7 @@ export class LinkManifestGroupService {
     try {
       const request = await this.linkManifestGroupRepository.find({
         where: { manifest: { id: manifestId } },
-        relations: ['user_group', 'media'],
+        relations: ['user_group', 'manifest'],
       });
       return request.map((linkGroup: LinkManifestGroup) => linkGroup);
     } catch (error) {
