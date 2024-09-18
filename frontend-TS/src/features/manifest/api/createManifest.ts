@@ -1,26 +1,20 @@
 import storage from "../../../utils/storage.ts";
-import { CreateManifestDto } from "../types/types.ts";
 
-export const createManifest= async (createManifestDto:CreateManifestDto) => {
+export const createManifest = async (createManifestDto :any) => {
   const token = storage.getToken();
-  const formData = new FormData();
-  formData.append('file', createManifestDto.file);
-  formData.append('idCreator', createManifestDto.idCreator.toString());
-  formData.append('user_group', JSON.stringify(createManifestDto.user_group));
-
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-media/media/upload`, {
-    method: 'POST',
-    headers: {
-      "Authorization": `Bearer ${token}`,
-    },
-    body: formData
-  });
-
-  if (!response.ok) {
-    throw new Error(`Error: ${response.statusText}`);
+  console.log('createManifestDto',createManifestDto);
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/creation`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(createManifestDto)
+    });
+    const manifest = await response.json();
+    return manifest
+  } catch (error) {
+    throw error;
   }
-
-  const data = await response.json();
-  console.log(data);
-  return data;
 }
