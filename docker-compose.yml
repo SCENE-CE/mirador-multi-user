@@ -33,6 +33,7 @@ services:
       DB_PORT: ${DB_EXPOSE_PORT}
       JWT_SECRET: ${JWT_SECRET}
       SALT: ${SALT}
+      BACKEND_URL: ${BACKEND_URL}
     depends_on:
       - db
     restart: always
