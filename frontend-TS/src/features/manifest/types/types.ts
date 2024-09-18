@@ -20,11 +20,24 @@ export type CreateManifestDto = {
 }
 
 export type ManifestItem = {
-  id: string;
-  type: "Canvas";
-  height: number;
-  width: number;
-  duration?: number;
-  label:string
+  id: string
+  type: string,
+  height: number,
+  width: number,
+  label: { en:string[] },
+  items:any[]
 };
 
+export type ManifestSubItem = {
+  id: string
+  type: string,
+  motivation: string,
+  target: string,
+  body: {
+    id: string,
+    type: string,
+    format: string,
+    height: number,
+    width: number,
+  }
+}

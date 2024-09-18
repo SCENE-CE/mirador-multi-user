@@ -101,7 +101,26 @@ export const ManifestCreationForm = ({userPersonalGroup,user}:IManifestCreationF
                 type: "Canvas",
                 height: img.height,
                 width: img.width,
-                label:"image"
+                label: { en:["image"] },
+                items:[{
+                  id:media.value+`/annotation/${Date.now}`,
+                  type:"AnnotationPage",
+                  items:[
+                    {
+                      id:media.value+`/annotation/${Date.now}`,
+                      type:"Annotation",
+                      motivation:"painting",
+                      target:media.value,
+                      body:{
+                        id:media.value,
+                        type:"Image",
+                        format:`Image/${response.headers.get("Content-Type")}`,
+                        height:img.height,
+                        width:img.width,
+                      }
+                    }
+                  ]
+                }]
               });
               resolve();
             };
