@@ -15,6 +15,8 @@ import { MediaGroupModule } from './media-group/media-group.module';
 import { GroupProjectModule } from './group-project/group-project.module';
 import { GroupMediaModule } from './group-media/group-media.module';
 import { LinkUserGroupModule } from './link-user-group/link-user-group.module';
+import { ManifestModule } from './manifest/manifest.module';
+import { GroupManifestModule } from './group-manifest/group-manifest.module';
 import dbConfiguration from './config/db.config';
 
 @Module({
@@ -42,6 +44,8 @@ import dbConfiguration from './config/db.config';
     GroupProjectModule,
     GroupMediaModule,
     LinkUserGroupModule,
+    ManifestModule,
+    GroupManifestModule,
   ],
   controllers: [AppController],
   providers: [AppService],

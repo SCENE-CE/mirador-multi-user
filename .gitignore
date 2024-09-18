@@ -1,6 +1,6 @@
 .env
 .idea/
 frontend-TS/src/config/config.ts
-backend/uploadMedia/
+backend/upload/
 backend/migrations/*
 mariaDB/data/*

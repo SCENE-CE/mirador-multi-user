@@ -9,7 +9,15 @@ export type CreateMediaDto = {
 export type Media={
   id:number
   path:string,
+  name:string,
+  description:string,
   idCreator:number,
   created_at:Date,
   updated_at:Date,
+}
+
+export enum MediaGroupRights {
+  ADMIN = 'admin',
+  READER = 'reader',
+  EDITOR = 'editor',
 }

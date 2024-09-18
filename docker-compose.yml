@@ -18,13 +18,13 @@ services:
       VITE_BACKEND_URL: ${BACKEND_URL}
     depends_on:
       - backend
-    restart: unless-stopped
+    restart: always
 
 
   backend:
     build: ./backend
     volumes:
-      - ./backend/$HTTP_FOLDER:/uploadMedia
+      - ./backend/$HTTP_FOLDER:/upload
     environment:
       DB_HOST: ${DB_HOST}
       DB_PASS: ${DB_PASS}
@@ -35,7 +35,7 @@ services:
       SALT: ${SALT}
     depends_on:
       - db
-    restart: unless-stopped
+    restart: always
     links:
       - db
 
@@ -43,11 +43,12 @@ services:
   caddy:
     hostname: files
     image: caddy:latest
-    restart: $CADDY_RESTART
+    restart: always
     environment:
       - CORS_ALLOWED_HOSTS
       - WEBPACK_MODE=development
     volumes:
       - ./backend/$HTTP_FOLDER:/srv
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+
 

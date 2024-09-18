@@ -18,6 +18,14 @@ export class Media {
   @Column()
   path: string;
 
+  @IsString()
+  @Column()
+  name: string;
+
+  @IsString()
+  @Column()
+  description: string;
+
   @IsNumberString()
   @Column()
   idCreator: number;

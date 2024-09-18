@@ -9,7 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
 import { UserGroup } from '../user-group/entities/user-group.entity';
-import { GroupProjectRights } from '../enum/group-project-rights';
+import { GroupProjectRights } from '../enum/rights';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -139,46 +139,31 @@ export class LinkGroupProjectService {
     updatedRights: GroupProjectRights,
   ) {
     try {
-      console.log('---------------------------ENTER UPDATE REALTION ---------------------------')
-      const linkGroupToUpdate = await this.linkGroupProjectRepository.find({
-        where: {
-          user_group: { id: user_group_Id },
-          project: { id: project_Id },
-        },
-      });
-      console.log('linkGroupToUpdate',linkGroupToUpdate)
-      const updatedData = await this.linkGroupProjectRepository.update(
-        linkGroupToUpdate[0].id,
-        { rights: updatedRights },
-      );
-      const dataToReturn = await this.linkGroupProjectRepository.find({
-        where: {
-          user_group: { id: user_group_Id },
-          project: { id: project_Id },
-        },
-      })
-      console.log('dataToReturn',dataToReturn)
-      return dataToReturn;
-    } catch (error) {
-      console.log(error);
-      throw new InternalServerErrorException(error);
-    }
-  }
+      console.log('---------------------------ENTER UPDATE RELATION ---------------------------');
 
-  async getUserGroupForProjectIdRelation(
-    projectId: number,
-    linkGroupProjectId,
-  ) {
-    try {
-      const dataToReturn = await this.linkGroupProjectRepository.find({
+      // Fetch the LinkGroupProject entity
+      const linkGroupToUpdate = await this.linkGroupProjectRepository.findOne({
         where: {
-          id: linkGroupProjectId,
-          project: { id: projectId },
+          user_group: { id: user_group_Id },
+          project: { id: project_Id },
         },
-        relations: ['user_group'],
       });
-      return dataToReturn[0];
+
+      // Ensure that the entity exists
+      if (!linkGroupToUpdate) {
+        throw new NotFoundException('No matching LinkGroupProject found');
+      }
+
+console.log('before update ')
+      linkGroupToUpdate.rights = updatedRights;
+      const updatedData = await this.linkGroupProjectRepository.save(linkGroupToUpdate);
+
+      console.log('--------------------UPDATED DATA-------------------------');
+      console.log(updatedData);
+
+      return updatedData;
     } catch (error) {
+      console.error(error);
       throw new InternalServerErrorException(error);
     }
   }
@@ -188,12 +173,12 @@ export class LinkGroupProjectService {
 
       const done = await this.linkGroupProjectRepository.delete({
         project: { id: projectId },
-        user_group: {id: group.id },
+        user_group: { id: group.id },
       });
       if (done.affected != 1) throw new NotFoundException(projectId);
       return done;
     } catch (error) {
-      console.log(error)
+      console.log(error);
       throw new InternalServerErrorException(
         'An error occurred while removing the linkGroupProject',
         error,

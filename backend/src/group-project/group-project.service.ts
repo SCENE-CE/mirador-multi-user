@@ -6,7 +6,7 @@ import {
 import { LinkGroupProjectService } from '../link-group-project/link-group-project.service';
 import { UserGroupService } from '../user-group/user-group.service';
 import { ProjectService } from '../project/project.service';
-import { GroupProjectRights } from '../enum/group-project-rights';
+import { GroupProjectRights } from '../enum/rights';
 import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../project/dto/create-project.dto';
 import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
@@ -49,28 +49,26 @@ export class GroupProjectService {
 
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
-      console.log(
-        '---------------------ENTER UPDATE PROJECT---------------------',
-      );
       let projectToReturn;
-      console.log('dto');
-      console.log(dto);
       if (dto.rights && dto.group && dto.rights !== GroupProjectRights.READER) {
         console.log('if');
         const updateRelation =
           await this.linkGroupProjectService.UpdateRelation(
-            dto.id,
+            dto.project.id,
             dto.group.id,
             dto.rights,
           );
+
+        await this.projectService.update(dto.project.id, dto.project);
+        console.log('post project update')
         projectToReturn =
           await this.linkGroupProjectService.getProjectRelations(dto.id);
+      } else {
+        projectToReturn = await this.projectService.update(
+          dto.project.id,
+          dto.project,
+        );
       }
-      projectToReturn = await this.projectService.update(
-        dto.project.id,
-        dto.project,
-      );
-
       return projectToReturn;
     } catch (error) {
       console.log(error);

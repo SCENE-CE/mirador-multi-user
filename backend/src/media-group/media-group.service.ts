@@ -1,9 +1,8 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { UserGroupService } from '../user-group/user-group.service';
 import { LinkMediaGroupService } from '../link-media-group/link-media-group.service';
 import { CreateMediaDto } from '../media/dto/create-media.dto';
 import { MediaService } from '../media/media.service';
-import { MediaGroupRights } from '../enum/media-group-rights';
+import { MediaGroupRights } from '../enum/rights';
 import { InsertResult } from 'typeorm';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 
@@ -28,6 +27,8 @@ export class MediaGroupService {
       const media = await this.mediaService.create({
         path: mediaInformation.path,
         idCreator: mediaInformation.idCreator,
+        description: mediaInformation.description,
+        name: mediaInformation.name,
         user_group: mediaInformation.user_group,
       });
 
@@ -49,5 +50,9 @@ export class MediaGroupService {
         error,
       );
     }
+  }
+
+  deleteMedia(id:number){
+    console.log('delete')
   }
 }

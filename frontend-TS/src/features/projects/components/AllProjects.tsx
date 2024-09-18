@@ -52,7 +52,7 @@ const emptyWorkspace: IState = {
 export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<Project|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
-  const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(null); // Updated state
+  const [openModalProjectId, setOpenModalProjectId] = useState<number | null>(null);
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
@@ -85,7 +85,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     setUserProjects(updatedListOfProject);
   },[setUserProjects, userProjects]);
 
-  //TODO FIX UPDATE
   const updateUserProject = useCallback(async (projectUpdated:Project)=>{
     const { rights , ...projectToUpdate } = projectUpdated;
     let updatedProject : ProjectGroupUpdateDto ;
@@ -152,14 +151,12 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   }
 
   const HandleOpenModal =useCallback ((projectId: number)=>{
-    setOpenModalProjectId(openModalProjectId === projectId ? null : projectId); // Updated logic
+    setOpenModalProjectId(openModalProjectId === projectId ? null : projectId);
   },[setOpenModalProjectId, openModalProjectId])
 
 
   const handleAddUser = async ( projectId: number) => {
-    console.log('userToAdd',userToAdd)
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
-    console.log('linkUserGroupToAdd',linkUserGroupToAdd)
     await addProjectToGroup({ projectsId: [projectId], groupId:linkUserGroupToAdd!.user_group.id });
   };
 
@@ -173,10 +170,11 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:Project) => {
     const groups:ProjectGroup[] = await getGroupsAccessToProject(projectId);
-
     const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const {rights, ...project } = ProjectUser
     await updateProject({
-      project: { ...ProjectUser },
+      project: { ...project},
       id: userGroup!.id,
       group: userGroup!.user_group,
       rights: eventValue as ProjectRights
@@ -197,7 +195,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   const handleLookingForUserGroups = async (partialString: string) => {
     const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
-    console.log('linkUserGroups', linkUserGroups)
     const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
       .filter(
         (group, index, self) =>
@@ -206,6 +203,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     setUserGroupSearch(linkUserGroups);
     return uniqueUserGroups
   }
+
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
@@ -230,8 +228,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           {!selectedProjectId && !searchedProject && userProjects && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {userProjects.map((projectUser) => (
-                  <>
-                    <Grid item>
+                    <Grid item key={projectUser.id}>
                       <MMUCard
                         searchBarLabel={"Search"}
                         description={projectUser.description}
@@ -258,7 +255,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                         setItemList={setGroupList}
                       />
                     </Grid>
-                  </>
                 )
               )}
               <Grid item>
@@ -303,7 +299,6 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
                     setItemList={setGroupList}
                   />
                 </Grid>
-
               </Grid>
             )
           }

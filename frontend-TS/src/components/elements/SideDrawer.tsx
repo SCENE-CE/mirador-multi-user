@@ -1,21 +1,10 @@
-import {
-  Box,
-  CSSObject,
-  Divider,
-  IconButton,
-  List,
-  styled,
-  Theme,
-  Tooltip
-} from "@mui/material";
+import { Box, CSSObject, Divider, IconButton, List, styled, Theme, Tooltip } from "@mui/material";
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import MuiDrawer from "@mui/material/Drawer";
 import WorkIcon from "@mui/icons-material/Work";
-import SubscriptionsIcon from "@mui/icons-material/Subscriptions";
 import GroupsIcon from "@mui/icons-material/Groups";
-import ConnectWithoutContactIcon from "@mui/icons-material/ConnectWithoutContact";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/Logout";
 import { ItemButton } from "./SideBar/ItemButton.tsx";
@@ -37,6 +26,11 @@ import { Media } from "../../features/media/types/types.ts";
 import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias.ts";
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
 import { UserGroup } from "../../features/user-group/types/types.ts";
+import { AllManifests } from "../../features/manifest/component/AllManifests.tsx";
+import ArticleIcon from "@mui/icons-material/Article";
+import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests.ts";
+import { Manifest } from "../../features/manifest/types/types.ts";
+import PermMediaIcon from '@mui/icons-material/PermMedia';
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -104,6 +98,7 @@ const CONTENT = {
   PROJECTS:'PROJECT',
   GROUPS:'GROUPS',
   MEDIA:'MEDIA',
+  MANIFEST:'MANIFEST'
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(false);
@@ -113,6 +108,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [miradorState, setMiradorState] = useState<IState | undefined>();
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [medias, setMedias] = useState<Media[]>([])
+  const [manifests, setManifests] = useState<Manifest[]>([])
 
 
   const myRef = useRef<MiradorViewerHandle>(null);
@@ -129,13 +125,20 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setOpen(false);
   };
 
-  const handleChangeContent = (content:string)=>{
+  const handleChangeContent = (content: string) => {
+    if (selectedProjectId){
+      saveProject()
+    }
     setSelectedProjectId(undefined);
     setSelectedContent(content);
   }
 
   const HandleSetUserProjects=(userProjects:Project[])=>{
-    setUserProjects(userProjects)
+    const uniqueProjects = Array.from(new Set(userProjects.map((project:Project) => project.id)))
+      .map(id => {
+        return userProjects.find((project:Project) => project.id === id);
+      }) as Project[];
+    setUserProjects(uniqueProjects);
   }
 
   const HandleSetMiradorState =(state:IState | undefined)=>{
@@ -149,10 +152,32 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }
 
   const fetchMediaForUser = async()=>{
-    const userPersonalGroup= await fetchUserPersonalGroup()
-    const medias = await getUserGroupMedias(userPersonalGroup!.id)
+    const personnalGroup = await fetchUserPersonalGroup()
+    const medias = await getUserGroupMedias(personnalGroup!.id)
     setMedias(medias);
   }
+  const getManifestFromUrl = async (manifestUrl:string) => {
+    try{
+      const response = await fetch(manifestUrl);
+      return await response.json();
+    }catch(error){
+      console.error(error)
+    }
+  }
+
+  const fetchManifestForUser = async () => {
+    const personnalGroup = await fetchUserPersonalGroup()
+    const userManifests = await getUserGroupManifests(personnalGroup!.id);
+    const updatedManifests = await Promise.all(
+      userManifests.map(async (manifest) => {
+        const manifestUrl = manifest.path;
+        const manifestJson = await getManifestFromUrl(manifestUrl);
+        return { ...manifest, json: manifestJson };
+      })
+    );
+
+    setManifests(updatedManifests);
+  };
 
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = myRef.current?.setViewer();
@@ -206,7 +231,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const fetchProjects = async () => {
     try {
       const projects = await getUserAllProjects(user.id);
-      setUserProjects(projects);
+      const uniqueProjects = Array.from(new Set(projects.map((project:Project) => project.id)))
+        .map(id => {
+          return projects.find((project:Project) => project.id === id);
+        });
+      setUserProjects(uniqueProjects);
     } catch (error) {
       console.error("Failed to fetch projects:", error);
     }
@@ -215,6 +244,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   useEffect(()=>{
     fetchProjects();
     fetchMediaForUser();
+    fetchManifestForUser()
   },[selectedProjectId])
 
   const projectSelected = useMemo(() => {
@@ -225,9 +255,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     return null;
   }, [userProjects, selectedProjectId]);
 
-  const handleSetMedia = useCallback((newMedia:Media)=>{
-    setMedias([...medias, newMedia])
-  },[setMedias,medias])
 
   return(
     <>
@@ -241,9 +268,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         <Divider />
         <List sx={{minHeight:'70vh'}}>
           <Tooltip title={"My projects"}><ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/></Tooltip>
-          <Tooltip title="My Media"><ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<SubscriptionsIcon />} text="Media" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
-          <Tooltip title=""><ItemButton open={open} selected={false} icon={<ConnectWithoutContactIcon />} text="API" action={()=>{console.log('API')}}/></Tooltip>
+          <Tooltip title="My Manifests"><ItemButton open={open} selected={false} icon={<ArticleIcon />} text="Manifests" action={()=>handleChangeContent(CONTENT.MANIFEST)}/></Tooltip>
+          <Tooltip title="My Media"><ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<PermMediaIcon />} text="Medias" action={()=>handleChangeContent(CONTENT.MEDIA)}/></Tooltip>
+          <Tooltip title="My Groups"><ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/></Tooltip>
         </List>
         <Divider/>
         {
@@ -256,9 +283,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             </>
           )
         }
-
         <List>
-          <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{console.log('settings')}}/>
+          <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{toast.error("This feature will be release in a future version")}}/>
           <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleSetDisconnectModalOpen}/>
         </List>
       </Drawer>
@@ -292,7 +318,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
               user={user}
               userPersonalGroup={userPersonalGroup!}
               medias={medias}
-              handleSetMedia={handleSetMedia}
+              fetchMediaForUser={fetchMediaForUser}
+              setMedias={setMedias}
             />
           )
         }
@@ -301,6 +328,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             <AllGroups
               user={user}
             />
+          )
+        }
+        {
+          user && user.id && selectedContent === CONTENT.MANIFEST && userPersonalGroup &&(
+            <AllManifests medias={medias} manifests={manifests} fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup}/>
           )
         }
         {modalDisconectIsOpen &&(
