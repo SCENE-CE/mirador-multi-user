@@ -7,6 +7,7 @@ Mirador multi user is a project that aims to create a multi-user environment for
 - Clone this repo : `git clone git@github.com:SCENE-CE/mirador-multi-user.git`
 - `cd mirador-multi-user`
 - `cp .env.dev.sample .env`. Change password stuff
+- define CADDY_HOST to access to medias and manifests
 - `cp frontend/src/config/config.sample.ts frontend/src/config/config.ts`
 - `nvm use`
 - `cd backend`
@@ -22,6 +23,7 @@ Mirador multi user is a project that aims to create a multi-user environment for
 - frontend to `localhost:4000`
 - backend to `localhost:3000`
 - DB to `localhost:3306`
+- Caddy to `localhost:9000`
 
 - ## Installation PROD (Docker)
 
