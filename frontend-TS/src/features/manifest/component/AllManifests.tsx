@@ -138,8 +138,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         path: path,
         name: manifest.label && manifest.label.type == 'string' ? manifest.label : "new Manifest",
       });
-    fetchManifestForUser()
-    setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)
+      fetchManifestForUser()
+      setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)
       return toast.success('manifest created')
     }
     return toast.error('manifest could not be created')
@@ -148,7 +148,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
   return (
     <Grid item container flexDirection="column" spacing={1}>
-      <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
+      <Grid item container spacing={2} alignItems="center" justifyContent="space-between" sx={{width:'100%'}}>
         <Grid item container spacing={2}>
           <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
             <SpeedDialTooltipOpen actions={actions}/>
@@ -161,9 +161,17 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
             />
           </Grid>
           {
-            !createManifestIsOpen &&(
-              <Grid item>
-                <SearchBar fetchFunction={HandleLookingForManifests} getOptionLabel={getOptionLabelForManifestSearchBar} label={"Search Manifest"} setSearchedData={handleSetSearchManifest}/>
+            !createManifestIsOpen && (
+              <Grid item container direction="row" sx={{justifyContent: "flex-end", alignItems: "center", }}>
+                <Grid item>
+
+                  <SearchBar
+                    fetchFunction={HandleLookingForManifests}
+                    getOptionLabel={getOptionLabelForManifestSearchBar}
+                    label="Search Manifest"
+                    setSearchedData={handleSetSearchManifest}
+                  />
+                </Grid>
               </Grid>
             )
           }
@@ -216,9 +224,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       {
         createManifestIsOpen &&(
           <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
-              <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup}>
-                <ManifestCreationForm userPersonalGroup={userPersonalGroup} user={user}/>
-              </SidePanelMedia>
+            <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup}>
+              <ManifestCreationForm setCreateManifestIsOpen={HandleCreateManifestIsOpen} userPersonalGroup={userPersonalGroup} user={user}/>
+            </SidePanelMedia>
           </Grid>
         )
       }

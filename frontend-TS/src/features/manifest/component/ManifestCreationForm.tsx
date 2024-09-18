@@ -20,9 +20,9 @@ interface ItemGroup {
 interface IManifestCreationFormProps{
   userPersonalGroup:UserGroup
   user:User
-
+  setCreateManifestIsOpen:()=>void
 }
-export const ManifestCreationForm = ({userPersonalGroup,user}:IManifestCreationFormProps) => {
+export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup,user}:IManifestCreationFormProps) => {
   const [manifestTitle, setManifestTitle] = useState<string>(""); // For manifest title
   const [items, setItems] = useState<ItemGroup[]>([]);
 
@@ -179,6 +179,13 @@ export const ManifestCreationForm = ({userPersonalGroup,user}:IManifestCreationF
   return (
     <Grid container direction="column" spacing={4}>
       <Grid item>
+        <Button
+          variant="contained"
+          onClick={setCreateManifestIsOpen}>
+          Back to Manifests
+        </Button>
+      </Grid>
+      <Grid item>
         <FieldForm
           name="manifest-title"
           placeholder="Enter manifest title"
@@ -206,7 +213,7 @@ export const ManifestCreationForm = ({userPersonalGroup,user}:IManifestCreationF
                   <Grid item>
                     <Button
                       variant="contained"
-                      color="secondary"
+                      color="primary"
                       onClick={() => handleRemoveMediaField(itemIndex, mediaIndex)}
                     >
                       Remove Field
@@ -218,7 +225,7 @@ export const ManifestCreationForm = ({userPersonalGroup,user}:IManifestCreationF
               <Grid item>
                 <Button
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   onClick={() => handleNewMediaField(itemIndex)}
                 >
                   Add Media to canvas {itemIndex + 1}

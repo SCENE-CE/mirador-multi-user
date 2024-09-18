@@ -284,7 +284,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           )
         }
         <List>
-          <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{console.log('settings')}}/>
+          <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{toast.error("This feature will be release in a future version")}}/>
           <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleSetDisconnectModalOpen}/>
         </List>
       </Drawer>

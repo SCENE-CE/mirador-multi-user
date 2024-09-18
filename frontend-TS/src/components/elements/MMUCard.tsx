@@ -163,7 +163,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
                 updateItem={updateItem}
                 rights={rights}
                 handleDeleteAccessListItem={handleRemoveAccessListItem}
-              /> : <Grid></Grid>
+              /> : <Grid>Manifest settings and modification will be possible in a future release</Grid>
             }/>
         </Grid>
       </Grid>
