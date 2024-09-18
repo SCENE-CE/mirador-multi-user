@@ -125,14 +125,14 @@ export class GroupMediaService {
         '..',
         '..',
         '..',
-        'uploadMedia',
+        'upload',
         hash,
         filename,
       );
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
 
-        const dirPath = join(__dirname, '..', '..', '..', 'uploadMedia', hash);
+        const dirPath = join(__dirname, '..', '..', '..', 'upload', hash);
         if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
           fs.rmdirSync(dirPath);
         }

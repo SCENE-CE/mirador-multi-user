@@ -24,7 +24,7 @@ services:
   backend:
     build: ./backend
     volumes:
-      - ./backend/$HTTP_FOLDER:/uploadMedia
+      - ./backend/$HTTP_FOLDER:/upload
     environment:
       DB_HOST: ${DB_HOST}
       DB_PASS: ${DB_PASS}

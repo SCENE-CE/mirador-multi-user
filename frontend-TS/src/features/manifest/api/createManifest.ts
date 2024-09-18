@@ -1,6 +1,6 @@
 import storage from "../../../utils/storage.ts";
 
-export const createManifest = async (createManifestDto :any) => {
+export const createManifest = async (createManifestDto) => {
   const token = storage.getToken();
   console.log('createManifestDto',createManifestDto);
   try {

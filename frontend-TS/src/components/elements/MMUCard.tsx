@@ -17,20 +17,21 @@ interface IMMUCardProps<T,G,O,X> {
   EditorButton?: ReactElement;
   itemLabel:string;
   handleSelectorChange?: (itemList: ListItem, eventValue : string, itemId:number, owner :any ) => Promise<void>,
-  listOfItem: ListItem[],
+  listOfItem?: ListItem[],
   itemOwner:O,
-  deleteItem: (itemId: number) => void,
-  getOptionLabel: (option: any, searchInput: string) => string,
-  AddAccessListItemFunction: (itemId: number ) => Promise<void>,
+  deleteItem?: (itemId: number) => void,
+  getOptionLabel?: (option: any, searchInput: string) => string,
+  AddAccessListItemFunction?: (itemId: number ) => Promise<void>,
   item : T,
-  searchModalEditItem: (query: string) => Promise<any[]>,
-  setItemToAdd: Dispatch<SetStateAction<G | null>>,
-  updateItem: (item: T) => void,
+  searchModalEditItem?: (query: string) => Promise<any[]>,
+  setItemToAdd?: Dispatch<SetStateAction<G | null>>,
+  updateItem?: (item: T) => void,
   getAccessToItem?:(itemId:number)=> Promise<any>
-  removeAccessListItemFunction:(itemId:number, accessItemId:number )=>Promise<void>
-  setItemList:Dispatch<SetStateAction<X[]>>
+  removeAccessListItemFunction?:(itemId:number, accessItemId:number )=>Promise<void>
+  setItemList?:Dispatch<SetStateAction<X[]>>
   searchBarLabel?:string
   imagePath?:string
+  manifest?:boolean
 }
 
 const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
@@ -58,7 +59,8 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     removeAccessListItemFunction,
     setItemList,
     searchBarLabel,
-    imagePath
+    imagePath,
+    manifest
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -67,7 +69,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     if (removeAccessListItemFunction) {
       await removeAccessListItemFunction(item.id, accessItemId);
     }
-    fetchData(); // Refresh the list after removing an item
+    fetchData();
   }
 
 
@@ -75,7 +77,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     if (AddAccessListItemFunction) {
       await AddAccessListItemFunction(item.id);
     }
-    fetchData(); // Refresh the list after removing an item
+    fetchData();
   }
 
 
@@ -97,7 +99,6 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     }
     await fetchData();
   };
-
 
   return (
     <Card>
@@ -142,7 +143,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             width={500}
             openModal={openModal}
             setOpenModal={HandleOpenModal}
-            children={
+            children={ !manifest ?
               <MMUModalEdit
                 description={description}
                 searchBarLabel={searchBarLabel ? searchBarLabel : ""}
@@ -162,7 +163,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
                 updateItem={updateItem}
                 rights={rights}
                 handleDeleteAccessListItem={handleRemoveAccessListItem}
-              />
+              /> : <Grid>Manifest settings and modification will be possible in a future release</Grid>
             }/>
         </Grid>
       </Grid>

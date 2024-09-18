@@ -8,5 +8,6 @@ import { Manifest } from './entities/manifest.entity';
   imports: [TypeOrmModule.forFeature([Manifest])],
   controllers: [ManifestController],
   providers: [ManifestService],
+  exports: [ManifestService],
 })
 export class ManifestModule {}
