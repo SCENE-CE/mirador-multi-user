@@ -57,7 +57,7 @@ export class GroupManifestController {
       name: file.originalname,
       description: 'your manifest description',
       user_group: userGroup,
-      path: `http://localhost:9000/${(req as any).generatedHash}/${file.filename}`,
+      path: `${process.env.CADDY_HOST}/${(req as any).generatedHash}/${file.filename}`,
       rights: ManifestGroupRights.ADMIN,
     };
     return this.groupManifestService.create(manifestToCreate);
@@ -99,7 +99,7 @@ export class GroupManifestController {
         name: label,
         description: 'your manifest description',
         user_group: createManifestDto.user_group,
-        path: `http://localhost:9000/${hash}/${label}.json`, // consider using env variables
+        path: `${process.env.CADDY_HOST}/${hash}/${label}.json`, // consider using env variables
         idCreator: createManifestDto.idCreator,
         rights: ManifestGroupRights.ADMIN,
       };
