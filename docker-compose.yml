@@ -33,7 +33,7 @@ services:
       DB_PORT: ${DB_EXPOSE_PORT}
       JWT_SECRET: ${JWT_SECRET}
       SALT: ${SALT}
-      CADDY_URL: ${CADDY_HOST}
+      CADDY_URL: "https://${CADDY_HOST}"
     depends_on:
       - db
     restart: always
