@@ -57,6 +57,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [modalCreateProjectIsOpen, setModalCreateProjectIsOpen]= useState(false);
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
+  const [projectFiltered, setProjectFiltered] = useState<Project[]>([]);
+  
   const fetchProjects = async () => {
     try {
       const projects = await getUserAllProjects(user.id);
@@ -211,7 +213,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
           {
             !selectedProjectId &&(
               <Grid item>
-                <SearchBar label={"Search Projects"} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
+                <SearchBar label={"Filter Projects"} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
               </Grid>
             )
           }

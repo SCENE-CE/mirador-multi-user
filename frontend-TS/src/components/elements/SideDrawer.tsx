@@ -101,7 +101,7 @@ const CONTENT = {
   MANIFEST:'MANIFEST'
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<Project[]>([]);
   const [modalDisconectIsOpen, setModalDisconectIsOpen]= useState(false);

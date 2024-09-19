@@ -1,7 +1,7 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import IState from "../../mirador/interface/IState.ts";
-import { ChangeEvent, useCallback, useState } from "react";
+import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 
 interface IDrawerCreateProjectProps{
   modalCreateProjectIsOpen: boolean
@@ -16,6 +16,11 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
     setProjectName(event.target.value);
   },[])
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    InitializeProject(projectWorkspace, projectName);
+  };
   return(
     <>
       <div>
@@ -32,7 +37,7 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
             }}
           >
 
-            <AppBar position="absolute" color="primary" enableColorOnDark >
+            <AppBar position="absolute" color="primary" enableColorOnDark>
               <Toolbar variant="dense">
                 <Button
                   color="inherit"
@@ -40,22 +45,27 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
                 >
                   <ExpandMoreIcon />
                 </Button>
-               <Typography>CREATE PROJECT</Typography>
+                <Typography>CREATE PROJECT</Typography>
               </Toolbar>
             </AppBar>
-            <form>
+            <form onSubmit={handleSubmit}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                <label>Project's name :</label>
+                  <label>Project's name:</label>
                 </Grid>
-                <Grid item sx={{ width:'70%'}}>
-                  <TextField onChange={handleNameChange} sx={{ width:'100%'}} placeholder="My wonderfull project !"></TextField>
+                <Grid item sx={{ width: '70%' }}>
+                  <TextField
+                    onChange={handleNameChange}
+                    sx={{ width: '100%' }}
+                    placeholder="My wonderful project!"
+                    value={projectName}
+                  />
                 </Grid>
                 <Grid item>
                   <Button
                     size="large"
                     variant="contained"
-                    onClick={()=>InitializeProject(projectWorkspace, projectName)}
+                    type="submit"
                   >
                     ADD
                   </Button>
