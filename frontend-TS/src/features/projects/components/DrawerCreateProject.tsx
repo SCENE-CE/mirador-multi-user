@@ -49,7 +49,7 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
                 <label>Project's name :</label>
                 </Grid>
                 <Grid item sx={{ width:'70%'}}>
-                  <TextField onChange={handleNameChange} sx={{ width:'100%'}} ></TextField>
+                  <TextField onChange={handleNameChange} sx={{ width:'100%'}} placeholder="My wonderfull project !"></TextField>
                 </Grid>
                 <Grid item>
                   <Button
