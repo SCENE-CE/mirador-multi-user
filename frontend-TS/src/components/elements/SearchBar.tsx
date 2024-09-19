@@ -6,7 +6,7 @@ interface IUsersSearchBarProps<T>{
   handleAdd?:()=>void
   setSelectedData?:Dispatch<SetStateAction<T | null>>
   setSearchedData?:any
-  fetchFunction:(partialString:string)=>Promise<any[]>
+  fetchFunction:(partialString:string)=>Promise<any[]> | any[]
   getOptionLabel:(option:any)=>string
   setSearchInput?:(value:string)=>void
   actionButtonLabel?:string
@@ -34,6 +34,9 @@ export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelected
     if(setSearchInput){
       setSearchInput(value);
     }
+    if(setSelectedData){
+      fetchFunction(value)
+    }
     if (value) {
       await debouncedFetch(value);
     }
@@ -41,8 +44,9 @@ export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelected
 
   const handleChange = (_event: SyntheticEvent, value: T | null) => {
     if(setSelectedData){
-      console.log(value)
+      console.log('value',value)
       setSelectedData(value);
+
     }else if(setSearchedData){
       setSearchedData(value);
     }
