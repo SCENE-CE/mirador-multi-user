@@ -1,4 +1,4 @@
-import { Box, CSSObject, Divider, IconButton, List, styled, Theme, Tooltip } from "@mui/material";
+import { Box, CSSObject, Divider, IconButton, List, ListItem, styled, Theme, Tooltip } from "@mui/material";
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -267,17 +267,25 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         </DrawerHeader>
         <Divider />
         <List sx={{minHeight:'70vh'}}>
-          <Tooltip title="My projects">
-            <ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/>
+          <Tooltip title="My projects" placement="right">
+            <ListItem sx={{padding:0}}>
+              <ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/>
+            </ListItem>
           </Tooltip>
-          <Tooltip title="Manifests">
-            <ItemButton open={open} selected={CONTENT.MANIFEST === selectedContent} icon={<ArticleIcon />} text="Manifests" action={()=>handleChangeContent(CONTENT.MANIFEST)}/>
+          <Tooltip title="Manifests" placement="right">
+            <ListItem sx={{padding:0}}>
+              <ItemButton open={open} selected={CONTENT.MANIFEST === selectedContent} icon={<ArticleIcon />} text="Manifests" action={()=>handleChangeContent(CONTENT.MANIFEST)}/>
+            </ListItem>
           </Tooltip>
-          <Tooltip title="Media">
-            <ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<PermMediaIcon />} text="Medias" action={()=>handleChangeContent(CONTENT.MEDIA)}/>
+          <Tooltip title="Media" placement="right">
+            <ListItem sx={{padding:0}}>
+              <ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<PermMediaIcon />} text="Medias" action={()=>handleChangeContent(CONTENT.MEDIA)}/>
+            </ListItem>
           </Tooltip>
-          <Tooltip title="Groups">
-            <ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/>
+          <Tooltip title="Groups" placement="right">
+            <ListItem sx={{padding:0}}>
+              <ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/>
+            </ListItem>
           </Tooltip>
         </List>
         <Divider/>
@@ -285,15 +293,27 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           selectedProjectId && (
             <>
               <List>
-                <Tooltip title="Save"><ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Mirador" action={saveProject}/></Tooltip>
+                <Tooltip title="Save">
+                  <ListItem sx={{padding:0}}>
+                    <ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Mirador" action={saveProject}/>
+                  </ListItem>
+                </Tooltip>
               </List>
               <Divider />
             </>
           )
         }
         <List>
-          <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{toast.error("This feature will be release in a future version")}}/>
-          <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleSetDisconnectModalOpen}/>
+          <Tooltip title="Settings" placement="right">
+            <ListItem sx={{padding:0}}>
+              <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{toast.error("This feature will be release in a future version")}}/>
+            </ListItem>
+          </Tooltip>
+          <Tooltip title="Discconect" placement="right">
+            <ListItem sx={{padding:0}}>
+              <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleSetDisconnectModalOpen}/>
+            </ListItem>
+          </Tooltip>
         </List>
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
