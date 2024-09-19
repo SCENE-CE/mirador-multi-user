@@ -14,7 +14,7 @@ interface IUsersSearchBarProps<T>{
 }
 
 export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
-  const [Suggestions, setSuggestions]=useState<T[]>([]);
+  const [suggestions, setSuggestions]=useState<T[]>([]);
 
   const HandlefetchData = async(partialDataName:string)=>{
     try{
@@ -47,7 +47,7 @@ export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelected
       setSearchedData(value);
     }
   };
-
+console.log('suggestions',suggestions)
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2}>
@@ -56,11 +56,11 @@ export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelected
             <Autocomplete
               disablePortal
               onInputChange={handleInputChange}
-              clearOnEscape
               sx={{width:'250px'}}
               onChange={handleChange}
               id="combo-box-demo"
-              options={Suggestions}
+              options={suggestions}
+              clearOnBlur={false}
               renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
             />

@@ -7,7 +7,6 @@ import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IMiradorState from "./interface/IState.ts";
 import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
-import { Grid, Typography } from "@mui/material";
 import './style/mirador.css'
 import { Project } from "../projects/types/types.ts";
 import IState from "./interface/IState.ts";
@@ -26,12 +25,9 @@ interface MiradorViewerProps {
   viewer:any
 }
 const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props, ref) => {
-   const { miradorState, saveMiradorState, project, setMiradorState, setViewer,viewer } = props;
+   const { miradorState, saveMiradorState, project, setMiradorState, setViewer } = props;
     const viewerRef = useRef<HTMLDivElement | null>(null);
   const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
-  console.log('miradorViewer',miradorViewer)
-  console.log('viewer',viewer)
-  console.log('project',project)
 
    useImperativeHandle(ref, () => ({
      saveProject: () => {
@@ -39,7 +35,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
      },
      setViewer: ()=>{
        const viewer : IState = miradorViewer.store.getState()
-       console.log('setMiradorViewer', viewer)
        setViewer(viewer);
        return viewer
      }
@@ -67,7 +62,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
         saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
       }
 
-      console.log('miradorState', miradorState)
 
       // Load state only if it is not empty
       if (loadingMiradorViewer && project.id && miradorState) {
@@ -75,8 +69,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
           Mirador.actions.importMiradorState(miradorState)
         );
       }
-      console.log('loadingMiradorViewer',loadingMiradorViewer);
-      console.log('viewer',miradorViewer)
 
       setMiradorViewer(loadingMiradorViewer);
       setViewer(loadingMiradorViewer)
@@ -86,20 +78,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
 
   return(
-    <Grid container flexDirection='column' spacing={2}>
-      <Grid item container flexDirection='row'>
-        <Grid item container alignContent="center" alignItems='center' justifyContent="flex-end" flexDirection="row" spacing={3} sx={{position:'relative', top: '-20px'}}>
-          <Grid item>
-            <Typography>
-              {project.name}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item>
-        <div ref={viewerRef} id="mirador"></div>
-      </Grid>
-    </Grid>
+        <div ref={viewerRef} id="mirador" style={{height:'100vh'}}></div>
   )
 });
 
