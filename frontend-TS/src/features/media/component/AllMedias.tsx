@@ -49,6 +49,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
+  const [mediaFiltered, setMediaFiltered] = useState<Media[]>([]);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
@@ -92,7 +93,10 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   },[medias, setMedias])
 
   const HandleLookingForMedia = async (partialString : string) =>{
-    return await lookingForMedias(partialString, userPersonalGroup.id)
+    const mediaFiltered = await lookingForMedias(partialString, userPersonalGroup.id)
+    console.log('toReturn',mediaFiltered)
+    setMediaFiltered(mediaFiltered)
+    return mediaFiltered
   }
 
   const getOptionLabelForMediaSearchBar = (option:Media): string => {
@@ -105,6 +109,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       setSearchedMedia(searchedMedia!)
     }else{
       setSearchedMedia(null);
+      setMediaFiltered([])
     }
   }
 
@@ -164,7 +169,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
         </Grid>
       </Grid>
       {
-        !searchedMedia && (
+        !searchedMedia && mediaFiltered.length < 1 && (
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             {
               medias.map((media)=>(
@@ -229,6 +234,42 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
+            }
+          </Grid>
+        )
+      }
+      {
+        !searchedMedia && mediaFiltered.length > 0 && (
+          <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+            {
+              mediaFiltered.map((media)=>(
+                <Grid item key={media.id}>
+                  <MMUCard
+                    id={media.id}
+                    rights={ProjectRights.ADMIN}
+                    description={media.description}
+                    HandleOpenModal={()=>HandleOpenModal(media.id)}
+                    openModal={openModalMediaId === media.id}
+                    itemLabel={media.name}
+                    DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>HandleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    itemOwner={user}
+                    deleteItem={()=>HandleDeleteMedia(media.id)}
+                    item={media}
+                    updateItem={HandleUpdateMedia}
+                    imagePath={media.path}
+                    AddAccessListItemFunction={handleGrantAccess}
+                    getOptionLabel={getOptionLabel}
+                    listOfItem={listOfGroup}
+                    removeAccessListItemFunction={handleRemoveAccessToMedia}
+                    searchModalEditItem={handleLookingForUserGroups}
+                    setItemList={setGroupList}
+                    setItemToAdd={setUserToAdd}
+                    getAccessToItem={getAllMediaGroups}
+                    handleSelectorChange={handleChangeRights}
+                  />
+                </Grid>
+              ))
             }
           </Grid>
         )
