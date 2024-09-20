@@ -50,7 +50,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
-  const [mediaFiltered, setMediaFiltered] = useState<Media[]>([]);
+  const [mediaFiltered, setMediaFiltered] = useState<Media[]|undefined>([]);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
@@ -95,8 +95,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
 
   const HandleLookingForMedia = async (partialString : string) =>{
     const mediaFiltered = await lookingForMedias(partialString, userPersonalGroup.id)
-    console.log('toReturn',mediaFiltered)
-    setMediaFiltered(mediaFiltered)
     return mediaFiltered
   }
 
@@ -110,7 +108,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       setSearchedMedia(searchedMedia!)
     }else{
       setSearchedMedia(null);
-      setMediaFiltered([])
     }
   }
 
@@ -152,6 +149,20 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const handleButtonClick = () => {
     document.getElementById('file-upload')!.click();
   };
+
+  const handleFiltered = (partialString:string)=>{
+    if(partialString.length < 1){
+      return setMediaFiltered([])
+    }
+    if(partialString.length > 0 ){
+      const filteredMedia = medias.filter((media)=>media.name.startsWith(partialString))
+      if(filteredMedia.length >= 1){
+        setMediaFiltered(filteredMedia)
+      }else{
+        setMediaFiltered(undefined)
+      }
+    }
+  }
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
@@ -164,7 +175,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
             />
         </Grid>
         <Grid item>
-          <SearchBar setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
+          <SearchBar handleFiltered={handleFiltered} setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
         </Grid>
       </Grid>
       {!medias.length && (
@@ -176,7 +187,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
         </Grid>
       )}
       {
-        !searchedMedia && mediaFiltered.length < 1 && (
+        !searchedMedia && mediaFiltered && mediaFiltered.length < 1 && (
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             {
               medias.map((media)=>(
@@ -247,7 +258,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
         )
       }
       {
-        !searchedMedia && mediaFiltered.length > 0 && (
+        !searchedMedia && mediaFiltered && mediaFiltered.length > 0 && (
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             {
               mediaFiltered.map((media)=>(
@@ -279,6 +290,14 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                 </Grid>
               ))
             }
+
+          </Grid>
+        )
+      }
+      {
+        !mediaFiltered && (
+          <Grid item container justifyContent="center" alignItems="center">
+            <Typography variant="h6" component="h2">There is no media matching your research.</Typography>
           </Grid>
         )
       }

@@ -34,7 +34,11 @@ export class GroupManifestService {
         userGroup: user_group,
         manifestsId: [manifest.id],
       });
-      return await this.getManifestForUser(user_group.id, manifest.id);
+
+       const toReturn = await this.getManifestForUser(user_group.id, manifest.id);
+      console.log('----------------toReturn----------------')
+      console.log(toReturn)
+      return toReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -92,9 +96,14 @@ export class GroupManifestService {
         await this.linkGroupManifestService.findAllManifestGroupByUserGroupId(
           userGroupId,
         );
-      return manifest.find(
+      console.log('------------------manifest------------------')
+      console.log(manifest)
+      const toReturn =  manifest.find(
         (linkGroupManifest) => linkGroupManifest.manifest.id == manifestId,
       );
+      console.log('----------------------MANI TO toReturn----------------------')
+      console.log(toReturn)
+      return toReturn.manifest
     } catch (error) {
       return new InternalServerErrorException(
         'An error occurred while getting manifest for user group',
