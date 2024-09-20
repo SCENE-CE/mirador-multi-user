@@ -1,6 +1,5 @@
-import { Button, Grid, styled, Typography } from "@mui/material";
+import { Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
 import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
@@ -22,6 +21,8 @@ import {  ProjectGroup } from "../../projects/types/types.ts";
 import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
 import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
 import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
+import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
+import AddIcon from "@mui/icons-material/Add";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -148,21 +149,19 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     await updateAccessToMedia(mediaId, group.id, eventValue as MediaGroupRights)
   };
 
+  const handleButtonClick = () => {
+    document.getElementById('file-upload')!.click();
+  };
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
         <Grid item>
-          <Button
-            component="label"
-            variant="contained"
-            startIcon={<CloudUploadIcon />}
-          >
-            Upload file
+          <FloatingActionButton onClick={handleButtonClick} content={"New Media"} Icon={<AddIcon />}/>
             <VisuallyHiddenInput
+              id="file-upload"
               type="file"
               onChange={handleCreateMedia}
             />
-          </Button>
         </Grid>
         <Grid item>
           <SearchBar setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
