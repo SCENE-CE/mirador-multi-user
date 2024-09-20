@@ -53,7 +53,7 @@ interface PopUpMediaProps {
 }
 
 export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMediaProps) => {
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
 
   const toggleDrawer = () => {
@@ -115,7 +115,7 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
             </ImageList>
 
           ):(
-            <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width:500 }} cols={3} rowHeight={164}>
+            <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
               {medias.map((media) => (
                 <CustomImageItem key={media.path}>
                   <img
