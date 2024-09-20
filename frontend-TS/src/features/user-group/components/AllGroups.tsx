@@ -142,7 +142,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
 
   return(
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
-      <Grid item container direction="row-reverse" spacing={2} alignItems="center">
+      <Grid item container direction="row-reverse" spacing={2} alignItems="center"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
         <Grid item>
           <SearchBar label={"Filter groups"} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
         </Grid>

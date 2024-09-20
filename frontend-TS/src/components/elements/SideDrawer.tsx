@@ -276,7 +276,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           </IconButton>
         </DrawerHeader>
         <Divider />
-        <List sx={{minHeight:'70vh'}}>
+        <List sx={{minHeight:'70vh', flexGrow: 1}}>
           <Tooltip title="My projects" placement="right">
             <ListItem sx={{padding:0}}>
               <ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/>
@@ -302,7 +302,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         {
           selectedProjectId && (
             <>
-              <List>
+              <List >
                 <Tooltip title={projectSelected!.name}>
                   <ListItem sx={{padding:0}}>
                     <ItemButton icon={<WorkIcon/>} text={projectSelected!.name} open={open} selected={false} action={()=>console.log('')}/>
