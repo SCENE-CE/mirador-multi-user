@@ -2,7 +2,7 @@ import { Box, Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
-import { Manifest } from "../types/types.ts";
+import { Manifest, ManifestItem } from "../types/types.ts";
 import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import placeholder from '../../../assets/Placeholder.svg';
@@ -21,6 +21,7 @@ import UploadFileIcon from '@mui/icons-material/UploadFile';
 import AddLinkIcon from '@mui/icons-material/AddLink';
 import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
 import { linkManifest } from "../api/linkManifest.ts";
+import { createManifest } from "../api/createManifest.ts";
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -57,6 +58,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         file: event.target.files[0],
       });
       fetchManifestForUser()
+      console.log(setCreateManifestIsOpen)
+      setCreateManifestIsOpen(false)
     }
   },[fetchManifestForUser, manifests])
 
@@ -154,6 +157,123 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     return toast.error('manifest could not be created')
 
   },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
+
+  const handleSubmitManifestCreationForm = async (manifestTitle:string,items:any) => {
+    const manifestData = {
+      title: manifestTitle,
+      items: items,
+    };
+
+    const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
+      ['@Context']:'https://iiif.io/api/presentation/3/context.json',
+      id:"",
+      type:"Manifest",
+      label:{
+        en:[manifestTitle]
+      },
+      items: [],
+    };
+
+    const fetchMediaForItem = async (media: any): Promise<void> => {
+      try {
+        const response = await fetch(media.value, { method: "GET" });
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const mediaBlob = await response.blob();
+        const mediaUrl = URL.createObjectURL(mediaBlob);
+        const contentType = response.headers.get("Content-Type");
+
+        if (contentType && contentType.startsWith("image")) {
+          const img = new Image();
+          img.src = mediaUrl;
+          console.log('img',img)
+          await new Promise<void>((resolve, reject) => {
+            img.onload = () => {
+              manifestToCreate.items.push({
+                id: media.value,
+                type: "Canvas",
+                height: img.height,
+                width: img.width,
+                label: { en:["image"] },
+                items:[{
+                  id:media.value+`/annotation/${Date.now}`,
+                  type:"AnnotationPage",
+                  items:[
+                    {
+                      id:media.value+`/annotation/${Date.now}`,
+                      type:"Annotation",
+                      motivation:"painting",
+                      target:media.value,
+                      body:{
+                        id:media.value,
+                        type:"Image",
+                        format:`Image/${response.headers.get("Content-Type")}`,
+                        height:img.height,
+                        width:img.width,
+                      }
+                    }
+                  ]
+                }]
+              });
+              resolve();
+            };
+            img.onerror = reject;
+          });
+        } else if (contentType && contentType.startsWith("video")) {
+          // const video = document.createElement("video");
+          // video.src = mediaUrl;
+          //
+          // await new Promise<void>((resolve, reject) => {
+          //   video.onloadedmetadata = () => {
+          //     manifestToCreate.items.push({
+          //       id: media.value,
+          //       type: "Canvas",
+          //       height: video.videoHeight,
+          //       width: video.videoWidth,
+          //       duration: video.duration,
+          //       label:"video"
+          //     });
+          //     resolve();
+          //   };
+          //   video.onerror = reject;
+          // });
+          toast.error('video will be handle in a future release')
+        } else {
+          console.log("Unsupported media type:", contentType);
+        }
+      } catch (error) {
+        console.log("Error fetching media:", error);
+        throw error;
+      }
+    };
+
+    const fetchMediaPromises = items.flatMap((item) =>
+      item.media.map((media) => {
+        return fetchMediaForItem(media);
+      })
+    );
+
+    try {
+      await Promise.all(fetchMediaPromises);
+      const manifestCreation = await createManifest({
+        manifest : manifestToCreate,
+        name: manifestToCreate.label,
+        user_group: userPersonalGroup,
+        idCreator:user.id
+      })
+      fetchManifestForUser()
+      setCreateManifestIsOpen(false)
+      console.log('manifests',manifests);
+      console.log('manifestCreation',manifestCreation);
+      console.log("All media fetched and manifestToCreate:", manifestToCreate);
+      console.log("All media fetched, Manifest Data: ", manifestData);
+    } catch (error) {
+      console.error("Error processing media", error);
+    }
+  };
 
   return (
     <Grid item container flexDirection="column" spacing={1}>
@@ -267,7 +387,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         createManifestIsOpen &&(
           <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
             <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup}>
-              <ManifestCreationForm setCreateManifestIsOpen={HandleCreateManifestIsOpen} userPersonalGroup={userPersonalGroup} user={user}/>
+              <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm} setCreateManifestIsOpen={HandleCreateManifestIsOpen}/>
             </SidePanelMedia>
           </Grid>
         )

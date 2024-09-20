@@ -3,11 +3,6 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { FieldForm } from "../../../components/elements/FieldForm.tsx";
-import { ManifestItem } from "../types/types.ts";
-import { createManifest } from "../api/createManifest.ts";
-import { UserGroup } from "../../user-group/types/types.ts";
-import { User } from "../../auth/types/types.ts";
-import toast from "react-hot-toast";
 
 interface MediaField {
   name: string;
@@ -19,12 +14,11 @@ interface ItemGroup {
 }
 
 interface IManifestCreationFormProps{
-  userPersonalGroup:UserGroup
-  user:User
   setCreateManifestIsOpen:()=>void
+  handleSubmit: (manifestTitle: string, items: any)=>void
 }
-export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup,user}:IManifestCreationFormProps) => {
-  const [manifestTitle, setManifestTitle] = useState<string>(""); // For manifest title
+export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IManifestCreationFormProps) => {
+  const [manifestTitle, setManifestTitle] = useState<string>("");
   const [items, setItems] = useState<ItemGroup[]>([]);
 
   const handleNewItemGroup = () => {
@@ -63,119 +57,6 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup
     setItems(updatedItems);
   };
 
-  const handleSubmit = async () => {
-    const manifestData = {
-      title: manifestTitle,
-      items: items,
-    };
-
-    const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
-      ['@Context']:'https://iiif.io/api/presentation/3/context.json',
-      id:"",
-      type:"Manifest",
-      label:{
-        en:[manifestTitle]
-      },
-      items: [],
-    };
-
-    const fetchMediaForItem = async (media: any): Promise<void> => {
-      try {
-        const response = await fetch(media.value, { method: "GET" });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const mediaBlob = await response.blob();
-        const mediaUrl = URL.createObjectURL(mediaBlob);
-        const contentType = response.headers.get("Content-Type");
-
-        if (contentType && contentType.startsWith("image")) {
-          const img = new Image();
-          img.src = mediaUrl;
-          console.log('img',img)
-          await new Promise<void>((resolve, reject) => {
-            img.onload = () => {
-              manifestToCreate.items.push({
-                id: media.value,
-                type: "Canvas",
-                height: img.height,
-                width: img.width,
-                label: { en:["image"] },
-                items:[{
-                  id:media.value+`/annotation/${Date.now}`,
-                  type:"AnnotationPage",
-                  items:[
-                    {
-                      id:media.value+`/annotation/${Date.now}`,
-                      type:"Annotation",
-                      motivation:"painting",
-                      target:media.value,
-                      body:{
-                        id:media.value,
-                        type:"Image",
-                        format:`Image/${response.headers.get("Content-Type")}`,
-                        height:img.height,
-                        width:img.width,
-                      }
-                    }
-                  ]
-                }]
-              });
-              resolve();
-            };
-            img.onerror = reject;
-          });
-        } else if (contentType && contentType.startsWith("video")) {
-          // const video = document.createElement("video");
-          // video.src = mediaUrl;
-          //
-          // await new Promise<void>((resolve, reject) => {
-          //   video.onloadedmetadata = () => {
-          //     manifestToCreate.items.push({
-          //       id: media.value,
-          //       type: "Canvas",
-          //       height: video.videoHeight,
-          //       width: video.videoWidth,
-          //       duration: video.duration,
-          //       label:"video"
-          //     });
-          //     resolve();
-          //   };
-          //   video.onerror = reject;
-          // });
-          toast.error('video will be handle in a future release')
-        } else {
-          console.log("Unsupported media type:", contentType);
-        }
-      } catch (error) {
-        console.log("Error fetching media:", error);
-        throw error;
-      }
-    };
-
-    const fetchMediaPromises = items.flatMap((item) =>
-      item.media.map((media) => {
-        return fetchMediaForItem(media);
-      })
-    );
-
-    try {
-      await Promise.all(fetchMediaPromises);
-      const manifestCreation = createManifest({
-        manifest : manifestToCreate,
-        name: manifestToCreate.label,
-        user_group: userPersonalGroup,
-        idCreator:user.id
-      });
-      console.log(manifestCreation);
-      console.log("All media fetched and manifestToCreate:", manifestToCreate);
-      console.log("All media fetched, Manifest Data: ", manifestData);
-    } catch (error) {
-      console.error("Error processing media", error);
-    }
-  };
 
 
   return (
@@ -255,7 +136,7 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup
       </Grid>
 
       <Grid item>
-        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={items.length < 1}>
+        <Button variant="contained" color="primary" onClick={()=>handleSubmit(manifestTitle,items)} disabled={items.length < 1}>
           Create
         </Button>
       </Grid>
