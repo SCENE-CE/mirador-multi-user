@@ -48,7 +48,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
   const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
   const [modalLinkManifestIsOpen, setModalLinkManifestSIsOpen] = useState(false)
-  const [manifestFiltered, setManifestFiltered] = useState<Manifest[]>([])
+  const [manifestFiltered, setManifestFiltered] = useState<Manifest[] | undefined>([])
 
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -102,7 +102,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const HandleLookingForManifests = async (partialString : string) =>{
     console.log(partialString)
     const userManifests =  await lookingForManifests(partialString, userPersonalGroup.id)
-    setManifestFiltered(userManifests);
     return userManifests
   }
 
@@ -118,18 +117,14 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       if (manifestIndex !== -1) {
         setSearchedManifest(manifests[manifestIndex]);
         setSearchedManifestIndex(manifestIndex);
-        setManifestFiltered([])
       } else {
         setSearchedManifest(null);
         setSearchedManifestIndex(null);
-        setManifestFiltered([])
       }
     } else {
       setSearchedManifest(null);
       setSearchedManifestIndex(null);
-      setManifestFiltered([])
     }
-    setManifestFiltered([])
   };
 
   const HandleCopyToClipBoard = async (path: string) => {
@@ -275,6 +270,20 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     }
   };
 
+  const handleFiltered = (partialString:string)=>{
+    if(partialString.length < 1){
+      return setManifestFiltered([])
+    }
+    if(partialString.length > 0 ){
+      const manifetsFiltered = manifests.filter((manifest) =>manifest.name.startsWith(partialString))
+      if(manifetsFiltered.length >= 1){
+        setManifestFiltered(manifetsFiltered)
+      }else{
+        setManifestFiltered(undefined)
+      }
+    }
+  }
+
   return (
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
@@ -295,13 +304,13 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
             !createManifestIsOpen && (
               <Grid item container direction="row" sx={{justifyContent: "flex-end", alignItems: "center", }}>
                 <Grid item>
-
                   <SearchBar
                     fetchFunction={HandleLookingForManifests}
                     getOptionLabel={getOptionLabelForManifestSearchBar}
                     label="Filter manifests"
                     setSearchedData={handleSetSearchManifest}
                     setFilter={setManifestFiltered}
+                    handleFiltered={handleFiltered}
                   />
                 </Grid>
               </Grid>
@@ -317,7 +326,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           <Typography variant="h6" component="h2">No manifests yet, start to work when clicking on the + button.</Typography>
         </Grid>
       )}
-      {!searchedManifest && !createManifestIsOpen && manifestFiltered.length < 1 &&(
+      {!searchedManifest && !createManifestIsOpen && manifestFiltered && manifestFiltered.length < 1 &&(
         <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
           {manifests.map((manifest, index) => (
             <Grid item key={manifest.id}>
@@ -339,7 +348,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           ))}
         </Grid>
       )}
-      {!searchedManifest && !createManifestIsOpen && manifestFiltered.length > 0 &&(
+      {!searchedManifest && !createManifestIsOpen && manifestFiltered && manifestFiltered.length > 0 &&(
         <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
           {manifestFiltered.map((manifest, index) => (
             <Grid item key={manifest.id}>
@@ -381,6 +390,13 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
             </Grid>
           </Grid>
 
+        )
+      }
+      {
+        !manifestFiltered && (
+          <Grid item container justifyContent="center" alignItems="center">
+            <Typography variant="h6" component="h2">There is no manifest matching your research.</Typography>
+          </Grid>
         )
       }
       {
