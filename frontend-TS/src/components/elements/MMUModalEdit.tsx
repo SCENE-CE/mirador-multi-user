@@ -112,6 +112,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   const handleSubmit = () => {
     handleUpdateItemName();
     handleEditDescription();
+    HandleOpenModalEdit()
   };
   return (
     <Grid container>
@@ -155,6 +156,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
               onChange={handleChangeDescription}
               variant="outlined"
               defaultValue={description}
+              multiline
               fullWidth
             />
           </Grid>
