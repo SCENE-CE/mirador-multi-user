@@ -12,7 +12,7 @@ interface IUsersSearchBarProps<T>{
   actionButtonLabel?:string
   label:string
   setFilter?:(myarray:any[])=>void
-  handleFiltered:(partialString:string)=>void
+  handleFiltered?:(partialString:string)=>void
 }
 
 export const SearchBar = <T,>({handleFiltered,setFilter,label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
@@ -32,7 +32,9 @@ export const SearchBar = <T,>({handleFiltered,setFilter,label,getOptionLabel,set
   }, 500);
 
   const handleInputChange= async (_event: SyntheticEvent, value: string) => {
+    if(handleFiltered){
     handleFiltered(value)
+    }
     console.log(value)
     if(setSearchInput){
       setSearchInput(value);

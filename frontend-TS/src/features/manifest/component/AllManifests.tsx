@@ -42,6 +42,16 @@ interface IAllManifests{
   medias:Media[]
 }
 
+type MediaItem = {
+  name: string;
+  value: string;
+};
+
+type ManifestCreationMedia = {
+  media: MediaItem[];
+  // Other properties for ManifestCreationMedia, if needed
+};
+
 export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
@@ -153,7 +163,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
   },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
-  const handleSubmitManifestCreationForm = async (manifestTitle:string,items:any) => {
+  const handleSubmitManifestCreationForm = async (manifestTitle:string,items:ManifestCreationMedia[]) => {
+    console.log('ITEMS',items)
     const manifestData = {
       title: manifestTitle,
       items: items,
@@ -169,7 +180,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       items: [],
     };
 
-    const fetchMediaForItem = async (media: any): Promise<void> => {
+    const fetchMediaForItem = async (media:MediaItem  ): Promise<void> => {
       try {
         const response = await fetch(media.value, { method: "GET" });
 
