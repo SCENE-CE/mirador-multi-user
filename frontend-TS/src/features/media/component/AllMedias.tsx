@@ -165,7 +165,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
           </Button>
         </Grid>
         <Grid item>
-          <SearchBar fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter media"} setSearchedData={handleSetSearchMedia}/>
+          <SearchBar fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
         </Grid>
       </Grid>
       {
@@ -175,6 +175,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               medias.map((media)=>(
                 <Grid item key={media.id}>
                   <MMUCard
+                    searchBarLabel={"Search"}
                     id={media.id}
                     rights={ProjectRights.ADMIN}
                     description={media.description}

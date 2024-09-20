@@ -111,7 +111,8 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             <Typography variant="subtitle1">{itemLabel}</Typography>
           </Grid>
           <Grid item xs={12} sm={3}>
-            {description}
+            <Typography variant="subtitle1">{description}</Typography>
+
           </Grid>
         </Grid>
         <Grid item alignSelf="center">
@@ -145,6 +146,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             setOpenModal={HandleOpenModal}
             children={ !manifest ?
               <MMUModalEdit
+                HandleOpenModalEdit={HandleOpenModal}
                 description={description}
                 searchBarLabel={searchBarLabel ? searchBarLabel : ""}
                 itemLabel={itemLabel}

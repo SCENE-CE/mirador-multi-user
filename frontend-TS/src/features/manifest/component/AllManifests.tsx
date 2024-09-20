@@ -168,7 +168,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                   <SearchBar
                     fetchFunction={HandleLookingForManifests}
                     getOptionLabel={getOptionLabelForManifestSearchBar}
-                    label="Filter manifest"
+                    label="Filter manifests"
                     setSearchedData={handleSetSearchManifest}
                   />
                 </Grid>

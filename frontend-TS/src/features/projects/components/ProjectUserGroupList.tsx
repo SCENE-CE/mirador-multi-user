@@ -40,7 +40,7 @@ export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: I
   return (
     <Grid container item>
       <Grid item>
-        <Typography variant="h5">Access List</Typography>
+        <Typography variant="h5">Permissions</Typography>
       </Grid>
       <Grid item container flexDirection="column" spacing={1}>
         {groupList && groupList.map((projectGroup) => (
