@@ -14,7 +14,7 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: `
         @font-face {
-          font-family: 'InputMonoNarrow';
+          font-family:'Roboto';
           font-style: normal;
           font-display: swap;
           font-weight: 400;

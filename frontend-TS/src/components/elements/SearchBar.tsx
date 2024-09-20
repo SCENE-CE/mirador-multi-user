@@ -6,15 +6,16 @@ interface IUsersSearchBarProps<T>{
   handleAdd?:()=>void
   setSelectedData?:Dispatch<SetStateAction<T | null>>
   setSearchedData?:any
-  fetchFunction:(partialString:string)=>Promise<any[]>
+  fetchFunction:(partialString:string)=>Promise<any[]> | any[]
   getOptionLabel:(option:any)=>string
   setSearchInput?:(value:string)=>void
   actionButtonLabel?:string
   label:string
+  setFilter?:(myarray:any[])=>void
 }
 
-export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
-  const [Suggestions, setSuggestions]=useState<T[]>([]);
+export const SearchBar = <T,>({setFilter,label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
+  const [suggestions, setSuggestions]=useState<T[]>([]);
 
   const HandlefetchData = async(partialDataName:string)=>{
     try{
@@ -34,20 +35,28 @@ export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelected
     if(setSearchInput){
       setSearchInput(value);
     }
+    if(setSelectedData){
+      fetchFunction(value)
+    }
     if (value) {
       await debouncedFetch(value);
+    }
+    if(!value && setFilter){
+      setFilter([]);
     }
   }
 
   const handleChange = (_event: SyntheticEvent, value: T | null) => {
     if(setSelectedData){
-      console.log(value)
+      console.log('value',value)
       setSelectedData(value);
+
     }else if(setSearchedData){
+      console.log('value',value)
       setSearchedData(value);
     }
   };
-
+console.log('suggestions',suggestions)
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2}>
@@ -56,11 +65,11 @@ export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelected
             <Autocomplete
               disablePortal
               onInputChange={handleInputChange}
-              clearOnEscape
               sx={{width:'250px'}}
               onChange={handleChange}
               id="combo-box-demo"
-              options={Suggestions}
+              options={suggestions}
+              clearOnBlur={false}
               renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
             />

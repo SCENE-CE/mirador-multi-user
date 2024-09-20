@@ -206,8 +206,8 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup
                   <Grid item xs>
                     <FieldForm
                       name={media.name}
-                      placeholder={`Media field ${mediaIndex + 1}`}
-                      label={`Media ${mediaIndex + 1}`}
+                      placeholder={`Media url`}
+                      label={`Media ${mediaIndex + 1} URL`}
                       value={media.value}
                       onChange={(e) => handleMediaChange(itemIndex, mediaIndex, e.target.value)}
                     />
@@ -218,7 +218,7 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup
                       color="primary"
                       onClick={() => handleRemoveMediaField(itemIndex, mediaIndex)}
                     >
-                      Remove Field
+                      Remove Media
                     </Button>
                   </Grid>
                 </Grid>
@@ -255,7 +255,7 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, userPersonalGroup
       </Grid>
 
       <Grid item>
-        <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <Button variant="contained" color="primary" onClick={handleSubmit} disabled={items.length < 1}>
           Create
         </Button>
       </Grid>

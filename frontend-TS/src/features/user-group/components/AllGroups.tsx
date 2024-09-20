@@ -1,5 +1,5 @@
 import { User } from "../../auth/types/types.ts";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CreateGroupDto,
@@ -37,6 +37,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [ userPersonalGroupList, setUserPersonalGroupList] = useState<LinkUserGroup[]>([])
+  const [groupFiltered, setGroupFiltered] = useState<UserGroup[]>([]);
 
 
   const fetchGroups = async () => {
@@ -133,19 +134,29 @@ export const AllGroups= ({user}:allGroupsProps)=>{
     await removeAccessToGroup(groupId, userToRemoveId)
   }
 
-  const handleLookingForGroup = async (partialString:string)=>{
-    return await groups.filter((groups)=>groups.name.startsWith(partialString))
+  const handleLookingForGroup =(partialString:string)=>{
+    const groupFiltered = groups.filter((groups) => groups.name.startsWith(partialString));
+    setGroupFiltered(groupFiltered)
+    return groupFiltered
   }
 
   return(
     <Grid container justifyContent='center' flexDirection='column' spacing={4}>
-      <Grid item container direction="row-reverse" spacing={2} alignItems="center">
+      <Grid item container direction="row-reverse" spacing={2} alignItems="center"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
         <Grid item>
-          <SearchBar label={"Search Groups"} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
+          <SearchBar label={"Filter groups"} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
         </Grid>
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
-        {groups && !selectedUserGroup && groups.map((group) => (
+        {!groups.length && (
+          <Grid
+            container
+            justifyContent={"center"}
+          >
+            <Typography variant="h6" component="h2">No groups yet, start to work when clicking on the new group button.</Typography>
+          </Grid>
+        )}
+        {groups && groupFiltered.length < 1 &&!selectedUserGroup && groups.map((group) => (
             <Grid item key={group.id}>
               <MMUCard
                 searchBarLabel={"Search Users"}
@@ -201,6 +212,34 @@ export const AllGroups= ({user}:allGroupsProps)=>{
             />
           </Grid>
         )}
+        {groups && groupFiltered.length > 0 &&!selectedUserGroup && groupFiltered.map((group) => (
+          <Grid item key={group.id}>
+            <MMUCard
+              searchBarLabel={"Search Users"}
+              rights={group.rights!}
+              itemLabel={group.name}
+              openModal={openModalGroupId === group.id}
+              getOptionLabel={getOptionLabelForEditModal}
+              deleteItem={handleDeleteGroup}
+              item={group}
+              updateItem={updateGroup}
+              HandleOpenModal={()=>HandleOpenModal(group.id)}
+              id={group.id}
+              AddAccessListItemFunction={grantingAccessToGroup}
+              EditorButton={<ModalButton tooltipButton={"Edit Group"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
+              ReaderButton={<ModalButton disabled={true} tooltipButton={"OpenGroup"} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
+              getAccessToItem={GetAllGroupUsers}
+              itemOwner={group}
+              listOfItem={listOfUserPersonalGroup}
+              removeAccessListItemFunction={handleRemoveUser}
+              searchModalEditItem={lookingForUsers}
+              setItemList={setUserPersonalGroupList}
+              setItemToAdd={setUserToAdd}
+              description={group.description}
+              handleSelectorChange={handleChangeRights}
+            />
+          </Grid>
+        ))}
       </Grid>
       <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />
       <DrawerCreateGroup handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>

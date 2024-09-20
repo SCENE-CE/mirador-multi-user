@@ -1,6 +1,5 @@
-import { Button, Grid, styled } from "@mui/material";
+import { Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
 import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
@@ -22,6 +21,8 @@ import {  ProjectGroup } from "../../projects/types/types.ts";
 import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
 import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
 import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
+import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
+import AddIcon from "@mui/icons-material/Add";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -49,6 +50,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
+  const [mediaFiltered, setMediaFiltered] = useState<Media[]>([]);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
@@ -92,7 +94,10 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   },[medias, setMedias])
 
   const HandleLookingForMedia = async (partialString : string) =>{
-    return await lookingForMedias(partialString, userPersonalGroup.id)
+    const mediaFiltered = await lookingForMedias(partialString, userPersonalGroup.id)
+    console.log('toReturn',mediaFiltered)
+    setMediaFiltered(mediaFiltered)
+    return mediaFiltered
   }
 
   const getOptionLabelForMediaSearchBar = (option:Media): string => {
@@ -105,6 +110,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       setSearchedMedia(searchedMedia!)
     }else{
       setSearchedMedia(null);
+      setMediaFiltered([])
     }
   }
 
@@ -143,33 +149,40 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     await updateAccessToMedia(mediaId, group.id, eventValue as MediaGroupRights)
   };
 
+  const handleButtonClick = () => {
+    document.getElementById('file-upload')!.click();
+  };
   return(
     <Grid item container flexDirection="column" spacing={1}>
-      <Grid item container spacing={2} alignItems="center" justifyContent="space-between">
+      <Grid item container spacing={2} alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
         <Grid item>
-          <Button
-            component="label"
-            variant="contained"
-            startIcon={<CloudUploadIcon />}
-          >
-            Upload file
+          <FloatingActionButton onClick={handleButtonClick} content={"New Media"} Icon={<AddIcon />}/>
             <VisuallyHiddenInput
+              id="file-upload"
               type="file"
               onChange={handleCreateMedia}
             />
-          </Button>
         </Grid>
         <Grid item>
-          <SearchBar fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Search Media"} setSearchedData={handleSetSearchMedia}/>
+          <SearchBar setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
         </Grid>
       </Grid>
+      {!medias.length && (
+        <Grid
+          container
+          justifyContent={"center"}
+        >
+          <Typography variant="h6" component="h2">No medias yet, start to work when clicking on "Upload Medias" button.</Typography>
+        </Grid>
+      )}
       {
-        !searchedMedia && (
+        !searchedMedia && mediaFiltered.length < 1 && (
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             {
               medias.map((media)=>(
                 <Grid item key={media.id}>
                   <MMUCard
+                    searchBarLabel={"Search"}
                     id={media.id}
                     rights={ProjectRights.ADMIN}
                     description={media.description}
@@ -229,6 +242,42 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
+            }
+          </Grid>
+        )
+      }
+      {
+        !searchedMedia && mediaFiltered.length > 0 && (
+          <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+            {
+              mediaFiltered.map((media)=>(
+                <Grid item key={media.id}>
+                  <MMUCard
+                    id={media.id}
+                    rights={ProjectRights.ADMIN}
+                    description={media.description}
+                    HandleOpenModal={()=>HandleOpenModal(media.id)}
+                    openModal={openModalMediaId === media.id}
+                    itemLabel={media.name}
+                    DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>HandleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    itemOwner={user}
+                    deleteItem={()=>HandleDeleteMedia(media.id)}
+                    item={media}
+                    updateItem={HandleUpdateMedia}
+                    imagePath={media.path}
+                    AddAccessListItemFunction={handleGrantAccess}
+                    getOptionLabel={getOptionLabel}
+                    listOfItem={listOfGroup}
+                    removeAccessListItemFunction={handleRemoveAccessToMedia}
+                    searchModalEditItem={handleLookingForUserGroups}
+                    setItemList={setGroupList}
+                    setItemToAdd={setUserToAdd}
+                    getAccessToItem={getAllMediaGroups}
+                    handleSelectorChange={handleChangeRights}
+                  />
+                </Grid>
+              ))
             }
           </Grid>
         )

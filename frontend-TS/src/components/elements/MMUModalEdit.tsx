@@ -3,19 +3,16 @@ import {
   Grid, SelectChangeEvent,
   TextField,
   Tooltip,
-  Typography
 } from "@mui/material";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
-import { SearchBar } from "./SearchBar.tsx";
 import { ItemList } from "./ItemList.tsx";
 import Selector from "../Selector.tsx";
 import { MMUModal } from "./modal.tsx";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 import { ListItem, SelectorItem } from "../types.ts";
-
+import CancelIcon from '@mui/icons-material/Cancel';
 interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
@@ -33,8 +30,9 @@ interface ModalItemProps<T, G,O> {
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,
   rights: ProjectRights,
-  searchBarLabel:string
-  description:string
+  searchBarLabel:string,
+  description:string,
+  HandleOpenModalEdit:()=>void,
 }
 
 export const MMUModalEdit = <O, T extends { id: number }, G>(
@@ -56,7 +54,8 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     rights,
     searchBarLabel,
     handleDeleteAccessListItem,
-    description
+    description,
+    HandleOpenModalEdit,
   }: ModalItemProps<T, G, O>) => {
   const [editName, setEditName] = useState(false);
   const [editDescription, setEditDescription] = useState(false);
@@ -70,15 +69,12 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
       description:newItemDescription,
     }
     if(updateItem){
-    updateItem(itemToUpdate);
+      updateItem(itemToUpdate);
     }
     setEditName(false);
     setEditDescription(false)
   }, [item, newItemName, newItemDescription, updateItem, itemOwner, editName, editDescription]);
 
-  const handleEditName = useCallback(() => {
-    setEditName(!editName);
-  }, [editName]);
 
   const handleEditDescription = useCallback(() => {
     setEditDescription(!editDescription);
@@ -107,57 +103,76 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   }));
 
   const handleGetOtpionLabel = (option : G) =>{
-      return getOptionLabel ? getOptionLabel(option, searchInput) : ""
+    return getOptionLabel ? getOptionLabel(option, searchInput) : ""
   }
   const handleSearchModalEditItem = (query: string)=>{
     return searchModalEditItem ? searchModalEditItem(query) : [""] as unknown as Promise<string[]>
   }
+
+  const handleSubmit = () => {
+    handleUpdateItemName();
+    handleEditDescription();
+    HandleOpenModalEdit()
+  };
   return (
     <Grid container>
       <Grid item container flexDirection="column">
-        {!editName ? (
-          <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
-            <Typography>{itemLabel}</Typography>
-            <Button variant="contained" onClick={handleEditName}>
-              <ModeEditIcon />
-            </Button>
-          </Grid>
-        ) : (
-          <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
-            <TextField type="text" onChange={handleChangeName} variant="outlined" defaultValue={itemLabel} />
-            <Button variant="contained" onClick={handleUpdateItemName}>
-              <SaveIcon />
-            </Button>
-          </Grid>
-        )}
-        {!editDescription ? (
-          <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
-            <Typography>{description}</Typography>
-            <Button variant="contained" onClick={handleEditDescription}>
-              <ModeEditIcon />
-            </Button>
-          </Grid>
-        ) : (
-          <Grid item sx={{ minHeight: '100px' }} container flexDirection="row" justifyContent="space-between" alignItems="center">
-            <TextField type="text" onChange={handleChangeDescription} variant="outlined" defaultValue={description} />
-            <Button variant="contained" onClick={handleUpdateItemName}>
-              <SaveIcon />
-            </Button>
-          </Grid>
-        )}
-
-        {rights !== ProjectRights.READER && listOfItem && getOptionLabel !==undefined &&(
-          <Grid item>
-            <SearchBar
-              label={searchBarLabel}
-              handleAdd={handleAddAccessListItem}
-              setSelectedData={setItemToAdd}
-              getOptionLabel={handleGetOtpionLabel}
-              fetchFunction={handleSearchModalEditItem}
-              setSearchInput={setSearchInput}
-              actionButtonLabel={"ADD"}
+        <Grid
+          item
+          sx={{ minHeight: '200px' }}
+          container
+          flexDirection="column"
+          justifyContent="space-between"
+          alignItems="center"
+        >
+          <Grid
+            item
+            sx={{ minHeight: '100px', width: '100%' }}
+            container
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <TextField
+              type="text"
+              label="Name"
+              onChange={handleChangeName}
+              variant="outlined"
+              defaultValue={itemLabel}
+              fullWidth
             />
-            <ItemList items={listOfItem} removeItem={handleDeleteAccessListItem}>
+          </Grid>
+          <Grid
+            item
+            sx={{ minHeight: '100px', width: '100%' }}
+            container
+            flexDirection="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
+            <TextField
+              type="text"
+              label="Description"
+              onChange={handleChangeDescription}
+              variant="outlined"
+              defaultValue={description}
+              multiline
+              fullWidth
+            />
+          </Grid>
+          <Grid
+            item
+            sx={{ minHeight: '50px', width: '100%' }}
+            container
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+
+          </Grid>
+        </Grid>
+        {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
+          <Grid item>
+            <ItemList handleAddAccessListItem={handleAddAccessListItem} setItemToAdd={setItemToAdd} items={listOfItem} handleSearchModalEditItem={handleSearchModalEditItem} removeItem={handleDeleteAccessListItem} searchBarLabel={searchBarLabel} setSearchInput={setSearchInput} handleGetOptionLabel={handleGetOtpionLabel}>
               {(accessListItem) => (
                 <Selector
                   selectorItems={rightsSelectorItems}
@@ -169,27 +184,55 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
           </Grid>
         )}
         {rights === ProjectRights.ADMIN && (
-          <Grid item container>
+          <Grid
+            item
+            container
+            justifyContent="space-between"
+            alignItems="center"
+            flexDirection="row"
+            sx={{paddingTop:"20px"}}
+          >
             <Grid item>
               <Tooltip title={"Delete item"}>
                 <Button
-                  color='error'
+                  color="error"
                   onClick={handleConfirmDeleteItemModal}
                   variant="contained"
                 >
-                  DELETE ITEM
+                  DELETE
                 </Button>
               </Tooltip>
+            </Grid>
+            <Grid
+              item
+              container
+              justifyContent="flex-end"
+              flexDirection="row"
+              alignItems="center"
+              spacing={2}
+              sx={{ width: 'auto' }}
+            >
+              <Grid item>
+                <Button variant="contained" type="button" onClick={HandleOpenModalEdit}>
+                  <CancelIcon />
+                  Cancel
+                </Button>
+              </Grid>
+              <Grid item>
+                <Button variant="contained" type="submit" onClick={handleSubmit}>
+                  <SaveIcon />
+                  Save
+                </Button>
+              </Grid>
             </Grid>
             <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteItemModal} children={
               <ModalConfirmDelete
                 deleteItem={deleteItem}
                 itemId={item.id}
                 itemName={itemLabel}
-              />
-            }
-            />
+              />}/>
           </Grid>
+
         )}
       </Grid>
     </Grid>
