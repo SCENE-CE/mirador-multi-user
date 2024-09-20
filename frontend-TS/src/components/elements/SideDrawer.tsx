@@ -1,4 +1,14 @@
-import { Box, CSSObject, Divider, IconButton, List, ListItem, styled, Theme, Tooltip } from "@mui/material";
+import {
+  Box,
+  CSSObject,
+  Divider,
+  IconButton,
+  List,
+  ListItem,
+  styled,
+  Theme,
+  Tooltip
+} from "@mui/material";
 import { Dispatch, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -293,9 +303,15 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           selectedProjectId && (
             <>
               <List>
+                <Tooltip title={projectSelected!.name}>
+                  <ListItem sx={{padding:0}}>
+                    <ItemButton icon={<WorkIcon/>} text={projectSelected!.name} open={open} selected={false} action={()=>console.log('')}/>
+                  </ListItem>
+                </Tooltip>
+              <Divider/>
                 <Tooltip title="Save">
                   <ListItem sx={{padding:0}}>
-                    <ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Mirador" action={saveProject}/>
+                    <ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Project" action={saveProject}/>
                   </ListItem>
                 </Tooltip>
               </List>

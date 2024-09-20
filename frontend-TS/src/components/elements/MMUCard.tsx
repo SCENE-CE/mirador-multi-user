@@ -84,10 +84,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
   const fetchData = useCallback(async () => {
     let list;
     if (getAccessToItem && setItemList) {
-      console.log("getAccessToItem",getAccessToItem)
-      console.log('item',item)
       list = await getAccessToItem(item.id);
-      console.log('LIST ', list)
       setItemList(list);
     }
   }, [getAccessToItem, item.id, setItemList]);
@@ -108,11 +105,14 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             <img src={imagePath? imagePath : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain"}} />
           </Grid>
           <Grid item xs={12} sm={4}>
-            <Typography variant="subtitle1">{itemLabel}</Typography>
+            <Tooltip title={itemLabel} placement="bottom-start" sx={{ fontSize: '3rem', maxWidth: '200px' }}>
+              <Typography variant="subtitle1" sx={{textOverflow:'ellipsis', overflow:'hidden', whiteSpace:'no-wrap'}}>{itemLabel}</Typography>
+            </Tooltip>
           </Grid>
           <Grid item xs={12} sm={3}>
-            <Typography variant="subtitle1">{description}</Typography>
-
+            <Tooltip  title={description}  sx={{ fontSize: '3rem' }}>
+              <Typography variant="subtitle1" sx={{textOverflow:'ellipsis', overflow:'hidden', whiteSpace:'no-wrap'}}>{description}</Typography>
+            </Tooltip>
           </Grid>
         </Grid>
         <Grid item alignSelf="center">
