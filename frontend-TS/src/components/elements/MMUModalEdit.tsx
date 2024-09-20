@@ -190,6 +190,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
             justifyContent="space-between"
             alignItems="center"
             flexDirection="row"
+            sx={{paddingTop:"20px"}}
           >
             <Grid item>
               <Tooltip title={"Delete item"}>
