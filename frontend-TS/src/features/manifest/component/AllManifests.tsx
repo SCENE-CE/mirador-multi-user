@@ -159,9 +159,11 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
         <Grid item container spacing={2}>
-          <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
-            <SpeedDialTooltipOpen actions={actions}/>
-          </Grid>
+          {!createManifestIsOpen &&(
+            <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
+              <SpeedDialTooltipOpen actions={actions}/>
+            </Grid>
+          )}
           <Grid item>
             <VisuallyHiddenInput
               id="hiddenFileInput"
