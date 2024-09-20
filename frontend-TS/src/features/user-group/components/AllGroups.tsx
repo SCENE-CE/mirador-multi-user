@@ -1,5 +1,5 @@
 import { User } from "../../auth/types/types.ts";
-import { Grid } from "@mui/material";
+import { Grid, Typography } from "@mui/material";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   CreateGroupDto,
@@ -148,6 +148,14 @@ export const AllGroups= ({user}:allGroupsProps)=>{
         </Grid>
       </Grid>
       <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
+        {!groups.length && (
+          <Grid
+            container
+            justifyContent={"center"}
+          >
+            <Typography variant="h6" component="h2">No groups yet, start to work when clicking on the new group button.</Typography>
+          </Grid>
+        )}
         {groups && groupFiltered.length < 1 &&!selectedUserGroup && groups.map((group) => (
             <Grid item key={group.id}>
               <MMUCard

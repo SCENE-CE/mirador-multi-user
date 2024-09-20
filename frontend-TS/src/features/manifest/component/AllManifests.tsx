@@ -1,4 +1,4 @@
-import { Box, Grid, styled } from "@mui/material";
+import { Box, Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
@@ -187,6 +187,14 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           }
         </Grid>
       </Grid>
+      {!manifests.length && (
+        <Grid
+          container
+          justifyContent={"center"}
+        >
+          <Typography variant="h6" component="h2">No manifests yet, start to work when clicking on the + button.</Typography>
+        </Grid>
+      )}
       {!searchedManifest && !createManifestIsOpen && manifestFiltered.length < 1 &&(
         <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
           {manifests.map((manifest, index) => (

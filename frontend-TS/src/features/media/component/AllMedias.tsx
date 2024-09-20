@@ -1,4 +1,4 @@
-import { Button, Grid, styled } from "@mui/material";
+import { Button, Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import { createMedia } from "../api/createMedia.ts";
@@ -168,6 +168,14 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
           <SearchBar setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
         </Grid>
       </Grid>
+      {!medias.length && (
+        <Grid
+          container
+          justifyContent={"center"}
+        >
+          <Typography variant="h6" component="h2">No medias yet, start to work when clicking on "Upload Medias" button.</Typography>
+        </Grid>
+      )}
       {
         !searchedMedia && mediaFiltered.length < 1 && (
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
