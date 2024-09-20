@@ -1,25 +1,69 @@
 import {
   Divider,
-  Grid, IconButton,
+  Grid,
+  IconButton,
+  Tooltip,
   Typography
 } from "@mui/material";
 import { ListItem } from "../types.ts";
 import { BigSpinner } from "./spinner.tsx";
-import { ReactNode } from "react";
+import { Dispatch, ReactNode, SetStateAction } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
+import { SearchBar } from "./SearchBar.tsx";
+import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
 
-interface IProjectUserGroup {
+interface IProjectUserGroup<G> {
   items: ListItem[];
-  children?: (item: ListItem) => ReactNode
-  removeItem: (itemId:number)=> void
+  children?: (item: ListItem) => ReactNode;
+  removeItem: (itemId: number) => void;
+  setSearchInput: Dispatch<SetStateAction<string>>;
+  handleSearchModalEditItem: (query: string) => Promise<G[]> | Promise<string[]>;
+  handleGetOptionLabel: (option: G) => string;
+  setItemToAdd?: Dispatch<SetStateAction<G | null>>,
+  handleAddAccessListItem: () => void;
+  searchBarLabel: string;
 }
 
-export const ItemList = ({ items, children, removeItem }: IProjectUserGroup) => {
-  console.log('item LIST item : ',items);
+export const ItemList = <G,>({
+                               items,
+                               children,
+                               removeItem,
+                               searchBarLabel,
+                               handleAddAccessListItem,
+                               setItemToAdd,
+                               handleGetOptionLabel,
+                               handleSearchModalEditItem,
+                               setSearchInput,
+                             }: IProjectUserGroup<G>): JSX.Element => {
+  console.log('item LIST item : ', items);
   return (
-    <Grid container item>
+    <Grid container item spacing={2}>
+      <Grid container item alignItems="center" spacing={2}>
+        <Grid item>
+          <Typography variant="h5">Permissions</Typography>
+        </Grid>
+        <Grid item>
+          <Tooltip title={<div>
+            Admin: Can Access / Modify / Delete <br />
+            Editor: Can Access / Modify <br />
+            Reader: Can Access
+          </div>} placement="top">
+            <IconButton>
+              <QuestionMarkIcon fontSize='small' />
+            </IconButton>
+          </Tooltip>
+        </Grid>
+      </Grid>
       <Grid item>
-        <Typography variant="h5">Access List</Typography>
+        <SearchBar
+          label={searchBarLabel}
+          handleAdd={handleAddAccessListItem}
+          setSelectedData={setItemToAdd}
+          getOptionLabel={handleGetOptionLabel}
+          fetchFunction={handleSearchModalEditItem}
+          setSearchInput={setSearchInput}
+          actionButtonLabel={"ADD"}
+        />
       </Grid>
       <Grid item container flexDirection="column" spacing={1}>
         {items && items.map((item) => (
@@ -28,20 +72,23 @@ export const ItemList = ({ items, children, removeItem }: IProjectUserGroup) => 
               <Grid item sx={{ flexGrow: 1 }}>
                 <Typography>{item.name}</Typography>
               </Grid>
-              {children &&(
+              {children && (
                 <Grid item>
                   {children(item)}
                 </Grid>
-                )
-              }
+              )}
               <Grid item>
-                <IconButton onClick={()=>removeItem(item.id)} aria-lavel="delete" color="error"><DeleteIcon/></IconButton>
+                <IconButton onClick={() => removeItem(item.id)} aria-label="delete" color="error">
+                  <DeleteIcon />
+                </IconButton>
               </Grid>
-              <Grid item xs={12} sx={{mb:"5px"}}>
+              <Grid item xs={12} sx={{ mb: "5px" }}>
                 <Divider />
               </Grid>
             </Grid>
-          ) : (<><BigSpinner/></>)
+          ) : (
+            <BigSpinner />
+          )
         ))}
       </Grid>
     </Grid>
