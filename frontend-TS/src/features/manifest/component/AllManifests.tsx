@@ -47,6 +47,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
   const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
   const [modalLinkManifestIsOpen, setModalLinkManifestSIsOpen] = useState(false)
+  const [manifestFiltered, setManifestFiltered] = useState<Manifest[]>([])
 
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -96,7 +97,10 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }, [manifests]);
 
   const HandleLookingForManifests = async (partialString : string) =>{
-    return await lookingForManifests(partialString, userPersonalGroup.id)
+    console.log(partialString)
+    const userManifests =  await lookingForManifests(partialString, userPersonalGroup.id)
+    setManifestFiltered(userManifests);
+    return userManifests
   }
 
   const getOptionLabelForManifestSearchBar = (option:Manifest): string => {
@@ -105,19 +109,24 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
 
   const handleSetSearchManifest = (manifestQuery: Manifest) => {
+    console.log('toto')
     if (manifestQuery) {
       const manifestIndex = manifests.findIndex((manifest: Manifest) => manifest.id === manifestQuery.id);
       if (manifestIndex !== -1) {
-        setSearchedManifest(manifests[manifestIndex]); // Set the searched manifest
-        setSearchedManifestIndex(manifestIndex); // Set the index
+        setSearchedManifest(manifests[manifestIndex]);
+        setSearchedManifestIndex(manifestIndex);
+        setManifestFiltered([])
       } else {
-        setSearchedManifest(null); // Clear if not found
-        setSearchedManifestIndex(null); // Clear index if not found
+        setSearchedManifest(null);
+        setSearchedManifestIndex(null);
+        setManifestFiltered([])
       }
     } else {
-      setSearchedManifest(null); // Clear if no query
-      setSearchedManifestIndex(null); // Clear index if no query
+      setSearchedManifest(null);
+      setSearchedManifestIndex(null);
+      setManifestFiltered([])
     }
+    setManifestFiltered([])
   };
 
   const HandleCopyToClipBoard = async (path: string) => {
@@ -148,7 +157,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
   return (
     <Grid item container flexDirection="column" spacing={1}>
-      <Grid item container spacing={2} alignItems="center" justifyContent="space-between" sx={{width:'100%'}}>
+      <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
         <Grid item container spacing={2}>
           <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
             <SpeedDialTooltipOpen actions={actions}/>
@@ -170,6 +179,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     getOptionLabel={getOptionLabelForManifestSearchBar}
                     label="Filter manifests"
                     setSearchedData={handleSetSearchManifest}
+                    setFilter={setManifestFiltered}
                   />
                 </Grid>
               </Grid>
@@ -177,9 +187,31 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           }
         </Grid>
       </Grid>
-      {!searchedManifest && !createManifestIsOpen &&(
+      {!searchedManifest && !createManifestIsOpen && manifestFiltered.length < 1 &&(
         <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
           {manifests.map((manifest, index) => (
+            <Grid item key={manifest.id}>
+              <MMUCard
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                id={manifest.id}
+                rights={ProjectRights.ADMIN}
+                description={manifest.description}
+                HandleOpenModal={()=>HandleOpenModal(manifest.id)}
+                openModal={openModalManifestId === manifest.id}
+                itemLabel={manifest.name}
+                itemOwner={user}
+                item={manifest}
+                imagePath={thumbnailUrls[index]}
+                manifest={true}
+                EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
+              />
+            </Grid>
+          ))}
+        </Grid>
+      )}
+      {!searchedManifest && !createManifestIsOpen && manifestFiltered.length > 0 &&(
+        <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+          {manifestFiltered.map((manifest, index) => (
             <Grid item key={manifest.id}>
               <MMUCard
                 DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}

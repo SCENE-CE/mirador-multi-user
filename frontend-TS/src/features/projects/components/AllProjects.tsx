@@ -215,7 +215,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">
-        <Grid item container direction="row-reverse" spacing={2} alignItems="center">
+        <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
           {
             !selectedProjectId &&(
               <Grid item>

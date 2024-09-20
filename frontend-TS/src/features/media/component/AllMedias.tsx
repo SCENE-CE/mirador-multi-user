@@ -165,7 +165,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
           </Button>
         </Grid>
         <Grid item>
-          <SearchBar fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
+          <SearchBar setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
         </Grid>
       </Grid>
       {

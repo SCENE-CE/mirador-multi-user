@@ -11,9 +11,10 @@ interface IUsersSearchBarProps<T>{
   setSearchInput?:(value:string)=>void
   actionButtonLabel?:string
   label:string
+  setFilter?:(myarray:any[])=>void
 }
 
-export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
+export const SearchBar = <T,>({setFilter,label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
   const [suggestions, setSuggestions]=useState<T[]>([]);
 
   const HandlefetchData = async(partialDataName:string)=>{
@@ -40,6 +41,9 @@ export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelected
     if (value) {
       await debouncedFetch(value);
     }
+    if(!value && setFilter){
+      setFilter([]);
+    }
   }
 
   const handleChange = (_event: SyntheticEvent, value: T | null) => {
@@ -48,6 +52,7 @@ export const SearchBar = <T,>({label,getOptionLabel,setSearchedData, setSelected
       setSelectedData(value);
 
     }else if(setSearchedData){
+      console.log('value',value)
       setSearchedData(value);
     }
   };
