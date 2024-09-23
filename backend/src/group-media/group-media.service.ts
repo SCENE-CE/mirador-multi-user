@@ -30,6 +30,7 @@ export class GroupMediaService {
       await this.addMediaToGroup({
         userGroup: user_group,
         mediasId: [media.id],
+        rights: MediaGroupRights.ADMIN,
       });
       return await this.getMediaRightsForUser(user_group.id, media.id);
     } catch (error) {
@@ -53,7 +54,7 @@ export class GroupMediaService {
           );
         }
         const linkMediaGroup = await this.linkMediaGroupService.create({
-          rights: MediaGroupRights.ADMIN,
+          rights: dto.rights ? dto.rights : MediaGroupRights.READER,
           user_group: userGroup,
           media: media,
         });
@@ -99,9 +100,11 @@ export class GroupMediaService {
 
   async getAllMediasForUserGroup(userGroupId: number) {
     try {
-      return await this.linkMediaGroupService.findAllMediaByUserGroupId(
-        userGroupId,
-      );
+      const toReturn =
+        await this.linkMediaGroupService.findAllMediaByUserGroupId(userGroupId);
+      console.log('----------------------medias----------------------');
+      console.log(toReturn);
+      return toReturn;
     } catch (error) {
       throw new InternalServerErrorException(
         'an error occurred while getting all medias for user',

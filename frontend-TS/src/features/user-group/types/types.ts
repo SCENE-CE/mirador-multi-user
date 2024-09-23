@@ -6,9 +6,9 @@ export enum UserGroupTypes {
 }
 
 export enum ProjectRights{
-  ADMIN="admin",
-  EDITOR="editor",
+  ADMIN = 'admin',
   READER = 'reader',
+  EDITOR = 'editor',
 }
 
 
@@ -42,4 +42,10 @@ export type AddProjectToGroupDto ={
 export type RemoveProjectToGroupDto ={
   projectId:number;
   groupId:number;
+}
+
+export type changeAccessToGroupDto ={
+  userId:number;
+  groupId:number;
+  rights:ProjectRights;
 }

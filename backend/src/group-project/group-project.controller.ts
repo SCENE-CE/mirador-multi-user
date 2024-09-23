@@ -43,7 +43,7 @@ export class GroupProjectController {
 
   @Get('/user/projects/:userId')
   getAllUsersProjects(@Param('userId') userId: number) {
-    console.log('get All Users Projects', userId)
+    console.log('get All Users Projects', userId);
     return this.groupProjectService.findAllUserProjects(userId);
   }
 
@@ -58,6 +58,7 @@ export class GroupProjectController {
     console.log('create project dto');
     return this.groupProjectService.createProject(createProjectDto);
   }
+
 
   @Patch('/updateProject/')
   @UseGuards(AuthGuard)

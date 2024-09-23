@@ -13,6 +13,7 @@ import { ModalConfirmDelete } from "../../features/projects/components/ModalConf
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 import { ListItem, SelectorItem } from "../types.ts";
 import CancelIcon from '@mui/icons-material/Cancel';
+import { MediaGroupRights } from "../../features/media/types/types.ts";
 interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
@@ -29,7 +30,7 @@ interface ModalItemProps<T, G,O> {
   handleAddAccessListItem: () => void,
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,
-  rights: ProjectRights,
+  rights: ProjectRights | MediaGroupRights,
   searchBarLabel:string,
   description:string,
   HandleOpenModalEdit:()=>void,

@@ -3,7 +3,7 @@ import { ProjectGroupUpdateDto } from "../types/types";
 
 export const updateProject = async (project: ProjectGroupUpdateDto) => {
   const token = storage.getToken();
-  console.log('project',project)
+  console.log('-----------------------------project-----------------------------',project)
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/updateProject`, {
       method: "PATCH",

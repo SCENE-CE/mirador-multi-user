@@ -12,7 +12,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';
-import { MediaGroupRights } from "../enum/rights";
+import { MediaGroupRights } from '../enum/rights';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -71,7 +71,10 @@ export class LinkMediaGroupService {
         where: { user_group: { id } },
         relations: ['user_group'],
       });
-      return request.map((linkGroup: LinkMediaGroup) => linkGroup.media);
+      return request.map((linkGroup: LinkMediaGroup) => ({
+        ...linkGroup.media,
+        rights: linkGroup.rights,
+      }));
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
