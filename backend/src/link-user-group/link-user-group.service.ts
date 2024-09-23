@@ -10,6 +10,7 @@ import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
 import { UserGroup } from '../user-group/entities/user-group.entity';
+import { User_UserGroupRights } from '../enum/rights';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -85,33 +86,43 @@ export class LinkUserGroupService {
 
   async ChangeAccessToUserGroup(
     groupId: number,
-    updateUserGroupDto: UpdateLinkUserGroupDto,
+    userId: number,
+    rights: User_UserGroupRights,
   ) {
+
+    console.log('groupId')
+    console.log(groupId)
+    console.log('userId')
+    console.log(userId)
     try {
       const linkGroup = await this.linkUserGroupRepository.findOne({
-        where: { user_group: { id: groupId, type: UserGroupTypes.MULTI_USER } },
-        relations: ['user', 'user_group'], // Ensuring relations are loaded
+        where: { user_group: { type: UserGroupTypes.MULTI_USER, id: groupId }, user: {id:userId} },
+        relations: ['user', 'user_group'],
       });
 
       if (!linkGroup) {
         throw new NotFoundException(`User group with id ${groupId} not found.`);
       }
 
-      // Merge the existing entity with new data
-      Object.assign(linkGroup, updateUserGroupDto);
+      linkGroup.rights = rights;
 
-      // Save the updated entity
-      const updatedGroup = await this.linkUserGroupRepository.save(linkGroup);
+      await this.linkUserGroupRepository.upsert(linkGroup, {
+        conflictPaths: ['user', 'user_group'],
+      });
 
-      return updatedGroup;
+      // Return the updated linkGroup
+      console.log(linkGroup);
+      return linkGroup;
+
     } catch (error) {
-      console.error(error);
+      console.error(`Error updating access for userId ${userId} to group ${groupId}:`, error);
       throw new InternalServerErrorException(
-        `Updating access for userId ${updateUserGroupDto.user} to group ${updateUserGroupDto.user_group} failed`,
+        `Updating access for userId ${userId} to group ${groupId} failed.`,
         error,
       );
     }
   }
+
 
   async RemoveAccessToUserGroup(groupId: number, userId: number) {
     try {
@@ -217,8 +228,8 @@ export class LinkUserGroupService {
         })
         .limit(3)
         .getMany();
-  console.log('-----------------linkUserGroups---------------')
-  console.log(linkUserGroups)
+      console.log('-----------------linkUserGroups---------------');
+      console.log(linkUserGroups);
       return linkUserGroups;
     } catch (error) {
       console.log(error);

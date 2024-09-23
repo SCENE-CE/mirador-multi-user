@@ -53,14 +53,12 @@ export class LinkUserGroupController {
       grantAccessToGroupDto,
     );
   }
-  @Patch('/change-access/:groupId')
-  changeAccess(
-    @Body() grantAccessToGroupDto: UpdateLinkUserGroupDto,
-    @Param('groupId') groupId: number,
-  ) {
+  @Patch('/change-access')
+  changeAccess(@Body() grantAccessToGroupDto: UpdateLinkUserGroupDto) {
     return this.linkUserGroupService.ChangeAccessToUserGroup(
-      groupId,
-      grantAccessToGroupDto,
+      grantAccessToGroupDto.groupId,
+      grantAccessToGroupDto.userId,
+      grantAccessToGroupDto.rights,
     );
   }
 

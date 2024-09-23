@@ -85,7 +85,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
 
   const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number) =>{
     const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
-    const changeAccess =await  ChangeAccessToGroup(groupId, {...userToUpdate, rights: eventValue as ProjectRights} );
+    const changeAccess =await  ChangeAccessToGroup(groupId, {userId: userToUpdate!.user.id, groupId: group.id, rights: eventValue as ProjectRights} );
     console.log(changeAccess)
   }
 

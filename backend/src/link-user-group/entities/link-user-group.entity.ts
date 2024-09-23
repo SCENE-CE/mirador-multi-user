@@ -2,9 +2,9 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne, PrimaryColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
-  Unique
+  Unique,
 } from 'typeorm';
 import { User_UserGroupRights } from '../../enum/rights';
 import { User } from '../../users/entities/user.entity';

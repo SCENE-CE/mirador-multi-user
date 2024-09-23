@@ -30,6 +30,7 @@ export class GroupMediaService {
       await this.addMediaToGroup({
         userGroup: user_group,
         mediasId: [media.id],
+        rights: MediaGroupRights.ADMIN,
       });
       return await this.getMediaRightsForUser(user_group.id, media.id);
     } catch (error) {
@@ -53,7 +54,7 @@ export class GroupMediaService {
           );
         }
         const linkMediaGroup = await this.linkMediaGroupService.create({
-          rights: MediaGroupRights.READER,
+          rights: dto.rights ? dto.rights : MediaGroupRights.READER,
           user_group: userGroup,
           media: media,
         });
