@@ -5,10 +5,11 @@ import placeholder from '../../assets/Placeholder.svg'
 import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
+import { MediaGroupRights } from "../../features/media/types/types.ts";
 
 interface IMMUCardProps<T,G,O,X> {
   id: number;
-  rights: ProjectRights;
+  rights: ProjectRights | MediaGroupRights;
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
