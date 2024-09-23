@@ -154,7 +154,7 @@ export class LinkGroupProjectService {
         throw new NotFoundException('No matching LinkGroupProject found');
       }
 
-console.log('before update ')
+     console.log('before update ')
       linkGroupToUpdate.rights = updatedRights;
       const updatedData = await this.linkGroupProjectRepository.save(linkGroupToUpdate);
 

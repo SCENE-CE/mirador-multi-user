@@ -53,7 +53,7 @@ export class GroupMediaService {
           );
         }
         const linkMediaGroup = await this.linkMediaGroupService.create({
-          rights: MediaGroupRights.ADMIN,
+          rights: MediaGroupRights.READER,
           user_group: userGroup,
           media: media,
         });

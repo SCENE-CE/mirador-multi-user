@@ -50,8 +50,11 @@ export class GroupProjectService {
   async updateProject(dto: UpdateProjectGroupDto) {
     try {
       let projectToReturn;
-      if (dto.rights && dto.group && dto.rights !== GroupProjectRights.READER) {
-        console.log('if');
+
+      console.log('------------------dto------------------')
+      console.log(dto)
+      if (dto.rights && dto.group) {
+        console.log('if')
         const updateRelation =
           await this.linkGroupProjectService.UpdateRelation(
             dto.project.id,
@@ -59,11 +62,14 @@ export class GroupProjectService {
             dto.rights,
           );
 
+        console.log('-------------------------------updateRelation-------------------------------')
+        console.log(updateRelation)
+
         await this.projectService.update(dto.project.id, dto.project);
-        console.log('post project update')
         projectToReturn =
           await this.linkGroupProjectService.getProjectRelations(dto.id);
       } else {
+        console.log('else')
         projectToReturn = await this.projectService.update(
           dto.project.id,
           dto.project,

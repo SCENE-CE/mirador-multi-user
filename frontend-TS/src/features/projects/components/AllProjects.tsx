@@ -174,10 +174,14 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   };
 
   const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:Project) => {
+    console.log('ProjectUser',ProjectUser)
+    console.log('eventValue',eventValue );
     const groups:ProjectGroup[] = await getGroupsAccessToProject(projectId);
+
     const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {rights, ...project } = ProjectUser
+    console.log('rights',rights)
     await updateProject({
       project: { ...project},
       id: userGroup!.id,

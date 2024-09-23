@@ -46,6 +46,7 @@ export class LinkUserGroupController {
   getUserPersonalGroup(@Param('userId') userId: number) {
     return this.linkUserGroupService.findUserPersonalGroup(userId);
   }
+
   @Post('/access')
   grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
     return this.linkUserGroupService.GrantAccessToUserGroup(
