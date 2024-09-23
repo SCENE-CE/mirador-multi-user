@@ -3,7 +3,6 @@ import InputMonoNarrow from '../fonts/InputMonoNarrow-ExtraLight.ttf';
 
 export const theme = createTheme({
   typography: {
-    fontFamily: 'InputMonoNarrow, Arial',
   },
   palette: {
     background: {
@@ -14,7 +13,7 @@ export const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: `
         @font-face {
-          font-family:'Roboto';
+          font-family:'InputMonoNarrow';
           font-style: normal;
           font-display: swap;
           font-weight: 400;
