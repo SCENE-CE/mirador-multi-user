@@ -12,7 +12,7 @@ import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';
-import { MediaGroupRights } from "../enum/rights";
+import { MediaGroupRights } from '../enum/rights';
 
 @Injectable()
 export class LinkMediaGroupService {
