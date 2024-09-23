@@ -1,6 +1,6 @@
 import { Dispatch, forwardRef, useEffect, useImperativeHandle, useRef, useState } from "react";
 import Mirador from 'mirador';
-import miradorAnnotationEditorVideo from "mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin";
+import miradorAnnotationEditor from "mirador-annotation-editor/src/plugins/miradorAnnotationPlugin.js";
 import '@fontsource/roboto/300.css';
 import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
@@ -56,7 +56,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
       // First displaying of the viewer
       if(!miradorViewer){
         loadingMiradorViewer = Mirador.viewer(config, [
-          ...miradorAnnotationEditorVideo]);
+          ...miradorAnnotationEditor]);
       }
       if(!miradorState){
         saveMiradorState(loadingMiradorViewer.store.getState(),project.name);

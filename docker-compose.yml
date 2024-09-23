@@ -13,7 +13,7 @@ services:
       - ./mariaDB/data:/var/lib/mysql:rw
 
   frontend:
-    image: tetraslibre/mmu-frontend:latest
+    build: ./frontend-TS
     environment:
       VITE_BACKEND_URL: ${BACKEND_URL}
     depends_on:

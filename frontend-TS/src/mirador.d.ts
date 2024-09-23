@@ -14,8 +14,8 @@ declare module 'mirador-annotation-editor/src/annotationAdapter/LocalStorageAdap
   export default LocalStorageAdapter;
 }
 
-declare module 'mirador-annotation-editor-video/src/plugin/MiradorAnnotationEditionVideoPlugin'{
-  const miradorAnnotationEditorVideo: any;
-  export default miradorAnnotationEditorVideo;
+declare module 'mirador-annotation-editor/src/plugins/miradorAnnotationPlugin.js'{
+  const miradorAnnotationEditor: any;
+  export default miradorAnnotationEditor;
 }
 
