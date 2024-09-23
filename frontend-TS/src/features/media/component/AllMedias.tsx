@@ -163,6 +163,8 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       }
     }
   }
+
+  console.log(medias)
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
@@ -195,13 +197,14 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                   <MMUCard
                     searchBarLabel={"Search"}
                     id={media.id}
-                    rights={ProjectRights.ADMIN}
+                    rights={media.rights}
                     description={media.description}
                     HandleOpenModal={()=>HandleOpenModal(media.id)}
                     openModal={openModalMediaId === media.id}
                     itemLabel={media.name}
                     DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>HandleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                     EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                     itemOwner={user}
                     deleteItem={()=>HandleDeleteMedia(media.id)}
                     item={media}

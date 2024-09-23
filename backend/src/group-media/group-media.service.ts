@@ -100,9 +100,12 @@ export class GroupMediaService {
 
   async getAllMediasForUserGroup(userGroupId: number) {
     try {
-      return await this.linkMediaGroupService.findAllMediaByUserGroupId(
+      const toReturn = await this.linkMediaGroupService.findAllMediaByUserGroupId(
         userGroupId,
       );
+      console.log('----------------------medias----------------------')
+      console.log(toReturn)
+      return toReturn
     } catch (error) {
       throw new InternalServerErrorException(
         'an error occurred while getting all medias for user',

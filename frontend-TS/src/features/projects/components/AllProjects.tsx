@@ -227,6 +227,8 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
     }
   }
 
+
+
   return (
     <>
       <Grid container spacing={2} justifyContent="center" flexDirection="column">

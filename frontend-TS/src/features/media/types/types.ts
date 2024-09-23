@@ -14,6 +14,7 @@ export type Media={
   idCreator:number,
   created_at:Date,
   updated_at:Date,
+  rights:MediaGroupRights
 }
 
 export enum MediaGroupRights {
