@@ -36,5 +36,13 @@ Mirador multi user is a project that aims to create a multi-user environment for
   - `npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
 - change db password and JWT secret into .env file.
 
+## Utils 
 
+### Update backend API documentation
+
+We use the `swagger` library to generate the API documentation. Natively, the DTOs object are not generated in 
+the documentation. To update the documentation, you need to run the following command. Currently (2024/09/24), the 
+command trigger 1 error but the command run properly
+- `cd backend && npm run updateSwaggerDocumentation`
+  
 
