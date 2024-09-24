@@ -33,11 +33,11 @@ In an other terminal, run following commands to generate the database
 - `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
  
 Now you can access :
-- frontend to `http://localhost:4000`
-- backend to `http://localhost:3000`
-- backend API documentation to `http://localhost:3000/api`
+- frontend to [http://localhost:4000](http://localhost:4000)
+- backend to [http://localhost:3000](http://localhost:3000)
+- backend API documentation to [http://localhost:3000/api](http://localhost:3000/api)
 - Database to `http://localhost:3306` For DBeaver or other DB client
-- Caddy to `http://localhost:9000`
+- Caddy to [http://localhost:9000](http://localhost:9000)
 
 - ## Installation PROD (Docker)
 
