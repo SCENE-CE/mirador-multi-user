@@ -11,7 +11,6 @@ import { MediaModule } from './media/media.module';
 import { UserGroupModule } from './user-group/user-group.module';
 import { LinkGroupProjectModule } from './link-group-project/link-group-project.module';
 import { LinkMediaGroupModule } from './link-media-group/link-media-group.module';
-import { MediaGroupModule } from './media-group/media-group.module';
 import { GroupProjectModule } from './group-project/group-project.module';
 import { GroupMediaModule } from './group-media/group-media.module';
 import { LinkUserGroupModule } from './link-user-group/link-user-group.module';
@@ -40,7 +39,6 @@ import dbConfiguration from './config/db.config';
     UserGroupModule,
     LinkGroupProjectModule,
     LinkMediaGroupModule,
-    MediaGroupModule,
     GroupProjectModule,
     GroupMediaModule,
     LinkUserGroupModule,

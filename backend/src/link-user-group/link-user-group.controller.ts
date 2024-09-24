@@ -71,4 +71,5 @@ export class LinkUserGroupController {
     console.log('userId', userId);
     return this.linkUserGroupService.RemoveAccessToUserGroup(groupId, userId);
   }
+
 }

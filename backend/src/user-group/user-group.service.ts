@@ -150,10 +150,20 @@ export class UserGroupService {
     }
   }
 
-  async remove(id: number) {
+  async remove(groupId: number) {
     try {
-      const deleteData = await this.userGroupRepository.delete(id);
-      if (deleteData.affected != 1) throw new NotFoundException(id);
+      const linkUserGroups =
+        await this.linkUserGroupService.findAllUsersForGroup(groupId);
+      console.log(linkUserGroups);
+      for (const linkUserGroup of linkUserGroups) {
+        await this.linkUserGroupService.RemoveAccessToUserGroup(
+          groupId,
+          linkUserGroup.user.id,
+        );
+      }
+      const deleteData = await this.userGroupRepository.delete(groupId);
+      if (deleteData.affected != 1) throw new NotFoundException(groupId);
+      return deleteData;
     } catch (error) {
       throw new InternalServerErrorException(error);
     }

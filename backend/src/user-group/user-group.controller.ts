@@ -47,7 +47,6 @@ export class UserGroupController {
 
   @Delete(':groupId')
   @UseGuards(AuthGuard)
-  @HttpCode(204)
   remove(@Param('groupId') id: string) {
     return this.userGroupService.remove(+id);
   }

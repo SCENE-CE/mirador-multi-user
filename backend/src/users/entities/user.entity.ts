@@ -6,7 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Project } from '../../project/entities/project.entity';
-import { LinkUserGroup } from "../../link-user-group/entities/link-user-group.entity";
+import { LinkUserGroup } from '../../link-user-group/entities/link-user-group.entity';
 
 @Entity()
 export class User {
