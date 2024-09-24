@@ -23,8 +23,8 @@
     "iiif-manifest-editor": "^1.0.3",
     "manifest-editor": "^1.0.2",
     "mirador": "npm:mirador-video@^1.0.6",
-    "mirador-annotation-editor": "^1.0.22-mirador-video-based",
-    "mirador-annotation-editor-video": "^0.0.6",
+    "mirador-annotation-editor": "^1.0.31",
+    "mirador-annotation-editor-video": "^0.0.7",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.51.3",
@@ -49,5 +49,10 @@
     "redux": "^5.0.0",
     "typescript": "^5.4.5",
     "vite": "^5.3.5"
+  },
+  "overrides" : {
+    "mirador-annotation-editor": {
+      "mirador": "npm:mirador-video@^1.0.6"
+    }
   }
 }
