@@ -1,19 +1,13 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { LinkMediaGroupService } from '../link-media-group/link-media-group.service';
-import { UserGroupService } from '../user-group/user-group.service';
-import { MediaService } from '../media/media.service';
-import { CreateMediaDto } from '../media/dto/create-media.dto';
-import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
-import { MediaGroupRights } from '../enum/rights';
-import { join } from 'path';
-import * as fs from 'node:fs';
-import { UpdateMediaDto } from '../media/dto/update-media.dto';
+import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { LinkMediaGroupService } from "../link-media-group/link-media-group.service";
+import { UserGroupService } from "../user-group/user-group.service";
+import { MediaService } from "../media/media.service";
+import { CreateMediaDto } from "../media/dto/create-media.dto";
+import { AddMediaToGroupDto } from "./dto/addMediaToGroupDto";
+import { MediaGroupRights } from "../enum/rights";
+import { join } from "path";
+import * as fs from "node:fs";
+import { UpdateMediaDto } from "../media/dto/update-media.dto";
 
 @Injectable()
 export class GroupMediaService {
@@ -100,11 +94,7 @@ export class GroupMediaService {
 
   async getAllMediasForUserGroup(userGroupId: number) {
     try {
-      const toReturn =
-        await this.linkMediaGroupService.findAllMediaByUserGroupId(userGroupId);
-      console.log('----------------------medias----------------------');
-      console.log(toReturn);
-      return toReturn;
+      return await this.linkMediaGroupService.findAllMediaByUserGroupId(userGroupId);
     } catch (error) {
       throw new InternalServerErrorException(
         'an error occurred while getting all medias for user',

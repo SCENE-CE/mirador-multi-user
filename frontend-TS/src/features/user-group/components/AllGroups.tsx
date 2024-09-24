@@ -95,8 +95,7 @@ export const AllGroups= ({user}:allGroupsProps)=>{
 
   const handleDeleteGroup = useCallback(async (groupId: number) => {
     await deleteGroup(groupId);
-    const updateListOfGroup = groups.filter((group: UserGroup) => group.id !== groupId);
-    setGroups(updateListOfGroup);
+    fetchGroups()
   },[groups, setGroups])
 
   const updateGroup= useCallback(async (groupUdated: UserGroup) => {

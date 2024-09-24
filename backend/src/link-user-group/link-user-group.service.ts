@@ -89,14 +89,16 @@ export class LinkUserGroupService {
     userId: number,
     rights: User_UserGroupRights,
   ) {
-
-    console.log('groupId')
-    console.log(groupId)
-    console.log('userId')
-    console.log(userId)
+    console.log('groupId');
+    console.log(groupId);
+    console.log('userId');
+    console.log(userId);
     try {
       const linkGroup = await this.linkUserGroupRepository.findOne({
-        where: { user_group: { type: UserGroupTypes.MULTI_USER, id: groupId }, user: {id:userId} },
+        where: {
+          user_group: { type: UserGroupTypes.MULTI_USER, id: groupId },
+          user: { id: userId },
+        },
         relations: ['user', 'user_group'],
       });
 
@@ -113,16 +115,17 @@ export class LinkUserGroupService {
       // Return the updated linkGroup
       console.log(linkGroup);
       return linkGroup;
-
     } catch (error) {
-      console.error(`Error updating access for userId ${userId} to group ${groupId}:`, error);
+      console.error(
+        `Error updating access for userId ${userId} to group ${groupId}:`,
+        error,
+      );
       throw new InternalServerErrorException(
         `Updating access for userId ${userId} to group ${groupId} failed.`,
         error,
       );
     }
   }
-
 
   async RemoveAccessToUserGroup(groupId: number, userId: number) {
     try {
@@ -258,6 +261,18 @@ export class LinkUserGroupService {
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while trying to find the personal group for user id: ${userId}. Error: ${error.message}`,
+      );
+    }
+  }
+
+  async deleteLinkUserGroup(linkUserGroupId: number) {
+    try {
+      return await this.linkUserGroupRepository.delete(linkUserGroupId);
+    } catch (error) {
+      console.log(error);
+      throw new InternalServerErrorException(
+        `an error occurred while removing linkUserGroup with id ${linkUserGroupId}`,
+        error,
       );
     }
   }
