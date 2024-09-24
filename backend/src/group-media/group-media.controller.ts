@@ -19,6 +19,7 @@ import { generateAlphanumericSHA1Hash } from '../utils/hashGenerator';
 import { UpdateMediaDto } from '../media/dto/update-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
+import { SharpPipeInterceptor } from '../Custom_pipes/sharp.pipe';
 
 @Controller('group-media')
 export class GroupMediaController {
@@ -44,6 +45,7 @@ export class GroupMediaController {
       }),
       fileFilter: fileFilterMedia,
     }),
+    SharpPipeInterceptor,
   )
   async uploadSingleFile(
     @UploadedFile() file,
