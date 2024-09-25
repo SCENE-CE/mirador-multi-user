@@ -21,6 +21,7 @@ import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { SharpPipeInterceptor } from '../Custom_pipes/sharp.pipe';
 import { MediaLinkInterceptor } from '../Custom_pipes/media-link.pipe';
+import { mediaOrigin } from "../enum/origins";
 
 @Controller('group-media')
 export class GroupMediaController {
@@ -61,6 +62,7 @@ export class GroupMediaController {
       user_group: userGroup,
       path: `${file.filename}`,
       hash: `${(req as any).generatedHash}`,
+      origin: mediaOrigin.UPLOAD,
     };
     return await this.groupMediaService.createMedia(mediaToCreate);
   }
@@ -68,8 +70,17 @@ export class GroupMediaController {
   @Post('/media/link')
   @UseInterceptors(MediaLinkInterceptor)
   @HttpCode(201)
-  linkManifest() {
-    return;
+  async linkManifest(@Body() createMediaDto, @Req() req) {
+    const mediaToCreate = {
+      ...createMediaDto,
+      name: req.fileName,
+      description: 'your media description',
+      user_group: createMediaDto.userGroup,
+      path: `${req.body.imageUrl}`,
+      hash: `${(req as any).generatedHash}`,
+      origin: mediaOrigin.UPLOAD,
+    };
+    return await this.groupMediaService.createMedia(mediaToCreate);
   }
 
   @Get('/group/:userGroupId')

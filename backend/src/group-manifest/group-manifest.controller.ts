@@ -21,6 +21,7 @@ import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ManifestGroupRights } from '../enum/rights';
+import { manifestOrigin } from "../enum/origins";
 
 @Controller('group-manifest')
 export class GroupManifestController {
@@ -60,6 +61,7 @@ export class GroupManifestController {
       hash: `${(req as any).generatedHash}`,
       path: `${file.filename}`,
       rights: ManifestGroupRights.ADMIN,
+      origin: manifestOrigin.UPLOAD,
     };
     return this.groupManifestService.create(manifestToCreate);
   }
@@ -69,6 +71,7 @@ export class GroupManifestController {
     const manifestToCreate = {
       ...createLinkDto,
       description: 'your manifest description',
+      origin: manifestOrigin.LINK,
     };
     return this.groupManifestService.create(manifestToCreate);
   }

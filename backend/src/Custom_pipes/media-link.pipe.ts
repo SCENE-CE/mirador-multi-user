@@ -27,6 +27,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
     const arrayBuffer = await imageFetch.arrayBuffer();
     const imageBuffer = Buffer.from(arrayBuffer);
 
+
     const hash = generateAlphanumericSHA1Hash(
       `${Date.now().toString()}${Math.random().toString(36)}`,
     );
