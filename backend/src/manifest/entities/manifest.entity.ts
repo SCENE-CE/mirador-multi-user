@@ -27,7 +27,7 @@ export class Manifest {
   path: string;
 
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   hash: string;
 
   @IsString()

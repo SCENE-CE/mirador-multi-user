@@ -72,8 +72,6 @@ export class GroupMediaController {
   @UseInterceptors(MediaLinkInterceptor)
   @HttpCode(201)
   async linkManifest(@Body() createMediaDto, @Req() req) {
-    console.log('-------------------createMediaDto--------------------------------------')
-    console.log(createMediaDto)
     const mediaToCreate = {
       ...createMediaDto,
       name: `${req.body.imageUrl}`,
