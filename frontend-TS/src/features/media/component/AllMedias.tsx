@@ -209,7 +209,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     deleteItem={()=>HandleDeleteMedia(media.id)}
                     item={media}
                     updateItem={HandleUpdateMedia}
-                    imagePath={media.path}
+                    imagePath={`${media.path}_thumbnail.webp`}
                     AddAccessListItemFunction={handleGrantAccess}
                     getOptionLabel={getOptionLabel}
                     listOfItem={listOfGroup}

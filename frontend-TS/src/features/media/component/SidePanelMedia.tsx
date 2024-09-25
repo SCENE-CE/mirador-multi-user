@@ -97,32 +97,52 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
           searchedMedia ?(
             <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width:500 }} cols={3} rowHeight={164}>
 
-              <CustomImageItem key={searchedMedia.path}>
-                <img
-                  srcSet={`${searchedMedia.path}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                  src={`${searchedMedia.path}?w=164&h=164&fit=crop&auto=format`}
-                  alt={searchedMedia.name}
-                  loading="lazy"
-                />
-                <CustomButton
-                  className="overlayButton"
-                  disableRipple
-                  onClick={() => handleCopyToClipBoard(searchedMedia.path)}
-                >
-                  Copy path to clipboard
-                </CustomButton>
-              </CustomImageItem>
+              <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width: 500 }} cols={3} rowHeight={164}>
+                <CustomImageItem key={searchedMedia.path}>
+                  <Box
+                    component="img"
+                    src={`${searchedMedia.path}_thumbnail.webp`}
+                    alt={searchedMedia.name}
+                    loading="lazy"
+                    sx={{
+                      width: 164,
+                      height: 164,
+                      objectFit: 'cover', // Ensures cropping behavior
+                      '@media(min-resolution: 2dppx)': {
+                        width: 164 * 2,
+                        height: 164 * 2,
+                      },
+                    }}
+                  />
+                  <CustomButton
+                    className="overlayButton"
+                    disableRipple
+                    onClick={() => handleCopyToClipBoard(searchedMedia.path)}
+                  >
+                    Copy path to clipboard
+                  </CustomButton>
+                </CustomImageItem>
+              </ImageList>
             </ImageList>
 
           ):(
             <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
               {medias.map((media) => (
                 <CustomImageItem key={media.path}>
-                  <img
-                    srcSet={`${media.path}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-                    src={`${media.path}?w=164&h=164&fit=crop&auto=format`}
+                  <Box
+                    component="img"
+                    src={`${media.path}_thumbnail.webp`}
                     alt={media.name}
                     loading="lazy"
+                    sx={{
+                      width: 164,
+                      height: 164,
+                      objectFit: 'cover', // Ensures cropping behavior
+                      '@media(min-resolution: 2dppx)': {
+                        width: 164 * 2,
+                        height: 164 * 2,
+                      },
+                    }}
                   />
                   <CustomButton
                     className="overlayButton"
