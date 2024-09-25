@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkManifestGroup } from '../../link-manifest-group/entities/link-manifest-group.entity';
+import { manifestOrigin } from '../../enum/origins';
 
 @Entity()
 export class Manifest {
@@ -17,6 +18,9 @@ export class Manifest {
   @IsString()
   @Column()
   url: string;
+
+  @Column({ type: 'enum', enum: manifestOrigin })
+  origin: manifestOrigin;
 
   @IsString()
   @Column()
