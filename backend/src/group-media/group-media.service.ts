@@ -21,12 +21,24 @@ export class GroupMediaService {
     try {
       const { idCreator, path, user_group } = mediaDto;
       const media = await this.mediaService.create(mediaDto);
+      console.log('--------------------media--------------------')
+      console.log(media.id);
       await this.addMediaToGroup({
         userGroup: user_group,
         mediasId: [media.id],
         rights: MediaGroupRights.ADMIN,
       });
-      return await this.getMediaRightsForUser(user_group.id, media.id);
+      console.log('BEFORE GET MEDIA RIGHTS FOR USER')
+      console.log('media.id',media.id)
+      console.log('user_group',user_group)
+      console.log('user_group.id',user_group.id)
+      const toReturn = await this.getMediaRightsForUser(
+        user_group.id,
+        media.id,
+      );
+      console.log('toReturn')
+      console.log(toReturn)
+      return toReturn
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -55,6 +67,8 @@ export class GroupMediaService {
         const groupsForMedia = await this.getAllMediaGroup(mediaId);
         mediasForGroup.push(groupsForMedia);
       }
+      console.log('--------------------mediasForGroup--------------------')
+      console.log(mediasForGroup)
       return mediasForGroup;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -79,10 +93,13 @@ export class GroupMediaService {
 
   async getMediaRightsForUser(userGroupId: number, mediaId: number) {
     try {
+      console.log('GET MEDIA RIGHTS FOR USER')
       const media =
         await this.linkMediaGroupService.findAllMediaGroupByUserGroupId(
           userGroupId,
         );
+      console.log('-------------LINK MEDIA GROUP FIND ALL Group by UserGroupId--------------')
+      console.log(media)
       return media.find((linkMediaGroup) => linkMediaGroup.media.id == mediaId);
     } catch (error) {
       throw new InternalServerErrorException(

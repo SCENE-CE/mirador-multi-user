@@ -2,6 +2,7 @@ import storage from "../../../utils/storage.ts";
 import { LinkMediaDto } from "../types/types.ts";
 
 export const createMediaLink = async (mediaLinkDto: LinkMediaDto) => {
+  console.log(mediaLinkDto);
   const token = storage.getToken();
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-media/media/link`, {

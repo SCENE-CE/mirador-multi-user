@@ -40,10 +40,8 @@ export class MediaLinkInterceptor implements NestInterceptor {
 
     fs.mkdirSync(uploadPath, { recursive: true });
 
-    const fileName = request.body.imageUrl;
-    const processedFilePath = join(uploadPath, `${fileName}_thumbnail.webp`);
+    const processedFilePath = join(uploadPath, `thumbnail.webp`);
     request.generatedHash = hash;
-    request.fileName = fileName;
     try {
       const buffer = await sharp(imageBuffer)
         .resize(200, 200)

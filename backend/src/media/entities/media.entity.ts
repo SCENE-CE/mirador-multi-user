@@ -16,11 +16,11 @@ export class Media {
   id: number;
 
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   url: string;
 
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   path: string;
 
   @IsString()

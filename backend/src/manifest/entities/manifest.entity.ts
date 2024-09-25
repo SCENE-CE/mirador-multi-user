@@ -16,14 +16,14 @@ export class Manifest {
   id: number;
 
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   url: string;
 
   @Column({ type: 'enum', enum: manifestOrigin })
   origin: manifestOrigin;
 
   @IsString()
-  @Column()
+  @Column({ nullable: true })
   path: string;
 
   @IsString()
