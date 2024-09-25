@@ -420,7 +420,10 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         )
       }
       <Grid>
-        <DrawerLinkManifest linkingManifest={handleLinkManifest} modalCreateManifestIsOpen={modalLinkManifestIsOpen} toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
+        <DrawerLinkManifest
+          linkingManifest={handleLinkManifest}
+          modalCreateManifestIsOpen={modalLinkManifestIsOpen}
+          toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
       </Grid>
       {
         !createManifestIsOpen && (

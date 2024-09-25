@@ -1,7 +1,13 @@
-import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
-import { IsNumberString, IsString } from "class-validator";
-import { LinkMediaGroup } from "../../link-media-group/entities/link-media-group.entity";
-import { LinkManifestGroup } from "../../link-manifest-group/entities/link-manifest-group.entity";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToMany,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { IsNumberString, IsString } from 'class-validator';
+import { LinkManifestGroup } from '../../link-manifest-group/entities/link-manifest-group.entity';
 
 @Entity()
 export class Manifest {
@@ -10,7 +16,15 @@ export class Manifest {
 
   @IsString()
   @Column()
+  url: string;
+
+  @IsString()
+  @Column()
   path: string;
+
+  @IsString()
+  @Column()
+  hash: string;
 
   @IsString()
   @Column()
@@ -37,7 +51,9 @@ export class Manifest {
   })
   public updated_at: Date;
 
-
-  @OneToMany(() => LinkManifestGroup, (linkManifestGroup) => linkManifestGroup.manifest)
+  @OneToMany(
+    () => LinkManifestGroup,
+    (linkManifestGroup) => linkManifestGroup.manifest,
+  )
   linkManifestGroup: LinkManifestGroup;
 }

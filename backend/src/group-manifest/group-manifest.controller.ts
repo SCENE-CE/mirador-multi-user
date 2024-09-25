@@ -20,7 +20,7 @@ import * as fs from 'node:fs';
 import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
-import { ManifestGroupRights } from "../enum/rights";
+import { ManifestGroupRights } from '../enum/rights';
 
 @Controller('group-manifest')
 export class GroupManifestController {
@@ -57,7 +57,8 @@ export class GroupManifestController {
       name: file.originalname,
       description: 'your manifest description',
       user_group: userGroup,
-      path: `${process.env.CADDY_URL}/${(req as any).generatedHash}/${file.filename}`,
+      hash: `${(req as any).generatedHash}`,
+      path: `${file.filename}`,
       rights: ManifestGroupRights.ADMIN,
     };
     return this.groupManifestService.create(manifestToCreate);
@@ -89,7 +90,10 @@ export class GroupManifestController {
     fs.mkdirSync(uploadPath, { recursive: true });
 
     try {
-      const manifestData = { ...createManifestDto.manifest, id: `${uploadPath}/${label}.json` };
+      const manifestData = {
+        ...createManifestDto.manifest,
+        id: `${uploadPath}/${label}.json`,
+      };
       const manifestJson = JSON.stringify(manifestData);
       const filePath = `${uploadPath}/${label}.json`;
       console.log(`Writing to: ${filePath}`);
@@ -112,8 +116,6 @@ export class GroupManifestController {
       );
     }
   }
-
-
 
   @Get('/group/:userGroupId')
   async getManifestByUserGroupId(@Param('userGroupId') userGroupId: number) {

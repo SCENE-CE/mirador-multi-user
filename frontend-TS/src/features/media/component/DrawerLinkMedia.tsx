@@ -1,37 +1,38 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 
-
-interface IDrawerCreateManifestProps{
-  modalCreateManifestIsOpen: boolean
-  toggleModalManifestCreation:()=>void
-  linkingManifest:(link:string)=>Promise<string>
+interface IDrawerCreateMediaProps{
+  modalCreateMediaIsOpen: boolean
+  toggleModalMediaCreation:()=>void
+  CreateMediaWithLink:(link:string)=>void
 }
 
-export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManifestIsOpen,linkingManifest}:IDrawerCreateManifestProps) =>{
-
-  const [manifestLink, setManifestLink] = useState('');
+export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,CreateMediaWithLink}:IDrawerCreateMediaProps)=>{
+  const [mediaLink, setMediaLink] = useState('');
 
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
-    setManifestLink(event.target.value);
+    setMediaLink(event.target.value);
   },[])
 
-  const handleLinkingManifest = useCallback((event?:FormEvent)=>{
+  const handleLinkingMedia = useCallback((event?:FormEvent)=>{
     if (event) event.preventDefault();
-    toggleModalManifestCreation();
-    linkingManifest(manifestLink);
-    setManifestLink('');
-  },[linkingManifest, manifestLink, toggleModalManifestCreation])
+    toggleModalMediaCreation();
+    CreateMediaWithLink(mediaLink);
+    setMediaLink('');
+  },[CreateMediaWithLink, mediaLink, toggleModalMediaCreation])
 
   const handleToggleModalGroupCreation= useCallback(()=>{
-    toggleModalManifestCreation();
-    setManifestLink('');
-  },[toggleModalManifestCreation])
+    toggleModalMediaCreation();
+    setMediaLink('');
+  },[CreateMediaWithLink])
+
+  console.log(modalCreateMediaIsOpen);
+
   return (
     <>
       <div>
-        <Drawer anchor="bottom" open={modalCreateManifestIsOpen} onClose={handleToggleModalGroupCreation}>
+        <Drawer anchor="bottom" open={modalCreateMediaIsOpen} onClose={handleToggleModalGroupCreation}>
           <Paper
             sx={{
               left: '0',
@@ -48,26 +49,26 @@ export const DrawerLinkManifest = ({toggleModalManifestCreation,modalCreateManif
               <Toolbar variant="dense">
                 <Button
                   color="inherit"
-                  onClick={toggleModalManifestCreation}
+                  onClick={toggleModalMediaCreation}
                 >
                   <ExpandMoreIcon />
                 </Button>
-                <Typography>LINK MANIFEST</Typography>
+                <Typography>LINK MEDIA</Typography>
               </Toolbar>
             </AppBar>
-            <form onSubmit={handleLinkingManifest}>
+            <form onSubmit={handleLinkingMedia}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>Manifest's link :</label>
+                  <label>Media's link :</label>
                 </Grid>
-                <Grid item sx={{ width:'70%'}}>
-                  <TextField onChange={handleNameChange} sx={{ width:'100%'}} ></TextField>
+                <Grid item sx={{ width: "70%" }}>
+                  <TextField onChange={handleNameChange} sx={{ width: "100%" }}></TextField>
                 </Grid>
                 <Grid item>
                   <Button
                     size="large"
                     variant="contained"
-                    onClick={handleLinkingManifest}
+                    onClick={handleLinkingMedia}
                   >
                     ADD
                   </Button>

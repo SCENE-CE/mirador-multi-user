@@ -6,6 +6,12 @@ export type CreateMediaDto = {
   file:File;
 }
 
+export type LinkMediaDto = {
+  idCreator:number
+  user_group:UserGroup;
+  imageUrl: string
+}
+
 export type Media={
   id:number
   path:string,

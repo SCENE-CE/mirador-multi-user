@@ -1,5 +1,5 @@
 import { Grid, styled, Typography } from "@mui/material";
-import { ChangeEvent, Dispatch, SetStateAction, useCallback, useMemo, useState } from "react";
+import { ChangeEvent, Dispatch, ReactNode, SetStateAction, useCallback, useMemo, useState } from "react";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
 import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
@@ -21,8 +21,11 @@ import {  ProjectGroup } from "../../projects/types/types.ts";
 import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
 import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
 import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
-import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
-import AddIcon from "@mui/icons-material/Add";
+import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
+import AddLinkIcon from "@mui/icons-material/AddLink";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
+import { createMediaLink } from "../api/createMediaWithLink.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -51,6 +54,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [mediaFiltered, setMediaFiltered] = useState<Media[]|undefined>([]);
+  const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
@@ -164,17 +168,33 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     }
   }
 
-  console.log(medias)
+  const actions = [
+    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:()=> {
+        console.log('open')
+        console.log('modalLinkMediaIsOpen',modalLinkMediaIsOpen)
+        setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
+      }},
+    { icon: <UploadFileIcon /> as ReactNode, name: 'Upload' , onClick: () => {
+        handleButtonClick()
+      }},
+  ];
+  const createMediaWithLink = async (link: string) => {
+    try {
+      await createMediaLink({imageUrl:link, idCreator:user.id, user_group: userPersonalGroup})
+    } catch (error) {
+      console.error('Error fetching the image:', error);
+    }
+  };
+
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
         <Grid item>
-          <FloatingActionButton onClick={handleButtonClick} content={"New Media"} Icon={<AddIcon />}/>
-            <VisuallyHiddenInput
-              id="file-upload"
-              type="file"
-              onChange={handleCreateMedia}
-            />
+          <VisuallyHiddenInput
+            id="file-upload"
+            type="file"
+            onChange={handleCreateMedia}
+          />
         </Grid>
         <Grid item>
           <SearchBar handleFiltered={handleFiltered} setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
@@ -230,32 +250,32 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
         searchedMedia && (
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             {
-                <Grid item key={searchedMedia.id}>
-                  <MMUCard
-                    id={searchedMedia.id}
-                    rights={ProjectRights.ADMIN}
-                    description={searchedMedia.description}
-                    HandleOpenModal={()=>HandleOpenModal(searchedMedia.id)}
-                    openModal={openModalMediaId === searchedMedia.id}
-                    itemLabel={searchedMedia.name}
-                    DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>HandleCopyToClipBoard(searchedMedia.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                    EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(searchedMedia.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                    itemOwner={user}
-                    deleteItem={()=>HandleDeleteMedia(searchedMedia.id)}
-                    item={searchedMedia}
-                    updateItem={HandleUpdateMedia}
-                    imagePath={searchedMedia.path}
-                    AddAccessListItemFunction={handleGrantAccess}
-                    getOptionLabel={getOptionLabel}
-                    listOfItem={listOfGroup}
-                    removeAccessListItemFunction={handleRemoveAccessToMedia}
-                    searchModalEditItem={handleLookingForUserGroups}
-                    setItemList={setGroupList}
-                    setItemToAdd={setUserToAdd}
-                    getAccessToItem={getAllMediaGroups}
-                    handleSelectorChange={handleChangeRights}
-                  />
-                </Grid>
+              <Grid item key={searchedMedia.id}>
+                <MMUCard
+                  id={searchedMedia.id}
+                  rights={ProjectRights.ADMIN}
+                  description={searchedMedia.description}
+                  HandleOpenModal={()=>HandleOpenModal(searchedMedia.id)}
+                  openModal={openModalMediaId === searchedMedia.id}
+                  itemLabel={searchedMedia.name}
+                  DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>HandleCopyToClipBoard(searchedMedia.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                  EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(searchedMedia.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                  itemOwner={user}
+                  deleteItem={()=>HandleDeleteMedia(searchedMedia.id)}
+                  item={searchedMedia}
+                  updateItem={HandleUpdateMedia}
+                  imagePath={searchedMedia.path}
+                  AddAccessListItemFunction={handleGrantAccess}
+                  getOptionLabel={getOptionLabel}
+                  listOfItem={listOfGroup}
+                  removeAccessListItemFunction={handleRemoveAccessToMedia}
+                  searchModalEditItem={handleLookingForUserGroups}
+                  setItemList={setGroupList}
+                  setItemToAdd={setUserToAdd}
+                  getAccessToItem={getAllMediaGroups}
+                  handleSelectorChange={handleChangeRights}
+                />
+              </Grid>
             }
           </Grid>
         )
@@ -304,6 +324,16 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
           </Grid>
         )
       }
+      <Grid>
+        <DrawerLinkMedia
+          toggleModalMediaCreation={()=>setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}
+          CreateMediaWithLink={createMediaWithLink}
+          modalCreateMediaIsOpen={modalLinkMediaIsOpen}
+        />
+      </Grid>
+      <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
+        <SpeedDialTooltipOpen actions={actions}/>
+      </Grid>
     </Grid>
   )
 }

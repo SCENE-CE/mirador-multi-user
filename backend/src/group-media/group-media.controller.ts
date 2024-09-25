@@ -8,8 +8,8 @@ import {
   UseInterceptors,
   UploadedFile,
   Req,
-  Delete,
-} from '@nestjs/common';
+  Delete, HttpStatus, HttpCode
+} from "@nestjs/common";
 import { GroupMediaService } from './group-media.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -20,6 +20,7 @@ import { UpdateMediaDto } from '../media/dto/update-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { SharpPipeInterceptor } from '../Custom_pipes/sharp.pipe';
+import { MediaLinkInterceptor } from '../Custom_pipes/media-link.pipe';
 
 @Controller('group-media')
 export class GroupMediaController {
@@ -58,9 +59,17 @@ export class GroupMediaController {
       name: file.originalname,
       description: 'your media description',
       user_group: userGroup,
-      path: `${process.env.CADDY_URL}/${(req as any).generatedHash}/${file.filename}`,
+      path: `${file.filename}`,
+      hash: `${(req as any).generatedHash}`,
     };
     return await this.groupMediaService.createMedia(mediaToCreate);
+  }
+
+  @Post('/media/link')
+  @UseInterceptors(MediaLinkInterceptor)
+  @HttpCode(201)
+  linkManifest() {
+    return;
   }
 
   @Get('/group/:userGroupId')
