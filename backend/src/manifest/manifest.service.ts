@@ -17,6 +17,8 @@ export class ManifestService {
   ) {}
   async create(createManifestDto: CreateManifestDto) {
     try {
+      console.log("----------------------createManifestDto----------------------")
+      console.log(createManifestDto)
       const manifest = this.manifestRepository.create({ ...createManifestDto });
       return await this.manifestRepository.save(manifest);
     } catch (error) {

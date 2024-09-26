@@ -26,7 +26,11 @@ export class GroupMediaService {
         mediasId: [media.id],
         rights: MediaGroupRights.ADMIN,
       });
-      return await this.getMediaRightsForUser(user_group.id, media.id);
+      const toReturn = await this.getMediaRightsForUser(
+        user_group.id,
+        media.id,
+      );
+      return toReturn
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -55,6 +59,8 @@ export class GroupMediaService {
         const groupsForMedia = await this.getAllMediaGroup(mediaId);
         mediasForGroup.push(groupsForMedia);
       }
+      console.log('--------------------mediasForGroup--------------------')
+      console.log(mediasForGroup)
       return mediasForGroup;
     } catch (error) {
       throw new InternalServerErrorException(

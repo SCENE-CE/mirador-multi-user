@@ -52,6 +52,8 @@ interface PopUpMediaProps {
   userPersonalGroup:UserGroup
 }
 
+const caddyUrl = import.meta.env.VITE_CADDY_URL
+
 export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMediaProps) => {
   const [open, setOpen] = useState(true);
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
@@ -101,7 +103,7 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
                 <CustomImageItem key={searchedMedia.path}>
                   <Box
                     component="img"
-                    src={`${searchedMedia.path}_thumbnail.webp`}
+                    src={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
                     alt={searchedMedia.name}
                     loading="lazy"
                     sx={{
@@ -117,7 +119,7 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
                   <CustomButton
                     className="overlayButton"
                     disableRipple
-                    onClick={() => handleCopyToClipBoard(searchedMedia.path)}
+                    onClick={searchedMedia.path ? () => handleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`) :() => handleCopyToClipBoard(`${searchedMedia.url}`) }
                   >
                     Copy path to clipboard
                   </CustomButton>
@@ -131,7 +133,7 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
                 <CustomImageItem key={media.path}>
                   <Box
                     component="img"
-                    src={`${media.path}_thumbnail.webp`}
+                    src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
                     alt={media.name}
                     loading="lazy"
                     sx={{
@@ -147,7 +149,7 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
                   <CustomButton
                     className="overlayButton"
                     disableRipple
-                    onClick={() => handleCopyToClipBoard(media.path)}
+                    onClick={media.path ? () => handleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) :() => handleCopyToClipBoard(`${media.url}`) }
                   >
                     Copy path to clipboard
                   </CustomButton>

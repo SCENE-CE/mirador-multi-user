@@ -22,11 +22,8 @@ export class GroupManifestService {
     private readonly linkGroupManifestService: LinkManifestGroupService,
   ) {}
   async create(createGroupManifestDto: CreateGroupManifestDto) {
-    console.log('-------------createGroupManifestDto-------------');
-    console.log(createGroupManifestDto);
     try {
       const { idCreator, path, user_group } = createGroupManifestDto;
-      console.log(path)
       const manifest = await this.manifestService.create(
         createGroupManifestDto,
       );
@@ -35,9 +32,10 @@ export class GroupManifestService {
         manifestsId: [manifest.id],
       });
 
-       const toReturn = await this.getManifestForUser(user_group.id, manifest.id);
-      console.log('----------------toReturn----------------')
-      console.log(toReturn)
+      const toReturn = await this.getManifestForUser(
+        user_group.id,
+        manifest.id,
+      );
       return toReturn;
     } catch (error) {
       console.log(error);
@@ -48,8 +46,6 @@ export class GroupManifestService {
   }
 
   async addManifestToGroup(addManifestToGroupDto: AddManifestToGroupDto) {
-    console.log('-------------addManifestToGroupDto-------------');
-    console.log(addManifestToGroupDto);
     const { userGroup, manifestsId } = addManifestToGroupDto;
     try {
       const manifestsForGroup = [];
@@ -96,14 +92,16 @@ export class GroupManifestService {
         await this.linkGroupManifestService.findAllManifestGroupByUserGroupId(
           userGroupId,
         );
-      console.log('------------------manifest------------------')
-      console.log(manifest)
-      const toReturn =  manifest.find(
+      console.log('------------------manifest------------------');
+      console.log(manifest);
+      const toReturn = manifest.find(
         (linkGroupManifest) => linkGroupManifest.manifest.id == manifestId,
       );
-      console.log('----------------------MANI TO toReturn----------------------')
-      console.log(toReturn)
-      return toReturn.manifest
+      console.log(
+        '----------------------MANI TO toReturn----------------------',
+      );
+      console.log(toReturn);
+      return toReturn.manifest;
     } catch (error) {
       return new InternalServerErrorException(
         'An error occurred while getting manifest for user group',

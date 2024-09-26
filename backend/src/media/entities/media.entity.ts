@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkMediaGroup } from '../../link-media-group/entities/link-media-group.entity';
+import { mediaOrigin } from '../../enum/origins';
 
 @Entity()
 export class Media {
@@ -15,12 +16,23 @@ export class Media {
   id: number;
 
   @IsString()
-  @Column()
+  @Column({ nullable: true })
+  url: string;
+
+  @IsString()
+  @Column({ nullable: true })
   path: string;
 
   @IsString()
   @Column()
+  hash: string;
+
+  @IsString()
+  @Column()
   name: string;
+
+  @Column({ type: 'enum', enum: mediaOrigin })
+  origin: mediaOrigin;
 
   @IsString()
   @Column()

@@ -2,7 +2,7 @@ import { Box, Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
-import { Manifest, ManifestItem } from "../types/types.ts";
+import { Manifest, ManifestCreationMedia } from "../types/types.ts";
 import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import placeholder from '../../../assets/Placeholder.svg';
@@ -42,15 +42,9 @@ interface IAllManifests{
   medias:Media[]
 }
 
-type MediaItem = {
-  name: string;
-  value: string;
-};
 
-type ManifestCreationMedia = {
-  media: MediaItem[];
-  // Other properties for ManifestCreationMedia, if needed
-};
+const caddyUrl = import.meta.env.VITE_CADDY_URL
+
 
 export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
@@ -121,7 +115,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
 
   const handleSetSearchManifest = (manifestQuery: Manifest) => {
-    console.log('toto')
     if (manifestQuery) {
       const manifestIndex = manifests.findIndex((manifest: Manifest) => manifest.id === manifestQuery.id);
       if (manifestIndex !== -1) {
@@ -164,118 +157,111 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
   const handleSubmitManifestCreationForm = async (manifestTitle:string,items:ManifestCreationMedia[]) => {
-    console.log('ITEMS',items)
-    const manifestData = {
-      title: manifestTitle,
-      items: items,
-    };
-
-    const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
-      ['@Context']:'https://iiif.io/api/presentation/3/context.json',
-      id:"",
-      type:"Manifest",
-      label:{
-        en:[manifestTitle]
-      },
-      items: [],
-    };
-
-    const fetchMediaForItem = async (media:MediaItem  ): Promise<void> => {
-      try {
-        const response = await fetch(media.value, { method: "GET" });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        const mediaBlob = await response.blob();
-        const mediaUrl = URL.createObjectURL(mediaBlob);
-        const contentType = response.headers.get("Content-Type");
-
-        if (contentType && contentType.startsWith("image")) {
-          const img = new Image();
-          img.src = mediaUrl;
-          console.log('img',img)
-          await new Promise<void>((resolve, reject) => {
-            img.onload = () => {
-              manifestToCreate.items.push({
-                id: media.value,
-                type: "Canvas",
-                height: img.height,
-                width: img.width,
-                label: { en:["image"] },
-                items:[{
-                  id:media.value+`/annotation/${Date.now}`,
-                  type:"AnnotationPage",
-                  items:[
-                    {
-                      id:media.value+`/annotation/${Date.now}`,
-                      type:"Annotation",
-                      motivation:"painting",
-                      target:media.value,
-                      body:{
-                        id:media.value,
-                        type:"Image",
-                        format:`Image/${response.headers.get("Content-Type")}`,
-                        height:img.height,
-                        width:img.width,
-                      }
-                    }
-                  ]
-                }]
-              });
-              resolve();
-            };
-            img.onerror = reject;
-          });
-        } else if (contentType && contentType.startsWith("video")) {
-          // const video = document.createElement("video");
-          // video.src = mediaUrl;
-          //
-          // await new Promise<void>((resolve, reject) => {
-          //   video.onloadedmetadata = () => {
-          //     manifestToCreate.items.push({
-          //       id: media.value,
-          //       type: "Canvas",
-          //       height: video.videoHeight,
-          //       width: video.videoWidth,
-          //       duration: video.duration,
-          //       label:"video"
-          //     });
-          //     resolve();
-          //   };
-          //   video.onerror = reject;
-          // });
-          toast.error('video will be handle in a future release')
-        } else {
-          console.log("Unsupported media type:", contentType);
-        }
-      } catch (error) {
-        console.log("Error fetching media:", error);
-        throw error;
-      }
-    };
-
-    const fetchMediaPromises = items.flatMap((item) =>
-      item.media.map((media) => {
-        return fetchMediaForItem(media);
-      })
-    );
+      console.log('items',items)
+    // const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
+    //   ['@Context']:'https://iiif.io/api/presentation/3/context.json',
+    //   id:"",
+    //   type:"Manifest",
+    //   label:{
+    //     en:[manifestTitle]
+    //   },
+    //   items: [],
+    // };
+    // const fetchMediaForItem = async (media:MediaItem  ): Promise<void> => {
+    //   try {
+    //     console.log('ENTER FETCH MEDIA FOR ITEM')
+    //     console.log(media.value)
+    //     const response = await fetch(media.value, { method: "GET" });
+    //
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
+    //     console.log(response.ok)
+    //     const mediaBlob = await response.blob();
+    //     console.log('mediaBlob',mediaBlob)
+    //     const mediaUrl = URL.createObjectURL(mediaBlob);
+    //     const contentType = response.headers.get("Content-Type");
+    //
+    //     if (contentType && contentType.startsWith("image")) {
+    //       const img = new Image();
+    //       img.src = mediaUrl;
+    //       console.log('img',img)
+    //       await new Promise<void>((resolve, reject) => {
+    //         img.onload = () => {
+    //           manifestToCreate.items.push({
+    //             id: media.value,
+    //             type: "Canvas",
+    //             height: img.height,
+    //             width: img.width,
+    //             label: { en:["image"] },
+    //             items:[{
+    //               id:media.value+`/annotation/${Date.now}`,
+    //               type:"AnnotationPage",
+    //               items:[
+    //                 {
+    //                   id:media.value+`/annotation/${Date.now}`,
+    //                   type:"Annotation",
+    //                   motivation:"painting",
+    //                   target:media.value,
+    //                   body:{
+    //                     id:media.value,
+    //                     type:"Image",
+    //                     format:`Image/${response.headers.get("Content-Type")}`,
+    //                     height:img.height,
+    //                     width:img.width,
+    //                   }
+    //                 }
+    //               ]
+    //             }]
+    //           });
+    //           resolve();
+    //         };
+    //         img.onerror = reject;
+    //       });
+    //     } else if (contentType && contentType.startsWith("video")) {
+    //       // const video = document.createElement("video");
+    //       // video.src = mediaUrl;
+    //       //
+    //       // await new Promise<void>((resolve, reject) => {
+    //       //   video.onloadedmetadata = () => {
+    //       //     manifestToCreate.items.push({
+    //       //       id: media.value,
+    //       //       type: "Canvas",
+    //       //       height: video.videoHeight,
+    //       //       width: video.videoWidth,
+    //       //       duration: video.duration,
+    //       //       label:"video"
+    //       //     });
+    //       //     resolve();
+    //       //   };
+    //       //   video.onerror = reject;
+    //       // });
+    //       toast.error('video will be handle in a future release')
+    //     } else {
+    //       console.log("Unsupported media type:", contentType);
+    //     }
+    //   } catch (error) {
+    //     console.log("Error fetching media:", error);
+    //     throw error;
+    //   }
+    // };
+    //
+    // const fetchMediaPromises = items.flatMap((item) =>
+    //   item.media.map((media) => {
+    //     return fetchMediaForItem(media);
+    //   })
+    // );
 
     try {
-      await Promise.all(fetchMediaPromises);
-      const manifestCreation = await createManifest({
-        manifest : manifestToCreate,
-        name: manifestToCreate.label,
+      // await Promise.all(fetchMediaPromises);
+      await createManifest({
+        manifestMedias : items,
+        name: manifestTitle,
         user_group: userPersonalGroup,
         idCreator:user.id
       })
       fetchManifestForUser()
       setCreateManifestIsOpen(false)
-      console.log('manifests',manifests);
-      console.log('manifestCreation',manifestCreation);
-      console.log("All media fetched and manifestToCreate:", manifestToCreate);
-      console.log("All media fetched, Manifest Data: ", manifestData);
     } catch (error) {
       console.error("Error processing media", error);
     }
@@ -294,6 +280,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       }
     }
   }
+
+  console.log(manifests)
 
   return (
     <Grid item container flexDirection="column" spacing={1}>
@@ -342,7 +330,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           {manifests.map((manifest, index) => (
             <Grid item key={manifest.id}>
               <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 id={manifest.id}
                 rights={ProjectRights.ADMIN}
                 description={manifest.description}
@@ -364,7 +352,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           {manifestFiltered.map((manifest, index) => (
             <Grid item key={manifest.id}>
               <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`): ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 id={manifest.id}
                 rights={ProjectRights.ADMIN}
                 description={manifest.description}
@@ -386,7 +374,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             <Grid item key={searchedManifest.id}>
               <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={ searchedManifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) : ()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 id={searchedManifest.id}
                 rights={ProjectRights.ADMIN}
                 description={searchedManifest.description}
@@ -420,7 +408,10 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         )
       }
       <Grid>
-        <DrawerLinkManifest linkingManifest={handleLinkManifest} modalCreateManifestIsOpen={modalLinkManifestIsOpen} toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
+        <DrawerLinkManifest
+          linkingManifest={handleLinkManifest}
+          modalCreateManifestIsOpen={modalLinkManifestIsOpen}
+          toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
       </Grid>
       {
         !createManifestIsOpen && (

@@ -16,6 +16,7 @@ services:
     image: tetraslibre/mmu-frontend:latest
     environment:
       VITE_BACKEND_URL: ${BACKEND_URL}
+      VITE_CADDY_URL: "${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}"
     depends_on:
       - backend
     restart: always

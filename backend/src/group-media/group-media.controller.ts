@@ -9,6 +9,7 @@ import {
   UploadedFile,
   Req,
   Delete,
+  HttpCode,
 } from '@nestjs/common';
 import { GroupMediaService } from './group-media.service';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -20,6 +21,8 @@ import { UpdateMediaDto } from '../media/dto/update-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { SharpPipeInterceptor } from '../Custom_pipes/sharp.pipe';
+import { MediaLinkInterceptor } from '../Custom_pipes/media-link.pipe';
+import { mediaOrigin } from '../enum/origins';
 
 @Controller('group-media')
 export class GroupMediaController {
@@ -58,7 +61,25 @@ export class GroupMediaController {
       name: file.originalname,
       description: 'your media description',
       user_group: userGroup,
-      path: `${process.env.CADDY_URL}/${(req as any).generatedHash}/${file.filename}`,
+      path: `${file.filename}`,
+      hash: `${(req as any).generatedHash}`,
+      origin: mediaOrigin.UPLOAD,
+    };
+    return await this.groupMediaService.createMedia(mediaToCreate);
+  }
+
+  @Post('/media/link')
+  @UseInterceptors(MediaLinkInterceptor)
+  @HttpCode(201)
+  async linkManifest(@Body() createMediaDto, @Req() req) {
+    const mediaToCreate = {
+      ...createMediaDto,
+      name: `${req.body.imageUrl}`,
+      description: 'your media description',
+      user_group: createMediaDto.user_group,
+      hash: `${(req as any).generatedHash}`,
+      url: `${req.body.imageUrl}`,
+      origin: mediaOrigin.UPLOAD,
     };
     return await this.groupMediaService.createMedia(mediaToCreate);
   }

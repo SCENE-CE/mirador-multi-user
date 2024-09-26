@@ -1,7 +1,7 @@
 import storage from "../../../utils/storage.ts";
-import { CreateManifestDto } from "../types/types.ts";
+import { UploadAndLinkManifestDto } from "../types/types.ts";
 
-export const uploadManifest= async (createManifestDto:CreateManifestDto) => {
+export const uploadManifest= async (createManifestDto:UploadAndLinkManifestDto) => {
   const token = storage.getToken();
   const formData = new FormData();
   formData.append('file', createManifestDto.file!);
