@@ -52,6 +52,9 @@ type ManifestCreationMedia = {
   // Other properties for ManifestCreationMedia, if needed
 };
 
+const caddyUrl = import.meta.env.VITE_CADDY_URL
+
+
 export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
@@ -163,12 +166,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
   const handleSubmitManifestCreationForm = async (manifestTitle:string,items:ManifestCreationMedia[]) => {
-    const manifestData = {
-      title: manifestTitle,
-      items: items,
-    };
-
-    console.log('items',items)
 
     const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
       ['@Context']:'https://iiif.io/api/presentation/3/context.json',
@@ -267,7 +264,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
     try {
       await Promise.all(fetchMediaPromises);
-      const manifestCreation = await createManifest({
+      await createManifest({
         manifest : manifestToCreate,
         name: manifestToCreate.label,
         user_group: userPersonalGroup,
@@ -343,7 +340,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           {manifests.map((manifest, index) => (
             <Grid item key={manifest.id}>
               <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 id={manifest.id}
                 rights={ProjectRights.ADMIN}
                 description={manifest.description}
@@ -365,7 +362,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           {manifestFiltered.map((manifest, index) => (
             <Grid item key={manifest.id}>
               <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 id={manifest.id}
                 rights={ProjectRights.ADMIN}
                 description={manifest.description}
@@ -387,7 +384,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
             <Grid item key={searchedManifest.id}>
               <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`)} disabled={false} icon={<ContentCopyIcon/>}/>}
                 id={searchedManifest.id}
                 rights={ProjectRights.ADMIN}
                 description={searchedManifest.description}
