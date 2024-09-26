@@ -42,13 +42,15 @@ interface IAllManifests{
   medias:Media[]
   setCreateManifestIsOpen:(createManifestIsOpen:boolean)=>void
   createManifestIsOpen:boolean
+  fetchMediaForUser:()=>void
+
 }
 
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL
 
 
-export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias,setCreateManifestIsOpen,createManifestIsOpen}:IAllManifests) => {
+export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias,setCreateManifestIsOpen,createManifestIsOpen,fetchMediaForUser}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
@@ -402,7 +404,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       {
         createManifestIsOpen &&(
           <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
-            <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup}>
+            <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user}>
               <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm}/>
             </SidePanelMedia>
           </Grid>

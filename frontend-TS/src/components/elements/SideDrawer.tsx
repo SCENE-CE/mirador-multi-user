@@ -381,7 +381,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         }
         {
           user && user.id && selectedContent === CONTENT.MANIFEST && userPersonalGroup &&(
-            <AllManifests createManifestIsOpen={createManifestIsOpen} setCreateManifestIsOpen={handleSetCreateManifestIsOpen} medias={medias} manifests={manifests} fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup}/>
+            <AllManifests fetchMediaForUser={fetchMediaForUser} createManifestIsOpen={createManifestIsOpen} setCreateManifestIsOpen={handleSetCreateManifestIsOpen} medias={medias} manifests={manifests} fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup}/>
           )
         }
         {modalDisconectIsOpen &&(
