@@ -1,12 +1,18 @@
-import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid } from "@mui/material";
+import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { ReactNode, useState } from "react";
+import { ChangeEvent, ReactNode, useCallback, useState } from "react";
 import toast from "react-hot-toast";
 import { Media } from "../types/types.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForMedias } from "../api/lookingForMedias.ts";
 import { UserGroup } from "../../user-group/types/types.ts";
+import { createMedia } from "../api/createMedia.ts";
+import { User } from "../../auth/types/types.ts";
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import AddLinkIcon from "@mui/icons-material/AddLink";
+import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
+import { createMediaLink } from "../api/createMediaWithLink.ts";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -16,6 +22,18 @@ const CustomImageItem = styled(ImageListItem)({
   "&:hover .overlayButton": {
     opacity: 1,
   }
+});
+
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  bottom: 0,
+  left: 0,
+  whiteSpace: 'nowrap',
+  width: 1,
 });
 
 const CustomButton = styled(Button)({
@@ -50,17 +68,34 @@ interface PopUpMediaProps {
   medias: Media[];
   children: ReactNode;
   userPersonalGroup:UserGroup
+  user:User
+  fetchMediaForUser:()=>void
 }
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL
 
-export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMediaProps) => {
+export const SidePanelMedia = ({ medias, children,userPersonalGroup, user,fetchMediaForUser}: PopUpMediaProps) => {
   const [open, setOpen] = useState(true);
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
+  const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
 
   const toggleDrawer = () => {
     setOpen((prevOpen) => !prevOpen);
   };
+
+  const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.files);
+    if (event.target.files) {
+      console.log(userPersonalGroup)
+      const mediaCreation= await createMedia({
+        idCreator: user.id,
+        user_group: userPersonalGroup!,
+        file: event.target.files[0],
+      });
+      console.log('mediaCreation',mediaCreation)
+      fetchMediaForUser()
+    }
+  },[fetchMediaForUser, user.id, userPersonalGroup,medias])
 
   const handleSetSearchMedia = (mediaQuery:Media)=>{
     if(mediaQuery){
@@ -71,6 +106,10 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
     }
   }
 
+  const handleButtonClick = () => {
+    document.getElementById('file-upload')!.click();
+  };
+
   const HandleLookingForMedia = async (partialString : string) =>{
     return await lookingForMedias(partialString, userPersonalGroup.id)
   }
@@ -78,6 +117,16 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
   const getOptionLabelForMediaSearchBar = (option:Media): string => {
     return option.name;
   };
+
+  const createMediaWithLink = async (link: string) => {
+    try {
+      await createMediaLink({imageUrl:link, idCreator:user.id, user_group: userPersonalGroup})
+      fetchMediaForUser()
+    } catch (error) {
+      console.error('Error fetching the image:', error);
+    }
+  };
+
   return (
     <div>
       <ToggleButton open={open} onClick={toggleDrawer}>
@@ -89,11 +138,30 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
         variant="persistent"
         ModalProps={{
           BackdropProps: {
-            style: { backgroundColor: 'transparent' },
+            style: { backgroundColor: 'transparent'},
           },
         }}>
-        <Grid item>
-          <SearchBar fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Search Media"} setSearchedData={handleSetSearchMedia}/>
+        <Grid item container spacing={1} sx={{padding:'10px'}} alignItems="center">
+          <Grid item>
+            <SearchBar fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Search Media"} setSearchedData={handleSetSearchMedia}/>
+          </Grid>
+          <Grid item>
+            <VisuallyHiddenInput
+              id="file-upload"
+              type="file"
+              onChange={handleCreateMedia}
+            />
+            <Tooltip title="Upload Media">
+              <Button onClick={handleButtonClick} variant="contained"> <UploadFileIcon/></Button>
+            </Tooltip>
+          </Grid>
+          <Grid item>
+            <Tooltip title="Link Media">
+              <Button variant="contained" onClick={()=>setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}>
+                <AddLinkIcon />
+              </Button>
+            </Tooltip>
+          </Grid>
         </Grid>
         {
           searchedMedia ?(
@@ -107,12 +175,12 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
                     alt={searchedMedia.name}
                     loading="lazy"
                     sx={{
-                      width: 164,
-                      height: 164,
+                      width: 150,
+                      height: 150,
                       objectFit: 'cover', // Ensures cropping behavior
                       '@media(min-resolution: 2dppx)': {
-                        width: 164 * 2,
-                        height: 164 * 2,
+                        width: 150 * 2,
+                        height: 150 * 2,
                       },
                     }}
                   />
@@ -130,19 +198,19 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
           ):(
             <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
               {medias.map((media) => (
-                <CustomImageItem key={media.path}>
+                <CustomImageItem key={media.hash}>
                   <Box
                     component="img"
                     src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
                     alt={media.name}
                     loading="lazy"
                     sx={{
-                      width: 164,
-                      height: 164,
+                      width: 150,
+                      height: 150,
                       objectFit: 'cover', // Ensures cropping behavior
                       '@media(min-resolution: 2dppx)': {
-                        width: 164 * 2,
-                        height: 164 * 2,
+                        width: 150 * 2,
+                        height: 150 * 2,
                       },
                     }}
                   />
@@ -158,11 +226,17 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
             </ImageList>
           )
         }
-
       </Drawer>
       <Box sx={{ padding: 2 }}>
         {children}
       </Box>
+      <Grid>
+        <DrawerLinkMedia
+          toggleModalMediaCreation={()=>setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}
+          CreateMediaWithLink={createMediaWithLink}
+          modalCreateMediaIsOpen={modalLinkMediaIsOpen}
+        />
+      </Grid>
     </div>
   );
 };

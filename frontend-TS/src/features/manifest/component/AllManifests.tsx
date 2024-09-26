@@ -40,17 +40,20 @@ interface IAllManifests{
   fetchManifestForUser:()=>void
   manifests:Manifest[]
   medias:Media[]
+  setCreateManifestIsOpen:(createManifestIsOpen:boolean)=>void
+  createManifestIsOpen:boolean
+  fetchMediaForUser:()=>void
+
 }
 
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL
 
 
-export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias}:IAllManifests) => {
+export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manifests,medias,setCreateManifestIsOpen,createManifestIsOpen,fetchMediaForUser}:IAllManifests) => {
   const [searchedManifest, setSearchedManifest] = useState<Manifest|null>(null);
   const [openModalManifestId, setOpenModalManifestId] = useState<number | null>(null);
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
-  const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
   const [modalLinkManifestIsOpen, setModalLinkManifestSIsOpen] = useState(false)
   const [manifestFiltered, setManifestFiltered] = useState<Manifest[] | undefined>([])
 
@@ -401,8 +404,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       {
         createManifestIsOpen &&(
           <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
-            <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup}>
-              <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm} setCreateManifestIsOpen={HandleCreateManifestIsOpen}/>
+            <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user}>
+              <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm}/>
             </SidePanelMedia>
           </Grid>
         )
