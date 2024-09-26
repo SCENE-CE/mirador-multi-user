@@ -59,7 +59,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
   const [projectFiltered, setProjectFiltered] = useState<Project[]|undefined>([]);
 
-
+  console.log(userProjects)
   const fetchProjects = async () => {
     try {
       const projects = await getUserAllProjects(user.id);
