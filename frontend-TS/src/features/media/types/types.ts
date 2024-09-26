@@ -12,15 +12,23 @@ export type LinkMediaDto = {
   imageUrl: string
 }
 
+export enum mediaOrigin {
+  UPLOAD = 'upload',
+  LINK = 'link',
+}
+
 export type Media={
-  id:number
-  path:string,
-  name:string,
-  description:string,
-  idCreator:number,
   created_at:Date,
-  updated_at:Date,
+  description:string,
+  hash:string
+  id:number
+  idCreator:number,
+  name:string,
+  origin:mediaOrigin
+  path?:string,
   rights:MediaGroupRights
+  updated_at:Date,
+  url:string,
 }
 
 export enum MediaGroupRights {

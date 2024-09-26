@@ -27,7 +27,7 @@ export class SharpPipeInterceptor implements NestInterceptor {
         .webp({ effort: 3 })
         .toBuffer()
         .then((buffer) => {
-          const processedFilePath = `${file.destination}/${file.originalname}_thumbnail.webp`;
+          const processedFilePath = `${file.destination}/thumbnail.webp`;
           return sharp(buffer).toFile(processedFilePath);
         })
         .then(() => next.handle());

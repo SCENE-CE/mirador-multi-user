@@ -121,7 +121,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
 
   const handleSetSearchManifest = (manifestQuery: Manifest) => {
-    console.log('toto')
     if (manifestQuery) {
       const manifestIndex = manifests.findIndex((manifest: Manifest) => manifest.id === manifestQuery.id);
       if (manifestIndex !== -1) {
@@ -164,11 +163,12 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
   const handleSubmitManifestCreationForm = async (manifestTitle:string,items:ManifestCreationMedia[]) => {
-    console.log('ITEMS',items)
     const manifestData = {
       title: manifestTitle,
       items: items,
     };
+
+    console.log('items',items)
 
     const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
       ['@Context']:'https://iiif.io/api/presentation/3/context.json',
@@ -179,16 +179,19 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       },
       items: [],
     };
-
+    //TODO: MOVE MANIFEST CREATION LOGIC TO BACKEND TO AVOID CORS ERROR WHEN MEDIA COME FROME OUTSIDE ARVEST
     const fetchMediaForItem = async (media:MediaItem  ): Promise<void> => {
       try {
+        console.log('ENTER FETCH MEDIA FOR ITEM')
+        console.log(media.value)
         const response = await fetch(media.value, { method: "GET" });
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
-
+        console.log(response.ok)
         const mediaBlob = await response.blob();
+        console.log('mediaBlob',mediaBlob)
         const mediaUrl = URL.createObjectURL(mediaBlob);
         const contentType = response.headers.get("Content-Type");
 
@@ -272,10 +275,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       })
       fetchManifestForUser()
       setCreateManifestIsOpen(false)
-      console.log('manifests',manifests);
-      console.log('manifestCreation',manifestCreation);
-      console.log("All media fetched and manifestToCreate:", manifestToCreate);
-      console.log("All media fetched, Manifest Data: ", manifestData);
     } catch (error) {
       console.error("Error processing media", error);
     }
@@ -294,6 +293,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       }
     }
   }
+
+  console.log(manifests)
 
   return (
     <Grid item container flexDirection="column" spacing={1}>

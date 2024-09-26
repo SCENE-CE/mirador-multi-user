@@ -1,15 +1,25 @@
 import { UserGroup } from "../../user-group/types/types.ts";
 
 export type Manifest = {
-  id:number
-  path:string,
-  name:string,
-  description:string,
-  idCreator:number,
   created_at:Date,
-  updated_at:Date,
+  description:string,
+  hash:string,
+  id:number
+  idCreator:number,
   json?:any
+  name:string,
+  origin:manifestOrigin,
+  path:string,
+  updated_at:Date,
+  url?:string,
 }
+
+export enum manifestOrigin {
+  UPLOAD = 'upload',
+  LINK = 'link',
+  CREATE = 'create',
+}
+
 
 export type CreateManifestDto = {
   name?:string

@@ -47,6 +47,9 @@ interface IAllMediasProps{
   setMedias:Dispatch<SetStateAction<Media[]>>
 }
 
+const caddyUrl = import.meta.env.VITE_CADDY_URL
+
+
 export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMedias}:IAllMediasProps) => {
   const [openModalMediaId, setOpenModalMediaId] = useState<number | null>(null);
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
@@ -70,6 +73,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   },[fetchMediaForUser, medias])
 
   const HandleCopyToClipBoard = async (path: string) => {
+    console.log('path',path);
     await navigator.clipboard.writeText(path);
     toast.success('path copied to clipboard');
   }
@@ -185,7 +189,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       console.error('Error fetching the image:', error);
     }
   };
-
+console.log('medias',medias)
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2} alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
@@ -222,14 +226,14 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     HandleOpenModal={()=>HandleOpenModal(media.id)}
                     openModal={openModalMediaId === media.id}
                     itemLabel={media.name}
-                    DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>HandleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={media.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`):()=>HandleCopyToClipBoard(media.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
                     EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                     itemOwner={user}
                     deleteItem={()=>HandleDeleteMedia(media.id)}
                     item={media}
                     updateItem={HandleUpdateMedia}
-                    imagePath={`${media.path}_thumbnail.webp`}
+                    imagePath={`${caddyUrl}/${media.hash}/thumbnail.webp`}
                     AddAccessListItemFunction={handleGrantAccess}
                     getOptionLabel={getOptionLabel}
                     listOfItem={listOfGroup}
@@ -258,13 +262,13 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                   HandleOpenModal={()=>HandleOpenModal(searchedMedia.id)}
                   openModal={openModalMediaId === searchedMedia.id}
                   itemLabel={searchedMedia.name}
-                  DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>HandleCopyToClipBoard(searchedMedia.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                  DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={searchedMedia.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`):()=>HandleCopyToClipBoard(searchedMedia.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
                   EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(searchedMedia.id)} icon={<ModeEditIcon />} disabled={false}/>}
                   itemOwner={user}
                   deleteItem={()=>HandleDeleteMedia(searchedMedia.id)}
                   item={searchedMedia}
                   updateItem={HandleUpdateMedia}
-                  imagePath={searchedMedia.path}
+                  imagePath={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
                   AddAccessListItemFunction={handleGrantAccess}
                   getOptionLabel={getOptionLabel}
                   listOfItem={listOfGroup}
@@ -293,7 +297,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     HandleOpenModal={()=>HandleOpenModal(media.id)}
                     openModal={openModalMediaId === media.id}
                     itemLabel={media.name}
-                    DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={()=>HandleCopyToClipBoard(media.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={media.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) : ()=>HandleCopyToClipBoard(media.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
                     EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     itemOwner={user}
                     deleteItem={()=>HandleDeleteMedia(media.id)}

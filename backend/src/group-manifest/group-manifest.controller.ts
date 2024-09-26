@@ -21,7 +21,7 @@ import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ManifestGroupRights } from '../enum/rights';
-import { manifestOrigin } from "../enum/origins";
+import { manifestOrigin } from '../enum/origins';
 
 @Controller('group-manifest')
 export class GroupManifestController {
@@ -52,6 +52,7 @@ export class GroupManifestController {
     @Req() req,
     @UploadedFile() file,
   ) {
+    console.log('UPLOAD MANIFEST')
     const userGroup = JSON.parse(createGroupManifestDto.user_group);
     const manifestToCreate = {
       ...createGroupManifestDto,
@@ -63,6 +64,9 @@ export class GroupManifestController {
       rights: ManifestGroupRights.ADMIN,
       origin: manifestOrigin.UPLOAD,
     };
+
+    console.log('-----------------manifestToCreate-----------------')
+    console.log(manifestToCreate);
     return this.groupManifestService.create(manifestToCreate);
   }
 
@@ -106,9 +110,11 @@ export class GroupManifestController {
         name: label,
         description: 'your manifest description',
         user_group: createManifestDto.user_group,
-        path: `${process.env.CADDY_URL}/${hash}/${label}.json`, // consider using env variables
+        hash: hash,
+        path: `${label}.json`,
         idCreator: createManifestDto.idCreator,
         rights: ManifestGroupRights.ADMIN,
+        origin: manifestOrigin.CREATE,
       };
 
       return await this.groupManifestService.create(manifestToCreate);
