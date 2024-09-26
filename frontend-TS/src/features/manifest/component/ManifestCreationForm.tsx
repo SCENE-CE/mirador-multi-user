@@ -4,6 +4,7 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { FieldForm } from "../../../components/elements/FieldForm.tsx";
 import { Box, Typography } from "@mui/material";
+import { MMUToolTip } from "../../../components/elements/MMUTootlTip.tsx";
 
 interface MediaField {
   name: string;
@@ -17,14 +18,12 @@ interface ItemGroup {
 interface IManifestCreationFormProps{
   handleSubmit: (manifestTitle: string, items: any)=>void
 }
-const caddyUrl = import.meta.env.VITE_CADDY_URL
 
 
 export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps) => {
   const [manifestTitle, setManifestTitle] = useState<string>("");
   const [manifestThumbnail, setManifestThumbnail] = useState<string>("");
   const [items, setItems] = useState<ItemGroup[]>([]);
-  const [warningImageSize, setWarningImageSize] = useState(false)
   const [warningWrongUrl, setWarningWrongUrl] = useState(false)
 
   const handleNewItemGroup = () => {
@@ -34,42 +33,13 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
   const handleManifestTitleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setManifestTitle(e.target.value);
   };
+
   const handleManifestThumbnailChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setWarningImageSize(false); // Reset the image size warning
-    const url = e.target.value;
 
-    // If the URL is an empty string, treat it as invalid and stop further execution
-    if (!url.trim()) {
-      setWarningWrongUrl(false);  // Mark it as an invalid URL
-      setManifestThumbnail("");  // Optionally set to an empty string or handle accordingly
-      return;  // Stop execution
-    }
-
-    let isValidUrl = true;
-
-    // Check if the entered value is a valid URL
-    try {
-      new URL(url);  // Will throw an error if invalid
-      setWarningWrongUrl(false); // Valid URL, so no warning
-    } catch (_) {
-      setWarningWrongUrl(true);  // Invalid URL, show warning
-      isValidUrl = false;  // Mark the URL as invalid
-    }
-
-    // Set the manifest thumbnail regardless of URL validity
-    if (isValidUrl && url.startsWith(caddyUrl)) {
-      const lastSlashIndex = url.lastIndexOf('/');
-      const result = url.substring(0, lastSlashIndex);
-      setManifestThumbnail(`${result}/thumbnail.webp`);
-    } else {
-      setManifestThumbnail(url);  // Set the original URL if not valid or does not start with caddyUrl
-    }
-
-    // Only trigger the weight alert if the URL is valid and does not start with caddyUrl
-    if (isValidUrl && !url.startsWith(caddyUrl)) {
-      setWarningImageSize(true);
-    }
+    setManifestThumbnail(e.target.value);
   };
+
+
 
 
 
@@ -141,6 +111,10 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
                     component="img"
                     src={manifestThumbnail}
                     loading="lazy"
+                    onError={() => {
+                      setWarningWrongUrl(true);
+                    }}
+                    onLoad={() => setWarningWrongUrl(false)}
                     sx={{
                       width: 50,
                       height: 50,
@@ -154,13 +128,14 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
                 )
               }
             </Grid>
-            {
-              warningImageSize &&(
-                <Grid item>
-                  <Typography variant="subtitle1" color={"red"}>Media shouldn't weight more than 1Mo</Typography>
-                </Grid>
-              )
-            }
+            <Grid item>
+              <MMUToolTip children={
+                <div>
+                  Media shouldn't weight more than 1Mo <br />
+                  If url come from your media library we took care of this for you.
+                </div>
+              }></MMUToolTip>
+            </Grid>
             {
               warningWrongUrl && (
                 <Grid item>

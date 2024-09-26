@@ -2,7 +2,6 @@ import {
   Divider,
   Grid,
   IconButton,
-  Tooltip,
   Typography
 } from "@mui/material";
 import { ListItem } from "../types.ts";
@@ -10,7 +9,7 @@ import { BigSpinner } from "./spinner.tsx";
 import { Dispatch, ReactNode, SetStateAction } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SearchBar } from "./SearchBar.tsx";
-import QuestionMarkIcon from '@mui/icons-material/QuestionMark';
+import { MMUToolTip } from "./MMUTootlTip.tsx";
 
 interface IProjectUserGroup<G> {
   items: ListItem[];
@@ -43,15 +42,11 @@ export const ItemList = <G,>({
           <Typography variant="h5">Permissions</Typography>
         </Grid>
         <Grid item>
-          <Tooltip title={<div>
+          <MMUToolTip children={<div>
             Admin: Can Access / Modify / Delete <br />
             Editor: Can Access / Modify <br />
             Reader: Can Access
-          </div>} placement="top">
-            <IconButton>
-              <QuestionMarkIcon fontSize='small' />
-            </IconButton>
-          </Tooltip>
+          </div>} />
         </Grid>
       </Grid>
       <Grid item>
