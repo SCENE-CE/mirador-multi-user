@@ -130,7 +130,7 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
           ):(
             <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
               {medias.map((media) => (
-                <CustomImageItem key={media.path}>
+                <CustomImageItem key={media.hash}>
                   <Box
                     component="img"
                     src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
@@ -158,7 +158,6 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup }: PopUpMedi
             </ImageList>
           )
         }
-
       </Drawer>
       <Box sx={{ padding: 2 }}>
         {children}
