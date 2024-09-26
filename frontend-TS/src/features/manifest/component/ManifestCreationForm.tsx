@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { FieldForm } from "../../../components/elements/FieldForm.tsx";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 interface MediaField {
   name: string;
@@ -17,12 +17,15 @@ interface ItemGroup {
 interface IManifestCreationFormProps{
   handleSubmit: (manifestTitle: string, items: any)=>void
 }
+const caddyUrl = import.meta.env.VITE_CADDY_URL
 
 
 export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps) => {
   const [manifestTitle, setManifestTitle] = useState<string>("");
   const [manifestThumbnail, setManifestThumbnail] = useState<string>("");
   const [items, setItems] = useState<ItemGroup[]>([]);
+  const [warningImageSize, setWarningImageSize] = useState(false)
+  const [warningWrongUrl, setWarningWrongUrl] = useState(false)
 
   const handleNewItemGroup = () => {
     setItems([...items, { media: [{ name: "media-1", value: "" }] }]);
@@ -32,8 +35,43 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
     setManifestTitle(e.target.value);
   };
   const handleManifestThumbnailChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setManifestThumbnail(e.target.value);
+    setWarningImageSize(false); // Reset the image size warning
+    const url = e.target.value;
+
+    // If the URL is an empty string, treat it as invalid and stop further execution
+    if (!url.trim()) {
+      setWarningWrongUrl(false);  // Mark it as an invalid URL
+      setManifestThumbnail("");  // Optionally set to an empty string or handle accordingly
+      return;  // Stop execution
+    }
+
+    let isValidUrl = true;
+
+    // Check if the entered value is a valid URL
+    try {
+      new URL(url);  // Will throw an error if invalid
+      setWarningWrongUrl(false); // Valid URL, so no warning
+    } catch (_) {
+      setWarningWrongUrl(true);  // Invalid URL, show warning
+      isValidUrl = false;  // Mark the URL as invalid
+    }
+
+    // Set the manifest thumbnail regardless of URL validity
+    if (isValidUrl && url.startsWith(caddyUrl)) {
+      const lastSlashIndex = url.lastIndexOf('/');
+      const result = url.substring(0, lastSlashIndex);
+      setManifestThumbnail(`${result}/thumbnail.webp`);
+    } else {
+      setManifestThumbnail(url);  // Set the original URL if not valid or does not start with caddyUrl
+    }
+
+    // Only trigger the weight alert if the URL is valid and does not start with caddyUrl
+    if (isValidUrl && !url.startsWith(caddyUrl)) {
+      setWarningImageSize(true);
+    }
   };
+
+
 
   const handleMediaChange = (itemIndex: number, mediaIndex: number, value: string) => {
     console.log(itemIndex, mediaIndex, value);
@@ -86,7 +124,7 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
       <Grid item container>
 
         <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
-          <Grid item container spacing={4} alignItems="center">
+          <Grid item container spacing={4} alignItems="center" >
             <Grid item xs={8}>
               <FieldForm
                 name="manifest-thumbnail"
@@ -102,7 +140,6 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
                   <Box
                     component="img"
                     src={manifestThumbnail}
-                    alt={manifestThumbnail}
                     loading="lazy"
                     sx={{
                       width: 50,
@@ -117,7 +154,20 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
                 )
               }
             </Grid>
-
+            {
+              warningImageSize &&(
+                <Grid item>
+                  <Typography variant="subtitle1" color={"red"}>Media shouldn't weight more than 1Mo</Typography>
+                </Grid>
+              )
+            }
+            {
+              warningWrongUrl && (
+                <Grid item>
+                  <Typography variant="subtitle1" color={"red"}>url is not valid</Typography>
+                </Grid>
+              )
+            }
           </Grid>
         </Paper>
       </Grid>
