@@ -3,6 +3,8 @@ import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { FieldForm } from "../../../components/elements/FieldForm.tsx";
+import { Box } from "@mui/material";
+import Divider from '@mui/material/Divider';
 
 interface MediaField {
   name: string;
@@ -17,6 +19,8 @@ interface IManifestCreationFormProps{
   setCreateManifestIsOpen:()=>void
   handleSubmit: (manifestTitle: string, items: any)=>void
 }
+
+
 export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IManifestCreationFormProps) => {
   const [manifestTitle, setManifestTitle] = useState<string>("");
   const [items, setItems] = useState<ItemGroup[]>([]);
@@ -30,6 +34,8 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IMa
   };
 
   const handleMediaChange = (itemIndex: number, mediaIndex: number, value: string) => {
+    console.log(itemIndex, mediaIndex, value);
+    console.log('items',items)
     const updatedItems = [...items];
     updatedItems[itemIndex].media[mediaIndex].value = value;
     setItems(updatedItems);
@@ -57,7 +63,7 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IMa
     setItems(updatedItems);
   };
 
-
+//TODO: implement logic to display thumbnail of the media add to the form if it's available in db
 
   return (
     <Grid container direction="column" spacing={4}>
@@ -83,6 +89,7 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IMa
           <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
             <Grid container direction="column" spacing={2}>
               {item.media.map((media, mediaIndex) => (
+                <>
                 <Grid item key={mediaIndex} container spacing={2} alignItems="center">
                   <Grid item xs>
                     <FieldForm
@@ -93,6 +100,27 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IMa
                       onChange={(e) => handleMediaChange(itemIndex, mediaIndex, e.target.value)}
                     />
                   </Grid>
+                  { items[itemIndex].media[mediaIndex].value && (
+                    <Grid item>
+                      <Box
+                        component="img"
+                        src={items[itemIndex].media[mediaIndex].value}
+                        alt={items[itemIndex].media[mediaIndex].value}
+                        loading="lazy"
+                        sx={{
+                          width: 164,
+                          height: 164,
+                          objectFit: 'cover',
+                          '@media(min-resolution: 2dppx)': {
+                            width: 164 * 2,
+                            height: 164 * 2,
+                          },
+                        }}
+                      />
+                    </Grid>
+                    )
+                  }
+
                   <Grid item>
                     <Button
                       variant="contained"
@@ -103,6 +131,8 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IMa
                     </Button>
                   </Grid>
                 </Grid>
+                <Divider />
+                </>
               ))}
 
               <Grid item>
