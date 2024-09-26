@@ -67,8 +67,6 @@ export class GroupManifestController {
       origin: manifestOrigin.UPLOAD,
     };
 
-    console.log('-----------------manifestToCreate-----------------')
-    console.log(manifestToCreate);
     return this.groupManifestService.create(manifestToCreate);
   }
 
@@ -85,8 +83,6 @@ export class GroupManifestController {
   @Post('/manifest/creation')
   @UseInterceptors(MediaInterceptor)
   async createManifest(@Body() createManifestDto: manifestCreationDto) {
-    console.log('------------------createManifestDto.processedManifest------------------');
-    console.log(createManifestDto.processedManifest);
 
     const label = createManifestDto.name;
     if (!label) {
@@ -96,7 +92,6 @@ export class GroupManifestController {
     const hash = generateAlphanumericSHA1Hash(
       `${label}${Date.now().toString()}`,
     );
-    console.log('hash:', hash);
     const uploadPath = `./upload/${hash}`;
     fs.mkdirSync(uploadPath, { recursive: true });
 
@@ -107,7 +102,6 @@ export class GroupManifestController {
       };
       const manifestJson = JSON.stringify(manifestData);
       const filePath = `${uploadPath}/${label}.json`;
-      console.log(`Writing to: ${filePath}`);
       await fs.promises.writeFile(filePath, manifestJson);
 
       const manifestToCreate = {

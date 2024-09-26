@@ -6,8 +6,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import fetch from 'node-fetch';
-import * as sharp from 'sharp'; // Import sharp
+import * as sharp from 'sharp';
 
 @Injectable()
 export class MediaInterceptor implements NestInterceptor {
@@ -37,7 +36,6 @@ export class MediaInterceptor implements NestInterceptor {
       items: [],
     };
 
-    // Helper function to process each media item
     const fetchMediaForItem = async (media) => {
       try {
         const response = await fetch(media.value, { method: 'GET' });
@@ -46,12 +44,10 @@ export class MediaInterceptor implements NestInterceptor {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
 
-        // Convert the response to buffer
         const arrayBuffer = await response.arrayBuffer();
         const mediaBuffer = Buffer.from(arrayBuffer);
         const contentType = response.headers.get('Content-Type');
 
-        // Process image data
         if (contentType && contentType.startsWith('image')) {
           const imageMetadata = await sharp(mediaBuffer).metadata();
           const { width, height } = imageMetadata;

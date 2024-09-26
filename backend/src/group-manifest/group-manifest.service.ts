@@ -22,11 +22,8 @@ export class GroupManifestService {
     private readonly linkGroupManifestService: LinkManifestGroupService,
   ) {}
   async create(createGroupManifestDto: CreateGroupManifestDto) {
-    console.log('-------------createGroupManifestDto-------------');
-    console.log(createGroupManifestDto);
     try {
       const { idCreator, path, user_group } = createGroupManifestDto;
-      console.log(path);
       const manifest = await this.manifestService.create(
         createGroupManifestDto,
       );
@@ -39,8 +36,6 @@ export class GroupManifestService {
         user_group.id,
         manifest.id,
       );
-      console.log('----------------toReturn----------------');
-      console.log(toReturn);
       return toReturn;
     } catch (error) {
       console.log(error);
@@ -51,8 +46,6 @@ export class GroupManifestService {
   }
 
   async addManifestToGroup(addManifestToGroupDto: AddManifestToGroupDto) {
-    console.log('-------------addManifestToGroupDto-------------');
-    console.log(addManifestToGroupDto);
     const { userGroup, manifestsId } = addManifestToGroupDto;
     try {
       const manifestsForGroup = [];
