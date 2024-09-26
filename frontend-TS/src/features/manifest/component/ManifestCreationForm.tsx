@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import { FieldForm } from "../../../components/elements/FieldForm.tsx";
 import { Box } from "@mui/material";
-import Divider from '@mui/material/Divider';
 
 interface MediaField {
   name: string;
@@ -16,13 +15,13 @@ interface ItemGroup {
 }
 
 interface IManifestCreationFormProps{
-  setCreateManifestIsOpen:()=>void
   handleSubmit: (manifestTitle: string, items: any)=>void
 }
 
 
-export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IManifestCreationFormProps) => {
+export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps) => {
   const [manifestTitle, setManifestTitle] = useState<string>("");
+  const [manifestThumbnail, setManifestThumbnail] = useState<string>("");
   const [items, setItems] = useState<ItemGroup[]>([]);
 
   const handleNewItemGroup = () => {
@@ -31,6 +30,9 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IMa
 
   const handleManifestTitleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setManifestTitle(e.target.value);
+  };
+  const handleManifestThumbnailChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setManifestThumbnail(e.target.value);
   };
 
   const handleMediaChange = (itemIndex: number, mediaIndex: number, value: string) => {
@@ -67,22 +69,59 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IMa
 
   return (
     <Grid container direction="column" spacing={4}>
-      <Grid item>
-        <Button
-          variant="contained"
-          onClick={setCreateManifestIsOpen}>
-          Back to Manifests
-        </Button>
+      <Grid item container>
+
+        <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
+          <Grid item>
+            <FieldForm
+              name="manifest-title"
+              placeholder="Enter manifest title"
+              label="Manifest Title"
+              value={manifestTitle}
+              onChange={(e) => handleManifestTitleChange(e)}
+            />
+          </Grid>
+        </Paper>
       </Grid>
-      <Grid item>
-        <FieldForm
-          name="manifest-title"
-          placeholder="Enter manifest title"
-          label="Manifest Title"
-          value={manifestTitle}
-          onChange={(e) => handleManifestTitleChange(e)}
-        />
+      <Grid item container>
+
+        <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
+          <Grid item container spacing={4} alignItems="center">
+            <Grid item xs={8}>
+              <FieldForm
+                name="manifest-thumbnail"
+                placeholder="manifest thumbnail Url"
+                label="Manifest thumbnail"
+                value={manifestThumbnail}
+                onChange={(e) => handleManifestThumbnailChange(e)}
+              />
+            </Grid>
+            <Grid item>
+              {
+                manifestThumbnail && (
+                  <Box
+                    component="img"
+                    src={manifestThumbnail}
+                    alt={manifestThumbnail}
+                    loading="lazy"
+                    sx={{
+                      width: 50,
+                      height: 50,
+                      objectFit: 'cover',
+                      '@media(min-resolution: 2dppx)': {
+                        width: 50 * 2,
+                        height: 50 * 2,
+                      },
+                    }}
+                  />
+                )
+              }
+            </Grid>
+
+          </Grid>
+        </Paper>
       </Grid>
+
 
       {items.map((item, itemIndex) => (
         <Grid item key={itemIndex}>
@@ -90,48 +129,47 @@ export const ManifestCreationForm = ({setCreateManifestIsOpen, handleSubmit}:IMa
             <Grid container direction="column" spacing={2}>
               {item.media.map((media, mediaIndex) => (
                 <>
-                <Grid item key={mediaIndex} container spacing={2} alignItems="center">
-                  <Grid item xs>
-                    <FieldForm
-                      name={media.name}
-                      placeholder={`Media url`}
-                      label={`Media ${mediaIndex + 1} URL`}
-                      value={media.value}
-                      onChange={(e) => handleMediaChange(itemIndex, mediaIndex, e.target.value)}
-                    />
-                  </Grid>
-                  { items[itemIndex].media[mediaIndex].value && (
-                    <Grid item>
-                      <Box
-                        component="img"
-                        src={items[itemIndex].media[mediaIndex].value}
-                        alt={items[itemIndex].media[mediaIndex].value}
-                        loading="lazy"
-                        sx={{
-                          width: 164,
-                          height: 164,
-                          objectFit: 'cover',
-                          '@media(min-resolution: 2dppx)': {
-                            width: 164 * 2,
-                            height: 164 * 2,
-                          },
-                        }}
+                  <Grid item key={mediaIndex} container spacing={2} alignItems="center">
+                    <Grid item xs>
+                      <FieldForm
+                        name={media.name}
+                        placeholder={`Media url`}
+                        label={`Media ${mediaIndex + 1} URL`}
+                        value={media.value}
+                        onChange={(e) => handleMediaChange(itemIndex, mediaIndex, e.target.value)}
                       />
                     </Grid>
+                    { items[itemIndex].media[mediaIndex].value && (
+                      <Grid item>
+                        <Box
+                          component="img"
+                          src={items[itemIndex].media[mediaIndex].value}
+                          alt={items[itemIndex].media[mediaIndex].value}
+                          loading="lazy"
+                          sx={{
+                            width: 50,
+                            height: 50,
+                            objectFit: 'cover',
+                            '@media(min-resolution: 2dppx)': {
+                              width: 50 * 2,
+                              height: 50 * 2,
+                            },
+                          }}
+                        />
+                      </Grid>
                     )
-                  }
+                    }
 
-                  <Grid item>
-                    <Button
-                      variant="contained"
-                      color="primary"
-                      onClick={() => handleRemoveMediaField(itemIndex, mediaIndex)}
-                    >
-                      Remove Media
-                    </Button>
+                    <Grid item>
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={() => handleRemoveMediaField(itemIndex, mediaIndex)}
+                      >
+                        Remove Media
+                      </Button>
+                    </Grid>
                   </Grid>
-                </Grid>
-                <Divider />
                 </>
               ))}
 

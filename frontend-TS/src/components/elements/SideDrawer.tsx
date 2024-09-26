@@ -119,7 +119,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
   const [medias, setMedias] = useState<Media[]>([])
   const [manifests, setManifests] = useState<Manifest[]>([])
+  const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
 
+  const handleSetCreateManifestIsOpen = (boolean:boolean) =>{
+    setCreateManifestIsOpen(boolean);
+  }
 
   const myRef = useRef<MiradorViewerHandle>(null);
   const handleDrawerOpen = () => {
@@ -141,6 +145,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     }
     setSelectedProjectId(undefined);
     setSelectedContent(content);
+    handleSetCreateManifestIsOpen(false)
   }
 
   const HandleSetUserProjects=(userProjects:Project[])=>{
@@ -376,7 +381,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         }
         {
           user && user.id && selectedContent === CONTENT.MANIFEST && userPersonalGroup &&(
-            <AllManifests medias={medias} manifests={manifests} fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup}/>
+            <AllManifests createManifestIsOpen={createManifestIsOpen} setCreateManifestIsOpen={handleSetCreateManifestIsOpen} medias={medias} manifests={manifests} fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup}/>
           )
         }
         {modalDisconectIsOpen &&(
