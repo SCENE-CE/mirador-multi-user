@@ -1,6 +1,8 @@
 import storage from "../../../utils/storage.ts";
+import { manifestCreationDto } from "../types/types.ts";
 
-export const createManifest = async (createManifestDto:any) => {
+export const createManifest = async (createManifestDto:manifestCreationDto) => {
+  console.log('createManifestDto',createManifestDto);
   const token = storage.getToken();
   console.log('createManifestDto',createManifestDto);
   try {

@@ -1,7 +1,7 @@
 import storage from "../../../utils/storage.ts";
-import { CreateManifestDto } from "../types/types.ts";
+import { UploadAndLinkManifestDto } from "../types/types.ts";
 
-export const linkManifest= async (createManifestDto:CreateManifestDto) => {
+export const linkManifest= async (createManifestDto:UploadAndLinkManifestDto) => {
   const token = storage.getToken();
 
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/link`, {

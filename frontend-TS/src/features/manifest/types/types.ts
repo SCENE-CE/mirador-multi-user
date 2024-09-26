@@ -20,8 +20,22 @@ export enum manifestOrigin {
   CREATE = 'create',
 }
 
+export type manifestCreationDto = {
+  idCreator:number,
+  manifestMedias:ManifestCreationMedia[]
+  name:string,
+  user_group: UserGroup,
+}
+export type MediaItem = {
+  name: string;
+  value: string;
+};
 
-export type CreateManifestDto = {
+export type ManifestCreationMedia = {
+  media: MediaItem[];
+};
+
+export type UploadAndLinkManifestDto = {
   name?:string
   idCreator:number
   user_group:UserGroup;

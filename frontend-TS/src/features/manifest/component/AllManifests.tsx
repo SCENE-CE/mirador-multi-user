@@ -2,7 +2,7 @@ import { Box, Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
-import { Manifest, ManifestItem } from "../types/types.ts";
+import { Manifest, ManifestCreationMedia } from "../types/types.ts";
 import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import placeholder from '../../../assets/Placeholder.svg';
@@ -42,15 +42,6 @@ interface IAllManifests{
   medias:Media[]
 }
 
-type MediaItem = {
-  name: string;
-  value: string;
-};
-
-type ManifestCreationMedia = {
-  media: MediaItem[];
-  // Other properties for ManifestCreationMedia, if needed
-};
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL
 
@@ -166,107 +157,106 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
   const handleSubmitManifestCreationForm = async (manifestTitle:string,items:ManifestCreationMedia[]) => {
-
-    const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
-      ['@Context']:'https://iiif.io/api/presentation/3/context.json',
-      id:"",
-      type:"Manifest",
-      label:{
-        en:[manifestTitle]
-      },
-      items: [],
-    };
-    //TODO: MOVE MANIFEST CREATION LOGIC TO BACKEND TO AVOID CORS ERROR WHEN MEDIA COME FROME OUTSIDE ARVEST
-    const fetchMediaForItem = async (media:MediaItem  ): Promise<void> => {
-      try {
-        console.log('ENTER FETCH MEDIA FOR ITEM')
-        console.log(media.value)
-        const response = await fetch(media.value, { method: "GET" });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        console.log(response.ok)
-        const mediaBlob = await response.blob();
-        console.log('mediaBlob',mediaBlob)
-        const mediaUrl = URL.createObjectURL(mediaBlob);
-        const contentType = response.headers.get("Content-Type");
-
-        if (contentType && contentType.startsWith("image")) {
-          const img = new Image();
-          img.src = mediaUrl;
-          console.log('img',img)
-          await new Promise<void>((resolve, reject) => {
-            img.onload = () => {
-              manifestToCreate.items.push({
-                id: media.value,
-                type: "Canvas",
-                height: img.height,
-                width: img.width,
-                label: { en:["image"] },
-                items:[{
-                  id:media.value+`/annotation/${Date.now}`,
-                  type:"AnnotationPage",
-                  items:[
-                    {
-                      id:media.value+`/annotation/${Date.now}`,
-                      type:"Annotation",
-                      motivation:"painting",
-                      target:media.value,
-                      body:{
-                        id:media.value,
-                        type:"Image",
-                        format:`Image/${response.headers.get("Content-Type")}`,
-                        height:img.height,
-                        width:img.width,
-                      }
-                    }
-                  ]
-                }]
-              });
-              resolve();
-            };
-            img.onerror = reject;
-          });
-        } else if (contentType && contentType.startsWith("video")) {
-          // const video = document.createElement("video");
-          // video.src = mediaUrl;
-          //
-          // await new Promise<void>((resolve, reject) => {
-          //   video.onloadedmetadata = () => {
-          //     manifestToCreate.items.push({
-          //       id: media.value,
-          //       type: "Canvas",
-          //       height: video.videoHeight,
-          //       width: video.videoWidth,
-          //       duration: video.duration,
-          //       label:"video"
-          //     });
-          //     resolve();
-          //   };
-          //   video.onerror = reject;
-          // });
-          toast.error('video will be handle in a future release')
-        } else {
-          console.log("Unsupported media type:", contentType);
-        }
-      } catch (error) {
-        console.log("Error fetching media:", error);
-        throw error;
-      }
-    };
-
-    const fetchMediaPromises = items.flatMap((item) =>
-      item.media.map((media) => {
-        return fetchMediaForItem(media);
-      })
-    );
+      console.log('items',items)
+    // const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
+    //   ['@Context']:'https://iiif.io/api/presentation/3/context.json',
+    //   id:"",
+    //   type:"Manifest",
+    //   label:{
+    //     en:[manifestTitle]
+    //   },
+    //   items: [],
+    // };
+    // const fetchMediaForItem = async (media:MediaItem  ): Promise<void> => {
+    //   try {
+    //     console.log('ENTER FETCH MEDIA FOR ITEM')
+    //     console.log(media.value)
+    //     const response = await fetch(media.value, { method: "GET" });
+    //
+    //     if (!response.ok) {
+    //       throw new Error(`HTTP error! status: ${response.status}`);
+    //     }
+    //     console.log(response.ok)
+    //     const mediaBlob = await response.blob();
+    //     console.log('mediaBlob',mediaBlob)
+    //     const mediaUrl = URL.createObjectURL(mediaBlob);
+    //     const contentType = response.headers.get("Content-Type");
+    //
+    //     if (contentType && contentType.startsWith("image")) {
+    //       const img = new Image();
+    //       img.src = mediaUrl;
+    //       console.log('img',img)
+    //       await new Promise<void>((resolve, reject) => {
+    //         img.onload = () => {
+    //           manifestToCreate.items.push({
+    //             id: media.value,
+    //             type: "Canvas",
+    //             height: img.height,
+    //             width: img.width,
+    //             label: { en:["image"] },
+    //             items:[{
+    //               id:media.value+`/annotation/${Date.now}`,
+    //               type:"AnnotationPage",
+    //               items:[
+    //                 {
+    //                   id:media.value+`/annotation/${Date.now}`,
+    //                   type:"Annotation",
+    //                   motivation:"painting",
+    //                   target:media.value,
+    //                   body:{
+    //                     id:media.value,
+    //                     type:"Image",
+    //                     format:`Image/${response.headers.get("Content-Type")}`,
+    //                     height:img.height,
+    //                     width:img.width,
+    //                   }
+    //                 }
+    //               ]
+    //             }]
+    //           });
+    //           resolve();
+    //         };
+    //         img.onerror = reject;
+    //       });
+    //     } else if (contentType && contentType.startsWith("video")) {
+    //       // const video = document.createElement("video");
+    //       // video.src = mediaUrl;
+    //       //
+    //       // await new Promise<void>((resolve, reject) => {
+    //       //   video.onloadedmetadata = () => {
+    //       //     manifestToCreate.items.push({
+    //       //       id: media.value,
+    //       //       type: "Canvas",
+    //       //       height: video.videoHeight,
+    //       //       width: video.videoWidth,
+    //       //       duration: video.duration,
+    //       //       label:"video"
+    //       //     });
+    //       //     resolve();
+    //       //   };
+    //       //   video.onerror = reject;
+    //       // });
+    //       toast.error('video will be handle in a future release')
+    //     } else {
+    //       console.log("Unsupported media type:", contentType);
+    //     }
+    //   } catch (error) {
+    //     console.log("Error fetching media:", error);
+    //     throw error;
+    //   }
+    // };
+    //
+    // const fetchMediaPromises = items.flatMap((item) =>
+    //   item.media.map((media) => {
+    //     return fetchMediaForItem(media);
+    //   })
+    // );
 
     try {
-      await Promise.all(fetchMediaPromises);
+      // await Promise.all(fetchMediaPromises);
       await createManifest({
-        manifest : manifestToCreate,
-        name: manifestToCreate.label,
+        manifestMedias : items,
+        name: manifestTitle,
         user_group: userPersonalGroup,
         idCreator:user.id
       })
