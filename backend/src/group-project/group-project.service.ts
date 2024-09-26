@@ -246,12 +246,9 @@ export class GroupProjectService {
 
   async findAllUserProjects(userId: number) {
     try {
-      console.log('find all user projects userId', userId);
       const usersGroups = await this.linkUserGroup.findALlGroupsForUser(userId);
-      console.log(usersGroups);
       let projects: Project[] = [];
       for (const usersGroup of usersGroups) {
-        console.log(usersGroup);
         const groupProjects =
           await this.linkGroupProjectService.findAllProjectByUserGroupId(
             usersGroup.id,
