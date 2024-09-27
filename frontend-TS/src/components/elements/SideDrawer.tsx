@@ -358,7 +358,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             userProjects={userProjects}
             setUserProjects={HandleSetUserProjects}
             handleSetMiradorState={HandleSetMiradorState}
-          />
+            medias={medias}
+           setMedias={setMedias}/>
 
         )}
         {

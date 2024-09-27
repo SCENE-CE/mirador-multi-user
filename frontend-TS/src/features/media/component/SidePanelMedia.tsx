@@ -50,7 +50,7 @@ const ToggleButton = styled(IconButton)(({ open }: { open: boolean }) => ({
   position: 'fixed',
   top: 16,
   right: open ? 515 : 15,
-  zIndex: 1300,
+  zIndex: 9999,
   transition: 'right 0.3s ease',
   backgroundColor: '#fff',
 }));
@@ -129,13 +129,15 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup, user,fetchM
 
   return (
     <div>
-      <ToggleButton open={open} onClick={toggleDrawer}>
+      <ToggleButton
+        open={open} onClick={toggleDrawer}>
         {open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
       </ToggleButton>
       <Drawer
         open={open}
         anchor="right"
         variant="persistent"
+        sx={{  position: 'relative', zIndex:9999}}
         ModalProps={{
           BackdropProps: {
             style: { backgroundColor: 'transparent'},
