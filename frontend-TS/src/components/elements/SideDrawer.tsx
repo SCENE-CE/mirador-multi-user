@@ -313,7 +313,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
                     <ItemButton icon={<WorkIcon/>} text={projectSelected!.name} open={open} selected={false} action={()=>console.log('')}/>
                   </ListItem>
                 </Tooltip>
-              <Divider/>
+                <Divider/>
                 <Tooltip title="Save">
                   <ListItem sx={{padding:0}}>
                     <ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Project" action={saveProject}/>
@@ -358,8 +358,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             userProjects={userProjects}
             setUserProjects={HandleSetUserProjects}
             handleSetMiradorState={HandleSetMiradorState}
+            medias={medias}
+            setMedias={setMedias}
           />
-
         )}
         {
           user && user.id && !selectedProjectId &&selectedContent === CONTENT.MEDIA && (
@@ -375,7 +376,10 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         {
           user && user.id && selectedContent === CONTENT.GROUPS &&(
             <AllGroups
+              userPersonalGroup={userPersonalGroup!}
+              medias={medias}
               user={user}
+              setMedias={setMedias}
             />
           )
         }

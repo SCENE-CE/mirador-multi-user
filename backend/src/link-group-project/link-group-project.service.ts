@@ -62,17 +62,12 @@ export class LinkGroupProjectService {
 
   async findAllProjectByUserGroupId(userGroupId: number) {
     try {
-      console.log(userGroupId)
       const linkGroupProjects = await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userGroupId } },
         relations: { project: true },
       });
 
-      console.log('link group projects', linkGroupProjects)
-
-      return linkGroupProjects.map(
-        (linkGroupProject) => linkGroupProject,
-      );
+      return linkGroupProjects.map((linkGroupProject) => linkGroupProject);
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while finding projects for user group ID: ${userGroupId}`,
@@ -120,12 +115,10 @@ export class LinkGroupProjectService {
 
   async getProjectRelations(projectId: number) {
     try {
-      console.log('ENTER GET PROJECT RELATION');
       const dataToReturn = await this.linkGroupProjectRepository.find({
         where: { project: { id: projectId } },
         relations: ['user_group'],
       });
-      console.log('dataToReturn', dataToReturn);
       return dataToReturn;
     } catch (error) {
       console.log(error);
@@ -139,8 +132,6 @@ export class LinkGroupProjectService {
     updatedRights: GroupProjectRights,
   ) {
     try {
-      console.log('---------------------------ENTER UPDATE RELATION ---------------------------');
-
       // Fetch the LinkGroupProject entity
       const linkGroupToUpdate = await this.linkGroupProjectRepository.findOne({
         where: {
@@ -154,12 +145,9 @@ export class LinkGroupProjectService {
         throw new NotFoundException('No matching LinkGroupProject found');
       }
 
-     console.log('before update ')
       linkGroupToUpdate.rights = updatedRights;
-      const updatedData = await this.linkGroupProjectRepository.save(linkGroupToUpdate);
-
-      console.log('--------------------UPDATED DATA-------------------------');
-      console.log(updatedData);
+      const updatedData =
+        await this.linkGroupProjectRepository.save(linkGroupToUpdate);
 
       return updatedData;
     } catch (error) {
@@ -170,7 +158,6 @@ export class LinkGroupProjectService {
 
   async removeProjectGroupRelation(projectId: number, group: UserGroup) {
     try {
-
       const done = await this.linkGroupProjectRepository.delete({
         project: { id: projectId },
         user_group: { id: group.id },
@@ -185,8 +172,4 @@ export class LinkGroupProjectService {
       );
     }
   }
-
-
-
-
 }

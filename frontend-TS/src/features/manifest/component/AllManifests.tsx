@@ -342,7 +342,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 itemLabel={manifest.name}
                 itemOwner={user}
                 item={manifest}
-                imagePath={thumbnailUrls[index]}
+                thumbnailUrl={thumbnailUrls[index]}
                 manifest={true}
                 EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
               />
@@ -364,7 +364,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 itemLabel={manifest.name}
                 itemOwner={user}
                 item={manifest}
-                imagePath={thumbnailUrls[index]}
+                thumbnailUrl={thumbnailUrls[index]}
                 manifest={true}
                 EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
               />
@@ -386,7 +386,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 itemLabel={searchedManifest.name}
                 itemOwner={user}
                 item={searchedManifest}
-                imagePath={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}
+                thumbnailUrl={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}
                 manifest={true}
               />
             </Grid>
@@ -404,7 +404,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       {
         createManifestIsOpen &&(
           <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
-            <SidePanelMedia medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user}>
+            <SidePanelMedia display={true} medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user}>
               <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm}/>
             </SidePanelMedia>
           </Grid>

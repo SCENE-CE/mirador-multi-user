@@ -34,6 +34,7 @@ interface ModalItemProps<T, G,O> {
   searchBarLabel:string,
   description:string,
   HandleOpenModalEdit:()=>void,
+  thumbnailUrl?:string | null
 }
 
 export const MMUModalEdit = <O, T extends { id: number }, G>(
@@ -57,33 +58,34 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     handleDeleteAccessListItem,
     description,
     HandleOpenModalEdit,
+    thumbnailUrl
   }: ModalItemProps<T, G, O>) => {
-  const [editName, setEditName] = useState(false);
-  const [editDescription, setEditDescription] = useState(false);
   const [newItemName, setNewItemName] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
+  const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
   const [openModal, setOpenModal] = useState(false);
 
-  const handleUpdateItemName = useCallback(async () => {
+  const handleUpdateItem = useCallback(async () => {
+    console.log('newItemThumbnailUrl',newItemThumbnailUrl)
     const itemToUpdate = {...item,
+      thumbnailUrl:newItemThumbnailUrl,
       name:newItemName,
       description:newItemDescription,
     }
+    console.log("itemToUpdate",itemToUpdate)
     if(updateItem){
       updateItem(itemToUpdate);
     }
-    setEditName(false);
-    setEditDescription(false)
-  }, [item, newItemName, newItemDescription, updateItem, itemOwner, editName, editDescription]);
-
-
-  const handleEditDescription = useCallback(() => {
-    setEditDescription(!editDescription);
-  }, [editDescription]);
+  }, [newItemThumbnailUrl, item, newItemName, newItemDescription, updateItem]);
 
 
   const handleChangeName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setNewItemName(e.target.value);
+  }, []);
+
+  const handleChangeThumbnailUrl = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setNewItemThumbnailUrl(e.target.value);
+    console.log(e.target.value)
   }, []);
 
   const handleChangeDescription= useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -111,8 +113,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   }
 
   const handleSubmit = () => {
-    handleUpdateItemName();
-    handleEditDescription();
+    handleUpdateItem();
     HandleOpenModalEdit()
   };
   return (
@@ -168,7 +169,15 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
             justifyContent="flex-end"
             alignItems="center"
           >
-
+            <TextField
+              type="text"
+              label="Thumbnail Url"
+              onChange={handleChangeThumbnailUrl}
+              variant="outlined"
+              defaultValue={thumbnailUrl ? thumbnailUrl : undefined }
+              multiline
+              fullWidth
+            />
           </Grid>
         </Grid>
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(

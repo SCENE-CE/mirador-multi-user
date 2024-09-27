@@ -21,6 +21,9 @@ export class UserGroup {
   ownerId: number;
 
   @Column({ nullable: true })
+  thumbnailUrl: string;
+
+  @Column({ nullable: true })
   description: string;
 
   @Column({ type: 'enum', enum: UserGroupTypes })
@@ -39,6 +42,9 @@ export class UserGroup {
   @OneToMany(() => LinkUserGroup, (linkUserGroup) => linkUserGroup.user_group)
   linkUserGroups: LinkUserGroup[];
 
-  @OneToMany(() => LinkManifestGroup, (linkManifestGroup) => linkManifestGroup.user_group)
+  @OneToMany(
+    () => LinkManifestGroup,
+    (linkManifestGroup) => linkManifestGroup.user_group,
+  )
   linkManifestGroup: LinkManifestGroup[];
 }

@@ -5,7 +5,7 @@ import placeholder from '../../assets/Placeholder.svg'
 import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
-import { MediaGroupRights } from "../../features/media/types/types.ts";
+import {  MediaGroupRights } from "../../features/media/types/types.ts";
 
 interface IMMUCardProps<T,G,O,X> {
   id: number;
@@ -31,7 +31,7 @@ interface IMMUCardProps<T,G,O,X> {
   removeAccessListItemFunction?:(itemId:number, accessItemId:number )=>Promise<void>
   setItemList?:Dispatch<SetStateAction<X[]>>
   searchBarLabel?:string
-  imagePath?:string
+  thumbnailUrl?:string | null
   manifest?:boolean
 }
 
@@ -60,8 +60,8 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     removeAccessListItemFunction,
     setItemList,
     searchBarLabel,
-    imagePath,
-    manifest
+    thumbnailUrl,
+    manifest,
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -96,14 +96,13 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
       await handleSelectorChange(itemSelected, event.target.value, item.id, item);
     }
     await fetchData();
-  };
-
+  }
   return (
     <Card>
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
         <Grid item container flexDirection="row" alignItems="center" justifyContent="flex-start" spacing={2}>
           <Grid item xs={12} sm={4}>
-            <img src={imagePath? imagePath : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain"}} />
+            <img src={thumbnailUrl? thumbnailUrl : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain"}} />
           </Grid>
           <Grid item xs={12} sm={4}>
             <Tooltip title={itemLabel} placement="bottom-start" sx={{ fontSize: '3rem', maxWidth: '200px' }}>
@@ -141,33 +140,37 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
               </Grid>
             </Grid>
           </CardActions>
-          <MMUModal
-            width={500}
-            openModal={openModal}
-            setOpenModal={HandleOpenModal}
-            children={ !manifest ?
-              <MMUModalEdit
-                HandleOpenModalEdit={HandleOpenModal}
-                description={description}
-                searchBarLabel={searchBarLabel ? searchBarLabel : ""}
-                itemLabel={itemLabel}
-                handleSelectorChange={handleChangeSelectedItem}
-                fetchData={fetchData}
-                listOfItem={listOfItem}
-                itemOwner={itemOwner}
-                deleteItem={deleteItem}
-                getOptionLabel={getOptionLabel}
-                setSearchInput={setSearchInput}
-                handleAddAccessListItem={handleAddAccessListItem}
-                item={item}
-                searchInput={searchInput}
-                searchModalEditItem={searchModalEditItem}
-                setItemToAdd={setItemToAdd}
-                updateItem={updateItem}
-                rights={rights}
-                handleDeleteAccessListItem={handleRemoveAccessListItem}
-              /> : <Grid>Manifest settings and modification will be possible in a future release</Grid>
-            }/>
+            <MMUModal
+              width={500}
+              openModal={openModal}
+              setOpenModal={HandleOpenModal}
+              children={ !manifest ?
+                <>
+                  <MMUModalEdit
+                    thumbnailUrl={thumbnailUrl}
+                    HandleOpenModalEdit={HandleOpenModal}
+                    description={description}
+                    searchBarLabel={searchBarLabel ? searchBarLabel : ""}
+                    itemLabel={itemLabel}
+                    handleSelectorChange={handleChangeSelectedItem}
+                    fetchData={fetchData}
+                    listOfItem={listOfItem}
+                    itemOwner={itemOwner}
+                    deleteItem={deleteItem}
+                    getOptionLabel={getOptionLabel}
+                    setSearchInput={setSearchInput}
+                    handleAddAccessListItem={handleAddAccessListItem}
+                    item={item}
+                    searchInput={searchInput}
+                    searchModalEditItem={searchModalEditItem}
+                    setItemToAdd={setItemToAdd}
+                    updateItem={updateItem}
+                    rights={rights}
+                    handleDeleteAccessListItem={handleRemoveAccessListItem}
+                  />
+                </>
+                : <Grid>Manifest settings and modification will be possible in a future release</Grid>
+              }/>
         </Grid>
       </Grid>
     </Card>

@@ -24,6 +24,9 @@ export class Project {
   @Column({ nullable: true })
   description: string;
 
+  @Column({ nullable: true })
+  thumbnailUrl: string;
+
   @ManyToOne(() => User, (user) => user.projects, {
     nullable: false,
     cascade: true,

@@ -19,6 +19,7 @@ const style = {
   pt: 2,
   px: 4,
   pb: 3,
+  zIndex: 1300
 };
 
 export const MMUModal= ({ openModal, setOpenModal, children, width }:IOpenModalProps)=>{
@@ -28,6 +29,12 @@ export const MMUModal= ({ openModal, setOpenModal, children, width }:IOpenModalP
       onClose={setOpenModal}
       aria-labelledby="child-modal-title"
       aria-describedby="child-modal-description"
+      slotProps={{
+        backdrop: {
+          sx: { zIndex: 800 },  // Lower the z-index of the backdrop if needed
+        },
+      }}
+      sx={{ zIndex: 1300 }} // Set z-index for the modal itself
     >
       <Box sx={{ ...style, width:width}}>
         {children}

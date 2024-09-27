@@ -26,6 +26,7 @@ export type UserGroup = {
   description:string;
   type:UserGroupTypes;
   rights?:ProjectRights;
+  thumbnailUrl?:string
 }
 
 export type CreateGroupDto ={
