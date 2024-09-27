@@ -90,6 +90,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
 
   const updateUserProject = useCallback(async (projectUpdated:Project)=>{
     const { rights , ...projectToUpdate } = projectUpdated;
+    console.log('projectUpdated',projectUpdated)
     let updatedProject : ProjectGroupUpdateDto ;
     if(rights){
       updatedProject = {

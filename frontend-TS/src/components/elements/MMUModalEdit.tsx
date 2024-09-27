@@ -62,13 +62,17 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   }: ModalItemProps<T, G, O>) => {
   const [newItemName, setNewItemName] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
+  const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
   const [openModal, setOpenModal] = useState(false);
 
   const handleUpdateItemName = useCallback(async () => {
+    console.log('newItemThumbnailUrl',newItemThumbnailUrl)
     const itemToUpdate = {...item,
+      thumbnailUrl:newItemThumbnailUrl,
       name:newItemName,
       description:newItemDescription,
     }
+    console.log("itemToUpdate",itemToUpdate)
     if(updateItem){
       updateItem(itemToUpdate);
     }
@@ -77,6 +81,11 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
 
   const handleChangeName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     setNewItemName(e.target.value);
+  }, []);
+
+  const handleChangeThumbnailUrl = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setNewItemThumbnailUrl(e.target.value);
+    console.log(e.target.value)
   }, []);
 
   const handleChangeDescription= useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -163,7 +172,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
             <TextField
               type="text"
               label="Thumbnail Url"
-              onChange={handleChangeDescription}
+              onChange={handleChangeThumbnailUrl}
               variant="outlined"
               defaultValue={thumbnailUrl ? thumbnailUrl : undefined }
               multiline
