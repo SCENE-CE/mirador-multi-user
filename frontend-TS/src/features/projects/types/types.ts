@@ -9,6 +9,7 @@ export type Project = {
   owner:User;
   rights?: ProjectRights;
   description:string
+  thumbnailUrl?:string
 }
 
 export type ProjectGroup = {

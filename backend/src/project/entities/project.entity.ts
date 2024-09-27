@@ -25,7 +25,7 @@ export class Project {
   description: string;
 
   @Column({ nullable: true })
-  thumbnailUrl:string
+  thumbnailUrl: string;
 
   @ManyToOne(() => User, (user) => user.projects, {
     nullable: false,

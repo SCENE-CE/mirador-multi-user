@@ -31,7 +31,7 @@ interface IMMUCardProps<T,G,O,X> {
   removeAccessListItemFunction?:(itemId:number, accessItemId:number )=>Promise<void>
   setItemList?:Dispatch<SetStateAction<X[]>>
   searchBarLabel?:string
-  imagePath?:string
+  thumbnailUrl?:string | null
   manifest?:boolean
 }
 
@@ -60,7 +60,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     removeAccessListItemFunction,
     setItemList,
     searchBarLabel,
-    imagePath,
+    thumbnailUrl,
     manifest
   }:IMMUCardProps<T,G,O, X>
 ) => {
@@ -103,7 +103,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
         <Grid item container flexDirection="row" alignItems="center" justifyContent="flex-start" spacing={2}>
           <Grid item xs={12} sm={4}>
-            <img src={imagePath? imagePath : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain"}} />
+            <img src={thumbnailUrl? thumbnailUrl : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain"}} />
           </Grid>
           <Grid item xs={12} sm={4}>
             <Tooltip title={itemLabel} placement="bottom-start" sx={{ fontSize: '3rem', maxWidth: '200px' }}>
@@ -147,6 +147,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             setOpenModal={HandleOpenModal}
             children={ !manifest ?
               <MMUModalEdit
+                thumbnailUrl={thumbnailUrl}
                 HandleOpenModalEdit={HandleOpenModal}
                 description={description}
                 searchBarLabel={searchBarLabel ? searchBarLabel : ""}

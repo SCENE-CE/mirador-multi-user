@@ -233,7 +233,7 @@ console.log('medias',medias)
                     deleteItem={()=>HandleDeleteMedia(media.id)}
                     item={media}
                     updateItem={HandleUpdateMedia}
-                    imagePath={`${caddyUrl}/${media.hash}/thumbnail.webp`}
+                    thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
                     AddAccessListItemFunction={handleGrantAccess}
                     getOptionLabel={getOptionLabel}
                     listOfItem={listOfGroup}
@@ -268,7 +268,7 @@ console.log('medias',medias)
                   deleteItem={()=>HandleDeleteMedia(searchedMedia.id)}
                   item={searchedMedia}
                   updateItem={HandleUpdateMedia}
-                  imagePath={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
+                  thumbnailUrl={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
                   AddAccessListItemFunction={handleGrantAccess}
                   getOptionLabel={getOptionLabel}
                   listOfItem={listOfGroup}
@@ -303,7 +303,7 @@ console.log('medias',medias)
                     deleteItem={()=>HandleDeleteMedia(media.id)}
                     item={media}
                     updateItem={HandleUpdateMedia}
-                    imagePath={media.path}
+                    thumbnailUrl={media.path}
                     AddAccessListItemFunction={handleGrantAccess}
                     getOptionLabel={getOptionLabel}
                     listOfItem={listOfGroup}

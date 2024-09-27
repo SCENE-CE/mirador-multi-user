@@ -251,6 +251,7 @@ export const AllProjects = ({ user, selectedProjectId, setSelectedProjectId,user
               {userProjects.map((projectUser) => (
                   <Grid item key={projectUser.id}>
                     <MMUCard
+                      thumbnailUrl={projectUser.thumbnailUrl ? projectUser.thumbnailUrl : null }
                       searchBarLabel={"Search"}
                       description={projectUser.description}
                       HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
