@@ -65,7 +65,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
   const [openModal, setOpenModal] = useState(false);
 
-  const handleUpdateItemName = useCallback(async () => {
+  const handleUpdateItem = useCallback(async () => {
     console.log('newItemThumbnailUrl',newItemThumbnailUrl)
     const itemToUpdate = {...item,
       thumbnailUrl:newItemThumbnailUrl,
@@ -76,7 +76,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     if(updateItem){
       updateItem(itemToUpdate);
     }
-  }, [item, newItemName, newItemDescription, updateItem, itemOwner]);
+  }, [newItemThumbnailUrl, item, newItemName, newItemDescription, updateItem]);
 
 
   const handleChangeName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +113,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   }
 
   const handleSubmit = () => {
-    handleUpdateItemName();
+    handleUpdateItem();
     HandleOpenModalEdit()
   };
   return (
