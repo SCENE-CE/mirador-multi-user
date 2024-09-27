@@ -32,7 +32,7 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
   return (
     <>
       <div>
-        <Drawer anchor="bottom" open={modalCreateMediaIsOpen} onClose={handleToggleModalGroupCreation}>
+        <Drawer sx={{zIndex:9999}} anchor="bottom" open={modalCreateMediaIsOpen} onClose={handleToggleModalGroupCreation}>
           <Paper
             sx={{
               left: '0',
@@ -42,6 +42,7 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
               paddingRight: { sm: 3, xs: 2 },
               paddingTop: 2,
               right: '0',
+              zIndex:9999
             }}
           >
 

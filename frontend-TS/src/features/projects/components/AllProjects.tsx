@@ -161,6 +161,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   }
 
   const HandleOpenModal =useCallback ((projectId: number)=>{
+    console.log('HANDLE OPEN MODAL')
     setOpenModalProjectId(openModalProjectId === projectId ? null : projectId);
   },[setOpenModalProjectId, openModalProjectId])
 
@@ -237,7 +238,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   console.log('medias',medias)
   return (
     <>
-      <SidePanelMedia fetchMediaForUser={fetchMediaForUser} medias={medias} user={user}  userPersonalGroup={userPersonalGroup!}>
+      <SidePanelMedia display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
         <Grid container spacing={2} justifyContent="center" flexDirection="column">
           <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             {

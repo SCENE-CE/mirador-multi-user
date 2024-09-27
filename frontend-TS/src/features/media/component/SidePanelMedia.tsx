@@ -70,15 +70,15 @@ interface PopUpMediaProps {
   userPersonalGroup:UserGroup
   user:User
   fetchMediaForUser:()=>void
+  display:boolean
 }
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL
 
-export const SidePanelMedia = ({ medias, children,userPersonalGroup, user,fetchMediaForUser}: PopUpMediaProps) => {
+export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, user,fetchMediaForUser}: PopUpMediaProps) => {
   const [open, setOpen] = useState(true);
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
-
   const toggleDrawer = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -129,106 +129,114 @@ export const SidePanelMedia = ({ medias, children,userPersonalGroup, user,fetchM
 
   return (
     <div>
-      <ToggleButton
-        open={open} onClick={toggleDrawer}>
-        {open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-      </ToggleButton>
-      <Drawer
-        open={open}
-        anchor="right"
-        variant="persistent"
-        sx={{  position: 'relative', zIndex:9999}}
-        ModalProps={{
-          BackdropProps: {
-            style: { backgroundColor: 'transparent'},
-          },
-        }}>
-        <Grid item container spacing={1} sx={{padding:'10px'}} alignItems="center">
-          <Grid item>
-            <SearchBar fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Search Media"} setSearchedData={handleSetSearchMedia}/>
-          </Grid>
-          <Grid item>
-            <VisuallyHiddenInput
-              id="file-upload"
-              type="file"
-              onChange={handleCreateMedia}
-            />
-            <Tooltip title="Upload Media">
-              <Button onClick={handleButtonClick} variant="contained"> <UploadFileIcon/></Button>
-            </Tooltip>
-          </Grid>
-          <Grid item>
-            <Tooltip title="Link Media">
-              <Button variant="contained" onClick={()=>setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}>
-                <AddLinkIcon />
-              </Button>
-            </Tooltip>
-          </Grid>
-        </Grid>
-        {
-          searchedMedia ?(
-            <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width:500 }} cols={3} rowHeight={164}>
+      {display && (
+        <ToggleButton
+          open={open} onClick={toggleDrawer}>
+          {open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+        </ToggleButton>
+      )
 
-              <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width: 500 }} cols={3} rowHeight={164}>
-                <CustomImageItem key={searchedMedia.path}>
-                  <Box
-                    component="img"
-                    src={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
-                    alt={searchedMedia.name}
-                    loading="lazy"
-                    sx={{
-                      width: 150,
-                      height: 150,
-                      objectFit: 'cover', // Ensures cropping behavior
-                      '@media(min-resolution: 2dppx)': {
-                        width: 150 * 2,
-                        height: 150 * 2,
-                      },
-                    }}
-                  />
-                  <CustomButton
-                    className="overlayButton"
-                    disableRipple
-                    onClick={searchedMedia.path ? () => handleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`) :() => handleCopyToClipBoard(`${searchedMedia.url}`) }
-                  >
-                    Copy path to clipboard
-                  </CustomButton>
-                </CustomImageItem>
+      }
+      {display && (
+
+        <Drawer
+          open={open}
+          anchor="right"
+          variant="persistent"
+          sx={{  position: 'relative', zIndex:9998}}
+          ModalProps={{
+            BackdropProps: {
+              style: { backgroundColor: 'transparent'},
+            },
+          }}>
+          <Grid item container spacing={1} sx={{padding:'10px'}} alignItems="center">
+            <Grid item>
+              <SearchBar fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Search Media"} setSearchedData={handleSetSearchMedia}/>
+            </Grid>
+            <Grid item>
+              <VisuallyHiddenInput
+                id="file-upload"
+                type="file"
+                onChange={handleCreateMedia}
+              />
+              <Tooltip title="Upload Media">
+                <Button onClick={handleButtonClick} variant="contained"> <UploadFileIcon/></Button>
+              </Tooltip>
+            </Grid>
+            <Grid item>
+              <Tooltip title="Link Media">
+                <Button variant="contained" onClick={()=>setModalLinkMediaIsOpen(!modalLinkMediaIsOpen)}>
+                  <AddLinkIcon />
+                </Button>
+              </Tooltip>
+            </Grid>
+          </Grid>
+          {
+            searchedMedia ?(
+              <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width:500 }} cols={3} rowHeight={164}>
+
+                <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width: 500 }} cols={3} rowHeight={164}>
+                  <CustomImageItem key={searchedMedia.path}>
+                    <Box
+                      component="img"
+                      src={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
+                      alt={searchedMedia.name}
+                      loading="lazy"
+                      sx={{
+                        width: 150,
+                        height: 150,
+                        objectFit: 'cover', // Ensures cropping behavior
+                        '@media(min-resolution: 2dppx)': {
+                          width: 150 * 2,
+                          height: 150 * 2,
+                        },
+                      }}
+                    />
+                    <CustomButton
+                      className="overlayButton"
+                      disableRipple
+                      onClick={searchedMedia.path ? () => handleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`) :() => handleCopyToClipBoard(`${searchedMedia.url}`) }
+                    >
+                      Copy path to clipboard
+                    </CustomButton>
+                  </CustomImageItem>
+                </ImageList>
               </ImageList>
-            </ImageList>
 
-          ):(
-            <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
-              {medias.map((media) => (
-                <CustomImageItem key={media.hash}>
-                  <Box
-                    component="img"
-                    src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
-                    alt={media.name}
-                    loading="lazy"
-                    sx={{
-                      width: 150,
-                      height: 150,
-                      objectFit: 'cover', // Ensures cropping behavior
-                      '@media(min-resolution: 2dppx)': {
-                        width: 150 * 2,
-                        height: 150 * 2,
-                      },
-                    }}
-                  />
-                  <CustomButton
-                    className="overlayButton"
-                    disableRipple
-                    onClick={media.path ? () => handleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) :() => handleCopyToClipBoard(`${media.url}`) }
-                  >
-                    Copy path to clipboard
-                  </CustomButton>
-                </CustomImageItem>
-              ))}
-            </ImageList>
-          )
-        }
-      </Drawer>
+            ):(
+              <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
+                {medias.map((media) => (
+                  <CustomImageItem key={media.hash}>
+                    <Box
+                      component="img"
+                      src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
+                      alt={media.name}
+                      loading="lazy"
+                      sx={{
+                        width: 150,
+                        height: 150,
+                        objectFit: 'cover', // Ensures cropping behavior
+                        '@media(min-resolution: 2dppx)': {
+                          width: 150 * 2,
+                          height: 150 * 2,
+                        },
+                      }}
+                    />
+                    <CustomButton
+                      className="overlayButton"
+                      disableRipple
+                      onClick={media.path ? () => handleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) :() => handleCopyToClipBoard(`${media.url}`) }
+                    >
+                      Copy path to clipboard
+                    </CustomButton>
+                  </CustomImageItem>
+                ))}
+              </ImageList>
+            )
+          }
+        </Drawer>
+      )
+      }
       <Box sx={{ padding: 2 }}>
         {children}
       </Box>
