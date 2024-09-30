@@ -1,7 +1,7 @@
 import { User } from "../../auth/types/types.ts";
 import { Grid, Typography } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
-import { CreateGroupDto, LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../types/types.ts";
+import { CreateGroupDto, LinkUserGroup, ProjectRights, UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
@@ -29,9 +29,11 @@ interface allGroupsProps {
   medias:Media[];
   setMedias:Dispatch<SetStateAction<Media[]>>
   userPersonalGroup:UserGroup
+  fetchGroups:()=>void
+  groups:UserGroup[]
+  setGroups:Dispatch<SetStateAction<UserGroup[]>>
 }
-export const AllGroups= ({user, medias, setMedias,userPersonalGroup}:allGroupsProps)=>{
-  const [groups, setGroups] = useState<UserGroup[]>([]);
+export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups, groups,setGroups}:allGroupsProps)=>{
   const [modalGroupCreationIsOpen, setModalGroupCreationIsOpen] = useState(false)
   const [selectedUserGroup, setSelectedUserGroup] = useState<UserGroup | null>(null);
   const [openModalGroupId, setOpenModalGroupId] = useState<number | null>(null); // Updated state
@@ -44,11 +46,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup}:allGroupsPr
     setMedias(medias);
   }
 
-  const fetchGroups = async () => {
-    let groups = await getAllUserGroups(user.id)
-    groups = groups.filter((group : UserGroup)=> group.type == UserGroupTypes.MULTI_USER)
-    setGroups(groups)
-  }
 
   useEffect(
     () =>{

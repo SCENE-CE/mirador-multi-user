@@ -35,12 +35,13 @@ import { User } from "../../features/auth/types/types.ts";
 import { Media } from "../../features/media/types/types.ts";
 import { getUserGroupMedias } from "../../features/media/api/getUserGroupMedias.ts";
 import { getUserPersonalGroup } from "../../features/projects/api/getUserPersonalGroup.ts";
-import { UserGroup } from "../../features/user-group/types/types.ts";
+import { UserGroup, UserGroupTypes } from "../../features/user-group/types/types.ts";
 import { AllManifests } from "../../features/manifest/component/AllManifests.tsx";
 import ArticleIcon from "@mui/icons-material/Article";
 import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupManifests.ts";
 import { Manifest } from "../../features/manifest/types/types.ts";
 import PermMediaIcon from '@mui/icons-material/PermMedia';
+import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -120,6 +121,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [medias, setMedias] = useState<Media[]>([])
   const [manifests, setManifests] = useState<Manifest[]>([])
   const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
+  const [groups, setGroups] = useState<UserGroup[]>([]);
 
   const handleSetCreateManifestIsOpen = (boolean:boolean) =>{
     setCreateManifestIsOpen(boolean);
@@ -166,11 +168,22 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     return personalGroup
   }
 
-  const fetchMediaForUser = async()=>{
-    const personnalGroup = await fetchUserPersonalGroup()
-    const medias = await getUserGroupMedias(personnalGroup!.id)
+  const fetchMediaForUser = async () => {
+    const personalGroup = await fetchUserPersonalGroup();
+    let medias = await getUserGroupMedias(personalGroup!.id);
+
+    for (const group of groups) {
+      const groupMedias = await getUserGroupMedias(group.id);
+
+      const groupMediasFiltered = groupMedias.filter(
+        (media) => !medias.find((existingMedia) => existingMedia.id === media.id)
+      );
+
+      medias = [...medias, ...groupMediasFiltered];
+    }
+
     setMedias(medias);
-  }
+  };
   const getManifestFromUrl = async (manifestUrl:string) => {
     try{
       const response = await fetch(manifestUrl);
@@ -193,6 +206,13 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
     setManifests(updatedManifests);
   };
+
+  const fetchGroups = async () => {
+    let groups = await getAllUserGroups(user.id)
+    groups = groups.filter((group : UserGroup)=> group.type == UserGroupTypes.MULTI_USER)
+    setGroups(groups)
+  }
+
 
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = myRef.current?.setViewer();
@@ -376,6 +396,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         {
           user && user.id && selectedContent === CONTENT.GROUPS &&(
             <AllGroups
+              setGroups={setGroups}
+              groups={groups}
+              fetchGroups={fetchGroups}
               userPersonalGroup={userPersonalGroup!}
               medias={medias}
               user={user}
