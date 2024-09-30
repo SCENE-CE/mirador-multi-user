@@ -1,27 +1,28 @@
 import { Box, Grid, styled, Typography } from "@mui/material";
-import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
+import { ChangeEvent, ReactNode, useCallback, useEffect, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
-import { Manifest, ManifestCreationMedia } from "../types/types.ts";
+import { Manifest, ManifestCreationMedia, manifestOrigin } from "../types/types.ts";
 import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
-import placeholder from '../../../assets/Placeholder.svg';
+import placeholder from "../../../assets/Placeholder.svg";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForManifests } from "../api/loonkingForManifests.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import toast from "react-hot-toast";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import CreateIcon from '@mui/icons-material/Create';
+import CreateIcon from "@mui/icons-material/Create";
 import { ManifestCreationForm } from "./ManifestCreationForm.tsx";
 import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import SpeedDialTooltipOpen from "../../../components/elements/SpeedDial.tsx";
-import UploadFileIcon from '@mui/icons-material/UploadFile';
-import AddLinkIcon from '@mui/icons-material/AddLink';
+import UploadFileIcon from "@mui/icons-material/UploadFile";
+import AddLinkIcon from "@mui/icons-material/AddLink";
 import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
 import { linkManifest } from "../api/linkManifest.ts";
 import { createManifest } from "../api/createManifest.ts";
+
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
   clipPath: 'inset(50%)',
@@ -56,6 +57,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [searchedManifestIndex,setSearchedManifestIndex] = useState<number | null>(null);
   const [modalLinkManifestIsOpen, setModalLinkManifestSIsOpen] = useState(false)
   const [manifestFiltered, setManifestFiltered] = useState<Manifest[] | undefined>([])
+  const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
 
   const handleCreateManifest  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -88,22 +90,47 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       }},
   ];
 
-  const thumbnailUrls = useMemo(() => {
-    const thumbailUrls = [];
 
-    for (const manifest of manifests) {
+  useEffect(() => {
+    const fetchThumbnails = async () => {
+      const urls:string[] = [];
 
-      if (manifest.json) {
-        const thumbnailUrl = manifest.json.thumbnail?.['@id'];
+      for (const manifest of manifests) {
+        if (manifest.thumbnailUrl) {
+          urls.push(manifest.thumbnailUrl);
+        } else if (manifest.origin === manifestOrigin.UPLOAD) {
+          try {
+            const manifestResponse = await fetch(`${caddyUrl}/${manifest.hash}/${manifest.name}`);
+            const manifestFetched = await manifestResponse.json();
+            console.log(manifestFetched);
 
-        if (thumbnailUrl) {
-          thumbailUrls.push(thumbnailUrl);
-        } else {
-          thumbailUrls.push(placeholder);
+            if (manifestFetched.thumbnail?.["@id"]) {
+              urls.push(manifestFetched.thumbnail["@id"]);
+            } else {
+              urls.push(placeholder);
+            }
+          } catch (error) {
+            console.error("Error fetching manifest:", error);
+            urls.push(placeholder);
+          }
+        } else if(manifest.origin === manifestOrigin.LINK){
+          const manifestResponse = await fetch(manifest.path);
+          const manifestFetched = await manifestResponse.json();
+          if (manifestFetched.thumbnail?.["@id"]) {
+            urls.push(manifestFetched.thumbnail["@id"]);
+          } else {
+            urls.push(placeholder);
+          }
+
+        }else {
+          urls.push(placeholder);
         }
       }
-    }
-    return thumbailUrls;
+
+      setThumbnailUrls(urls);
+    };
+
+    fetchThumbnails();
   }, [manifests]);
 
   const HandleLookingForManifests = async (partialString : string) =>{
@@ -160,103 +187,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
   const handleSubmitManifestCreationForm = async (manifestThumbnail:string,manifestTitle:string,items:ManifestCreationMedia[]) => {
-      console.log('items',items)
-    // const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
-    //   ['@Context']:'https://iiif.io/api/presentation/3/context.json',
-    //   id:"",
-    //   type:"Manifest",
-    //   label:{
-    //     en:[manifestTitle]
-    //   },
-    //   items: [],
-    // };
-    // const fetchMediaForItem = async (media:MediaItem  ): Promise<void> => {
-    //   try {
-    //     console.log('ENTER FETCH MEDIA FOR ITEM')
-    //     console.log(media.value)
-    //     const response = await fetch(media.value, { method: "GET" });
-    //
-    //     if (!response.ok) {
-    //       throw new Error(`HTTP error! status: ${response.status}`);
-    //     }
-    //     console.log(response.ok)
-    //     const mediaBlob = await response.blob();
-    //     console.log('mediaBlob',mediaBlob)
-    //     const mediaUrl = URL.createObjectURL(mediaBlob);
-    //     const contentType = response.headers.get("Content-Type");
-    //
-    //     if (contentType && contentType.startsWith("image")) {
-    //       const img = new Image();
-    //       img.src = mediaUrl;
-    //       console.log('img',img)
-    //       await new Promise<void>((resolve, reject) => {
-    //         img.onload = () => {
-    //           manifestToCreate.items.push({
-    //             id: media.value,
-    //             type: "Canvas",
-    //             height: img.height,
-    //             width: img.width,
-    //             label: { en:["image"] },
-    //             items:[{
-    //               id:media.value+`/annotation/${Date.now}`,
-    //               type:"AnnotationPage",
-    //               items:[
-    //                 {
-    //                   id:media.value+`/annotation/${Date.now}`,
-    //                   type:"Annotation",
-    //                   motivation:"painting",
-    //                   target:media.value,
-    //                   body:{
-    //                     id:media.value,
-    //                     type:"Image",
-    //                     format:`Image/${response.headers.get("Content-Type")}`,
-    //                     height:img.height,
-    //                     width:img.width,
-    //                   }
-    //                 }
-    //               ]
-    //             }]
-    //           });
-    //           resolve();
-    //         };
-    //         img.onerror = reject;
-    //       });
-    //     } else if (contentType && contentType.startsWith("video")) {
-    //       // const video = document.createElement("video");
-    //       // video.src = mediaUrl;
-    //       //
-    //       // await new Promise<void>((resolve, reject) => {
-    //       //   video.onloadedmetadata = () => {
-    //       //     manifestToCreate.items.push({
-    //       //       id: media.value,
-    //       //       type: "Canvas",
-    //       //       height: video.videoHeight,
-    //       //       width: video.videoWidth,
-    //       //       duration: video.duration,
-    //       //       label:"video"
-    //       //     });
-    //       //     resolve();
-    //       //   };
-    //       //   video.onerror = reject;
-    //       // });
-    //       toast.error('video will be handle in a future release')
-    //     } else {
-    //       console.log("Unsupported media type:", contentType);
-    //     }
-    //   } catch (error) {
-    //     console.log("Error fetching media:", error);
-    //     throw error;
-    //   }
-    // };
-    //
-    // const fetchMediaPromises = items.flatMap((item) =>
-    //   item.media.map((media) => {
-    //     return fetchMediaForItem(media);
-    //   })
-    // );
-
     try {
-      // await Promise.all(fetchMediaPromises);
       await createManifest({
         manifestMedias : items,
         name: manifestTitle,
@@ -284,7 +215,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       }
     }
   }
-
+  console.log('thumbnailUrls',thumbnailUrls)
   console.log(manifests)
 
   return (

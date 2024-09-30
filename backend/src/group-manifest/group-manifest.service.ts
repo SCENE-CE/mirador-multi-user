@@ -24,6 +24,7 @@ export class GroupManifestService {
   async create(createGroupManifestDto: CreateGroupManifestDto) {
     try {
       const { idCreator, path, user_group } = createGroupManifestDto;
+      console.log('createGroupManifestDto',createGroupManifestDto)
       const manifest = await this.manifestService.create(
         createGroupManifestDto,
       );
@@ -92,15 +93,9 @@ export class GroupManifestService {
         await this.linkGroupManifestService.findAllManifestGroupByUserGroupId(
           userGroupId,
         );
-      console.log('------------------manifest------------------');
-      console.log(manifest);
       const toReturn = manifest.find(
         (linkGroupManifest) => linkGroupManifest.manifest.id == manifestId,
       );
-      console.log(
-        '----------------------MANI TO toReturn----------------------',
-      );
-      console.log(toReturn);
       return toReturn.manifest;
     } catch (error) {
       return new InternalServerErrorException(

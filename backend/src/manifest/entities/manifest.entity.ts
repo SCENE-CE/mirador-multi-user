@@ -17,7 +17,7 @@ export class Manifest {
 
   @IsString()
   @Column({ nullable: true })
-  url: string;
+  thumbnailUrl: string;
 
   @Column({ type: 'enum', enum: manifestOrigin })
   origin: manifestOrigin;

@@ -22,8 +22,8 @@ import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relatio
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ManifestGroupRights } from '../enum/rights';
 import { manifestOrigin } from '../enum/origins';
-import { manifestCreationDto } from "./dto/manifestCreationDto";
-import { MediaInterceptor } from "../Custom_pipes/manifest-creation.pipe";
+import { manifestCreationDto } from './dto/manifestCreationDto';
+import { MediaInterceptor } from '../Custom_pipes/manifest-creation.pipe';
 
 @Controller('group-manifest')
 export class GroupManifestController {
@@ -54,7 +54,8 @@ export class GroupManifestController {
     @Req() req,
     @UploadedFile() file,
   ) {
-    console.log('UPLOAD MANIFEST')
+    console.log('UPLOAD MANIFEST');
+    console.log(createGroupManifestDto.thumbnailUrl);
     const userGroup = JSON.parse(createGroupManifestDto.user_group);
     const manifestToCreate = {
       ...createGroupManifestDto,
@@ -83,7 +84,6 @@ export class GroupManifestController {
   @Post('/manifest/creation')
   @UseInterceptors(MediaInterceptor)
   async createManifest(@Body() createManifestDto: manifestCreationDto) {
-
     const label = createManifestDto.name;
     if (!label) {
       throw new BadRequestException('Manifest label is required');
@@ -113,6 +113,7 @@ export class GroupManifestController {
         idCreator: createManifestDto.idCreator,
         rights: ManifestGroupRights.ADMIN,
         origin: manifestOrigin.CREATE,
+        thumbnailUrl: createManifestDto.manifestThumbnail,
       };
 
       return await this.groupManifestService.create(manifestToCreate);
