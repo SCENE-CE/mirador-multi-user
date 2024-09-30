@@ -1,13 +1,22 @@
 import { createTheme } from '@mui/material/styles';
 import InputMonoNarrow from '../fonts/InputMonoNarrow-ExtraLight.ttf';
+import backgroundImage from '../110719_RdL_0288.jpg';
+declare module '@mui/material/styles' {
+  interface Palette {
+    backgroundImage?: string;
+  }
+  interface PaletteOptions {
+    backgroundImage?: string;
+  }
+}
 
 export const theme = createTheme({
-  typography: {
-  },
+  typography: {},
   palette: {
     background: {
       default: '#dcdcdc',
     },
+    backgroundImage: `url(${backgroundImage})`,
   },
   components: {
     MuiCssBaseline: {

@@ -9,16 +9,17 @@ interface IItemButton {
   selected:boolean
 }
 
-export const ItemButton = ({ open,action,icon,text, selected }:IItemButton)=>{
-  return(
+export const ItemButton = ({ open, action, icon, text, selected }: IItemButton) => {
+  return (
     <ListItem
       key={text}
       disablePadding
       sx={{
         display: "block",
-        backgroundColor: selected ? "#dcdcdc" : "inherit"
+        backgroundColor: selected ? "#dcdcdc" : "inherit",
       }}
-    >      <ListItemButton
+    >
+      <ListItemButton
         sx={{
           minHeight: 48,
           justifyContent: open ? 'initial' : 'center',
@@ -35,8 +36,16 @@ export const ItemButton = ({ open,action,icon,text, selected }:IItemButton)=>{
         >
           {icon}
         </ListItemIcon>
-        <ListItemText primary={text} sx={{ opacity: open ? 1 : 0 }} />
+        <ListItemText
+          primary={text}
+          sx={{
+            opacity: open ? 1 : 0,
+            textOverflow: 'ellipsis',
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
+          }}
+        />
       </ListItemButton>
     </ListItem>
-  )
-}
+  );
+};

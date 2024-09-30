@@ -197,7 +197,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
                       disableRipple
                       onClick={searchedMedia.path ? () => handleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`) :() => handleCopyToClipBoard(`${searchedMedia.url}`) }
                     >
-                      Copy path to clipboard
+                      Copy URL to clipboard
                     </CustomButton>
                   </CustomImageItem>
                 </ImageList>
