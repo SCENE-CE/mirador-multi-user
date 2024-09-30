@@ -11,7 +11,7 @@ export type Manifest = {
   origin:manifestOrigin,
   path:string,
   updated_at:Date,
-  url?:string,
+  thumbnailUrl?:string,
 }
 
 export enum manifestOrigin {

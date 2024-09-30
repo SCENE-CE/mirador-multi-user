@@ -105,7 +105,6 @@ export class MediaInterceptor implements NestInterceptor {
     );
 
     request.body.processedManifest = manifestToCreate;
-
     return next.handle();
   }
 }
