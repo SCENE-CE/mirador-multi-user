@@ -81,12 +81,13 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   useEffect(() => {
     fetchProjects();
     fetchUserPersonalGroup()
-  }, [user]);
+  }, [user,openModalProjectId]);
 
 
 
   const deleteUserProject = useCallback(async (projectId: number) => {
     await deleteProject(projectId);
+    setOpenModalProjectId(null)
     const updatedListOfProject = userProjects.filter(function(ProjectUser) {
       return ProjectUser.id != projectId;
     });
@@ -95,7 +96,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const updateUserProject = useCallback(async (projectUpdated:Project)=>{
     const { rights , ...projectToUpdate } = projectUpdated;
-    console.log('projectUpdated',projectUpdated)
     let updatedProject : ProjectGroupUpdateDto ;
     if(rights){
       updatedProject = {
@@ -115,7 +115,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     });
     updatedListOfProject = [projectUpdated,...updatedListOfProject]
     setUserProjects(updatedListOfProject);
-  },[setUserProjects, userProjects])
+  },[setUserProjects, userPersonalGroup, userProjects])
 
 
   const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: Project) => {
@@ -161,7 +161,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   }
 
   const HandleOpenModal =useCallback ((projectId: number)=>{
-    console.log('HANDLE OPEN MODAL')
     setOpenModalProjectId(openModalProjectId === projectId ? null : projectId);
   },[setOpenModalProjectId, openModalProjectId])
 
@@ -235,7 +234,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setMedias(medias);
   }
 
-  console.log('medias',medias)
+  console.log('openModalProjectId',openModalProjectId)
   return (
     <>
       <SidePanelMedia display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
