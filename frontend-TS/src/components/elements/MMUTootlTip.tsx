@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { Tooltip, IconButton } from '@mui/material';
-import HelpIcon from '@mui/icons-material/Help';
-
+import InfoIcon from '@mui/icons-material/Info';
 interface MMUToolTipProps {
   children: ReactNode;
 }
@@ -11,7 +10,7 @@ export const MMUToolTip = ({ children }: MMUToolTipProps) => {
     <>
       <Tooltip title={children} placement="top">
         <IconButton>
-          <HelpIcon fontSize='small' />
+          <InfoIcon fontSize='small' />
         </IconButton>
       </Tooltip>
     </>
