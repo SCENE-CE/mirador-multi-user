@@ -2,7 +2,7 @@ import {
   Button,
   Grid, SelectChangeEvent,
   TextField,
-  Tooltip,
+  Tooltip
 } from "@mui/material";
 import { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
@@ -14,6 +14,7 @@ import { ProjectRights } from "../../features/user-group/types/types.ts";
 import { ListItem, SelectorItem } from "../types.ts";
 import CancelIcon from '@mui/icons-material/Cancel';
 import { MediaGroupRights } from "../../features/media/types/types.ts";
+import MetadataForm from "./metadataForm.tsx";
 interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
@@ -35,6 +36,7 @@ interface ModalItemProps<T, G,O> {
   description:string,
   HandleOpenModalEdit:()=>void,
   thumbnailUrl?:string | null
+  metadata?: Record<string, string>;
 }
 
 export const MMUModalEdit = <O, T extends { id: number }, G>(
@@ -58,43 +60,50 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     handleDeleteAccessListItem,
     description,
     HandleOpenModalEdit,
-    thumbnailUrl
+    thumbnailUrl,
+    metadata,
   }: ModalItemProps<T, G, O>) => {
   const [newItemName, setNewItemName] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
   const [openModal, setOpenModal] = useState(false);
+  const [metadataFormData, setMetadataFormData] = useState({});
 
-  const handleUpdateItem = useCallback(async () => {
-    console.log('newItemThumbnailUrl',newItemThumbnailUrl)
+  const handeUpdateMetadata = (updateData:any)=>{
+
+    console.log('HANDLE UPDATE META DATA')
+    setMetadataFormData(updateData)
+  }
+  const handleUpdateItem =  () => {
+    console.log('handleUpdateItem debug',metadataFormData)
     const itemToUpdate = {...item,
       thumbnailUrl:newItemThumbnailUrl,
       name:newItemName,
       description:newItemDescription,
+      metadata:metadataFormData,
     }
-    console.log("itemToUpdate",itemToUpdate)
+    //TODO : remove this later
     if(updateItem){
       updateItem(itemToUpdate);
     }
-  }, [newItemThumbnailUrl, item, newItemName, newItemDescription, updateItem]);
+  };
 
 
-  const handleChangeName = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemName(e.target.value);
-  }, []);
+  }
 
-  const handleChangeThumbnailUrl = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeThumbnailUrl = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemThumbnailUrl(e.target.value);
-    console.log(e.target.value)
-  }, []);
+  }
 
-  const handleChangeDescription= useCallback((e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeDescription=(e: ChangeEvent<HTMLInputElement>) => {
     setNewItemDescription(e.target.value);
-  }, []);
+  }
 
-  const handleConfirmDeleteItemModal = useCallback(() => {
+  const handleConfirmDeleteItemModal =() => {
     setOpenModal(!openModal);
-  }, [openModal]);
+  }
 
   useEffect(() => {
     fetchData();
@@ -116,8 +125,9 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     handleUpdateItem();
     HandleOpenModalEdit()
   };
+
   return (
-    <Grid container>
+    <Grid container sx={{overflow:'scroll'}}>
       <Grid item container flexDirection="column">
         <Grid
           item
@@ -179,6 +189,11 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
               fullWidth
             />
           </Grid>
+          {
+            metadata &&(
+              <MetadataForm setMetaData={handeUpdateMetadata} metadata={metadata}/>
+            )
+          }
         </Grid>
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
           <Grid item>

@@ -34,7 +34,6 @@ export const ItemList = <G,>({
                                handleSearchModalEditItem,
                                setSearchInput,
                              }: IProjectUserGroup<G>): JSX.Element => {
-  console.log('item LIST item : ', items);
   return (
     <Grid container item spacing={2}>
       <Grid container item alignItems="center" spacing={2}>

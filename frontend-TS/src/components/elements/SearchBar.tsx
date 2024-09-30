@@ -60,7 +60,6 @@ export const SearchBar = <T,>({handleFiltered,setFilter,label,getOptionLabel,set
       setSearchedData(value);
     }
   };
-console.log('suggestions',suggestions)
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2}>

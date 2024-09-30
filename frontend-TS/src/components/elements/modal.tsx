@@ -26,15 +26,16 @@ export const MMUModal= ({ openModal, setOpenModal, children, width }:IOpenModalP
   return(
     <Modal
       open={openModal}
+
       onClose={setOpenModal}
       aria-labelledby="child-modal-title"
       aria-describedby="child-modal-description"
       slotProps={{
         backdrop: {
-          sx: { zIndex: 800 },  // Lower the z-index of the backdrop if needed
+          sx: { zIndex: 800 },
         },
       }}
-      sx={{ zIndex: 1300 }} // Set z-index for the modal itself
+      sx={{ zIndex: 1300,overflow:'scroll' }}
     >
       <Box sx={{ ...style, width:width}}>
         {children}

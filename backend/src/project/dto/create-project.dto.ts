@@ -1,8 +1,4 @@
-import {
-  IsNotEmpty,
-  IsObject,
-  IsString,
-} from 'class-validator';
+import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
 
 export class CreateProjectDto {
@@ -14,4 +10,7 @@ export class CreateProjectDto {
   userWorkspace: any;
 
   owner: User;
+
+  @IsObject()
+  metadata: any;
 }

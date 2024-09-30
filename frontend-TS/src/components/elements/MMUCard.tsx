@@ -33,6 +33,7 @@ interface IMMUCardProps<T,G,O,X> {
   searchBarLabel?:string
   thumbnailUrl?:string | null
   manifest?:boolean
+  metadata?: Record<string, string>;
 }
 
 const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
@@ -62,6 +63,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     searchBarLabel,
     thumbnailUrl,
     manifest,
+    metadata
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -141,12 +143,13 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
             </Grid>
           </CardActions>
             <MMUModal
-              width={500}
+              width={800}
               openModal={openModal}
               setOpenModal={HandleOpenModal}
               children={ !manifest ?
                 <>
                   <MMUModalEdit
+                    metadata={metadata?metadata:undefined}
                     thumbnailUrl={thumbnailUrl}
                     HandleOpenModalEdit={HandleOpenModal}
                     description={description}
