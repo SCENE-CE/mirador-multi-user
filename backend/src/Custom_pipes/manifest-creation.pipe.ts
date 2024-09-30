@@ -15,7 +15,7 @@ export class MediaInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
-    const { manifestMedias, name } = request.body;
+    const { manifestMedias, name, manifestThumbnail } = request.body;
 
     if (!manifestMedias || !Array.isArray(manifestMedias)) {
       throw new BadRequestException(
@@ -34,6 +34,14 @@ export class MediaInterceptor implements NestInterceptor {
       type: 'Manifest',
       label: { en: [name] },
       items: [],
+      thumbnail: {
+        ['@id']: manifestThumbnail,
+        service: {
+          ['@context']: manifestThumbnail,
+          ['@id']: manifestThumbnail,
+          profile: manifestThumbnail,
+        },
+      },
     };
 
     const fetchMediaForItem = async (media) => {
