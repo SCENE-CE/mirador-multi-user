@@ -16,7 +16,7 @@ interface ItemGroup {
 }
 
 interface IManifestCreationFormProps{
-  handleSubmit: (manifestTitle: string, items: any)=>void
+  handleSubmit: (manifestThumbnail:string,manifestTitle: string, items: any)=>void
 }
 
 
@@ -35,7 +35,6 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
   };
 
   const handleManifestThumbnailChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-
     setManifestThumbnail(e.target.value);
   };
 
@@ -229,7 +228,7 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
       </Grid>
 
       <Grid item>
-        <Button variant="contained" color="primary" onClick={()=>handleSubmit(manifestTitle,items)} disabled={items.length < 1}>
+        <Button variant="contained" color="primary" onClick={()=>handleSubmit(manifestThumbnail,manifestTitle,items)} disabled={items.length < 1}>
           Create
         </Button>
       </Grid>

@@ -159,7 +159,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
   },[fetchManifestForUser, modalLinkManifestIsOpen, user.id, userPersonalGroup])
 
-  const handleSubmitManifestCreationForm = async (manifestTitle:string,items:ManifestCreationMedia[]) => {
+  const handleSubmitManifestCreationForm = async (manifestThumbnail:string,manifestTitle:string,items:ManifestCreationMedia[]) => {
       console.log('items',items)
     // const manifestToCreate: { ['@Context']:string,id:string,type:string,label:{en:string[]},items: ManifestItem[] } = {
     //   ['@Context']:'https://iiif.io/api/presentation/3/context.json',
@@ -261,7 +261,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         manifestMedias : items,
         name: manifestTitle,
         user_group: userPersonalGroup,
-        idCreator:user.id
+        idCreator:user.id,
+        manifestThumbnail:manifestThumbnail
       })
       fetchManifestForUser()
       setCreateManifestIsOpen(false)

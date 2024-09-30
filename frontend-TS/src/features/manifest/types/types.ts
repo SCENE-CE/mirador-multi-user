@@ -25,6 +25,7 @@ export type manifestCreationDto = {
   manifestMedias:ManifestCreationMedia[]
   name:string,
   user_group: UserGroup,
+  manifestThumbnail:string,
 }
 export type MediaItem = {
   name: string;
