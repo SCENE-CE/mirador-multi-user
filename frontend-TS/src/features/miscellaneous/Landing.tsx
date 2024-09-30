@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
-import backgroundImage from '../../assets/110719_RdL_0288.jpg';
+import { theme } from "../../assets/theme/mainTheme.ts";
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ export const Landing = () => {
     spacing={10}
     minHeight={'100vh'}
     sx={{
-      backgroundImage: `url(${backgroundImage})`,
+      backgroundImage: theme.palette.backgroundImage,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
