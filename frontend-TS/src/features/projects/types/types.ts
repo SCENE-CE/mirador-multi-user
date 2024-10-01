@@ -10,6 +10,7 @@ export type Project = {
   rights?: ProjectRights;
   description:string
   thumbnailUrl?:string
+  metadata: Record<string, string>;
 }
 
 export type ProjectGroup = {

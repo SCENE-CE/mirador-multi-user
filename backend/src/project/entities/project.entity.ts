@@ -38,6 +38,9 @@ export class Project {
   @Column({ type: 'json' })
   userWorkspace: any;
 
+  @Column({ type: 'json', nullable: true })
+  metadata: any;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',

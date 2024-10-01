@@ -286,6 +286,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         updateItem={updateUserProject}
                         removeAccessListItemFunction={handleRemoveUser}
                         setItemList={setGroupList}
+                        metadata={projectUser.metadata}
                       />
                     </Grid>
                   )
