@@ -54,6 +54,8 @@ export class MediaService {
   }
   async update(id: number, updateMediaDto: UpdateMediaDto) {
     try {
+      console.log('-----------------------updateMediaDto-----------------------')
+      console.log(updateMediaDto)
       const done = await this.mediaRepository.update(id, updateMediaDto);
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);

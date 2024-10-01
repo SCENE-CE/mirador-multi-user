@@ -308,6 +308,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                 <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                   <Grid item>
                     <MMUCard
+                      metadata={searchedProject.metadata}
                       searchBarLabel={"Search Users"}
                       description={searchedProject.description}
                       HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}
@@ -342,6 +343,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                   {projectFiltered.map((projectUser) => (
                       <Grid item key={projectUser.id}>
                         <MMUCard
+                          metadata={projectUser.metadata}
                           searchBarLabel={"Search"}
                           description={projectUser.description}
                           HandleOpenModal={()=>HandleOpenModal(projectUser.id)}

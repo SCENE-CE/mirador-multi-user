@@ -29,6 +29,7 @@ export type Media={
   rights:MediaGroupRights
   updated_at:Date,
   url:string,
+  metadata: Record<string, string>;
 }
 
 export enum MediaGroupRights {

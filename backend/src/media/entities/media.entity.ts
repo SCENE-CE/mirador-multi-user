@@ -23,6 +23,9 @@ export class Media {
   @Column({ nullable: true })
   path: string;
 
+  @Column({ nullable: true })
+  thumbnailUrl: string;
+
   @IsString()
   @Column()
   hash: string;
@@ -30,6 +33,9 @@ export class Media {
   @IsString()
   @Column()
   name: string;
+
+  @Column({ type: 'json', nullable: true })
+  metadata: any;
 
   @Column({ type: 'enum', enum: mediaOrigin })
   origin: mediaOrigin;
