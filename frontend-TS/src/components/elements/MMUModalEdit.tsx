@@ -214,7 +214,6 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
             flexDirection="row"
             sx={{ paddingTop: "20px" }}
           >
-            {/* Always render this Grid, but conditionally show the DELETE button */}
             <Grid item>
               {rights === ProjectRights.ADMIN && (
                 <Tooltip title={"Delete item"}>
@@ -229,7 +228,6 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
               )}
             </Grid>
 
-            {/* Save and Cancel buttons always appear on the right side */}
             <Grid
               item
               container
