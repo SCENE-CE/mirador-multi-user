@@ -190,7 +190,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
               fullWidth
             />
           </Grid>
-              <MetadataForm setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
+          <MetadataForm setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
         </Grid>
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
           <Grid item>
@@ -205,26 +205,31 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
             </ItemList>
           </Grid>
         )}
-        {rights === ProjectRights.ADMIN && (
+        {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
           <Grid
             item
             container
             justifyContent="space-between"
             alignItems="center"
             flexDirection="row"
-            sx={{paddingTop:"20px"}}
+            sx={{ paddingTop: "20px" }}
           >
+            {/* Always render this Grid, but conditionally show the DELETE button */}
             <Grid item>
-              <Tooltip title={"Delete item"}>
-                <Button
-                  color="error"
-                  onClick={handleConfirmDeleteItemModal}
-                  variant="contained"
-                >
-                  DELETE
-                </Button>
-              </Tooltip>
+              {rights === ProjectRights.ADMIN && (
+                <Tooltip title={"Delete item"}>
+                  <Button
+                    color="error"
+                    onClick={handleConfirmDeleteItemModal}
+                    variant="contained"
+                  >
+                    DELETE
+                  </Button>
+                </Tooltip>
+              )}
             </Grid>
+
+            {/* Save and Cancel buttons always appear on the right side */}
             <Grid
               item
               container
@@ -240,6 +245,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
                   Cancel
                 </Button>
               </Grid>
+
               <Grid item>
                 <Button variant="contained" type="submit" onClick={handleSubmit}>
                   <SaveIcon />
@@ -247,15 +253,18 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
                 </Button>
               </Grid>
             </Grid>
-            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteItemModal} children={
+
+            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteItemModal}>
               <ModalConfirmDelete
                 deleteItem={deleteItem}
                 itemId={item.id}
                 itemName={itemLabel}
-              />}/>
+              />
+            </MMUModal>
           </Grid>
-
         )}
+
+
       </Grid>
     </Grid>
   )
