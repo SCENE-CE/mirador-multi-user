@@ -19,7 +19,7 @@ services:
       VITE_CADDY_URL: "${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}"
     depends_on:
       - backend
-    restart: always
+    restart: ${RESTART} 
 
 
   backend:
@@ -42,7 +42,7 @@ services:
       SWAGGER_VERSION : ${SWAGGER_VERSION}
     depends_on:
       - db
-    restart: always
+    restart: ${RESTART}
     links:
       - db
 
@@ -50,7 +50,7 @@ services:
   caddy:
     hostname: files
     image: caddy:latest
-    restart: always
+    restart: ${RESTART}
     environment:
       - CORS_ALLOWED_HOSTS
       - WEBPACK_MODE=development
