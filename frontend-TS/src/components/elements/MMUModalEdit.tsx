@@ -4,7 +4,7 @@ import {
   TextField,
   Tooltip
 } from "@mui/material";
-import { ChangeEvent, Dispatch, SetStateAction, useCallback, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { ItemList } from "./ItemList.tsx";
 import Selector from "../Selector.tsx";
@@ -67,7 +67,8 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
   const [openModal, setOpenModal] = useState(false);
-  const [metadataFormData, setMetadataFormData] = useState({});
+  const [metadataFormData, setMetadataFormData] = useState<{ [key: string]: string }>(metadata || {});
+
 
   const handeUpdateMetadata = (updateData:any)=>{
 
@@ -189,11 +190,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
               fullWidth
             />
           </Grid>
-          {
-            metadata &&(
-              <MetadataForm setMetaData={handeUpdateMetadata} metadata={metadata}/>
-            )
-          }
+              <MetadataForm setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
         </Grid>
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
           <Grid item>

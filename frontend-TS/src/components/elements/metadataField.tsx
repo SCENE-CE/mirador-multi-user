@@ -1,0 +1,52 @@
+import { memo } from "react";
+import { Grid, TextField } from "@mui/material";
+import { MMUToolTip } from "./MMUTootlTip.tsx";
+
+interface MetadataFieldProps {
+  field: {
+    term: string;
+    label: string;
+    definition: string;
+    comment?: string;
+  };
+  value: string;
+  handleInputChange: (term: string, value: string) => void;
+}
+
+const MetadataField = memo(
+  ({ field, value, handleInputChange }:MetadataFieldProps) => {
+    return (
+      <Grid item xs={12}>
+        <Grid container alignItems="center" spacing={2}>
+          <Grid item xs={11}>
+            <TextField
+              id={field.term}
+              label={field.label}
+              placeholder={field.definition}
+              fullWidth
+              variant="outlined"
+              value={value}
+              onChange={(e) => handleInputChange(field.term, e.target.value)}
+              inputProps={{
+                style: {
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                },
+              }}
+            />
+          </Grid>
+          <Grid item xs={1}>
+            {field.comment && (
+              <MMUToolTip>
+                <div>{field.comment}</div>
+              </MMUToolTip>
+            )}
+          </Grid>
+        </Grid>
+      </Grid>
+    );
+  }
+);
+
+export default MetadataField;
