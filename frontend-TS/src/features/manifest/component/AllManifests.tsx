@@ -172,11 +172,12 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
     if(response){
       const manifest = await response.json()
+      console.log(manifest)
       await linkManifest({
         idCreator: user.id,
         user_group: userPersonalGroup!,
         path: path,
-        name: manifest.label && manifest.label.type == 'string' ? manifest.label : "new Manifest",
+        name: manifest.label ? manifest.label : "new Manifest",
       });
       fetchManifestForUser()
       setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)
@@ -215,8 +216,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       }
     }
   }
-  console.log('thumbnailUrls',thumbnailUrls)
-  console.log(manifests)
 
   return (
     <Grid item container flexDirection="column" spacing={1}>
