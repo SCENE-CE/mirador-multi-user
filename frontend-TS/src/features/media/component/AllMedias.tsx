@@ -93,6 +93,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   )
 
   const HandleUpdateMedia = useCallback(async(mediaToUpdate:Media)=>{
+    console.log('mediaToUpdate',mediaToUpdate)
     await updateMedia(mediaToUpdate)
     const updatedListOfMedias = medias.filter(function(media) {
       return media.id != mediaToUpdate.id;
@@ -149,7 +150,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const handleRemoveAccessToMedia= async (userGroupId:number, mediaId:number) => {
     await removeAccessToMedia(mediaId, userGroupId);
   }
-//TODO handleChange rights must be adapt to Media Entity
   const handleChangeRights = async (group: ListItem, eventValue: string, mediaId: number) => {
     await updateAccessToMedia(mediaId, group.id, eventValue as MediaGroupRights)
   };
@@ -220,6 +220,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                 medias.map((media)=>(
                   <Grid item key={media.id}>
                     <MMUCard
+                      metadata={media.metadata}
                       searchBarLabel={"Search"}
                       id={media.id}
                       rights={media.rights}
@@ -257,6 +258,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               {
                 <Grid item key={searchedMedia.id}>
                   <MMUCard
+                    metadata={searchedMedia.metadata}
                     id={searchedMedia.id}
                     rights={ProjectRights.ADMIN}
                     description={searchedMedia.description}
@@ -292,6 +294,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                 mediaFiltered.map((media)=>(
                   <Grid item key={media.id}>
                     <MMUCard
+                      metadata={media.metadata}
                       id={media.id}
                       rights={ProjectRights.ADMIN}
                       description={media.description}

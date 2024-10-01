@@ -1,13 +1,19 @@
-import { HttpException, HttpStatus, Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { LinkMediaGroupService } from "../link-media-group/link-media-group.service";
-import { UserGroupService } from "../user-group/user-group.service";
-import { MediaService } from "../media/media.service";
-import { CreateMediaDto } from "../media/dto/create-media.dto";
-import { AddMediaToGroupDto } from "./dto/addMediaToGroupDto";
-import { MediaGroupRights } from "../enum/rights";
-import { join } from "path";
-import * as fs from "node:fs";
-import { UpdateMediaDto } from "../media/dto/update-media.dto";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { LinkMediaGroupService } from '../link-media-group/link-media-group.service';
+import { UserGroupService } from '../user-group/user-group.service';
+import { MediaService } from '../media/media.service';
+import { CreateMediaDto } from '../media/dto/create-media.dto';
+import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
+import { MediaGroupRights } from '../enum/rights';
+import { join } from 'path';
+import * as fs from 'node:fs';
+import { UpdateMediaDto } from '../media/dto/update-media.dto';
 
 @Injectable()
 export class GroupMediaService {
@@ -30,7 +36,7 @@ export class GroupMediaService {
         user_group.id,
         media.id,
       );
-      return toReturn
+      return toReturn;
     } catch (error) {
       console.log(error);
       throw new InternalServerErrorException(
@@ -59,8 +65,8 @@ export class GroupMediaService {
         const groupsForMedia = await this.getAllMediaGroup(mediaId);
         mediasForGroup.push(groupsForMedia);
       }
-      console.log('--------------------mediasForGroup--------------------')
-      console.log(mediasForGroup)
+      console.log('--------------------mediasForGroup--------------------');
+      console.log(mediasForGroup);
       return mediasForGroup;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -100,7 +106,9 @@ export class GroupMediaService {
 
   async getAllMediasForUserGroup(userGroupId: number) {
     try {
-      return await this.linkMediaGroupService.findAllMediaByUserGroupId(userGroupId);
+      return await this.linkMediaGroupService.findAllMediaByUserGroupId(
+        userGroupId,
+      );
     } catch (error) {
       throw new InternalServerErrorException(
         'an error occurred while getting all medias for user',
@@ -151,11 +159,16 @@ export class GroupMediaService {
     }
   }
 
-  async updateMedia(updateGroupMediaDto: UpdateMediaDto) {
+  async updateMedia(updateGroupMediaDto) {
     try {
+      const { rights, ...mediaUpdateData } = updateGroupMediaDto;
+
+      console.log('updateGroupMediaDto');
+      console.log(updateGroupMediaDto);
+
       return await this.mediaService.update(
         updateGroupMediaDto.id,
-        updateGroupMediaDto,
+        mediaUpdateData,
       );
     } catch (error) {
       throw new HttpException(
