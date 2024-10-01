@@ -190,80 +190,87 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
               fullWidth
             />
           </Grid>
-          <MetadataForm setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
-        </Grid>
-        {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
-          <Grid item>
-            <ItemList handleAddAccessListItem={handleAddAccessListItem} setItemToAdd={setItemToAdd} items={listOfItem} handleSearchModalEditItem={handleSearchModalEditItem} removeItem={handleDeleteAccessListItem} searchBarLabel={searchBarLabel} setSearchInput={setSearchInput} handleGetOptionLabel={handleGetOtpionLabel}>
-              {(accessListItem) => (
-                <Selector
-                  selectorItems={rightsSelectorItems}
-                  value={accessListItem.rights!}
-                  onChange={handleSelectorChange(accessListItem)}
-                />
-              )}
-            </ItemList>
-          </Grid>
-        )}
-        {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
           <Grid
             item
             container
-            justifyContent="space-between"
+            justifyContent="flex-end"
             alignItems="center"
+          >
+            <MetadataForm setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
+          </Grid>
+        </Grid>
+      {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
+        <Grid item sx={{marginTop:'10px'}}>
+          <ItemList handleAddAccessListItem={handleAddAccessListItem} setItemToAdd={setItemToAdd} items={listOfItem} handleSearchModalEditItem={handleSearchModalEditItem} removeItem={handleDeleteAccessListItem} searchBarLabel={searchBarLabel} setSearchInput={setSearchInput} handleGetOptionLabel={handleGetOtpionLabel}>
+            {(accessListItem) => (
+              <Selector
+                selectorItems={rightsSelectorItems}
+                value={accessListItem.rights!}
+                onChange={handleSelectorChange(accessListItem)}
+              />
+            )}
+          </ItemList>
+        </Grid>
+      )}
+      {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
+        <Grid
+          item
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          flexDirection="row"
+          sx={{ paddingTop: "20px" }}
+        >
+          <Grid item>
+            {rights === ProjectRights.ADMIN && (
+              <Tooltip title={"Delete item"}>
+                <Button
+                  color="error"
+                  onClick={handleConfirmDeleteItemModal}
+                  variant="contained"
+                >
+                  DELETE
+                </Button>
+              </Tooltip>
+            )}
+          </Grid>
+
+          <Grid
+            item
+            container
+            justifyContent="flex-end"
             flexDirection="row"
-            sx={{ paddingTop: "20px" }}
+            alignItems="center"
+            spacing={2}
+            sx={{ width: 'auto' }}
           >
             <Grid item>
-              {rights === ProjectRights.ADMIN && (
-                <Tooltip title={"Delete item"}>
-                  <Button
-                    color="error"
-                    onClick={handleConfirmDeleteItemModal}
-                    variant="contained"
-                  >
-                    DELETE
-                  </Button>
-                </Tooltip>
-              )}
+              <Button variant="contained" type="button" onClick={HandleOpenModalEdit}>
+                <CancelIcon />
+                Cancel
+              </Button>
             </Grid>
 
-            <Grid
-              item
-              container
-              justifyContent="flex-end"
-              flexDirection="row"
-              alignItems="center"
-              spacing={2}
-              sx={{ width: 'auto' }}
-            >
-              <Grid item>
-                <Button variant="contained" type="button" onClick={HandleOpenModalEdit}>
-                  <CancelIcon />
-                  Cancel
-                </Button>
-              </Grid>
-
-              <Grid item>
-                <Button variant="contained" type="submit" onClick={handleSubmit}>
-                  <SaveIcon />
-                  Save
-                </Button>
-              </Grid>
+            <Grid item>
+              <Button variant="contained" type="submit" onClick={handleSubmit}>
+                <SaveIcon />
+                Save
+              </Button>
             </Grid>
-
-            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteItemModal}>
-              <ModalConfirmDelete
-                deleteItem={deleteItem}
-                itemId={item.id}
-                itemName={itemLabel}
-              />
-            </MMUModal>
           </Grid>
-        )}
+
+          <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteItemModal}>
+            <ModalConfirmDelete
+              deleteItem={deleteItem}
+              itemId={item.id}
+              itemName={itemLabel}
+            />
+          </MMUModal>
+        </Grid>
+      )}
 
 
-      </Grid>
     </Grid>
-  )
+</Grid>
+)
 }

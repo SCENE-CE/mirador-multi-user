@@ -32,7 +32,7 @@ const MetadataForm = ({metadataFormData,setMetadataFormData}:MetadataFormProps) 
   };
 
   return (
-    <Accordion component={Paper} elevation={0}>
+    <Accordion component={Paper} elevation={1}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="metadata-content"
