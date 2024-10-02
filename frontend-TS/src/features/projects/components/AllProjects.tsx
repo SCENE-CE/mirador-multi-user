@@ -27,6 +27,7 @@ import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
+import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 
 
 interface AllProjectsProps {
@@ -63,6 +64,18 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
   const [projectFiltered, setProjectFiltered] = useState<Project[]|undefined>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
+
+  const currentPageData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return userProjects.slice(start, end);
+  }, [currentPage, userProjects]);
+
+  const totalPages = Math.ceil(userProjects.length / itemsPerPage);
+
 
   console.log(userProjects)
   const fetchProjects = async () => {
@@ -259,7 +272,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
             )}
             {!selectedProjectId && projectFiltered && projectFiltered.length < 1 && !searchedProject && userProjects && (
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
-                {userProjects.map((projectUser) => (
+                {currentPageData.map((projectUser) => (
                     <Grid item key={projectUser.id}>
                       <MMUCard
                         thumbnailUrl={projectUser.thumbnailUrl ? projectUser.thumbnailUrl : null }
@@ -290,7 +303,8 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       />
                     </Grid>
                   )
-                )}
+                )
+                }
                 <Grid item>
                   <FloatingActionButton onClick={toggleModalProjectCreation} content={"New Project"} Icon={<AddIcon />} />
                   <div>
@@ -301,6 +315,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       modalCreateProjectIsOpen={modalCreateProjectIsOpen}/>
                   </div>
                 </Grid>
+                <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
               </Grid>
             ) }
             {

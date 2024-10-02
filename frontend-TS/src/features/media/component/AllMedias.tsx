@@ -1,4 +1,4 @@
-import { Box, Grid, Pagination, styled, Typography } from "@mui/material";
+import { Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, Dispatch, ReactNode, SetStateAction, useCallback, useMemo, useState } from "react";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
@@ -26,6 +26,7 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
 import { createMediaLink } from "../api/createMediaWithLink.ts";
+import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -67,10 +68,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     const end = start + itemsPerPage;
     return medias.slice(start, end);
   }, [currentPage, medias]);
-
-  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
-    setCurrentPage(value);
-  };
 
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
@@ -264,14 +261,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                   </Grid>
                 ))
               }
-              <Box display="flex" justifyContent="center" mt={2}>
-                <Pagination
-                  count={totalPages}
-                  page={currentPage}
-                  onChange={handlePageChange}
-                  color="primary"
-                />
-              </Box>
+              <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
             </Grid>
           )
         }
