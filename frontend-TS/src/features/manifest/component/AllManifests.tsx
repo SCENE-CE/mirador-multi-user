@@ -102,49 +102,45 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       }},
   ];
 
-
-  useEffect(() => {
-    const fetchThumbnails = async () => {
-      const urls:string[] = [];
-
-      for (const manifest of manifests) {
+  const fetchThumbnails = useCallback(async () => {
+    const urls: string[] = await Promise.all(
+      currentPageData.map(async (manifest) => {
         if (manifest.thumbnailUrl) {
-          urls.push(manifest.thumbnailUrl);
-        } else if (manifest.origin === manifestOrigin.UPLOAD) {
-          try {
-            const manifestResponse = await fetch(`${caddyUrl}/${manifest.hash}/${manifest.name}`);
-            const manifestFetched = await manifestResponse.json();
-            console.log(manifestFetched);
-
-            if (manifestFetched.thumbnail?.["@id"]) {
-              urls.push(manifestFetched.thumbnail["@id"]);
-            } else {
-              urls.push(placeholder);
-            }
-          } catch (error) {
-            console.error("Error fetching manifest:", error);
-            urls.push(placeholder);
-          }
-        } else if(manifest.origin === manifestOrigin.LINK){
-          const manifestResponse = await fetch(manifest.path);
-          const manifestFetched = await manifestResponse.json();
-          if (manifestFetched.thumbnail?.["@id"]) {
-            urls.push(manifestFetched.thumbnail["@id"]);
-          } else {
-            urls.push(placeholder);
-          }
-
-        }else {
-          urls.push(placeholder);
+          return manifest.thumbnailUrl;
         }
-      }
 
-      setThumbnailUrls(urls);
-    };
+        let manifestUrl = '';
+        if (manifest.origin === manifestOrigin.UPLOAD) {
+          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.name}`;
+        } else if (manifest.origin === manifestOrigin.LINK) {
+          manifestUrl = manifest.path;
+        } else {
+          return placeholder; // fallback to placeholder for other origins
+        }
 
+        try {
+          const manifestResponse = await fetch(manifestUrl);
+          const manifestFetched = await manifestResponse.json();
+
+          if (manifestFetched.thumbnail?.["@id"]) {
+            return manifestFetched.thumbnail["@id"];
+          } else {
+            return placeholder;
+          }
+        } catch (error) {
+          console.error("Error fetching manifest:", error);
+          return placeholder;
+        }
+      })
+    );
+
+    setThumbnailUrls(urls);
+  }, [currentPageData, caddyUrl]);
+
+// Fetch thumbnails whenever the current page data changes
+  useEffect(() => {
     fetchThumbnails();
-  }, [manifests]);
-
+  }, [fetchThumbnails]);
   const HandleLookingForManifests = async (partialString : string) =>{
     console.log(partialString)
     const userManifests =  await lookingForManifests(partialString, userPersonalGroup.id)
