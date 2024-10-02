@@ -144,7 +144,8 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     const response = await createProject({
         name: projectName,
         owner: user,
-        userWorkspace: workspace
+        userWorkspace: workspace,
+        metadata: {},
       }
     )
     setUserProjects( [...userProjects,

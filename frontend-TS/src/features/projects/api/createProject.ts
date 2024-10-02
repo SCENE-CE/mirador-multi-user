@@ -1,6 +1,5 @@
 import storage from "../../../utils/storage.ts";
 import { CreateProjectDto, Project, ProjectUser } from "../types/types.ts";
-import { dublinCoreSample } from "../../../utils/dublinCoreSample.ts";
 
 export const createProject = async (project: CreateProjectDto): Promise<Project> => {
   const token = storage.getToken();
@@ -12,7 +11,7 @@ export const createProject = async (project: CreateProjectDto): Promise<Project>
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ ...project, metadata: dublinCoreSample })
+      body: JSON.stringify({ ...project })
     });
     const projectUser: ProjectUser   = await response.json();
     return projectUser.project
