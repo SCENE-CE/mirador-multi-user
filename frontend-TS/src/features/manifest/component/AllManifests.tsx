@@ -1,4 +1,4 @@
-import { Box, Grid, styled, Typography } from "@mui/material";
+import { Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
@@ -359,14 +359,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           modalCreateManifestIsOpen={modalLinkManifestIsOpen}
           toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
       </Grid>
-      {
-        !createManifestIsOpen && (
-          <Grid item sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%', zIndex: 998}}>
-            <Box sx={{ padding: '40px', textAlign: 'center'}}>
-            </Box>
-          </Grid>
-        )
-      }
       <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
     </Grid>
   )
