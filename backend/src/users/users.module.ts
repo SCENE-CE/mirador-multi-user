@@ -7,9 +7,13 @@ import { UserGroup } from '../user-group/entities/user-group.entity';
 import { UserGroupService } from '../user-group/user-group.service';
 import { LinkUserGroup } from '../link-user-group/entities/link-user-group.entity';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
+import { EmailModule } from '../email/email.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User, UserGroup, LinkUserGroup])],
+  imports: [
+    TypeOrmModule.forFeature([User, UserGroup, LinkUserGroup]),
+    EmailModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService, UserGroupService, LinkUserGroupService],
   exports: [UsersService],

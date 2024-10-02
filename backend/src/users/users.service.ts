@@ -11,12 +11,14 @@ import { User } from './entities/user.entity';
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroupService } from '../user-group/user-group.service';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly userGroupService: UserGroupService,
+    private readonly emailService: EmailService,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
@@ -32,11 +34,7 @@ export class UsersService {
           users: [savedUser],
         });
 
-      // const linkGroupToUser = await this.linkUserGroupService.create({
-      //   rights: User_UserGroupRights.ADMIN,
-      //   user_group: privateUserGroup,
-      //   user: savedUser,
-      // });
+      this.emailService.example();
 
       return savedUser;
     } catch (error) {
