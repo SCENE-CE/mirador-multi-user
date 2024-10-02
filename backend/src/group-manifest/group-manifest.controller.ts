@@ -96,6 +96,7 @@ export class GroupManifestController {
     fs.mkdirSync(uploadPath, { recursive: true });
 
     try {
+      console.log('-------------Create Manifest-------------')
       const manifestData = {
         ...createManifestDto.processedManifest,
         id: `${uploadPath}/${label}.json`,
