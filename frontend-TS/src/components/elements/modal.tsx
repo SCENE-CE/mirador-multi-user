@@ -1,7 +1,7 @@
 import Modal from '@mui/material/Modal';
-import { Box } from "@mui/material";
+import { Box, DialogTitle, IconButton } from "@mui/material";
 import { ReactNode } from "react";
-
+import CloseIcon from '@mui/icons-material/Close';
 interface IOpenModalProps{
   openModal:boolean,
   setOpenModal: () => void,
@@ -38,6 +38,15 @@ export const MMUModal= ({ openModal, setOpenModal, children, width }:IOpenModalP
       sx={{ zIndex: 1300,overflow:'scroll' }}
     >
       <Box sx={{ ...style, width:width}}>
+        <DialogTitle id="id" sx={{padding:0}}>
+          <Box display="flex" alignItems="center" justifyContent="flex-end">
+            <Box>
+              <IconButton onClick={setOpenModal}  sx={{padding:0}}>
+                <CloseIcon />
+              </IconButton>
+            </Box>
+          </Box>
+        </DialogTitle>
         {children}
       </Box>
     </Modal>
