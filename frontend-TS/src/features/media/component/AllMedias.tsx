@@ -26,6 +26,7 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
 import { createMediaLink } from "../api/createMediaWithLink.ts";
+import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -58,6 +59,17 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [mediaFiltered, setMediaFiltered] = useState<Media[]|undefined>([]);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const currentPageData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return medias.slice(start, end);
+  }, [currentPage, medias]);
+
+  const totalPages = Math.ceil(medias.length / itemsPerPage);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
@@ -217,7 +229,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
           !searchedMedia && mediaFiltered && mediaFiltered.length < 1 && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {
-                medias.map((media)=>(
+                currentPageData.map((media)=>(
                   <Grid item key={media.id}>
                     <MMUCard
                       metadata={media.metadata}
@@ -249,6 +261,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                   </Grid>
                 ))
               }
+              <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
             </Grid>
           )
         }
@@ -307,7 +320,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                       deleteItem={()=>HandleDeleteMedia(media.id)}
                       item={media}
                       updateItem={HandleUpdateMedia}
-                      thumbnailUrl={media.path}
+                      thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
                       AddAccessListItemFunction={handleGrantAccess}
                       getOptionLabel={getOptionLabel}
                       listOfItem={listOfGroup}

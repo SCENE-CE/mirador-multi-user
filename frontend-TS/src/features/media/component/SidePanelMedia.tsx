@@ -1,7 +1,7 @@
 import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { ChangeEvent, ReactNode, useCallback, useState } from "react";
+import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Media } from "../types/types.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
@@ -13,6 +13,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import AddLinkIcon from "@mui/icons-material/AddLink";
 import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
 import { createMediaLink } from "../api/createMediaWithLink.ts";
+import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -79,6 +80,18 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   const [open, setOpen] = useState(true);
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 9;
+
+  const currentPageData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return medias.slice(start, end);
+  }, [currentPage, medias]);
+
+  const totalPages = Math.ceil(medias.length / itemsPerPage);
+
   const toggleDrawer = () => {
     setOpen((prevOpen) => !prevOpen);
   };
@@ -205,7 +218,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
 
             ):(
               <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
-                {medias.map((media) => (
+                {currentPageData.map((media) => (
                   <CustomImageItem key={media.hash}>
                     <Box
                       component="img"
@@ -234,6 +247,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
               </ImageList>
             )
           }
+          <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
         </Drawer>
       )
       }

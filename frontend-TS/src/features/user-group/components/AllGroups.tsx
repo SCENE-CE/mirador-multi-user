@@ -22,6 +22,7 @@ import { ListItem } from "../../../components/types.ts";
 import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
+import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 
 
 interface allGroupsProps {
@@ -40,6 +41,17 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [userPersonalGroupList, setUserPersonalGroupList] = useState<LinkUserGroup[]>([])
   const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>([]);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const itemsPerPage = 5;
+
+  const currentPageData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return groups.slice(start, end);
+  }, [currentPage, groups]);
+
+  const totalPages = Math.ceil(groups.length / itemsPerPage);
 
   const fetchMediaForUser = async()=>{
     const medias = await getUserGroupMedias(userPersonalGroup!.id)
@@ -173,7 +185,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                 <Typography variant="h6" component="h2">No groups yet, start to work when clicking on the new group button.</Typography>
               </Grid>
             )}
-            {groups && groupFiltered && groupFiltered.length < 1 &&!selectedUserGroup && groups.map((group) => (
+            {groups && groupFiltered && groupFiltered.length < 1 &&!selectedUserGroup && currentPageData.map((group) => (
               <Grid item key={group.id}>
                 <MMUCard
                   isGroups={true}
@@ -270,6 +282,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                 </Grid>
               )
             }
+            <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
           </Grid>
           <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />
           <DrawerCreateGroup handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
