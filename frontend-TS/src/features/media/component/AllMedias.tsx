@@ -1,4 +1,4 @@
-import { Grid, styled, Typography } from "@mui/material";
+import { Box, Grid, Pagination, styled, Typography } from "@mui/material";
 import { ChangeEvent, Dispatch, ReactNode, SetStateAction, useCallback, useMemo, useState } from "react";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
@@ -58,6 +58,21 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [mediaFiltered, setMediaFiltered] = useState<Media[]|undefined>([]);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  const currentPageData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return medias.slice(start, end);
+  }, [currentPage, medias]);
+
+  const handlePageChange = (_event: ChangeEvent<unknown>, value: number) => {
+    setCurrentPage(value);
+  };
+
+  const totalPages = Math.ceil(medias.length / itemsPerPage);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
     console.log(event.target.files);
@@ -217,7 +232,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
           !searchedMedia && mediaFiltered && mediaFiltered.length < 1 && (
             <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
               {
-                medias.map((media)=>(
+                currentPageData.map((media)=>(
                   <Grid item key={media.id}>
                     <MMUCard
                       metadata={media.metadata}
@@ -249,6 +264,14 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                   </Grid>
                 ))
               }
+              <Box display="flex" justifyContent="center" mt={2}>
+                <Pagination
+                  count={totalPages}
+                  page={currentPage}
+                  onChange={handlePageChange}
+                  color="primary"
+                />
+              </Box>
             </Grid>
           )
         }
@@ -307,7 +330,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                       deleteItem={()=>HandleDeleteMedia(media.id)}
                       item={media}
                       updateItem={HandleUpdateMedia}
-                      thumbnailUrl={media.path}
+                      thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
                       AddAccessListItemFunction={handleGrantAccess}
                       getOptionLabel={getOptionLabel}
                       listOfItem={listOfGroup}
