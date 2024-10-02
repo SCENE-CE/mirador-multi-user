@@ -39,5 +39,6 @@ export type CreateProjectDto = {
   name:string;
   owner:User;
   userWorkspace:IState;
+  metadata: Record<string, string>;
 }
 
