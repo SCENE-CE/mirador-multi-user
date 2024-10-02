@@ -11,6 +11,8 @@ services:
     restart: unless-stopped
     volumes:
       - ./mariaDB/data:/var/lib/mysql:rw
+    networks:
+      - app-network
 
   frontend:
     image: tetraslibre/mmu-frontend:latest
@@ -19,7 +21,9 @@ services:
       VITE_CADDY_URL: "${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}"
     depends_on:
       - backend
-    restart: ${RESTART} 
+    restart: ${RESTART}
+    networks:
+      - app-network
 
 
   backend:
@@ -45,7 +49,8 @@ services:
     restart: ${RESTART}
     links:
       - db
-
+    networks:
+      - app-network
 
   caddy:
     hostname: files
@@ -57,5 +62,9 @@ services:
     volumes:
       - ./backend/$HTTP_FOLDER:/srv
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
+    networks:
+      - app-network
 
-
+networks:
+  app-network:
+    driver: bridge

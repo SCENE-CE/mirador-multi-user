@@ -16,7 +16,6 @@ export class MediaInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const { manifestMedias, name, manifestThumbnail } = request.body;
-
     if (!manifestMedias || !Array.isArray(manifestMedias)) {
       throw new BadRequestException(
         'Manifest media items are required and must be an array.',
@@ -46,12 +45,18 @@ export class MediaInterceptor implements NestInterceptor {
 
     const fetchMediaForItem = async (media) => {
       try {
-        const response = await fetch(media.value, { method: 'GET' });
+        const url = media.value.replace(
+          /^(http|https):\/\/localhost:\d+\//,
+          '$1://caddy/',
+        );
+
+        const response = await fetch(`${url}`, { method: 'GET' });
 
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+          throw new Error(
+            `HTTP error! status: ${response.status}, message: ${response.statusText}`,
+          );
         }
-
         const arrayBuffer = await response.arrayBuffer();
         const mediaBuffer = Buffer.from(arrayBuffer);
         const contentType = response.headers.get('Content-Type');
@@ -59,7 +64,7 @@ export class MediaInterceptor implements NestInterceptor {
         if (contentType && contentType.startsWith('image')) {
           const imageMetadata = await sharp(mediaBuffer).metadata();
           const { width, height } = imageMetadata;
-
+console.log('after image metadata')
           manifestToCreate.items.push({
             id: media.value,
             type: 'Canvas',
@@ -94,6 +99,7 @@ export class MediaInterceptor implements NestInterceptor {
           );
         }
       } catch (error) {
+        console.error('error details:', error);
         throw new BadRequestException(`Error fetching media: ${error.message}`);
       }
     };
