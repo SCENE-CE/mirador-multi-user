@@ -18,7 +18,8 @@ import { ManifestModule } from './manifest/manifest.module';
 import { GroupManifestModule } from './group-manifest/group-manifest.module';
 import dbConfiguration from './config/db.config';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { EmailModule } from './email/email.module';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { EmailServerModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -29,27 +30,28 @@ import { EmailModule } from './email/email.module';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
+
       useFactory: (configService: ConfigService) => ({
         ...configService.get('database'),
       }),
     }),
-    MailerModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => ({
-        transport: {
-          host: process.env.SMT_DOMAIN,
-          port: 25,
-          secure: false,
-          auth: {
-            user: process.env.SMT_USER,
-            pass: process.env.SMT_PASSWORD,
-          },
+    MailerModule.forRoot({
+      transport: {
+        host: String(process.env.SMTP_DOMAIN),
+        port: Number(process.env.SMTP_PORT),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
         },
-        defaults: {
-          from: `"No Reply" <${configService.get<string>('SMT_USER')}>`,
+      },
+      template: {
+        dir: __dirname + './template/notification',
+        adapter: new PugAdapter({ inlineCssEnabled: true }),
+        options: {
+          strict: true,
         },
-      }),
+      },
     }),
     UsersModule,
     AuthModule,
@@ -64,7 +66,7 @@ import { EmailModule } from './email/email.module';
     LinkUserGroupModule,
     ManifestModule,
     GroupManifestModule,
-    EmailModule,
+    EmailServerModule,
   ],
   controllers: [AppController],
   providers: [AppService],
