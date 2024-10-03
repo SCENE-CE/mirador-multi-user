@@ -17,6 +17,9 @@ import { LinkUserGroupModule } from './link-user-group/link-user-group.module';
 import { ManifestModule } from './manifest/manifest.module';
 import { GroupManifestModule } from './group-manifest/group-manifest.module';
 import dbConfiguration from './config/db.config';
+import { MailerModule } from '@nestjs-modules/mailer';
+import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
+import { EmailServerModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -27,9 +30,28 @@ import dbConfiguration from './config/db.config';
     }),
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
+
       useFactory: (configService: ConfigService) => ({
         ...configService.get('database'),
       }),
+    }),
+    MailerModule.forRoot({
+      transport: {
+        host: String(process.env.SMTP_DOMAIN),
+        port: Number(process.env.SMTP_PORT),
+        secure: false,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASSWORD,
+        },
+      },
+      template: {
+        dir: __dirname + './template/notification',
+        adapter: new PugAdapter({ inlineCssEnabled: true }),
+        options: {
+          strict: true,
+        },
+      },
     }),
     UsersModule,
     AuthModule,
@@ -44,6 +66,7 @@ import dbConfiguration from './config/db.config';
     LinkUserGroupModule,
     ManifestModule,
     GroupManifestModule,
+    EmailServerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

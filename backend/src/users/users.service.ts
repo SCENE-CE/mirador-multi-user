@@ -11,12 +11,14 @@ import { User } from './entities/user.entity';
 import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroupService } from '../user-group/user-group.service';
+import { EmailServerService } from '../email/email.service';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly userGroupService: UserGroupService,
+    private readonly emailService: EmailServerService,
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
@@ -31,13 +33,11 @@ export class UsersService {
           ownerId: savedUser.id,
           users: [savedUser],
         });
-
-      // const linkGroupToUser = await this.linkUserGroupService.create({
-      //   rights: User_UserGroupRights.ADMIN,
-      //   user_group: privateUserGroup,
-      //   user: savedUser,
-      // });
-
+      await this.emailService.sendMail({
+        to: dto.mail,
+        subject: 'Arvest account creation',
+        userName: dto.name,
+      });
       return savedUser;
     } catch (error) {
       if (error instanceof QueryFailedError) {
