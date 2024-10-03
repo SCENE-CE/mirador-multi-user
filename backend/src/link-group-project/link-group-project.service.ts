@@ -10,9 +10,12 @@ import { LinkGroupProject } from './entities/link-group-project.entity';
 import { Repository } from 'typeorm';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 import { GroupProjectRights } from '../enum/rights';
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class LinkGroupProjectService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     @InjectRepository(LinkGroupProject)
     private readonly linkGroupProjectRepository: Repository<LinkGroupProject>,
@@ -28,7 +31,7 @@ export class LinkGroupProjectService {
         conflictPaths: ['rights', 'project', 'user_group'],
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating the linkGroupProject',
         error,
@@ -40,7 +43,7 @@ export class LinkGroupProjectService {
     try {
       return await this.linkGroupProjectRepository.find();
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while finding linkGroupProjects',
         error,
@@ -52,7 +55,7 @@ export class LinkGroupProjectService {
     try {
       return await this.linkGroupProjectRepository.findOneBy({ id });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while finding the linkGroupProject',
         error,
@@ -78,12 +81,10 @@ export class LinkGroupProjectService {
 
   async findAllGroupProjectByUserGroupId(userId: number) {
     try {
-      console.log('findAllGroupProjectByUserGroupId');
       const request = await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
         relations: ['project'],
       });
-      console.log('request', request);
       return request;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -105,7 +106,7 @@ export class LinkGroupProjectService {
       if (done.affected != 1) throw new NotFoundException(linkGroupId);
       return this.findOne(linkGroupId);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while updating the linkGroupProject',
         error,
@@ -121,7 +122,7 @@ export class LinkGroupProjectService {
       });
       return dataToReturn;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }
@@ -151,7 +152,7 @@ export class LinkGroupProjectService {
 
       return updatedData;
     } catch (error) {
-      console.error(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }
@@ -165,7 +166,7 @@ export class LinkGroupProjectService {
       if (done.affected != 1) throw new NotFoundException(projectId);
       return done;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while removing the linkGroupProject',
         error,

@@ -13,9 +13,12 @@ import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { Project } from '../project/entities/project.entity';
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class GroupProjectService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     private readonly linkGroupProjectService: LinkGroupProjectService,
     private readonly userGroupService: UserGroupService,
@@ -29,6 +32,7 @@ export class GroupProjectService {
         groupId,
       );
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while getting all projects for this group id ${groupId}`,
         error,
@@ -40,6 +44,7 @@ export class GroupProjectService {
     try {
       return await this.linkGroupProjectService.getProjectRelations(projectId);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while getting all groups for this project id ${projectId}`,
         error,
@@ -51,8 +56,6 @@ export class GroupProjectService {
     try {
       let projectToReturn;
 
-      console.log('------------------dto------------------');
-      console.log(dto);
       if (dto.rights && dto.group) {
         console.log('if');
         const updateRelation =
@@ -61,12 +64,6 @@ export class GroupProjectService {
             dto.group.id,
             dto.rights,
           );
-
-        console.log(
-          '-------------------------------updateRelation-------------------------------',
-        );
-        console.log(updateRelation);
-
         await this.projectService.update(dto.project.id, dto.project);
         projectToReturn =
           await this.linkGroupProjectService.getProjectRelations(dto.id);
@@ -79,7 +76,7 @@ export class GroupProjectService {
       }
       return projectToReturn;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }
@@ -126,11 +123,7 @@ export class GroupProjectService {
     try {
       const projectRelation =
         await this.linkGroupProjectService.getProjectRelations(project_id);
-      console.log('------project_id--------------');
-      console.log(project_id);
       for (const linkGroupProject of projectRelation) {
-        console.log('------userGroupId--------------');
-        console.log(linkGroupProject.user_group.id);
         await this.RemoveProjectToGroup({
           projectId: project_id,
           groupId: linkGroupProject.user_group.id,
@@ -138,7 +131,7 @@ export class GroupProjectService {
       }
       return await this.projectService.remove(project_id);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }
@@ -174,7 +167,6 @@ export class GroupProjectService {
 
   async getProjectRightForUser(userGroupId: number, projectId: number) {
     try {
-      console.log('getProjectRightForUser');
       const project =
         await this.linkGroupProjectService.findAllGroupProjectByUserGroupId(
           userGroupId,
@@ -185,7 +177,7 @@ export class GroupProjectService {
       );
       return toReturn;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }
@@ -210,7 +202,7 @@ export class GroupProjectService {
       }
       return userProjects;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }
@@ -236,7 +228,7 @@ export class GroupProjectService {
         project.id,
       );
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'an error occurred while creating project',
         error,
@@ -266,7 +258,7 @@ export class GroupProjectService {
       }
       return projects;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while finding project for userId: ${userId}`,
         error,

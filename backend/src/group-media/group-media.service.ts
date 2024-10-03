@@ -13,10 +13,12 @@ import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { MediaGroupRights } from '../enum/rights';
 import { join } from 'path';
 import * as fs from 'node:fs';
-import { UpdateMediaDto } from '../media/dto/update-media.dto';
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class GroupMediaService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     private readonly linkMediaGroupService: LinkMediaGroupService,
     private readonly userGroupService: UserGroupService,
@@ -38,7 +40,7 @@ export class GroupMediaService {
       );
       return toReturn;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating the media',
         error,
@@ -65,10 +67,9 @@ export class GroupMediaService {
         const groupsForMedia = await this.getAllMediaGroup(mediaId);
         mediasForGroup.push(groupsForMedia);
       }
-      console.log('--------------------mediasForGroup--------------------');
-      console.log(mediasForGroup);
       return mediasForGroup;
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'an error occurred while adding media to Group',
         error,
@@ -82,6 +83,7 @@ export class GroupMediaService {
         await this.linkMediaGroupService.findAllUserGroupByMediaId(mediaId);
       return toReturn;
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while getting all group for media : ${mediaId}`,
         error,
@@ -97,6 +99,7 @@ export class GroupMediaService {
         );
       return media.find((linkMediaGroup) => linkMediaGroup.media.id == mediaId);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'an error occurred while getting media rights for user',
         error,
@@ -110,6 +113,7 @@ export class GroupMediaService {
         userGroupId,
       );
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'an error occurred while getting all medias for user',
         error,
@@ -152,6 +156,7 @@ export class GroupMediaService {
         throw new HttpException('File not found', HttpStatus.NOT_FOUND);
       }
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new HttpException(
         `An error occurred while removing media with id: ${mediaId}: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -171,6 +176,7 @@ export class GroupMediaService {
         mediaUpdateData,
       );
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new HttpException(
         `An error occurred while updating media with id: ${updateGroupMediaDto.id}: ${error.message}`,
         HttpStatus.INTERNAL_SERVER_ERROR,
@@ -190,7 +196,7 @@ export class GroupMediaService {
         rights,
       );
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occured while updating link between media and group : ${error.message}`,
       );
@@ -215,7 +221,7 @@ export class GroupMediaService {
         userGroupId,
       );
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while removing link between media and group : ${error.message}`,
       );

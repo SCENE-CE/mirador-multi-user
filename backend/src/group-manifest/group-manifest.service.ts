@@ -14,9 +14,12 @@ import { join } from 'path';
 import * as fs from 'node:fs';
 import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class GroupManifestService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     private readonly manifestService: ManifestService,
     private readonly linkGroupManifestService: LinkManifestGroupService,
@@ -24,7 +27,7 @@ export class GroupManifestService {
   async create(createGroupManifestDto: CreateGroupManifestDto) {
     try {
       const { idCreator, path, user_group } = createGroupManifestDto;
-      console.log('createGroupManifestDto',createGroupManifestDto)
+      console.log('createGroupManifestDto', createGroupManifestDto);
       const manifest = await this.manifestService.create(
         createGroupManifestDto,
       );
@@ -39,7 +42,7 @@ export class GroupManifestService {
       );
       return toReturn;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while creating manifest, ${error.message}`,
       );
@@ -67,6 +70,7 @@ export class GroupManifestService {
       }
       return manifestsForGroup;
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An Error occurred while adding manifests to userGroup with id ${userGroup.id} : ${error.message}`,
       );
@@ -79,7 +83,7 @@ export class GroupManifestService {
         manifestId,
       );
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'an error occurred while getting all manifests group',
         error.message,
@@ -98,6 +102,7 @@ export class GroupManifestService {
       );
       return toReturn.manifest;
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       return new InternalServerErrorException(
         'An error occurred while getting manifest for user group',
         error.message,
@@ -111,6 +116,7 @@ export class GroupManifestService {
         userGroupId,
       );
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while getting all manifests for groups with id ${userGroupId}`,
         error.message,
@@ -149,7 +155,7 @@ export class GroupManifestService {
         };
       }
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while removing manifest with id ${manifestId}`,
         error.message,
@@ -164,7 +170,7 @@ export class GroupManifestService {
         updateManifestDto,
       );
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while updating manifest with id ${updateManifestDto.id}`,
         error.message,
@@ -183,7 +189,7 @@ export class GroupManifestService {
         rights,
       );
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while updating access to manifest with id ${updateManifestGroupRelation.manifestId}, for the group with id ${updateManifestGroupRelation.userGroupId}`,
         error.message,
@@ -211,7 +217,7 @@ export class GroupManifestService {
         userGroupId,
       );
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while removing link between manifest and group : ${error.message}`,
       );

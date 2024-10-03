@@ -7,10 +7,12 @@ import { CreateMediaDto } from './dto/create-media.dto';
 import { UpdateMediaDto } from './dto/update-media.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Media } from './entities/media.entity';
-import { Brackets, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class MediaService {
+  private readonly logger = new CustomLogger();
   constructor(
     @InjectRepository(Media)
     private readonly mediaRepository: Repository<Media>,
@@ -21,7 +23,7 @@ export class MediaService {
       const media = this.mediaRepository.create({ ...createMediaDto });
       return await this.mediaRepository.save(media);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating the media',
         error,
@@ -33,7 +35,7 @@ export class MediaService {
     try {
       return await this.mediaRepository.find();
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while finding all medias',
         error,
@@ -45,7 +47,7 @@ export class MediaService {
     try {
       return await this.mediaRepository.findOneBy({ id });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while finding the media',
         error,
@@ -54,13 +56,11 @@ export class MediaService {
   }
   async update(id: number, updateMediaDto: UpdateMediaDto) {
     try {
-      console.log('-----------------------updateMediaDto-----------------------')
-      console.log(updateMediaDto)
       const done = await this.mediaRepository.update(id, updateMediaDto);
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while updating the media',
         error,
@@ -73,7 +73,7 @@ export class MediaService {
       const done = await this.mediaRepository.delete(id);
       if (done.affected != 1) throw new NotFoundException(id);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while removing the media',
         error,
@@ -100,7 +100,7 @@ export class MediaService {
         .limit(3)
         .getMany();
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred: ${error.message}`,
       );

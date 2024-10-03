@@ -8,20 +8,22 @@ import { UpdateManifestDto } from './dto/update-manifest.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Manifest } from './entities/manifest.entity';
 import { Repository } from 'typeorm';
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class ManifestService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     @InjectRepository(Manifest)
     private readonly manifestRepository: Repository<Manifest>,
   ) {}
   async create(createManifestDto: CreateManifestDto) {
     try {
-      console.log("----------------------createManifestDto----------------------")
-      console.log(createManifestDto)
       const manifest = this.manifestRepository.create({ ...createManifestDto });
       return await this.manifestRepository.save(manifest);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occured while creating manifest, ${error.message}`,
       );
@@ -36,7 +38,7 @@ export class ManifestService {
     try {
       return await this.manifestRepository.findOneBy({ id: manifestId });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while finding manifest with id ${manifestId}`,
         error.message,
@@ -50,7 +52,7 @@ export class ManifestService {
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while updating the manifest with id ${id}`,
         error.message,
@@ -63,7 +65,7 @@ export class ManifestService {
       const done = await this.manifestRepository.delete(id);
       if (done.affected != 1) throw new NotFoundException(id);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occured while removing manifest with id : ${id}`,
         error.message,
@@ -90,7 +92,7 @@ export class ManifestService {
         .limit(3)
         .getMany();
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred: ${error.message}`,
       );

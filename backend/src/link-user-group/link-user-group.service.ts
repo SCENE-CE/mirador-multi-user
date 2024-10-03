@@ -11,9 +11,11 @@ import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 import { User_UserGroupRights } from '../enum/rights';
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class LinkUserGroupService {
+  private readonly logger = new CustomLogger();
   constructor(
     @InjectRepository(LinkUserGroup)
     private readonly linkUserGroupRepository: Repository<LinkUserGroup>,
@@ -52,7 +54,7 @@ export class LinkUserGroupService {
         where: { user: { id: userId }, user_group: { id: groupId } },
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred when trying to get Access for user id : ${userId} to group id : ${groupId}`,
         error,
@@ -76,7 +78,7 @@ export class LinkUserGroupService {
 
       return linkUserToUserGroup;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `Granting access to userId : ${createUserGroupDto.user} to group ${createUserGroupDto.user_group} failed`,
         error,
@@ -141,7 +143,7 @@ export class LinkUserGroupService {
 
       return await this.linkUserGroupRepository.delete(linkGroupToDelete.id);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `Error while removing link between user id: ${userId} and group id: ${groupId}`,
       );
@@ -179,7 +181,7 @@ export class LinkUserGroupService {
       }
       return groupsToReturn;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while trying to find groups for this user id : ${userId}`,
         error,
@@ -206,7 +208,7 @@ export class LinkUserGroupService {
         .limit(3)
         .getMany();
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while trying to search for user group with partial name',
         error,
@@ -235,7 +237,7 @@ export class LinkUserGroupService {
       console.log(linkUserGroups);
       return linkUserGroups;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while searching for : ${partialGroupName}`,
         error,
@@ -269,7 +271,7 @@ export class LinkUserGroupService {
     try {
       return await this.linkUserGroupRepository.delete(linkUserGroupId);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while removing linkUserGroup with id ${linkUserGroupId}`,
         error,

@@ -8,9 +8,11 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Brackets, DeleteResult, Repository } from 'typeorm';
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class ProjectService {
+  private readonly logger = new CustomLogger();
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
@@ -23,7 +25,7 @@ export class ProjectService {
         description: "Your project description here"
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating the project',
         error,
@@ -41,7 +43,7 @@ export class ProjectService {
       });
       return projects;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
     }
   }
 
@@ -60,7 +62,7 @@ export class ProjectService {
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(dto.id);
     } catch (error) {
-      console.log(error)
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }
@@ -90,7 +92,7 @@ export class ProjectService {
         .getMany();
 
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
     }
   }
 
@@ -109,6 +111,7 @@ export class ProjectService {
       if (done.affected != 1) throw new NotFoundException(id);
       return done;
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }

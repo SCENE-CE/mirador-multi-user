@@ -13,9 +13,12 @@ import { Repository } from 'typeorm';
 import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';
 import { MediaGroupRights } from '../enum/rights';
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class LinkMediaGroupService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     @InjectRepository(LinkMediaGroup)
     private readonly linkMediaGroupRepository: Repository<LinkMediaGroup>,
@@ -31,7 +34,7 @@ export class LinkMediaGroupService {
         conflictPaths: ['rights', 'media', 'user_group'],
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating the linkMediaGroup',
         error,
@@ -43,7 +46,7 @@ export class LinkMediaGroupService {
     try {
       return await this.linkMediaGroupRepository.find();
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while finding linkMediaGroups',
         error,
@@ -56,7 +59,7 @@ export class LinkMediaGroupService {
       console.log('findOne id:', id);
       return await this.linkMediaGroupRepository.findOneBy({ id });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while finding the linkMediaGroup',
         error,
@@ -76,7 +79,7 @@ export class LinkMediaGroupService {
         rights: linkGroup.rights,
       }));
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while finding all Project for this Group id : ${id}`,
         error,
@@ -92,7 +95,7 @@ export class LinkMediaGroupService {
       });
       return request.map((linkGroup: LinkMediaGroup) => linkGroup);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while finding all Group for this media id : ${mediaId}`,
         error,
@@ -135,7 +138,7 @@ export class LinkMediaGroupService {
         conflictPaths: ['rights', 'media', 'user_group'],
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while updating the linkMediaGroup',
         error,
@@ -153,7 +156,7 @@ export class LinkMediaGroupService {
       );
       return this.findOne(id);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while updating the linkMediaGroup',
         error,
@@ -183,7 +186,7 @@ export class LinkMediaGroupService {
       if (done.affected != 1) throw new NotFoundException(mediaId);
       return done;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while removing the linkMediaGroup',
         error,

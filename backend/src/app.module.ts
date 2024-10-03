@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from "@nestjs/common";
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -20,6 +20,7 @@ import dbConfiguration from './config/db.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { EmailServerModule } from './email/email.module';
+import { CustomLogger } from "./Logger/CustomLogger.service";
 
 @Module({
   imports: [
@@ -69,6 +70,12 @@ import { EmailServerModule } from './email/email.module';
     EmailServerModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: Logger,
+      useClass: CustomLogger,
+    },
+  ],
 })
 export class AppModule {}

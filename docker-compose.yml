@@ -48,6 +48,8 @@ services:
       SWAGGER_TITLE : ${SWAGGER_TITLE}
       SWAGGER_DESCRIPTION : ${SWAGGER_DESCRIPTION}
       SWAGGER_VERSION : ${SWAGGER_VERSION}
+      ADMIN_MAIL: ${ADMIN_MAIL}
+      LOG_LEVEL : ${LOG_LEVEL}
     depends_on:
       - db
     restart: ${RESTART}

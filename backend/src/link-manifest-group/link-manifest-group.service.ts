@@ -5,9 +5,12 @@ import { Repository } from 'typeorm';
 import { CreateGroupManifestDto } from '../group-manifest/dto/create-group-manifest.dto';
 import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
 import { ManifestGroupRights, MediaGroupRights } from "../enum/rights";
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class LinkManifestGroupService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     @InjectRepository(LinkManifestGroup)
     private readonly linkManifestGroupRepository: Repository<LinkManifestGroup>,
@@ -23,7 +26,7 @@ export class LinkManifestGroupService {
         conflictPaths: ['rights', 'manifest', 'user_group'],
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while creating linkGroupManifest, ${error.message}`,
       );
@@ -34,7 +37,7 @@ export class LinkManifestGroupService {
     try {
       return await this.linkManifestGroupRepository.find();
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while finding linkMediaGroups',
         error,
@@ -50,7 +53,7 @@ export class LinkManifestGroupService {
       });
       return request.map((linkGroup: LinkManifestGroup) => linkGroup);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while finding all User Group for Manifest with id ${manifestId}, ${error.message}`,
       );
@@ -65,7 +68,7 @@ export class LinkManifestGroupService {
       });
       return request;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while finding all ManifestGroupByUserGroupId with userGroupId : ${userGroupId}`,
         error.message,
@@ -81,7 +84,7 @@ export class LinkManifestGroupService {
       });
       return request.map((linkGroup: LinkManifestGroup) => linkGroup.manifest);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while finding manifest for userGroup with id ${id}`,
         error.message,
@@ -110,7 +113,7 @@ export class LinkManifestGroupService {
         conflictPaths: ['rights', 'manifest', 'user_group'],
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while updating the linkManifestGroup',
         error.message,
@@ -127,7 +130,7 @@ export class LinkManifestGroupService {
       if (done.affected != 1) throw new NotFoundException(manifestId);
       return done;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while removing the linkManifestGroup',
         error.message,

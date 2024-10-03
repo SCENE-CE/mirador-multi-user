@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -12,9 +13,12 @@ import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroupService } from '../user-group/user-group.service';
 import { EmailServerService } from '../email/email.service';
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly userGroupService: UserGroupService,
@@ -38,8 +42,10 @@ export class UsersService {
         subject: 'Arvest account creation',
         userName: dto.name,
       });
+
       return savedUser;
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       if (error instanceof QueryFailedError) {
         throw new ConflictException('User creation failed', error.message);
       } else {
@@ -58,7 +64,8 @@ export class UsersService {
   async findOneByMail(mail: string): Promise<User> {
     try {
       return await this.userRepository.findOneBy({ mail });
-    } catch (err) {
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new NotFoundException(`User no found ${mail}`);
     }
   }
@@ -67,7 +74,8 @@ export class UsersService {
       return await this.userRepository.findOne({
         where: { id },
       });
-    } catch (err) {
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new NotFoundException(`User not found :${id}`);
     }
   }
@@ -78,7 +86,7 @@ export class UsersService {
       if (done.affected != 1) throw new NotFoundException(id);
       return this.findOne(id);
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }
@@ -88,6 +96,7 @@ export class UsersService {
       const done: DeleteResult = await this.userRepository.delete(id);
       if (done.affected != 1) throw new NotFoundException(id);
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
     }
   }

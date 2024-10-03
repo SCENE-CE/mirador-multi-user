@@ -11,9 +11,12 @@ import { UserGroupTypes } from '../enum/user-group-types';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { User_UserGroupRights } from '../enum/rights';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class UserGroupService {
+  private readonly logger = new CustomLogger();
+
   constructor(
     @InjectRepository(UserGroup)
     private readonly userGroupRepository: Repository<UserGroup>,
@@ -44,7 +47,7 @@ export class UserGroupService {
       }
       return userGroup;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating userGroup',
         error,
@@ -72,7 +75,7 @@ export class UserGroupService {
 
       return userPersonalGroup;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating userGroup',
         error,
@@ -84,7 +87,7 @@ export class UserGroupService {
     try {
       return this.userGroupRepository.find();
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
     }
   }
 
@@ -112,7 +115,7 @@ export class UserGroupService {
 
       return toReturn;
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'error while searching for userGroup',
         error,
@@ -126,7 +129,7 @@ export class UserGroupService {
         where: { id },
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
     }
   }
 
@@ -143,7 +146,7 @@ export class UserGroupService {
         where: { id: updateData.id },
       });
     } catch (error) {
-      console.log(error);
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `An error occurred while updating group with id : ${updateData.id}`,
       );
@@ -165,6 +168,8 @@ export class UserGroupService {
       if (deleteData.affected != 1) throw new NotFoundException(groupId);
       return deleteData;
     } catch (error) {
+      this.logger.error(error.message, error.stack);
+
       throw new InternalServerErrorException(error);
     }
   }

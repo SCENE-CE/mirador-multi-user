@@ -54,16 +54,27 @@ export class EmailServerService implements MailService {
     //   });
   }
 
-  /**
-   * Sends an email with the specified details.
-   *
-   * @param {string} to - The recipient of the email.
-   * @param {string} subject - The subject of the email.
-   * @param {string} text - The plain text content of the email.
-   * @param {string} body - The HTML content of the email.
-   * @return {Promise<void>} A promise that resolves when the email is sent successfully.
-   */
-  private async _processSendEmail(to, subject, text, body): Promise<void> {
+  async sendInternalServerErrorNotification(details: {
+    message: string;
+    url: string;
+    method: string;
+    timestamp: string;
+  }) {
+    console.log('Send mail internal server error')
+    const subject = `Internal Server Error: ${details.url}`;
+    const body = `
+      An internal server error occurred:
+      - URL: ${details.url}
+      - Method: ${details.method}
+      - Message: ${details.message}
+      - Timestamp: ${details.timestamp}
+    `;
+
+
+    await this._processSendEmail( process.env.ADMIN_MAIL,subject,body,body);
+  }
+
+  async _processSendEmail(to, subject, text, body): Promise<void> {
     await this.mailerMain
       .sendMail({
         to: to,
