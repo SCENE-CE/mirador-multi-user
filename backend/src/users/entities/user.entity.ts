@@ -17,7 +17,7 @@ export class User {
   @Column({ length: 300 })
   mail!: string;
 
-  @Index()
+  @Index({ unique: true })
   @Column({ length: 300 })
   name: string;
 
@@ -35,6 +35,9 @@ export class User {
   })
   projects: Project[];
 
-  @OneToMany(() => LinkUserGroup, (LinkUserGroup) => LinkUserGroup.user)
+  @OneToMany(() => LinkUserGroup, (linkUserGroup) => linkUserGroup.user, {
+    cascade: true,
+    onDelete: 'CASCADE',
+  })
   linkUserGroups: LinkUserGroup[];
 }
