@@ -14,6 +14,7 @@ import * as bcrypt from 'bcrypt';
 import { UserGroupService } from '../user-group/user-group.service';
 import { EmailServerService } from '../email/email.service';
 import { CustomLogger } from '../Logger/CustomLogger.service';
+import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +24,7 @@ export class UsersService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private readonly userGroupService: UserGroupService,
     private readonly emailService: EmailServerService,
+    private readonly linkUserGroup: LinkUserGroupService
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
@@ -93,6 +95,8 @@ export class UsersService {
 
   async remove(id: number) {
     try {
+      const personnalGroup = await this.linkUserGroup.findUserPersonalGroup(id);
+      await this.userGroupService.remove(personnalGroup.id);
       const done: DeleteResult = await this.userRepository.delete(id);
       if (done.affected != 1) throw new NotFoundException(id);
     } catch (error) {

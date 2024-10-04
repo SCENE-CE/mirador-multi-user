@@ -21,12 +21,16 @@ export class LinkUserGroup {
 
   @ManyToOne(() => User, (user) => user.linkUserGroups, {
     eager: false,
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
   })
   @JoinColumn({ name: 'user_id', referencedColumnName: 'id' })
   user: User;
 
   @ManyToOne(() => UserGroup, (group) => group.linkUserGroups, {
     eager: false,
+    onDelete: 'CASCADE',
+    orphanedRowAction: 'delete',
   })
   @JoinColumn({ name: 'user_group_id', referencedColumnName: 'id' })
   user_group: UserGroup;

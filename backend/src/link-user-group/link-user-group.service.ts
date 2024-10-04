@@ -7,11 +7,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LinkUserGroup } from './entities/link-user-group.entity';
 import { Brackets, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
-import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 import { User_UserGroupRights } from '../enum/rights';
-import { CustomLogger } from "../Logger/CustomLogger.service";
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -64,14 +63,9 @@ export class LinkUserGroupService {
 
   async GrantAccessToUserGroup(createUserGroupDto: CreateLinkUserGroupDto) {
     try {
-      console.log(createUserGroupDto);
       const linkUserToUserGroup = this.linkUserGroupRepository.create({
         ...createUserGroupDto,
       });
-      console.log(
-        '-------------linkUserToUserGroup-------------',
-        linkUserToUserGroup,
-      );
       await this.linkUserGroupRepository.upsert(linkUserToUserGroup, {
         conflictPaths: ['rights', 'user', 'user_group'],
       });
