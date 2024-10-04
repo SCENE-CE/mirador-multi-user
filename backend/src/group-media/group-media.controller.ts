@@ -9,8 +9,8 @@ import {
   UploadedFile,
   Req,
   Delete,
-  HttpCode,
-} from '@nestjs/common';
+  HttpCode, UseGuards
+} from "@nestjs/common";
 import { GroupMediaService } from './group-media.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -23,11 +23,13 @@ import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { SharpPipeInterceptor } from '../Custom_pipes/sharp.pipe';
 import { MediaLinkInterceptor } from '../Custom_pipes/media-link.pipe';
 import { mediaOrigin } from '../enum/origins';
+import { AuthGuard } from "../auth/auth.guard";
 
 @Controller('group-media')
 export class GroupMediaController {
   constructor(private readonly groupMediaService: GroupMediaService) {}
 
+  @UseGuards(AuthGuard)
   @Post('/media/upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -68,6 +70,7 @@ export class GroupMediaController {
     return await this.groupMediaService.createMedia(mediaToCreate);
   }
 
+  @UseGuards(AuthGuard)
   @Post('/media/link')
   @UseInterceptors(MediaLinkInterceptor)
   @HttpCode(201)
@@ -84,26 +87,31 @@ export class GroupMediaController {
     return await this.groupMediaService.createMedia(mediaToCreate);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/group/:userGroupId')
   async getMediaByUserGroupId(@Param('userGroupId') userGroupId: number) {
     return this.groupMediaService.getAllMediasForUserGroup(userGroupId);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/media/:mediaId')
   async getMediaById(@Param('mediaId') mediaId: number) {
     return this.groupMediaService.getAllMediaGroup(mediaId);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/media/:mediaId')
   async deleteMedia(@Param('mediaId') mediaId: number) {
     return this.groupMediaService.removeMedia(mediaId);
   }
 
+  @UseGuards(AuthGuard)
   @Patch('/media')
   async updateMedia(@Body() updateGroupMediaDto: UpdateMediaDto) {
     return this.groupMediaService.updateMedia(updateGroupMediaDto);
   }
 
+  @UseGuards(AuthGuard)
   @Patch('/relation')
   async updateMediaGroupRelation(
     @Body() updateMediaGroupRelationDto: UpdateMediaGroupRelationDto,
@@ -116,12 +124,14 @@ export class GroupMediaController {
     );
   }
 
+  @UseGuards(AuthGuard)
   @Post('/media/add')
   addMediaToGroup(@Body() addMediaToGroupDto: AddMediaToGroupDto) {
     console.log('ON THE ROAD ADD MEDIA TO GROUP');
     return this.groupMediaService.addMediaToGroup(addMediaToGroupDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/media/:mediaId/:groupId')
   async deleteMediaById(
     @Param('mediaId') mediaId: number,

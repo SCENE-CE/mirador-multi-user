@@ -1,7 +1,7 @@
 import { User } from "../../auth/types/types.ts";
 import { Grid, Typography } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
-import { CreateGroupDto, LinkUserGroup, ProjectRights, UserGroup } from "../types/types.ts";
+import { CreateGroupDto, LinkUserGroup, ProjectRights, UpdateUserGroupFromModal, UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
@@ -117,16 +117,15 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
     fetchGroups()
   },[groups, setGroups])
 
-  const updateGroup= useCallback(async (groupUpdated: UserGroup) => {
-    console.log('groupUpdated',groupUpdated)
+  const updateGroup= useCallback(async (groupUpdated: UpdateUserGroupFromModal) => {
+    const { metadata, ...restOfGroupUpdated } = groupUpdated;
+    console.log(restOfGroupUpdated)
     const dataForUpdate = {
-      ...groupUpdated
+      ...restOfGroupUpdated
     }
 
     const updateGroup =  await UpdateGroup(dataForUpdate);
-    const updateListOfGroup = groups.filter((group: UserGroup)=> group.id !== dataForUpdate.id);
-    const updatedListOfGroup = [updateGroup[0], ...updateListOfGroup]
-    setGroups(updatedListOfGroup);
+    fetchGroups()
   },[groups, setGroups])
 
 

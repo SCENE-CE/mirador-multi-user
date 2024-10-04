@@ -5,24 +5,26 @@ WORKDIR /app
 # Install dependencies
 COPY package*.json ./
 RUN npm ci
-# Build the application if necessary
+
+# Define build arguments
+ARG VITE_CADDY_URL
 ARG VITE_BACKEND_URL
+
+RUN export VITE_BACKEND_URL=$VITE_BACKEND_URL && \
+    export VITE_CADDY_URL=$VITE_CADDY_URL
+
+# Set the environment variables for future steps
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
+ENV VITE_CADDY_URL=$VITE_CADDY_URL
 
 # Copy application code (excluding what's defined in .dockerignore)
 COPY . .
 
-# install serve to render index.html in ENV=PROD
+# Install serve to render index.html in ENV=PROD
 RUN npm install --global serve
 
-
+# Build the application
 RUN npm run build
-
-# Change ownership (if necessary) and adjust permissions
-RUN chown -R 1000:node /app && chmod -R 770 /app && find /app -type f -exec chmod 660 {} \;
-
-# Use non-root user
-USER node
 
 EXPOSE 4000
 

@@ -65,6 +65,7 @@ export class ProjectController {
     return this.projectService.update(params.id, updateProjectDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/search/:UserGroupId/:partialProjectName')
   lookingForProject(
     @Param('partialProjectName') partialProjectName: string,

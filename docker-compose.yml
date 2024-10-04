@@ -15,16 +15,20 @@ services:
       - app-network
 
   frontend:
-    image: tetraslibre/mmu-frontend:latest
+    build:
+      context: ./frontend-TS
+      dockerfile: Dockerfile
+      args:
+        VITE_BACKEND_URL: ${BACKEND_URL}
+        VITE_CADDY_URL: ${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}
     environment:
       VITE_BACKEND_URL: ${BACKEND_URL}
-      VITE_CADDY_URL: "${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}"
+      VITE_CADDY_URL: ${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}
     depends_on:
       - backend
-    restart: ${RESTART}
+    restart: always
     networks:
       - app-network
-
 
   backend:
     build: ./backend

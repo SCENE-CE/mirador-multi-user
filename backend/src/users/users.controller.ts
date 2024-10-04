@@ -9,11 +9,13 @@ import {
   UsePipes,
   ValidationPipe,
   HttpCode,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { DeleteParams, UpdateParams } from './validators/validators';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('users')
 export class UsersController {
@@ -26,6 +28,7 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
+  @UseGuards(AuthGuard)
   @Get(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   findOne(@Param('id') id: number) {
@@ -37,13 +40,14 @@ export class UsersController {
   // findAllGroups(@Param('userId') userId: number) {
   //   return this.usersService.getUserGroupsByUserId(userId);
   // }
-
+  @UseGuards(AuthGuard)
   @Patch(':id')
   @UsePipes(new ValidationPipe({ transform: true }))
   update(@Param() params: UpdateParams, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(params.id, updateUserDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   @HttpCode(204)
   @UsePipes(new ValidationPipe({ transform: true }))
