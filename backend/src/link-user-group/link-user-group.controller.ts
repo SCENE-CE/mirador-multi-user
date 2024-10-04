@@ -5,12 +5,13 @@ import {
   Patch,
   Param,
   Delete,
-  Get, UseGuards
-} from "@nestjs/common";
+  Get,
+  UseGuards,
+} from '@nestjs/common';
 import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
-import { AuthGuard } from "../auth/auth.guard";
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('link-user-group')
 export class LinkUserGroupController {
@@ -31,8 +32,9 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Get('/access/:userId/:groupId')
   getAccessToGroup(
-    @Param('userId') userId: number, @Param('groupId') groupId: number,
-  ){
+    @Param('userId') userId: number,
+    @Param('groupId') groupId: number,
+  ) {
     return this.linkUserGroupService.getAccessForUserToGroup(userId, groupId);
   }
 
@@ -80,5 +82,4 @@ export class LinkUserGroupController {
     console.log('userId', userId);
     return this.linkUserGroupService.RemoveAccessToUserGroup(groupId, userId);
   }
-
 }

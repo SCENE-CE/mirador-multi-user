@@ -28,7 +28,10 @@ export class ManifestController {
 
   @Patch(':id')
   @UseGuards(AuthGuard)
-  update(@Param('id') id: string, @Body() updateManifestDto: UpdateManifestDto) {
+  update(
+    @Param('id') id: string,
+    @Body() updateManifestDto: UpdateManifestDto,
+  ) {
     return this.manifestService.update(+id, updateManifestDto);
   }
 

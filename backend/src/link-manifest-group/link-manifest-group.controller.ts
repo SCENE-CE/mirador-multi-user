@@ -1,6 +1,6 @@
-import { Controller, Get, UseGuards } from "@nestjs/common";
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { LinkManifestGroupService } from './link-manifest-group.service';
-import { AuthGuard } from "../auth/auth.guard";
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {

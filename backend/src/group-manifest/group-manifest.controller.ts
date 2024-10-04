@@ -10,8 +10,9 @@ import {
   Delete,
   Patch,
   InternalServerErrorException,
-  BadRequestException, UseGuards
-} from "@nestjs/common";
+  BadRequestException,
+  UseGuards,
+} from '@nestjs/common';
 import { GroupManifestService } from './group-manifest.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -24,7 +25,7 @@ import { ManifestGroupRights } from '../enum/rights';
 import { manifestOrigin } from '../enum/origins';
 import { manifestCreationDto } from './dto/manifestCreationDto';
 import { MediaInterceptor } from '../Custom_pipes/manifest-creation.pipe';
-import { AuthGuard } from "../auth/auth.guard";
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('group-manifest')
 export class GroupManifestController {

@@ -26,9 +26,7 @@ import { CheckPolicies } from '../casl/decorators/CheckPolicies';
 
 @Controller('project')
 export class ProjectController {
-  constructor(
-    private readonly projectService: ProjectService,
-  ) {}
+  constructor(private readonly projectService: ProjectService) {}
 
   @Post()
   @UseGuards(AuthGuard)

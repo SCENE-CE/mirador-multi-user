@@ -9,8 +9,9 @@ import {
   UploadedFile,
   Req,
   Delete,
-  HttpCode, UseGuards
-} from "@nestjs/common";
+  HttpCode,
+  UseGuards,
+} from '@nestjs/common';
 import { GroupMediaService } from './group-media.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -23,7 +24,7 @@ import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { SharpPipeInterceptor } from '../Custom_pipes/sharp.pipe';
 import { MediaLinkInterceptor } from '../Custom_pipes/media-link.pipe';
 import { mediaOrigin } from '../enum/origins';
-import { AuthGuard } from "../auth/auth.guard";
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('group-media')
 export class GroupMediaController {
