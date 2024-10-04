@@ -83,6 +83,20 @@ export class UserGroupService {
     }
   }
 
+  async findUserGroupByName(userGroupName: string) {
+    try {
+      return await this.userGroupRepository.findOne({
+        where: { name: userGroupName },
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `An error occurred while find userGroup with name: ${userGroupName}`,
+        error,
+      );
+    }
+  }
+
   findAll() {
     try {
       return this.userGroupRepository.find();

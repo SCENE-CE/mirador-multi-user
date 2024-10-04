@@ -128,7 +128,6 @@ export class GroupMediaController {
   @UseGuards(AuthGuard)
   @Post('/media/add')
   addMediaToGroup(@Body() addMediaToGroupDto: AddMediaToGroupDto) {
-    console.log('ON THE ROAD ADD MEDIA TO GROUP');
     return this.groupMediaService.addMediaToGroup(addMediaToGroupDto);
   }
 
