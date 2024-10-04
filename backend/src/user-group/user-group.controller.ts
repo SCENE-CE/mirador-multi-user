@@ -45,8 +45,11 @@ export class UserGroupController {
 
   @UseGuards(AuthGuard)
   @Patch('/update')
-  updateGroup(@Body() updateDate: UpdateUserGroupDto) {
-    return this.userGroupService.updateGroup(updateDate);
+  updateGroup(@Body() updateDate) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { metadata, ...restOfGroupUpdated } = updateDate;
+
+    return this.userGroupService.updateGroup(restOfGroupUpdated);
   }
 
   @UseGuards(AuthGuard)
