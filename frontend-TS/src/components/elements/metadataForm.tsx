@@ -21,7 +21,7 @@ const MetadataForm = ({metadataFormData,setMetadataFormData}:MetadataFormProps) 
 
 
   const handleInputChange = useCallback((term: string, value: string) => {
-    setMetadataFormData((prevMetadata) => {
+    setMetadataFormData((prevMetadata: { [x: string]: string; }) => {
       if (prevMetadata[term] === value) return prevMetadata; // Avoid re-renders if value hasn't changed
       return { ...prevMetadata, [term]: value };
     });
