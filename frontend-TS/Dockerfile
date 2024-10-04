@@ -10,7 +10,10 @@ RUN npm ci
 ARG VITE_CADDY_URL
 ARG VITE_BACKEND_URL
 
-RUN export VITE_BACKEND_URL=$VITE_BACKEND_URL && \
+# Echo the build arguments and set environment variables in the same step
+RUN echo "VITE_BACKEND_URL: $VITE_BACKEND_URL" && \
+    echo "VITE_CADDY_URL: $VITE_CADDY_URL" && \
+    export VITE_BACKEND_URL=$VITE_BACKEND_URL && \
     export VITE_CADDY_URL=$VITE_CADDY_URL
 
 # Set the environment variables for future steps
