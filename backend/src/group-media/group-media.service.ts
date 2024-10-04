@@ -13,7 +13,7 @@ import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { MediaGroupRights } from '../enum/rights';
 import { join } from 'path';
 import * as fs from 'node:fs';
-import { CustomLogger } from "../Logger/CustomLogger.service";
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class GroupMediaService {
@@ -30,7 +30,7 @@ export class GroupMediaService {
       const { idCreator, path, user_group } = mediaDto;
       const media = await this.mediaService.create(mediaDto);
       await this.addMediaToGroup({
-        userGroup: user_group,
+        userGroupName: user_group.name,
         mediasId: [media.id],
         rights: MediaGroupRights.ADMIN,
       });
@@ -49,7 +49,7 @@ export class GroupMediaService {
   }
 
   async addMediaToGroup(dto: AddMediaToGroupDto) {
-    const { userGroup, mediasId } = dto;
+    const { userGroupName, mediasId } = dto;
     try {
       const mediasForGroup = [];
       for (const mediaId of mediasId) {
@@ -59,9 +59,12 @@ export class GroupMediaService {
             `Project with id ${mediaId} not found`,
           );
         }
+
+        const group =
+          await this.userGroupService.findUserGroupByName(userGroupName);
         const linkMediaGroup = await this.linkMediaGroupService.create({
           rights: dto.rights ? dto.rights : MediaGroupRights.READER,
-          user_group: userGroup,
+          user_group: group,
           media: media,
         });
         const groupsForMedia = await this.getAllMediaGroup(mediaId);
