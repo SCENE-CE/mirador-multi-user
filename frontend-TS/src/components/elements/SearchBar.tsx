@@ -6,7 +6,7 @@ interface IUsersSearchBarProps<T>{
   handleAdd?:()=>void
   setSelectedData?:Dispatch<SetStateAction<T | null>>
   setSearchedData?:any
-  fetchFunction:(partialString:string)=>Promise<any[]> | any[]
+  fetchFunction:(query: string) => any[]
   getOptionLabel:(option:any)=>string
   setSearchInput?:(value:string)=>void
   actionButtonLabel?:string
@@ -21,8 +21,9 @@ export const SearchBar = <T,>({handleFiltered,setFilter,label,getOptionLabel,set
   const HandlefetchData = async(partialDataName:string)=>{
     try{
       const data = await fetchFunction(partialDataName);
-      console.log('data',data)
+      if(data){
       setSuggestions(data);
+      }
     } catch (error) {
       console.error('Error fetching address data:', error);
     }

@@ -92,13 +92,10 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
   const getOptionLabelForEditModal = (option: LinkUserGroup , searchInput: string): string => {
     const user = option.user;
-    if (user.mail.toLowerCase().includes(searchInput.toLowerCase())) {
-      return user.mail;
-    }
     if (user.name.toLowerCase().includes(searchInput.toLowerCase())) {
       return user.name;
     }
-    return user.mail;
+    return user.name
   };
 
 

@@ -219,6 +219,8 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   };
 
   const handleLookingForUserGroups = async (partialString: string) => {
+    if(partialString.length > 0){
+
     const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
     const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
       .filter(
@@ -227,6 +229,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
       );
     setUserGroupSearch(linkUserGroups);
     return uniqueUserGroups
+    }else{
+      return setUserGroupSearch([])
+    }
   }
 
   const handleFiltered = (partialString:string)=>{
