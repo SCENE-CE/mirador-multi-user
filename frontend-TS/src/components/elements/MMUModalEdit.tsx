@@ -18,7 +18,7 @@ interface ModalItemProps<T, G,O> {
   updateItem?: (newItem: T) => void,
   deleteItem?: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
-  searchModalEditItem?: ((partialString: string) => Promise<void | G[]>) | undefined,
+  searchModalEditItem?:(partialString:string)=>Promise<any[]> | any[]
   getOptionLabel?: (option: G, searchInput: string) => string,
   handleSelectorChange: (listItem: ListItem) => (event: SelectChangeEvent) => Promise<void>,
   fetchData: () => Promise<void>,
