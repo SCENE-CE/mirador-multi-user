@@ -10,8 +10,8 @@ import {
   Delete,
   Patch,
   InternalServerErrorException,
-  BadRequestException,
-} from '@nestjs/common';
+  BadRequestException, UseGuards
+} from "@nestjs/common";
 import { GroupManifestService } from './group-manifest.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
@@ -24,11 +24,13 @@ import { ManifestGroupRights } from '../enum/rights';
 import { manifestOrigin } from '../enum/origins';
 import { manifestCreationDto } from './dto/manifestCreationDto';
 import { MediaInterceptor } from '../Custom_pipes/manifest-creation.pipe';
+import { AuthGuard } from "../auth/auth.guard";
 
 @Controller('group-manifest')
 export class GroupManifestController {
   constructor(private readonly groupManifestService: GroupManifestService) {}
 
+  @UseGuards(AuthGuard)
   @Post('/manifest/upload')
   @UseInterceptors(
     FileInterceptor('file', {
@@ -71,6 +73,7 @@ export class GroupManifestController {
     return this.groupManifestService.create(manifestToCreate);
   }
 
+  @UseGuards(AuthGuard)
   @Post('/manifest/link')
   linkManifest(@Body() createLinkDto) {
     const manifestToCreate = {
@@ -81,6 +84,7 @@ export class GroupManifestController {
     return this.groupManifestService.create(manifestToCreate);
   }
 
+  @UseGuards(AuthGuard)
   @Post('/manifest/creation')
   @UseInterceptors(MediaInterceptor)
   async createManifest(@Body() createManifestDto: manifestCreationDto) {
@@ -96,7 +100,6 @@ export class GroupManifestController {
     fs.mkdirSync(uploadPath, { recursive: true });
 
     try {
-      console.log('-------------Create Manifest-------------')
       const manifestData = {
         ...createManifestDto.processedManifest,
         id: `${uploadPath}/${label}.json`,
@@ -125,27 +128,31 @@ export class GroupManifestController {
       );
     }
   }
-
+  @UseGuards(AuthGuard)
   @Get('/group/:userGroupId')
   async getManifestByUserGroupId(@Param('userGroupId') userGroupId: number) {
     return this.groupManifestService.getAllManifestsForUserGroup(userGroupId);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/manifest/:manifestId')
   async getManifestById(@Param('manifestId') manifestId: number) {
     return this.groupManifestService.getAllManifestsGroup(manifestId);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId')
   async deleteManifest(@Param('manifestId') manifestId: number) {
     return this.groupManifestService.removeManifest(manifestId);
   }
 
+  @UseGuards(AuthGuard)
   @Patch('manifest')
   async updateManifest(@Body() updateManifestDto: UpdateManifestDto) {
     return this.groupManifestService.updateManifest(updateManifestDto);
   }
 
+  @UseGuards(AuthGuard)
   @Patch('/relation')
   async updateManifestGroupRelation(
     @Body() updateManifestGroupRelation: UpdateManifestGroupRelation,
@@ -158,11 +165,13 @@ export class GroupManifestController {
     });
   }
 
+  @UseGuards(AuthGuard)
   @Post('/manifest/add')
   addManifestToGroup(@Body() addManifestToGroup: AddManifestToGroupDto) {
     return this.groupManifestService.addManifestToGroup(addManifestToGroup);
   }
 
+  @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId/:groupId')
   async deleteManifestById(
     @Param('manifestId') manifestId: number,

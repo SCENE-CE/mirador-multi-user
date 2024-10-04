@@ -29,6 +29,17 @@ export type UserGroup = {
   thumbnailUrl?:string
 }
 
+export type UpdateUserGroupFromModal = {
+  id:number;
+  name:string;
+  ownerId:number;
+  description:string;
+  type:UserGroupTypes;
+  rights?:ProjectRights;
+  thumbnailUrl?:string
+  metadata:Record<string, string>;
+}
+
 export type CreateGroupDto ={
   name: string;
   ownerId: number;

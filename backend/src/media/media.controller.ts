@@ -21,6 +21,7 @@ export class MediaController {
     return this.mediaService.findOne(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Get()
   findAll() {
     return this.mediaService.findAll();
@@ -38,6 +39,7 @@ export class MediaController {
     return this.mediaService.remove(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/search/:UserGroupId/:partialString')
   lookingForMedia(
     @Param('UserGroupId') userGroupId: number,

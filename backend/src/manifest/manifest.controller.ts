@@ -32,11 +32,13 @@ export class ManifestController {
     return this.manifestService.update(+id, updateManifestDto);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.manifestService.remove(+id);
   }
 
+  @UseGuards(AuthGuard)
   @Get('/search/:UserGroupId/:partialString')
   lookingForManifest(
     @Param('UserGroupId') userGroupId: number,
