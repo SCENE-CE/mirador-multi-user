@@ -234,6 +234,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         name: 'new project',
         owner: user,
         userWorkspace: miradorViewer!,
+        metadata:{},
       };
       const r = await createProject(project);
       if (r) {
