@@ -230,7 +230,8 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setUserGroupSearch(linkUserGroups);
     return uniqueUserGroups
     }else{
-      return setUserGroupSearch([])
+      setUserGroupSearch([])
+      return []
     }
   }
 

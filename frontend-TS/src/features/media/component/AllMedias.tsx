@@ -148,21 +148,22 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     }));
   }, [groupList]);
 
-  const handleLookingForUserGroups = async (partialString: string) => {
-    if(partialString.length > 0){
-
-    const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
-    const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
-      .filter(
-        (group, index, self) =>
-          index === self.findIndex((g) => g.id === group.id),
-      );
-    setUserGroupSearch(linkUserGroups);
-    return uniqueUserGroups
-    }else{
-      return setUserGroupSearch([]);
+  const handleLookingForUserGroups = async (partialString: string): Promise<UserGroup[]> => {
+    if (partialString.length > 0) {
+      const linkUserGroups: LinkUserGroup[] = await lookingForUserGroups(partialString);
+      const uniqueUserGroups: UserGroup[] = linkUserGroups
+        .map((linkUserGroup) => linkUserGroup.user_group)
+        .filter(
+          (group, index, self) =>
+            index === self.findIndex((g) => g.id === group.id),
+        );
+      setUserGroupSearch(linkUserGroups);
+      return uniqueUserGroups;
+    } else {
+      setUserGroupSearch([]);
+      return [];
     }
-  }
+  };
 
   const handleRemoveAccessToMedia= async (userGroupId:number, mediaId:number) => {
     await removeAccessToMedia(mediaId, userGroupId);
