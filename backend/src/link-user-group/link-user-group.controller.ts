@@ -41,7 +41,9 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Get('/looking-for-user/:partialString')
   lookingForUser(@Param('partialString') partialString: string) {
-    return this.linkUserGroupService.searchForUserGroup(partialString);
+    const toReturn =  this.linkUserGroupService.searchForUserGroup(partialString);
+    console.log(toReturn);
+    return toReturn
   }
 
   @UseGuards(AuthGuard)

@@ -185,22 +185,30 @@ export class LinkUserGroupService {
 
   async searchForUserGroup(userPartialString: string) {
     try {
-      return await this.linkUserGroupRepository
+      const toReturn = await this.linkUserGroupRepository
         .createQueryBuilder('linkUserGroup')
         .innerJoinAndSelect('linkUserGroup.user', 'user')
         .innerJoinAndSelect('linkUserGroup.user_group', 'userGroup')
+        .select([
+          'linkUserGroup.id',
+          'linkUserGroup.rights',
+          'userGroup.id',
+          'user.id',
+          'user.name',
+        ])
         .where('userGroup.type = :type', { type: UserGroupTypes.PERSONAL })
         .andWhere(
           new Brackets((qb) => {
             qb.where('user.name LIKE :userPartialString', {
-              userPartialString: `%${userPartialString}%`,
-            }).orWhere('user.mail LIKE :userPartialString', {
               userPartialString: `%${userPartialString}%`,
             });
           }),
         )
         .limit(3)
         .getMany();
+
+      console.log(toReturn);
+      return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -212,10 +220,17 @@ export class LinkUserGroupService {
 
   async searchForGroups(partialGroupName: string) {
     try {
-      const linkUserGroups = await this.linkUserGroupRepository
+      return await this.linkUserGroupRepository
         .createQueryBuilder('linkUserGroup')
         .leftJoinAndSelect('linkUserGroup.user_group', 'userGroup')
         .leftJoinAndSelect('linkUserGroup.user', 'user')
+        .select([
+          'linkUserGroup.id',
+          'linkUserGroup.rights',
+          'userGroup.id',
+          'userGroup.name',
+          'user.id',
+        ])
         .where('userGroup.name LIKE :partialString', {
           partialString: `%${partialGroupName}%`,
         })
@@ -227,9 +242,6 @@ export class LinkUserGroupService {
         })
         .limit(3)
         .getMany();
-      console.log('-----------------linkUserGroups---------------');
-      console.log(linkUserGroups);
-      return linkUserGroups;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -238,7 +250,6 @@ export class LinkUserGroupService {
       );
     }
   }
-
   async findUserPersonalGroup(userId: number): Promise<UserGroup> {
     try {
       const personnalLinkUserGroup = await this.linkUserGroupRepository

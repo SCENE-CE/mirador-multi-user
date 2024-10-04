@@ -83,10 +83,10 @@ export class UserGroupService {
     }
   }
 
-  async findUserGroupByName(userGroupName: string) {
+  async findUserGroupByNameAndId(userGroupName: string, id: number) {
     try {
       return await this.userGroupRepository.findOne({
-        where: { name: userGroupName },
+        where: { name: userGroupName, id: id },
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);

@@ -16,7 +16,7 @@ interface IProjectUserGroup<G> {
   children?: (item: ListItem) => ReactNode;
   removeItem: (itemId: number) => void;
   setSearchInput: Dispatch<SetStateAction<string>>;
-  handleSearchModalEditItem: (query: string) => Promise<G[]> | Promise<string[]>;
+  handleSearchModalEditItem: (query: string) => Promise<void | G[]> | Promise<string[]>;
   handleGetOptionLabel: (option: G) => string;
   setItemToAdd?: Dispatch<SetStateAction<G | null>>,
   handleAddAccessListItem: () => void;
