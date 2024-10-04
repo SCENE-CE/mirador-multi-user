@@ -6,7 +6,7 @@ interface IUsersSearchBarProps<T>{
   handleAdd?:()=>void
   setSelectedData?:Dispatch<SetStateAction<T | null>>
   setSearchedData?:any
-  fetchFunction:(query: string) => any[]
+  fetchFunction:(partialString:string)=>Promise<any[]> | any[]
   getOptionLabel:(option:any)=>string
   setSearchInput?:(value:string)=>void
   actionButtonLabel?:string

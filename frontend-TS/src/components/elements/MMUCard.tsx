@@ -24,7 +24,7 @@ interface IMMUCardProps<T,G,O,X> {
   getOptionLabel?: (option: any, searchInput: string) => string,
   AddAccessListItemFunction?: (itemId: number ) => Promise<void>,
   item : T,
-  searchModalEditItem?: (partialString: string) => Promise<void | any[]>,
+  searchModalEditItem?:(partialString:string)=>Promise<any[]> | any[]
   setItemToAdd?: Dispatch<SetStateAction<G | null>>,
   updateItem?: (item: T) => void,
   getAccessToItem?:(itemId:number)=> Promise<any>
