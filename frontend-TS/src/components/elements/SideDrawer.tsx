@@ -203,6 +203,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         return { ...manifest, json: manifestJson };
       })
     );
+    console.log('updatedManifests',updatedManifests)
 
     setManifests(updatedManifests);
   };

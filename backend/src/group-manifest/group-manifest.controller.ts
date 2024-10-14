@@ -144,6 +144,7 @@ export class GroupManifestController {
   @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId')
   async deleteManifest(@Param('manifestId') manifestId: number) {
+    console.log(manifestId)
     return this.groupManifestService.removeManifest(manifestId);
   }
 
@@ -169,6 +170,8 @@ export class GroupManifestController {
   @UseGuards(AuthGuard)
   @Post('/manifest/add')
   addManifestToGroup(@Body() addManifestToGroup: AddManifestToGroupDto) {
+    console.log('addManifestToGroup')
+    console.log(addManifestToGroup)
     return this.groupManifestService.addManifestToGroup(addManifestToGroup);
   }
 

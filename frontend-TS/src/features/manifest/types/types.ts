@@ -13,6 +13,18 @@ export type Manifest = {
   updated_at:Date,
   thumbnailUrl?:string,
   metadata: Record<string, string>;
+  rights?:ManifestGroupRights
+}
+
+export type grantAccessToManifestDto = {
+  userGroupId: number;
+  manifestId: number;
+}
+
+export enum ManifestGroupRights {
+  ADMIN = 'admin',
+  READER = 'reader',
+  EDITOR = 'editor',
 }
 
 export enum manifestOrigin {

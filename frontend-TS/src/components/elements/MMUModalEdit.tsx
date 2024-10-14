@@ -10,6 +10,7 @@ import { ListItem, SelectorItem } from "../types.ts";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { MediaGroupRights } from "../../features/media/types/types.ts";
 import MetadataForm from "./metadataForm.tsx";
+import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
 
 interface ModalItemProps<T, G,O> {
   itemOwner: O,
@@ -27,7 +28,7 @@ interface ModalItemProps<T, G,O> {
   handleAddAccessListItem: () => void,
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,
-  rights: ProjectRights | MediaGroupRights,
+  rights: ProjectRights | MediaGroupRights | ManifestGroupRights,
   searchBarLabel:string,
   description:string,
   HandleOpenModalEdit:()=>void,

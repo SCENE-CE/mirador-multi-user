@@ -1,8 +1,8 @@
 import { Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
-import { Manifest, ManifestCreationMedia, manifestOrigin } from "../types/types.ts";
+import { Manifest, ManifestCreationMedia, ManifestGroupRights, manifestOrigin } from "../types/types.ts";
 import { uploadManifest } from "../api/uploadManifest.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import placeholder from "../../../assets/Placeholder.svg";
@@ -25,6 +25,12 @@ import { createManifest } from "../api/createManifest.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { updateManifest } from "../api/updateManifest.ts";
 import { deleteManifest } from "../api/deleteManifest.ts";
+import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
+import { ProjectGroup } from "../../projects/types/types.ts";
+import { grantAccessToManifest } from "../api/grantAccessToManifest.ts";
+import { getAllManifestGroups } from "../api/getAllManifestGroups.ts";
+import { ListItem } from "../../../components/types.ts";
+import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -62,6 +68,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [manifestFiltered, setManifestFiltered] = useState<Manifest[] | undefined>([])
   const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
+  const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
+  const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
 
   const itemsPerPage = 5;
 
@@ -213,6 +222,23 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     }
   };
 
+  const handleLookingForUserGroups = async (partialString: string): Promise<UserGroup[]> => {
+    if (partialString.length > 0) {
+      const linkUserGroups: LinkUserGroup[] = await lookingForUserGroups(partialString);
+      const uniqueUserGroups: UserGroup[] = linkUserGroups
+        .map((linkUserGroup) => linkUserGroup.user_group)
+        .filter(
+          (group, index, self) =>
+            index === self.findIndex((g) => g.id === group.id),
+        );
+      setUserGroupSearch(linkUserGroups);
+      return uniqueUserGroups;
+    } else {
+      setUserGroupSearch([]);
+      return [];
+    }
+  };
+
   const handleFiltered = (partialString:string)=>{
     if(partialString.length < 1){
       return setManifestFiltered([])
@@ -235,7 +261,34 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       console.error("Error updating Manifest", error);
     }
   }
+  const handleDeleteManifest=async (manifestId: number) => {
+    await deleteManifest(manifestId)
+    fetchManifestForUser()
+  }
 
+  const handleGrantAccess = async (manifestId:number) =>{
+    const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
+    await grantAccessToManifest({ manifestId: manifestId, userGroupId: linkUserGroupToAdd!.user_group.id })
+  }
+
+  const getOptionLabel = (option: UserGroup): string => {
+    return option.name
+  };
+
+  const listOfGroup: ListItem[] = useMemo(() => {
+    return groupList.map((projectGroup) => ({
+      id: projectGroup.user_group.id,
+      name: projectGroup.user_group.name,
+      rights: projectGroup.rights
+    }));
+  }, [groupList]);
+
+  const handleChangeRights = async (group: ListItem, eventValue: string, manifestId: number) => {
+    const updated = await updateAccessToManifest(manifestId, group.id, eventValue as ManifestGroupRights)
+    console.log('updated',updated)
+  };
+
+  console.log(manifests)
   return (
     <>
       <SidePanelMedia display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
@@ -285,21 +338,29 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
               {currentPageData.map((manifest, index) => (
                 <Grid item key={manifest.id}>
                   <MMUCard
-                    metadata={manifest.metadata}
+                    AddAccessListItemFunction={handleGrantAccess}
                     DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                     EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                    id={manifest.id}
-                    searchBarLabel={"Search"}
-                    updateItem={handleUpdateManifest}
-                    deleteItem={deleteManifest}
-                    rights={ProjectRights.ADMIN}
-                    description={manifest.description}
                     HandleOpenModal={()=>HandleOpenModal(manifest.id)}
-                    openModal={openModalManifestId === manifest.id}
+                    deleteItem={handleDeleteManifest}
+                    description={manifest.description}
+                    getAccessToItem={getAllManifestGroups}
+                    getOptionLabel={getOptionLabel}
+                    id={manifest.id}
+                    item={manifest}
                     itemLabel={manifest.name}
                     itemOwner={user}
-                    item={manifest}
+                    listOfItem={listOfGroup}
+                    metadata={manifest.metadata}
+                    openModal={openModalManifestId === manifest.id}
+                    rights={manifest.rights!}
+                    searchBarLabel={"Search"}
+                    searchModalEditItem={handleLookingForUserGroups}
+                    setItemToAdd={setUserToAdd}
+                    setItemList={setGroupList}
                     thumbnailUrl={thumbnailUrls[index]}
+                    updateItem={handleUpdateManifest}
+                    handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
               ))}
@@ -323,7 +384,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     thumbnailUrl={thumbnailUrls[index]}
                     EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     updateItem={handleUpdateManifest}
-                    deleteItem={deleteManifest}
+                    deleteItem={handleDeleteManifest}
                   />
                 </Grid>
               ))}
@@ -346,7 +407,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     item={searchedManifest}
                     thumbnailUrl={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}
                     updateItem={handleUpdateManifest}
-                    deleteItem={deleteManifest}
+                    deleteItem={handleDeleteManifest}
                   />
                 </Grid>
               </Grid>

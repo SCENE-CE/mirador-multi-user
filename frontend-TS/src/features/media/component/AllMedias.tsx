@@ -72,9 +72,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.files);
     if (event.target.files) {
-      console.log(userPersonalGroup)
       await createMedia({
         idCreator: user.id,
         user_group: userPersonalGroup!,
@@ -239,30 +237,30 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                 currentPageData.map((media)=>(
                   <Grid item key={media.id}>
                     <MMUCard
-                      metadata={media.metadata}
-                      searchBarLabel={"Search"}
-                      id={media.id}
-                      rights={media.rights}
-                      description={media.description}
-                      HandleOpenModal={()=>HandleOpenModal(media.id)}
-                      openModal={openModalMediaId === media.id}
-                      itemLabel={media.name}
+                      AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={media.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`):()=>HandleCopyToClipBoard(media.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
                       EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                      HandleOpenModal={()=>HandleOpenModal(media.id)}
                       ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
-                      itemOwner={user}
                       deleteItem={()=>HandleDeleteMedia(media.id)}
-                      item={media}
-                      updateItem={HandleUpdateMedia}
-                      thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
-                      AddAccessListItemFunction={handleGrantAccess}
+                      description={media.description}
+                      getAccessToItem={getAllMediaGroups}
                       getOptionLabel={getOptionLabel}
+                      id={media.id}
+                      item={media}
+                      itemLabel={media.name}
+                      itemOwner={user}
                       listOfItem={listOfGroup}
+                      metadata={media.metadata}
+                      openModal={openModalMediaId === media.id}
                       removeAccessListItemFunction={handleRemoveAccessToMedia}
+                      rights={media.rights}
+                      searchBarLabel={"Search"}
                       searchModalEditItem={handleLookingForUserGroups}
                       setItemList={setGroupList}
                       setItemToAdd={setUserToAdd}
-                      getAccessToItem={getAllMediaGroups}
+                      thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
+                      updateItem={HandleUpdateMedia}
                       handleSelectorChange={handleChangeRights}
                     />
                   </Grid>
