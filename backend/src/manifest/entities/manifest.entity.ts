@@ -38,6 +38,9 @@ export class Manifest {
   @Column()
   description: string;
 
+  @Column({ type: 'json', nullable: true })
+  metadata: any;
+
   @IsNumberString()
   @Column()
   idCreator: number;

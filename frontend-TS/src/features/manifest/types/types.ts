@@ -12,6 +12,7 @@ export type Manifest = {
   path:string,
   updated_at:Date,
   thumbnailUrl?:string,
+  metadata: Record<string, string>;
 }
 
 export enum manifestOrigin {

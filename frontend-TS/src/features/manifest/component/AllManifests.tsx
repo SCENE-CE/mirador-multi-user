@@ -23,6 +23,8 @@ import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
 import { linkManifest } from "../api/linkManifest.ts";
 import { createManifest } from "../api/createManifest.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
+import { updateManifest } from "../api/updateManifest.ts";
+import { deleteManifest } from "../api/deleteManifest.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -225,137 +227,157 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     }
   }
 
+  const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
+    try{
+      await updateManifest(manifestToUpdate)
+      fetchManifestForUser();
+    }catch(error){
+      console.error("Error updating Manifest", error);
+    }
+  }
+
   return (
-    <Grid item container flexDirection="column" spacing={1}>
-      <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
-        <Grid item container spacing={2}>
-          {!createManifestIsOpen &&(
-            <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
-              <SpeedDialTooltipOpen actions={actions}/>
+    <>
+      <SidePanelMedia display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
+        <Grid item container flexDirection="column" spacing={1}>
+          <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
+            <Grid item container spacing={2}>
+              {!createManifestIsOpen &&(
+                <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
+                  <SpeedDialTooltipOpen actions={actions}/>
+                </Grid>
+              )}
+              <Grid item>
+                <VisuallyHiddenInput
+                  id="hiddenFileInput"
+                  type="file"
+                  onChange={handleCreateManifest}
+                />
+              </Grid>
+              {
+                !createManifestIsOpen && (
+                  <Grid item container direction="row" sx={{justifyContent: "flex-end", alignItems: "center", }}>
+                    <Grid item>
+                      <SearchBar
+                        fetchFunction={HandleLookingForManifests}
+                        getOptionLabel={getOptionLabelForManifestSearchBar}
+                        label="Filter manifests"
+                        setSearchedData={handleSetSearchManifest}
+                        setFilter={setManifestFiltered}
+                        handleFiltered={handleFiltered}
+                      />
+                    </Grid>
+                  </Grid>
+                )
+              }
+            </Grid>
+          </Grid>
+          {!manifests.length && (
+            <Grid
+              container
+              justifyContent={"center"}
+            >
+              <Typography variant="h6" component="h2">No manifests yet, start to work when clicking on the + button.</Typography>
             </Grid>
           )}
-          <Grid item>
-            <VisuallyHiddenInput
-              id="hiddenFileInput"
-              type="file"
-              onChange={handleCreateManifest}
-            />
-          </Grid>
+          {!searchedManifest && !createManifestIsOpen && manifestFiltered && manifestFiltered.length < 1 &&(
+            <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+              {currentPageData.map((manifest, index) => (
+                <Grid item key={manifest.id}>
+                  <MMUCard
+                    metadata={manifest.metadata}
+                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    id={manifest.id}
+                    searchBarLabel={"Search"}
+                    updateItem={handleUpdateManifest}
+                    deleteItem={deleteManifest}
+                    rights={ProjectRights.ADMIN}
+                    description={manifest.description}
+                    HandleOpenModal={()=>HandleOpenModal(manifest.id)}
+                    openModal={openModalManifestId === manifest.id}
+                    itemLabel={manifest.name}
+                    itemOwner={user}
+                    item={manifest}
+                    thumbnailUrl={thumbnailUrls[index]}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          )}
+          {!searchedManifest && !createManifestIsOpen && manifestFiltered && manifestFiltered.length > 0 &&(
+            <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+              {manifestFiltered.map((manifest, index) => (
+                <Grid item key={manifest.id}>
+                  <MMUCard
+                    metadata={manifest.metadata}
+                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`): ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    id={manifest.id}
+                    rights={ProjectRights.ADMIN}
+                    description={manifest.description}
+                    HandleOpenModal={()=>HandleOpenModal(manifest.id)}
+                    openModal={openModalManifestId === manifest.id}
+                    itemLabel={manifest.name}
+                    itemOwner={user}
+                    item={manifest}
+                    thumbnailUrl={thumbnailUrls[index]}
+                    EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    updateItem={handleUpdateManifest}
+                    deleteItem={deleteManifest}
+                  />
+                </Grid>
+              ))}
+            </Grid>
+          )}
           {
-            !createManifestIsOpen && (
-              <Grid item container direction="row" sx={{justifyContent: "flex-end", alignItems: "center", }}>
-                <Grid item>
-                  <SearchBar
-                    fetchFunction={HandleLookingForManifests}
-                    getOptionLabel={getOptionLabelForManifestSearchBar}
-                    label="Filter manifests"
-                    setSearchedData={handleSetSearchManifest}
-                    setFilter={setManifestFiltered}
-                    handleFiltered={handleFiltered}
+            searchedManifest && !createManifestIsOpen &&(
+              <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+                <Grid item key={searchedManifest.id}>
+                  <MMUCard
+                    metadata={searchedManifest.metadata}
+                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={ searchedManifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) : ()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    id={searchedManifest.id}
+                    rights={ProjectRights.ADMIN}
+                    description={searchedManifest.description}
+                    HandleOpenModal={()=>HandleOpenModal(searchedManifest.id)}
+                    openModal={openModalManifestId === searchedManifest.id}
+                    itemLabel={searchedManifest.name}
+                    itemOwner={user}
+                    item={searchedManifest}
+                    thumbnailUrl={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}
+                    updateItem={handleUpdateManifest}
+                    deleteItem={deleteManifest}
                   />
                 </Grid>
               </Grid>
+
             )
           }
-        </Grid>
-      </Grid>
-      {!manifests.length && (
-        <Grid
-          container
-          justifyContent={"center"}
-        >
-          <Typography variant="h6" component="h2">No manifests yet, start to work when clicking on the + button.</Typography>
-        </Grid>
-      )}
-      {!searchedManifest && !createManifestIsOpen && manifestFiltered && manifestFiltered.length < 1 &&(
-        <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
-          {currentPageData.map((manifest, index) => (
-            <Grid item key={manifest.id}>
-              <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                id={manifest.id}
-                rights={ProjectRights.ADMIN}
-                description={manifest.description}
-                HandleOpenModal={()=>HandleOpenModal(manifest.id)}
-                openModal={openModalManifestId === manifest.id}
-                itemLabel={manifest.name}
-                itemOwner={user}
-                item={manifest}
-                thumbnailUrl={thumbnailUrls[index]}
-                manifest={true}
-                EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      )}
-      {!searchedManifest && !createManifestIsOpen && manifestFiltered && manifestFiltered.length > 0 &&(
-        <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
-          {manifestFiltered.map((manifest, index) => (
-            <Grid item key={manifest.id}>
-              <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`): ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                id={manifest.id}
-                rights={ProjectRights.ADMIN}
-                description={manifest.description}
-                HandleOpenModal={()=>HandleOpenModal(manifest.id)}
-                openModal={openModalManifestId === manifest.id}
-                itemLabel={manifest.name}
-                itemOwner={user}
-                item={manifest}
-                thumbnailUrl={thumbnailUrls[index]}
-                manifest={true}
-                EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
-              />
-            </Grid>
-          ))}
-        </Grid>
-      )}
-      {
-        searchedManifest && !createManifestIsOpen &&(
-          <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
-            <Grid item key={searchedManifest.id}>
-              <MMUCard
-                DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={ searchedManifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) : ()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                id={searchedManifest.id}
-                rights={ProjectRights.ADMIN}
-                description={searchedManifest.description}
-                HandleOpenModal={()=>HandleOpenModal(searchedManifest.id)}
-                openModal={openModalManifestId === searchedManifest.id}
-                itemLabel={searchedManifest.name}
-                itemOwner={user}
-                item={searchedManifest}
-                thumbnailUrl={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}
-                manifest={true}
-              />
-            </Grid>
+          {
+            !manifestFiltered && (
+              <Grid item container justifyContent="center" alignItems="center">
+                <Typography variant="h6" component="h2">There is no manifest matching your research.</Typography>
+              </Grid>
+            )
+          }
+          {
+            createManifestIsOpen &&(
+              <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
+                <SidePanelMedia display={true} medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user}>
+                  <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm}/>
+                </SidePanelMedia>
+              </Grid>
+            )
+          }
+          <Grid>
+            <DrawerLinkManifest
+              linkingManifest={handleLinkManifest}
+              modalCreateManifestIsOpen={modalLinkManifestIsOpen}
+              toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
           </Grid>
-
-        )
-      }
-      {
-        !manifestFiltered && (
-          <Grid item container justifyContent="center" alignItems="center">
-            <Typography variant="h6" component="h2">There is no manifest matching your research.</Typography>
-          </Grid>
-        )
-      }
-      {
-        createManifestIsOpen &&(
-          <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
-            <SidePanelMedia display={true} medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user}>
-              <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm}/>
-            </SidePanelMedia>
-          </Grid>
-        )
-      }
-      <Grid>
-        <DrawerLinkManifest
-          linkingManifest={handleLinkManifest}
-          modalCreateManifestIsOpen={modalLinkManifestIsOpen}
-          toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
-      </Grid>
-      <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
-    </Grid>
+          <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
+        </Grid>
+      </SidePanelMedia>
+    </>
   )
 }
