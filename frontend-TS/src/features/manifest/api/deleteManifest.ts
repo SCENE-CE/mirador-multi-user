@@ -2,7 +2,7 @@ import storage from "../../../utils/storage.ts";
 
 export const deleteManifest = async (manifestId: number) => {
   const token = storage.getToken();
-
+  console.log(manifestId)
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/${manifestId}`, {
       method: 'DELETE',
@@ -19,7 +19,7 @@ export const deleteManifest = async (manifestId: number) => {
     console.log(data);
     return data;
   } catch (error) {
-    console.error('Error uploading manifest:', error);
+    console.error('Error deleting manifest:', error);
     throw error;
   }
 };

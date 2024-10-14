@@ -15,6 +15,7 @@ import * as fs from 'node:fs';
 import { UpdateManifestDto } from '../manifest/dto/update-manifest.dto';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { CustomLogger } from '../Logger/CustomLogger.service';
+import { UserGroupService } from '../user-group/user-group.service';
 
 @Injectable()
 export class GroupManifestService {
@@ -23,6 +24,7 @@ export class GroupManifestService {
   constructor(
     private readonly manifestService: ManifestService,
     private readonly linkGroupManifestService: LinkManifestGroupService,
+    private readonly groupService: UserGroupService,
   ) {}
   async create(createGroupManifestDto: CreateGroupManifestDto) {
     try {
@@ -32,8 +34,9 @@ export class GroupManifestService {
         createGroupManifestDto,
       );
       await this.addManifestToGroup({
-        userGroup: user_group,
-        manifestsId: [manifest.id],
+        userGroupId: user_group.id,
+        manifestId: manifest.id,
+        rights: ManifestGroupRights.ADMIN,
       });
 
       const toReturn = await this.getManifestForUser(
@@ -50,29 +53,30 @@ export class GroupManifestService {
   }
 
   async addManifestToGroup(addManifestToGroupDto: AddManifestToGroupDto) {
-    const { userGroup, manifestsId } = addManifestToGroupDto;
+    const { userGroupId, manifestId } = addManifestToGroupDto;
     try {
       const manifestsForGroup = [];
-      for (const manifestId of manifestsId) {
-        const manifest = await this.manifestService.findOne(manifestId);
-        if (!manifest) {
-          throw new InternalServerErrorException(
-            `Project with id ${manifestId} not found`,
-          );
-        }
-        const linkManifestGroup = await this.linkGroupManifestService.create({
-          rights: ManifestGroupRights.ADMIN,
-          user_group: userGroup,
-          manifest: manifest,
-        });
-        const groupForManifest = await this.getAllManifestsGroup(manifestId);
-        manifestsForGroup.push(groupForManifest);
+      const manifest = await this.manifestService.findOne(manifestId);
+      const group = await this.groupService.findOne(userGroupId);
+      if (!manifest) {
+        throw new InternalServerErrorException(
+          `Project with id ${manifestId} not found`,
+        );
       }
+      const linkManifestGroup = await this.linkGroupManifestService.create({
+        rights: addManifestToGroupDto.rights
+          ? addManifestToGroupDto.rights
+          : ManifestGroupRights.READER,
+        user_group: group,
+        manifest: manifest,
+      });
+      const groupForManifest = await this.getAllManifestsGroup(manifestId);
+      manifestsForGroup.push(groupForManifest);
       return manifestsForGroup;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `An Error occurred while adding manifests to userGroup with id ${userGroup.id} : ${error.message}`,
+        `An Error occurred while adding manifests to userGroup with id ${userGroupId} : ${error.message}`,
       );
     }
   }
@@ -130,21 +134,25 @@ export class GroupManifestService {
       if (!manifestToRemove) {
         throw new HttpException('Manifest not found', HttpStatus.NOT_FOUND);
       }
-      const manifestGroups = await this.getAllManifestsGroup(manifestId);
-      const hash = manifestToRemove.path.split('/')[3];
-      const filename = manifestToRemove.path.split('/')[4];
       const filePath = join(
         __dirname,
         '..',
         '..',
         '..',
         'upload',
-        hash,
-        filename,
+        manifestToRemove.hash,
+        manifestToRemove.path,
       );
       if (fs.existsSync(filePath)) {
         fs.unlinkSync(filePath);
-        const dirPath = join(__dirname, '..', '..', '..', 'upload', hash);
+        const dirPath = join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          'upload',
+          manifestToRemove.hash,
+        );
         if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
           fs.rmdirSync(dirPath);
         }
@@ -183,9 +191,11 @@ export class GroupManifestService {
   ) {
     try {
       const { manifestId, userGroupId, rights } = updateManifestGroupRelation;
+      const manifestToUpdate = await this.manifestService.findOne(manifestId);
+      const groupToUpdate = await this.groupService.findOne(userGroupId);
       return this.linkGroupManifestService.updateManifestGroupRelation(
-        manifestId,
-        userGroupId,
+        manifestToUpdate,
+        groupToUpdate,
         rights,
       );
     } catch (error) {

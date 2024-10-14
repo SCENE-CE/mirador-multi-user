@@ -1,11 +1,17 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Repository } from 'typeorm';
-import { CreateGroupManifestDto } from '../group-manifest/dto/create-group-manifest.dto';
 import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
-import { ManifestGroupRights, MediaGroupRights } from "../enum/rights";
-import { CustomLogger } from "../Logger/CustomLogger.service";
+import { ManifestGroupRights } from '../enum/rights';
+import { CustomLogger } from '../Logger/CustomLogger.service';
+import { Manifest } from '../manifest/entities/manifest.entity';
+import { UserGroup } from '../user-group/entities/user-group.entity';
+import { LinkMediaGroup } from "../link-media-group/entities/link-media-group.entity";
 
 @Injectable()
 export class LinkManifestGroupService {
@@ -82,7 +88,10 @@ export class LinkManifestGroupService {
         where: { user_group: { id: id } },
         relations: ['user_group'],
       });
-      return request.map((linkGroup: LinkManifestGroup) => linkGroup.manifest);
+      return request.map((linkGroup: LinkManifestGroup) => ({
+        ...linkGroup.manifest,
+        rights: linkGroup.rights,
+      }));
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -93,22 +102,31 @@ export class LinkManifestGroupService {
   }
 
   async updateManifestGroupRelation(
-    manifestId: number,
-    groupId: number,
+    manifest: Manifest,
+    group: UserGroup,
     rights: ManifestGroupRights,
   ) {
     try {
       const linkManifestGroupsToUpdate =
         await this.linkManifestGroupRepository.find({
           where: {
-            manifest: { id: manifestId },
-            user_group: { id: groupId },
+            manifest: { id: manifest.id },
+            user_group: { id: group.id },
           },
         });
-      const linkManifestGroup = this.linkManifestGroupRepository.create({
-        ...linkManifestGroupsToUpdate[0],
-        rights: rights,
-      });
+      let linkManifestGroup;
+      if (linkManifestGroupsToUpdate.length > 0) {
+        linkManifestGroup = this.linkManifestGroupRepository.create({
+          ...linkManifestGroupsToUpdate[0],
+          rights: rights,
+        });
+      } else {
+        linkManifestGroup = this.linkManifestGroupRepository.create({
+          manifest: manifest,
+          user_group: group,
+          rights: rights,
+        });
+      }
       return await this.linkManifestGroupRepository.upsert(linkManifestGroup, {
         conflictPaths: ['rights', 'manifest', 'user_group'],
       });
@@ -137,5 +155,4 @@ export class LinkManifestGroupService {
       );
     }
   }
-
 }

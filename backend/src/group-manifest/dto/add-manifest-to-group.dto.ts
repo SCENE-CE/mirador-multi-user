@@ -1,6 +1,7 @@
-import { UserGroup } from "../../user-group/entities/user-group.entity";
+import { ManifestGroupRights } from '../../enum/rights';
 
 export class AddManifestToGroupDto {
-  userGroup: UserGroup;
-  manifestsId:number[];
+  userGroupId: number;
+  manifestId: number;
+  rights: ManifestGroupRights
 }

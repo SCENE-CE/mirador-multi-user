@@ -6,10 +6,11 @@ import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 import {  MediaGroupRights } from "../../features/media/types/types.ts";
+import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
 
 interface IMMUCardProps<T,G,O,X> {
   id: number;
-  rights: ProjectRights | MediaGroupRights;
+  rights: ProjectRights | MediaGroupRights | ManifestGroupRights;
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
