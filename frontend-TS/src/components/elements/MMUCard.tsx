@@ -32,7 +32,6 @@ interface IMMUCardProps<T,G,O,X> {
   setItemList?:Dispatch<SetStateAction<X[]>>
   searchBarLabel?:string
   thumbnailUrl?:string | null
-  manifest?:boolean
   metadata?: Record<string, string>;
   isGroups?:boolean
 }
@@ -63,7 +62,6 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
     setItemList,
     searchBarLabel,
     thumbnailUrl,
-    manifest,
     metadata,
     isGroups
   }:IMMUCardProps<T,G,O, X>
@@ -148,7 +146,7 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
               width={800}
               openModal={openModal}
               setOpenModal={HandleOpenModal}
-              children={ !manifest ?
+              children={
                 <>
                   <MMUModalEdit
                     isGroups={isGroups}
@@ -175,7 +173,6 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
                     handleDeleteAccessListItem={handleRemoveAccessListItem}
                   />
                 </>
-                : <Grid>Manifest settings and modification will be possible in a future release</Grid>
               }/>
         </Grid>
       </Grid>

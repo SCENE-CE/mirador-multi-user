@@ -1,25 +1,14 @@
 import storage from "../../../utils/storage.ts";
-import { UploadAndLinkManifestDto } from "../types/types.ts";
 
-export const createManifest = async (manifestDto: UploadAndLinkManifestDto) => {
+export const deleteManifest = async (manifestId: number) => {
   const token = storage.getToken();
-  const formData = new FormData();
-if(manifestDto.file){
 
-  formData.append('file', manifestDto.file);
-}
-  formData.append('idCreator', manifestDto.idCreator.toString());
-  formData.append('user_group', JSON.stringify(manifestDto.user_group));
-
-  console.log('formData', formData);
   try {
-    console.log('CREATE Manifest ID CREATOR', manifestDto.idCreator);
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/upload`, {
-      method: 'POST',
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/${manifestId}`, {
+      method: 'DELETE',
       headers: {
         "Authorization": `Bearer ${token}`,
       },
-      body: formData
     });
 
     if (!response.ok) {
