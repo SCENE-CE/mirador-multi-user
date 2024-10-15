@@ -17,7 +17,6 @@ export const register = async (data: RegisterCredentialsDTO): Promise<UserRespon
       body: JSON.stringify(data)
     });
     if (!response.ok) {
-      // How to handle response 409 code ?
       if (response.status === 409) {
         throw new Error("User already exists");
       }

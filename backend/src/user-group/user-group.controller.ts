@@ -11,7 +11,6 @@ import {
 import { UserGroupService } from './user-group.service';
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 
 @Controller('user-group')
 export class UserGroupController {
@@ -23,25 +22,25 @@ export class UserGroupController {
   create(@Body() createUserGroupDto: CreateUserGroupDto) {
     return this.userGroupService.create(createUserGroupDto);
   }
+  //This routes shouldn't be exposed
+  // @UseGuards(AuthGuard)
+  // @Get(':groupId')
+  // @UseGuards(AuthGuard)
+  // findOne(@Param('groupId') id: string) {
+  //   return this.userGroupService.findOne(+id);
+  // }
 
-  @UseGuards(AuthGuard)
-  @Get(':groupId')
-  @UseGuards(AuthGuard)
-  findOne(@Param('groupId') id: string) {
-    return this.userGroupService.findOne(+id);
-  }
+  // @UseGuards(AuthGuard)
+  // @Get()
+  // findAll() {
+  //   return this.userGroupService.findAll();
+  // }
 
-  @UseGuards(AuthGuard)
-  @Get()
-  findAll() {
-    return this.userGroupService.findAll();
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('/search/groups/:partialUserGroupName')
-  lookingForGroup(@Param('partialUserGroupName') partialUserGroupName: string) {
-    return this.userGroupService.searchForUserGroup(partialUserGroupName);
-  }
+  // @UseGuards(AuthGuard)
+  // @Get('/search/groups/:partialUserGroupName')
+  // lookingForGroup(@Param('partialUserGroupName') partialUserGroupName: string) {
+  //   return this.userGroupService.searchForUserGroup(partialUserGroupName);
+  // }
 
   @UseGuards(AuthGuard)
   @Patch('/update')

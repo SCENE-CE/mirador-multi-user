@@ -39,6 +39,14 @@ export class LinkUserGroupController {
   }
 
   @UseGuards(AuthGuard)
+  @Post('/access')
+  grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
+    return this.linkUserGroupService.GrantAccessToUserGroup(
+      grantAccessToGroupDto,
+    );
+  }
+
+  @UseGuards(AuthGuard)
   @Get('/looking-for-user/:partialString')
   lookingForUser(@Param('partialString') partialString: string) {
     const toReturn =  this.linkUserGroupService.searchForUserGroup(partialString);
@@ -58,13 +66,7 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.findUserPersonalGroup(userId);
   }
 
-  @UseGuards(AuthGuard)
-  @Post('/access')
-  grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
-    return this.linkUserGroupService.GrantAccessToUserGroup(
-      grantAccessToGroupDto,
-    );
-  }
+
   @UseGuards(AuthGuard)
   @Patch('/change-access')
   changeAccess(@Body() grantAccessToGroupDto: UpdateLinkUserGroupDto) {
