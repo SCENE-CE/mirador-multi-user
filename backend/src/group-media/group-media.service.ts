@@ -30,7 +30,6 @@ export class GroupMediaService {
       const { idCreator, path, user_group } = mediaDto;
       const media = await this.mediaService.create(mediaDto);
       await this.addMediaToGroup({
-        userGroupName: user_group.name,
         userGroupId: user_group.id,
         mediasId: [media.id],
         rights: MediaGroupRights.ADMIN,
@@ -50,7 +49,7 @@ export class GroupMediaService {
   }
 
   async addMediaToGroup(dto: AddMediaToGroupDto) {
-    const { userGroupName, mediasId, userGroupId } = dto;
+    const { mediasId, userGroupId } = dto;
     try {
       const mediasForGroup = [];
       for (const mediaId of mediasId) {
@@ -62,7 +61,7 @@ export class GroupMediaService {
         }
 
         const group =
-          await this.userGroupService.findUserGroupByNameAndId(userGroupName, userGroupId);
+          await this.userGroupService.findUserGroupById(userGroupId);
         const linkMediaGroup = await this.linkMediaGroupService.create({
           rights: dto.rights ? dto.rights : MediaGroupRights.READER,
           user_group: group,

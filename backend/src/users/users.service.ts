@@ -1,20 +1,17 @@
 import {
-  ConflictException,
+  ConflictException, forwardRef, Inject,
   Injectable,
   InternalServerErrorException,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+  NotFoundException
+} from "@nestjs/common";
 import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { DeleteResult, QueryFailedError, Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserGroupService } from '../user-group/user-group.service';
 import { EmailServerService } from '../email/email.service';
 import { CustomLogger } from '../Logger/CustomLogger.service';
-import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 
 @Injectable()
 export class UsersService {
@@ -22,9 +19,9 @@ export class UsersService {
 
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @Inject(forwardRef(() => UserGroupService))
     private readonly userGroupService: UserGroupService,
     private readonly emailService: EmailServerService,
-    private readonly linkUserGroup: LinkUserGroupService
   ) {}
   async create(dto: CreateUserDto): Promise<User> {
     try {
@@ -59,10 +56,6 @@ export class UsersService {
     }
   }
 
-  findAll(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
   async findOneByMail(mail: string): Promise<User> {
     try {
       return await this.userRepository.findOneBy({ mail });
@@ -82,26 +75,4 @@ export class UsersService {
     }
   }
 
-  async update(id: number, dto: UpdateUserDto) {
-    try {
-      const done = await this.userRepository.update(id, dto);
-      if (done.affected != 1) throw new NotFoundException(id);
-      return this.findOne(id);
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(error);
-    }
-  }
-
-  async remove(id: number) {
-    try {
-      const personnalGroup = await this.linkUserGroup.findUserPersonalGroup(id);
-      await this.userGroupService.remove(personnalGroup.id);
-      const done: DeleteResult = await this.userRepository.delete(id);
-      if (done.affected != 1) throw new NotFoundException(id);
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(error);
-    }
-  }
 }

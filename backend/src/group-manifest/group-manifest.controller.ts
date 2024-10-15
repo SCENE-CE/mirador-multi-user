@@ -170,8 +170,6 @@ export class GroupManifestController {
   @UseGuards(AuthGuard)
   @Post('/manifest/add')
   addManifestToGroup(@Body() addManifestToGroup: AddManifestToGroupDto) {
-    console.log('addManifestToGroup')
-    console.log(addManifestToGroup)
     return this.groupManifestService.addManifestToGroup(addManifestToGroup);
   }
 

@@ -132,7 +132,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
 
   const handleGrantAccess = async (mediaId:number) =>{
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
-    await addMediaToGroup(mediaId, linkUserGroupToAdd!.user_group.name, linkUserGroupToAdd!.user_group.id)
+    await addMediaToGroup(mediaId, linkUserGroupToAdd!.user_group.id)
   }
 
   const getOptionLabel = (option: UserGroup): string => {

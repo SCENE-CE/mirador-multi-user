@@ -1,12 +1,11 @@
 import storage from "../../../utils/storage.ts";
-import { ProjectRights, UserGroup } from "../types/types.ts";
+import { UserGroup } from "../types/types.ts";
 import { User } from "../../auth/types/types.ts";
 
-export const grantAccessToGroup = async (rights: ProjectRights, user : User, user_group : UserGroup) => {
+export const grantAccessToGroup = async (user : User, user_group : UserGroup) => {
   const token = storage.getToken();
   try {
     const payload = {
-      rights: rights,
       user: user,
       user_group: user_group
     };
