@@ -1,45 +1,42 @@
 import {
   Controller,
   Get,
-  Body,
-  Patch,
   Param,
-  Delete,
   UseGuards,
 } from '@nestjs/common';
 import { ManifestService } from './manifest.service';
-import { UpdateManifestDto } from './dto/update-manifest.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('manifest')
 export class ManifestController {
   constructor(private readonly manifestService: ManifestService) {}
-  @Get()
-  @UseGuards(AuthGuard)
-  findAll() {
-    return this.manifestService.findAll();
-  }
-
-  @Get(':id')
-  @UseGuards(AuthGuard)
-  findOne(@Param('id') id: string) {
-    return this.manifestService.findOne(+id);
-  }
-
-  @Patch(':id')
-  @UseGuards(AuthGuard)
-  update(
-    @Param('id') id: string,
-    @Body() updateManifestDto: UpdateManifestDto,
-  ) {
-    return this.manifestService.update(+id, updateManifestDto);
-  }
-
-  @UseGuards(AuthGuard)
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.manifestService.remove(+id);
-  }
+  // This routes shouldn't be exposed
+  // @Get()
+  // @UseGuards(AuthGuard)
+  // findAll() {
+  //   return this.manifestService.findAll();
+  // }
+  //
+  // @Get(':id')
+  // @UseGuards(AuthGuard)
+  // findOne(@Param('id') id: string) {
+  //   return this.manifestService.findOne(+id);
+  // }
+  //
+  // @Patch(':id')
+  // @UseGuards(AuthGuard)
+  // update(
+  //   @Param('id') id: string,
+  //   @Body() updateManifestDto: UpdateManifestDto,
+  // ) {
+  //   return this.manifestService.update(+id, updateManifestDto);
+  // }
+  //
+  // @UseGuards(AuthGuard)
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.manifestService.remove(+id);
+  // }
 
   @UseGuards(AuthGuard)
   @Get('/search/:UserGroupId/:partialString')

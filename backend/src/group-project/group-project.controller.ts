@@ -27,7 +27,6 @@ export class GroupProjectController {
   @UseGuards(AuthGuard)
   @Get('/project/relation/:projectId')
   getProjectRelation(@Param('projectId') projectId: number) {
-    console.log('ON THE ROAD GET ALL PROJECT GROUPS');
     return this.groupProjectService.getAllProjectGroups(projectId);
   }
 
@@ -37,7 +36,6 @@ export class GroupProjectController {
     @Param('projectId') projectId: number,
     @Param('userGroupId') userGroupId: number,
   ) {
-    console.log('on the road get project for user');
     return this.groupProjectService.getProjectRightForUser(
       projectId,
       userGroupId,
@@ -53,14 +51,12 @@ export class GroupProjectController {
   @UseGuards(AuthGuard)
   @Post('/project/add')
   addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
-    console.log('ON THE ROAD ADD PROJECT TO GROUP');
     return this.groupProjectService.addProjectsToGroup(addProjectToGroupDto);
   }
 
   @UseGuards(AuthGuard)
   @Post('/project/')
   createProject(@Body() createProjectDto: CreateProjectDto) {
-    console.log('create project dto');
     return this.groupProjectService.createProject(createProjectDto);
   }
 
@@ -87,9 +83,6 @@ export class GroupProjectController {
   @UseGuards(AuthGuard)
   @Delete('/delete/project/:projectId')
   deleteProject(@Param('projectId') project_id: number) {
-    console.log(
-      '-----------------------DELETE PROJECT-------------------------------',
-    );
     return this.groupProjectService.deleteProject(project_id);
   }
 
@@ -99,7 +92,6 @@ export class GroupProjectController {
     @Param('projectId') projectId: number,
     @Param('groupId') groupId: number,
   ) {
-    console.log(projectId, groupId);
     return this.groupProjectService.RemoveProjectToGroup({
       projectId,
       groupId,
