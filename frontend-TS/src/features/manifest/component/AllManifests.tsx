@@ -284,11 +284,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }, [groupList]);
 
   const handleChangeRights = async (group: ListItem, eventValue: string, manifestId: number) => {
-    const updated = await updateAccessToManifest(manifestId, group.id, eventValue as ManifestGroupRights)
-    console.log('updated',updated)
+    await updateAccessToManifest(manifestId, group.id, eventValue as ManifestGroupRights)
   };
 
-  console.log(manifests)
   return (
     <>
       <SidePanelMedia display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
