@@ -42,6 +42,7 @@ import { getUserGroupManifests } from "../../features/manifest/api/getUserGroupM
 import { Manifest } from "../../features/manifest/types/types.ts";
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups.ts";
+import { UserSettings } from "../../features/user-setting/UserSettings.tsx";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -109,7 +110,8 @@ const CONTENT = {
   PROJECTS:'PROJECT',
   GROUPS:'GROUPS',
   MEDIA:'MEDIA',
-  MANIFEST:'MANIFEST'
+  MANIFEST:'MANIFEST',
+  SETTING:'SETTING'
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(true);
@@ -349,7 +351,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         <List>
           <Tooltip title="Settings" placement="right">
             <ListItem sx={{padding:0}}>
-              <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>{toast.error("This feature will be release in a future version")}}/>
+              <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>handleChangeContent(CONTENT.SETTING)}/>
             </ListItem>
           </Tooltip>
           <Tooltip title="Discconect" placement="right">
@@ -411,6 +413,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         {
           user && user.id && selectedContent === CONTENT.MANIFEST && userPersonalGroup &&(
             <AllManifests fetchMediaForUser={fetchMediaForUser} createManifestIsOpen={createManifestIsOpen} setCreateManifestIsOpen={handleSetCreateManifestIsOpen} medias={medias} manifests={manifests} fetchManifestForUser={fetchManifestForUser} user={user} userPersonalGroup={userPersonalGroup}/>
+          )
+        }
+        {
+          user && user.id && selectedContent === CONTENT.SETTING &&(
+            <UserSettings/>
           )
         }
         {modalDisconectIsOpen &&(
