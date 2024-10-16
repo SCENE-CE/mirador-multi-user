@@ -1,6 +1,4 @@
-import {
-  Controller,
-} from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { GroupProjectService } from './group-project.service';
 
 @Controller('group-project')

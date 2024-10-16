@@ -32,7 +32,7 @@ export type UserGroup = {
 export type CreateGroupDto ={
   name: string;
   ownerId: number;
-  users: User[];
+  user: User;
 }
 
 export type AddProjectToGroupDto ={

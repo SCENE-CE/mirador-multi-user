@@ -32,6 +32,8 @@ export class LinkUserGroupService {
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
     try {
+      console.log('------------------linkUserGroupDto------------------')
+      console.log(linkUserGroupDto)
       const userToLink = await this.userService.findOne(
         linkUserGroupDto.userId,
       );
@@ -133,6 +135,12 @@ export class LinkUserGroupService {
         ...createUserGroupDto,
         type: UserGroupTypes.MULTI_USER,
       });
+      console.log('------------------userGroup------------------')
+      console.log(userGroup)
+      console.log('------------------userGroup ID------------------')
+      console.log(userGroup.id)
+      console.log('------------------createUserGroupDto------------------')
+      console.log(createUserGroupDto)
       await this.create({
         rights: User_UserGroupRights.READER,
         userId: createUserGroupDto.user.id,

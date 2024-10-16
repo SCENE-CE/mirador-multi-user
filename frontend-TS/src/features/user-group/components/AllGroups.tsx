@@ -69,7 +69,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
       const userGroupToCreate : CreateGroupDto = {
         name: name,
         ownerId: user.id,
-        users: [user]
+        user: user
       }
       await createGroup(userGroupToCreate);
       await fetchGroups()

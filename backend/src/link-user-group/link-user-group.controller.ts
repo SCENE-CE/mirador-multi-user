@@ -50,6 +50,9 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Post('/group')
   createGroup(@Body() createUserGroupDto: CreateUserGroupDto) {
+    console.log('------------------ENTER POST CREATE GROUP------------------')
+    console.log('------------------createUserGroupDto------------------')
+    console.log(createUserGroupDto)
     return this.linkUserGroupService.createUserGroup(createUserGroupDto);
   }
 
