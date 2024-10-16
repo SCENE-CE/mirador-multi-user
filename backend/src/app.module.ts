@@ -3,22 +3,22 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UsersModule } from './users/users.module';
+import { UsersModule } from './BaseEntities/users/users.module';
 import { AuthModule } from './auth/auth.module';
-import { ProjectModule } from './project/project.module';
-import { CaslModule } from './casl/casl.module';
-import { MediaModule } from './media/media.module';
-import { UserGroupModule } from './user-group/user-group.module';
-import { LinkGroupProjectModule } from './link-group-project/link-group-project.module';
-import { LinkMediaGroupModule } from './link-media-group/link-media-group.module';
-import { LinkUserGroupModule } from './link-user-group/link-user-group.module';
-import { ManifestModule } from './manifest/manifest.module';
+import { ProjectModule } from './BaseEntities/project/project.module';
+import { CaslModule } from './utils/casl/casl.module';
+import { MediaModule } from './BaseEntities/media/media.module';
+import { UserGroupModule } from './BaseEntities/user-group/user-group.module';
+import { LinkGroupProjectModule } from './LinkModules/link-group-project/link-group-project.module';
+import { LinkMediaGroupModule } from './LinkModules/link-media-group/link-media-group.module';
+import { LinkUserGroupModule } from './LinkModules/link-user-group/link-user-group.module';
+import { ManifestModule } from './BaseEntities/manifest/manifest.module';
 import dbConfiguration from './config/db.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
-import { EmailServerModule } from './email/email.module';
-import { CustomLogger } from './Logger/CustomLogger.service';
-import { LinkManifestGroupModule } from "./link-manifest-group/link-manifest-group.module";
+import { EmailServerModule } from './utils/email/email.module';
+import { CustomLogger } from './utils/Logger/CustomLogger.service';
+import { LinkManifestGroupModule } from './LinkModules/link-manifest-group/link-manifest-group.module';
 
 @Module({
   imports: [
