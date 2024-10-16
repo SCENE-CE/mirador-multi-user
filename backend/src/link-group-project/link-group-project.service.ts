@@ -15,7 +15,7 @@ import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { ProjectService } from '../project/project.service';
 import { UserGroupService } from '../user-group/user-group.service';
 import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
-import { removeProjectToGroupDto } from '../group-project/dto/removeProjectToGroupDto';
+import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
 import { CreateProjectDto } from '../project/dto/create-project.dto';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { Project } from '../project/entities/project.entity';
