@@ -5,7 +5,7 @@ export const getGroupsAccessToMedia = async (userGroupId: number): Promise<Proje
   const token = storage.getToken();
 console.log('CONSOLE LOG GET GROUP ACCESS TO MEDIA')
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-media/group/${userGroupId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/group/${userGroupId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`

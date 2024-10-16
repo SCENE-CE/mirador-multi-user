@@ -4,7 +4,7 @@ import { Media } from "../types/types";
 export const updateMedia = async (media: Media) => {
   const token = storage.getToken();
   try {
-    const response =  await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-media/media`, {
+    const response =  await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/media`, {
       method: "PATCH",
       headers: {
         "Authorization": `Bearer ${token}`,

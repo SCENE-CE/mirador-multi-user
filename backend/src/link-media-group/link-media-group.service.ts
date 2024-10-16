@@ -1,19 +1,24 @@
 import {
   forwardRef,
+  HttpException,
+  HttpStatus,
   Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { CreateLinkMediaGroupDto } from './dto/create-link-media-group.dto';
-import { UpdateLinkMediaGroupDto } from './dto/update-link-media-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Repository } from 'typeorm';
 import { UserGroupService } from '../user-group/user-group.service';
 import { MediaService } from '../media/media.service';
 import { MediaGroupRights } from '../enum/rights';
-import { CustomLogger } from "../Logger/CustomLogger.service";
+import { CustomLogger } from '../Logger/CustomLogger.service';
+import { CreateMediaDto } from '../media/dto/create-media.dto';
+import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
+import { join } from 'path';
+import fs from 'node:fs';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -42,27 +47,180 @@ export class LinkMediaGroupService {
     }
   }
 
-  async findAll() {
+  async createMedia(mediaDto: CreateMediaDto) {
     try {
-      return await this.linkMediaGroupRepository.find();
+      const { idCreator, path, user_group } = mediaDto;
+      const media = await this.mediaService.create(mediaDto);
+      await this.addMediaToGroup({
+        userGroupId: user_group.id,
+        mediasId: [media.id],
+        rights: MediaGroupRights.ADMIN,
+      });
+      const toReturn = await this.getMediaRightsForUser(
+        user_group.id,
+        media.id,
+      );
+      return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        'An error occurred while finding linkMediaGroups',
+        'An error occurred while creating the media',
         error,
       );
     }
   }
 
-  async findOne(id: number) {
+  async addMediaToGroup(dto: AddMediaToGroupDto) {
+    const { mediasId, userGroupId } = dto;
     try {
-      console.log('findOne id:', id);
-      return await this.linkMediaGroupRepository.findOneBy({ id });
+      const mediasForGroup = [];
+      for (const mediaId of mediasId) {
+        const media = await this.mediaService.findOne(mediaId);
+        if (!media) {
+          throw new InternalServerErrorException(
+            `Project with id ${mediaId} not found`,
+          );
+        }
+
+        const group =
+          await this.userGroupService.findUserGroupById(userGroupId);
+        const linkMediaGroup = await this.create({
+          rights: dto.rights ? dto.rights : MediaGroupRights.READER,
+          user_group: group,
+          media: media,
+        });
+        const groupsForMedia = await this.getAllMediaGroup(mediaId);
+        mediasForGroup.push(groupsForMedia);
+      }
+      return mediasForGroup;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        'An error occurred while finding the linkMediaGroup',
+        'an error occurred while adding media to Group',
         error,
+      );
+    }
+  }
+
+  async getMediaRightsForUser(userGroupId: number, mediaId: number) {
+    try {
+      const media = await this.findAllMediaGroupByUserGroupId(userGroupId);
+      return media.find((linkMediaGroup) => linkMediaGroup.media.id == mediaId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'an error occurred while getting media rights for user',
+        error,
+      );
+    }
+  }
+
+  async getAllMediaGroup(mediaId: number) {
+    try {
+      const toReturn = await this.findAllUserGroupByMediaId(mediaId);
+      return toReturn;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while getting all group for media : ${mediaId}`,
+        error,
+      );
+    }
+  }
+
+  async getAllMediasForUserGroup(userGroupId: number) {
+    try {
+      return await this.findAllMediaByUserGroupId(userGroupId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'an error occurred while getting all medias for user',
+        error,
+      );
+    }
+  }
+
+  async removeMedia(mediaId: number) {
+    try {
+      const mediaToRemove = await this.mediaService.findOne(mediaId);
+      if (!mediaToRemove) {
+        throw new HttpException('Media not found', HttpStatus.NOT_FOUND);
+      }
+
+      const mediaGroups = await this.getAllMediaGroup(mediaId);
+      const hash = mediaToRemove.path.split('/')[3];
+      const filename = mediaToRemove.path.split('/')[4];
+      const filePath = join(
+        __dirname,
+        '..',
+        '..',
+        '..',
+        'upload',
+        hash,
+        filename,
+      );
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+
+        const dirPath = join(__dirname, '..', '..', '..', 'upload', hash);
+        if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
+          fs.rmdirSync(dirPath);
+        }
+        await this.mediaService.remove(mediaId);
+        return {
+          status: HttpStatus.OK,
+          message: 'File and associated records deleted successfully',
+        };
+      } else {
+        throw new HttpException('File not found', HttpStatus.NOT_FOUND);
+      }
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new HttpException(
+        `An error occurred while removing media with id: ${mediaId}: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async updateMedia(updateGroupMediaDto) {
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { rights, ...mediaUpdateData } = updateGroupMediaDto;
+
+      console.log('updateGroupMediaDto');
+      console.log(updateGroupMediaDto);
+
+      return await this.mediaService.update(
+        updateGroupMediaDto.id,
+        mediaUpdateData,
+      );
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new HttpException(
+        `An error occurred while updating media with id: ${updateGroupMediaDto.id}: ${error.message}`,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
+  }
+
+  async removeAccesToMedia(mediaId: number, userGroupId: number) {
+    try {
+      console.log('media', mediaId, 'group', userGroupId);
+      const userGroupMedias = await this.findAllMediaByUserGroupId(userGroupId);
+      const mediaToRemove = userGroupMedias.find(
+        (userGroupMedia) => userGroupMedia.id == mediaId,
+      );
+      if (!mediaToRemove) {
+        throw new NotFoundException(
+          `No association between Media with ID ${mediaId} and group with ID ${userGroupId}`,
+        );
+      }
+      return await this.removeMediaGroupRelation(mediaToRemove.id, userGroupId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while removing link between media and group : ${error.message}`,
       );
     }
   }
@@ -105,11 +263,10 @@ export class LinkMediaGroupService {
 
   async findAllMediaGroupByUserGroupId(userGroupId: number) {
     try {
-      const request = await this.linkMediaGroupRepository.find({
+      return await this.linkMediaGroupRepository.find({
         where: { user_group: { id: userGroupId } },
         relations: ['media'],
       });
-      return request;
     } catch (error) {
       throw new InternalServerErrorException(
         `an error occurred whild finding all MediaGroup for this userGroup : ${userGroupId}`,
@@ -134,44 +291,18 @@ export class LinkMediaGroupService {
         ...linkMediaGroupToUpdate[0],
         rights: rights,
       });
-      return await this.linkMediaGroupRepository.upsert(linkMediaGroup, {
-        conflictPaths: ['rights', 'media', 'user_group'],
-      });
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        'An error occurred while updating the linkMediaGroup',
-        error,
-      );
-    }
-  }
-
-  async update(id: number, updateLinkMediaGroupDto: UpdateLinkMediaGroupDto) {
-    try {
-      const done = await this.linkMediaGroupRepository.upsert(
-        updateLinkMediaGroupDto,
+      const toReturn = await this.linkMediaGroupRepository.upsert(
+        linkMediaGroup,
         {
-          conflictPaths: ['user_group', 'rights', 'media'],
+          conflictPaths: ['rights', 'media', 'user_group'],
         },
       );
-      return this.findOne(id);
+      console.log(toReturn);
+      return toReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while updating the linkMediaGroup',
-        error,
-      );
-    }
-  }
-
-  async remove(id: number) {
-    try {
-      const done = await this.linkMediaGroupRepository.delete(id);
-      if (done.affected != 1) throw new NotFoundException(id);
-      return done;
-    } catch (error) {
-      throw new InternalServerErrorException(
-        'An error occurred while removing the linkMediaGroup',
         error,
       );
     }

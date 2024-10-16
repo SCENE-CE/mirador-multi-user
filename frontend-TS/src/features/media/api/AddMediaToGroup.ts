@@ -2,7 +2,7 @@ import storage from "../../../utils/storage.ts";
 
 export const addMediaToGroup = async (mediaId:number, userGroupId:number) => {
   const token = storage.getToken();
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-media/media/add`,{
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/add`,{
 
   method: 'POST',
   headers: {

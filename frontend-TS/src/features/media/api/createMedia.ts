@@ -12,7 +12,7 @@ export const createMedia = async (mediaDto: CreateMediaDto) => {
   console.log('formData', formData);
   try {
     console.log('CREATE MEDIA ID CREATOR', mediaDto.idCreator);
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-media/media/upload`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/upload`, {
       method: 'POST',
       headers: {
         "Authorization": `Bearer ${token}`,
