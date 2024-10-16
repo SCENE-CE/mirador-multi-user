@@ -1,19 +1,12 @@
-import {
-  forwardRef,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateUserGroupDto } from './dto/create-user-group.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { UserGroup } from './entities/user-group.entity';
-import { Brackets, Repository } from 'typeorm';
-import { UserGroupTypes } from '../enum/user-group-types';
-import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
-import { User_UserGroupRights } from '../enum/rights';
-import { UpdateUserGroupDto } from './dto/update-user-group.dto';
-import { CustomLogger } from '../Logger/CustomLogger.service';
+import { Injectable, InternalServerErrorException } from "@nestjs/common";
+import { CreateUserGroupDto } from "./dto/create-user-group.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { UserGroup } from "./entities/user-group.entity";
+import { Brackets, Repository } from "typeorm";
+import { UserGroupTypes } from "../enum/user-group-types";
+import { User_UserGroupRights } from "../enum/rights";
+import { UpdateUserGroupDto } from "./dto/update-user-group.dto";
+import { CustomLogger } from "../Logger/CustomLogger.service";
 
 @Injectable()
 export class UserGroupService {
@@ -25,42 +18,28 @@ export class UserGroupService {
     // @Inject(forwardRef(() => LinkUserGroupService))
     // private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
-  // @ts-ignore
+
   async create(createUserGroupDto: CreateUserGroupDto): Promise<UserGroup> {
-    // try {
-    //   const groupToCreate = {
-    //     ...createUserGroupDto,
-    //     type: UserGroupTypes.MULTI_USER,
-    //     description: 'group description here',
-    //   };
-    //   const userGroup = await this.userGroupRepository.save(groupToCreate);
-    //   for (const user of userGroup.users) {
-    //     if (user.id === createUserGroupDto.ownerId) {
-    //       await this.linkUserGroupService.create({
-    //         rights: User_UserGroupRights.ADMIN,
-    //         userId: user.id,
-    //         user_groupId: userGroup.id,
-    //       });
-    //     } else {
-    //       await this.linkUserGroupService.create({
-    //         rights: User_UserGroupRights.READER,
-    //         userId: user.id,
-    //         user_groupId: userGroup.id,
-    //       });
-    //     }
-    //   }
-    //   return userGroup;
-    // } catch (error) {
-    //   this.logger.error(error.message, error.stack);
-    //   throw new InternalServerErrorException(
-    //     'An error occurred while creating userGroup',
-    //     error,
-    //   );
-    // }
+    try {
+      const groupToCreate = {
+        ...createUserGroupDto,
+        type: UserGroupTypes.MULTI_USER,
+        description: 'group description here',
+      };
+      return await this.userGroupRepository.save(groupToCreate);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while creating userGroup',
+        error,
+      );
+    }
   }
 
   // @ts-ignore
-  async createUserPersonalGroup(createUserGroupDto: CreateUserGroupDto,): Promise<UserGroup> {
+  async createUserPersonalGroup(
+    createUserGroupDto: CreateUserGroupDto,
+  ): Promise<UserGroup> {
     // try {
     //   const groupToCreate = {
     //     ...createUserGroupDto,

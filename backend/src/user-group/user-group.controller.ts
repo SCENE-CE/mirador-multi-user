@@ -1,7 +1,5 @@
 import {
   Controller,
-  Get,
-  Post,
   Body,
   Param,
   Delete,
@@ -9,19 +7,12 @@ import {
   Patch,
 } from '@nestjs/common';
 import { UserGroupService } from './user-group.service';
-import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('user-group')
 export class UserGroupController {
   constructor(private readonly userGroupService: UserGroupService) {}
 
-  @UseGuards(AuthGuard)
-  @Post()
-  @UseGuards(AuthGuard)
-  create(@Body() createUserGroupDto: CreateUserGroupDto) {
-    return this.userGroupService.create(createUserGroupDto);
-  }
   //This routes shouldn't be exposed
   // @UseGuards(AuthGuard)
   // @Get(':groupId')

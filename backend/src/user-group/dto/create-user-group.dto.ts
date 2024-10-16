@@ -7,5 +7,5 @@ export class CreateUserGroupDto {
 
   ownerId: number;
 
-  users: User[];
+  user: User;
 }

@@ -12,6 +12,7 @@ import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { CreateUserGroupDto } from '../user-group/dto/create-user-group.dto';
 
 @Controller('link-user-group')
 export class LinkUserGroupController {
@@ -39,6 +40,12 @@ export class LinkUserGroupController {
   }
 
   @UseGuards(AuthGuard)
+  @Post('/group')
+  createGroup(@Body() createUserGroupDto: CreateUserGroupDto) {
+    return this.linkUserGroupService.createUserGroup(createUserGroupDto);
+  }
+
+  @UseGuards(AuthGuard)
   @Post('/access')
   grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
     return this.linkUserGroupService.GrantAccessToUserGroup(
@@ -49,9 +56,10 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Get('/looking-for-user/:partialString')
   lookingForUser(@Param('partialString') partialString: string) {
-    const toReturn =  this.linkUserGroupService.searchForUserGroup(partialString);
+    const toReturn =
+      this.linkUserGroupService.searchForUserGroup(partialString);
     console.log(toReturn);
-    return toReturn
+    return toReturn;
   }
 
   @UseGuards(AuthGuard)
@@ -65,7 +73,6 @@ export class LinkUserGroupController {
   getUserPersonalGroup(@Param('userId') userId: number) {
     return this.linkUserGroupService.findUserPersonalGroup(userId);
   }
-
 
   @UseGuards(AuthGuard)
   @Patch('/change-access')
