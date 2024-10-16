@@ -5,7 +5,7 @@ export const createProject = async (project: CreateProjectDto): Promise<Project>
   const token = storage.getToken();
   console.log('CREATE PROJECT', project)
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/project`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/project`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,

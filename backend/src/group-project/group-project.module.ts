@@ -9,9 +9,9 @@ import { LinkUserGroupModule } from '../link-user-group/link-user-group.module';
 @Module({
   imports: [
     LinkGroupProjectModule,
-    ProjectModule,
-    UserGroupModule,
-    LinkUserGroupModule,
+    // ProjectModule,
+    // UserGroupModule,
+    // LinkUserGroupModule,
   ],
   controllers: [GroupProjectController],
   providers: [GroupProjectService],

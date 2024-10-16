@@ -4,7 +4,7 @@ import { ProjectGroupUpdateDto } from "../types/types";
 export const updateProject = async (project: ProjectGroupUpdateDto) => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/updateProject`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/updateProject`, {
       method: "PATCH",
       headers: {
         "Authorization": `Bearer ${token}`,

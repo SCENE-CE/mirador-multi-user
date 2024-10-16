@@ -8,11 +8,12 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { Brackets, DeleteResult, Repository } from 'typeorm';
-import { CustomLogger } from "../Logger/CustomLogger.service";
+import { CustomLogger } from '../Logger/CustomLogger.service';
 
 @Injectable()
 export class ProjectService {
   private readonly logger = new CustomLogger();
+  //Importing function from LinkTable there cause circular dependencies error, this is described into the wiki there : https://github.com/SCENE-CE/mirador-multi-user/wiki/Backend
   constructor(
     @InjectRepository(Project)
     private readonly projectRepository: Repository<Project>,
@@ -22,7 +23,7 @@ export class ProjectService {
     try {
       return this.projectRepository.save({
         ...dto,
-        description: "Your project description here"
+        description: 'Your project description here',
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -90,17 +91,18 @@ export class ProjectService {
         .distinct(true)
         .limit(3)
         .getMany();
-
     } catch (error) {
       this.logger.error(error.message, error.stack);
     }
   }
 
-  async findUsersProject(userId:number){
-    try{
-
-    }catch (error){
-      throw new InternalServerErrorException(`an error occurred while trying to find project for users id : ${userId}`, error);
+  async findUsersProject(userId: number) {
+    try {
+    } catch (error) {
+      throw new InternalServerErrorException(
+        `an error occurred while trying to find project for users id : ${userId}`,
+        error,
+      );
     }
   }
 

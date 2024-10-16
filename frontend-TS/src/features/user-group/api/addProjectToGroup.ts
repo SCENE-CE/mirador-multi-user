@@ -5,7 +5,7 @@ export const addProjectToGroup = async (dto:AddProjectToGroupDto)=>{
   const token = storage.getToken();
   console.log('add project to group dto',dto)
   try{
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/project/add`,
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/project/add`,
       {
         method: "POST",
         headers:{
