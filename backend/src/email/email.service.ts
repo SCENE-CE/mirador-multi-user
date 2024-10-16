@@ -1,23 +1,31 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { MailerService as MailerMain } from '@nestjs-modules/mailer';
 import { MailService } from './IMailService';
 import { CreateEmailServerDto } from './Dto/createEmailServerDto';
 import { accountCreationTemplate } from './templates/accountCreation';
+import { CustomLogger } from '../Logger/CustomLogger.service';
 @Injectable()
 export class EmailServerService implements MailService {
+  private readonly logger = new CustomLogger();
+
   constructor(private readonly mailerMain: MailerMain) {}
 
   async sendMail(email: CreateEmailServerDto): Promise<void> {
-    const renderedTemplate = this._bodyTemplate(email.userName);
-    const plainText = `Hello ${email.userName}, your account was successfully created!`;
+    try{
+      const renderedTemplate = this._bodyTemplate(email.userName);
+      const plainText = `Hello ${email.userName}, your account was successfully created!`;
 
-    // Send the email with the rendered HTML
-    await this._processSendEmail(
-      email.to,
-      email.subject,
-      plainText,
-      renderedTemplate,
-    );
+      const toReturn = await this._processSendEmail(
+        email.to,
+        email.subject,
+        plainText,
+        renderedTemplate,
+      );
+      return toReturn;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException('an error occurred', error);
+    }
   }
 
   private _bodyTemplate(userName: string): string {
@@ -75,18 +83,17 @@ export class EmailServerService implements MailService {
   }
 
   async _processSendEmail(to, subject, text, body): Promise<void> {
-    await this.mailerMain
-      .sendMail({
+    try {
+      await this.mailerMain.sendMail({
         to: to,
         subject: subject,
         text: text,
         html: body,
-      })
-      .then(() => {
-        console.log('Email sent');
-      })
-      .catch((e) => {
-        console.log('Error sending email', e);
       });
+      console.log('Email sent');
+    } catch (error) {
+      console.log('Error sending email', error);
+      throw new InternalServerErrorException('Failed to send email', error);
+    }
   }
 }

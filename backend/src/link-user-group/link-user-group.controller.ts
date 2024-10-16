@@ -6,13 +6,14 @@ import {
   Param,
   Delete,
   Get,
-  UseGuards,
-} from '@nestjs/common';
+  UseGuards, HttpCode
+} from "@nestjs/common";
 import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { CreateUserGroupDto } from '../user-group/dto/create-user-group.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Controller('link-user-group')
 export class LinkUserGroupController {
@@ -37,6 +38,15 @@ export class LinkUserGroupController {
     @Param('groupId') groupId: number,
   ) {
     return this.linkUserGroupService.getAccessForUserToGroup(userId, groupId);
+  }
+
+  @Post('/user')
+  @HttpCode(201)
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    const toReturn = await this.linkUserGroupService.createUser(createUserDto);
+    console.log('toReturn create User Controller:')
+    console.log(toReturn)
+    return toReturn
   }
 
   @UseGuards(AuthGuard)

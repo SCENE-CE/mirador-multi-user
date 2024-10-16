@@ -1,5 +1,6 @@
 import { IsString } from 'class-validator';
 import { User } from '../../users/entities/user.entity';
+import { UserGroupTypes } from '../../enum/user-group-types';
 
 export class CreateUserGroupDto {
   @IsString()
@@ -8,4 +9,6 @@ export class CreateUserGroupDto {
   ownerId: number;
 
   user: User;
+
+  type: UserGroupTypes;
 }

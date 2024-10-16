@@ -45,6 +45,8 @@ import { CustomLogger } from './Logger/CustomLogger.service';
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASSWORD,
         },
+        socketTimeout: 5000,
+        connectionTimeout: 5000,
       },
       template: {
         dir: __dirname + './template/notification',
