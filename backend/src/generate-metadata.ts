@@ -6,6 +6,7 @@ import { PluginMetadataGenerator } from '@nestjs/cli/lib';
 import { ReadonlyVisitor } from '@nestjs/swagger/dist/plugin';
 
 const generator = new PluginMetadataGenerator();
+
 generator.generate({
   visitors: [
     new ReadonlyVisitor({ introspectComments: true, pathToSource: __dirname }),
