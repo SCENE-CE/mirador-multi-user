@@ -1,16 +1,23 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkUserGroup } from './entities/link-user-group.entity';
-import { Brackets, Repository } from 'typeorm';
+import { Brackets, QueryFailedError, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UserGroupTypes } from '../enum/user-group-types';
 import { UserGroup } from '../user-group/entities/user-group.entity';
 import { User_UserGroupRights } from '../enum/rights';
 import { CustomLogger } from '../Logger/CustomLogger.service';
+import { UserGroupService } from '../user-group/user-group.service';
+import { UsersService } from '../users/users.service';
+import { CreateUserGroupDto } from '../user-group/dto/create-user-group.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
+import { EmailServerService } from '../email/email.service';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -18,15 +25,31 @@ export class LinkUserGroupService {
   constructor(
     @InjectRepository(LinkUserGroup)
     private readonly linkUserGroupRepository: Repository<LinkUserGroup>,
+    private groupService: UserGroupService,
+    private userService: UsersService,
+    private readonly emailService: EmailServerService,
   ) {}
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
     try {
-      const linkGroup = this.linkUserGroupRepository.create(linkUserGroupDto);
+      const userToLink = await this.userService.findOne(
+        linkUserGroupDto.userId,
+      );
+      const groupToLink = await this.groupService.findOne(
+        linkUserGroupDto.user_groupId,
+      );
+      const linkGroup = this.linkUserGroupRepository.create({
+        user: userToLink,
+        user_group: groupToLink,
+        rights: linkUserGroupDto.rights
+          ? linkUserGroupDto.rights
+          : User_UserGroupRights.READER,
+      });
       return await this.linkUserGroupRepository.upsert(linkGroup, {
         conflictPaths: ['user_group', 'user'],
       });
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating the linkUserGroup',
         error,
@@ -40,8 +63,106 @@ export class LinkUserGroupService {
         id: LinkUserGroupId,
       });
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `error while looking for linkUserGroupRepository ${LinkUserGroupId}`,
+        error,
+      );
+    }
+  }
+
+  async removeGroupFromLinkEntity(groupId: number) {
+    try {
+      const linkUserGroups = await this.findAllUsersForGroup(groupId);
+      console.log(linkUserGroups);
+      for (const linkUserGroup of linkUserGroups) {
+        await this.RemoveAccessToUserGroup(groupId, linkUserGroup.user.id);
+      }
+      return await this.groupService.remove(groupId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async createUser(createUserDto: CreateUserDto) {
+    try {
+      const userToSave = createUserDto;
+      userToSave.password = await bcrypt.hash(createUserDto.password, 10);
+      const savedUser = await this.userService.create(userToSave);
+      console.log(savedUser);
+      await this.groupService.create({
+        name: savedUser.name,
+        ownerId: savedUser.id,
+        user: savedUser,
+        type: UserGroupTypes.PERSONAL,
+      });
+      await this.emailService.sendMail({
+        to: savedUser.mail,
+        subject: 'Arvest account creation',
+        userName: savedUser.name,
+      });
+
+      return savedUser;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      if (error instanceof QueryFailedError) {
+        throw new ConflictException('User creation failed', error.message);
+      } else {
+        this.logger.error(error.message, error.stack);
+        throw new InternalServerErrorException(
+          'An error occurred while creating the user',
+        );
+      }
+    }
+  }
+
+  async createUserGroup(
+    createUserGroupDto: CreateUserGroupDto,
+  ): Promise<UserGroup> {
+    try {
+      const userGroup = await this.groupService.create({
+        ...createUserGroupDto,
+        type: UserGroupTypes.MULTI_USER,
+      });
+      await this.create({
+        rights: User_UserGroupRights.READER,
+        userId: createUserGroupDto.user.id,
+        user_groupId: userGroup.id,
+      });
+      return userGroup;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while creating userGroup',
+        error,
+      );
+    }
+  }
+
+  async createUserPersonalGroup(
+    createUserGroupDto: CreateUserGroupDto,
+  ): Promise<UserGroup> {
+    try {
+      const groupToCreate = {
+        ...createUserGroupDto,
+        type: UserGroupTypes.PERSONAL,
+      };
+
+      const userPersonalGroup = await this.groupService.create(groupToCreate);
+
+      await this.create({
+        rights: User_UserGroupRights.ADMIN,
+        userId: createUserGroupDto.user.id,
+        user_groupId: userPersonalGroup.id,
+      });
+
+      return userPersonalGroup;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while creating userGroup',
         error,
       );
     }
@@ -63,8 +184,18 @@ export class LinkUserGroupService {
 
   async GrantAccessToUserGroup(createUserGroupDto: CreateLinkUserGroupDto) {
     try {
+      const userToLink = await this.userService.findOne(
+        createUserGroupDto.userId,
+      );
+      const groupToLink = await this.groupService.findOne(
+        createUserGroupDto.user_groupId,
+      );
       const linkUserToUserGroup = this.linkUserGroupRepository.create({
-        ...createUserGroupDto,
+        user: userToLink,
+        user_group: groupToLink,
+        rights: createUserGroupDto.rights
+          ? createUserGroupDto.rights
+          : User_UserGroupRights.READER,
       });
       await this.linkUserGroupRepository.upsert(linkUserToUserGroup, {
         conflictPaths: ['rights', 'user', 'user_group'],
@@ -74,7 +205,7 @@ export class LinkUserGroupService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `Granting access to userId : ${createUserGroupDto.user} to group ${createUserGroupDto.user_group} failed`,
+        `Granting access to userId : ${createUserGroupDto.user_groupId} to group with id ${createUserGroupDto.user_groupId} failed`,
         error,
       );
     }
@@ -85,10 +216,6 @@ export class LinkUserGroupService {
     userId: number,
     rights: User_UserGroupRights,
   ) {
-    console.log('groupId');
-    console.log(groupId);
-    console.log('userId');
-    console.log(userId);
     try {
       const linkGroup = await this.linkUserGroupRepository.findOne({
         where: {

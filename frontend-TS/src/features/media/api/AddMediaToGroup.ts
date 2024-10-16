@@ -1,6 +1,6 @@
 import storage from "../../../utils/storage.ts";
 
-export const addMediaToGroup = async (mediaId:number,userGroupName:string, userGroupId:number) => {
+export const addMediaToGroup = async (mediaId:number, userGroupId:number) => {
   const token = storage.getToken();
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-media/media/add`,{
 
@@ -9,7 +9,7 @@ export const addMediaToGroup = async (mediaId:number,userGroupName:string, userG
     "Authorization": `Bearer ${token}`,
     "Content-Type": "application/json"
   },
-  body: JSON.stringify({ mediasId: [mediaId], userGroupName:userGroupName, userGroupId:userGroupId })
+  body: JSON.stringify({ mediasId: [mediaId], userGroupId:userGroupId })
 })
   return response.json()
 }

@@ -1,17 +1,20 @@
 import {
-  Controller,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
   Get,
+  HttpCode,
+  Param,
+  Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
 import { AuthGuard } from '../auth/auth.guard';
+import { CreateUserGroupDto } from '../user-group/dto/create-user-group.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 
 @Controller('link-user-group')
 export class LinkUserGroupController {
@@ -38,6 +41,18 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.getAccessForUserToGroup(userId, groupId);
   }
 
+  @Post('/user')
+  @HttpCode(201)
+  async createUser(@Body() createUserDto: CreateUserDto) {
+    return await this.linkUserGroupService.createUser(createUserDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/group')
+  createGroup(@Body() createUserGroupDto: CreateUserGroupDto) {
+    return this.linkUserGroupService.createUserGroup(createUserGroupDto);
+  }
+
   @UseGuards(AuthGuard)
   @Post('/access')
   grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
@@ -49,9 +64,10 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Get('/looking-for-user/:partialString')
   lookingForUser(@Param('partialString') partialString: string) {
-    const toReturn =  this.linkUserGroupService.searchForUserGroup(partialString);
+    const toReturn =
+      this.linkUserGroupService.searchForUserGroup(partialString);
     console.log(toReturn);
-    return toReturn
+    return toReturn;
   }
 
   @UseGuards(AuthGuard)
@@ -65,7 +81,6 @@ export class LinkUserGroupController {
   getUserPersonalGroup(@Param('userId') userId: number) {
     return this.linkUserGroupService.findUserPersonalGroup(userId);
   }
-
 
   @UseGuards(AuthGuard)
   @Patch('/change-access')
@@ -85,5 +100,12 @@ export class LinkUserGroupController {
     console.log('groupId', groupId);
     console.log('userId', userId);
     return this.linkUserGroupService.RemoveAccessToUserGroup(groupId, userId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete(':groupId')
+  @UseGuards(AuthGuard)
+  remove(@Param('groupId') id: string) {
+    return this.linkUserGroupService.removeGroupFromLinkEntity(+id);
   }
 }

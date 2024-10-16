@@ -1,4 +1,10 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  Index,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { IsEnum, IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../link-group-project/entities/link-group-project.entity';
 import { LinkMediaGroup } from '../../link-media-group/entities/link-media-group.entity';

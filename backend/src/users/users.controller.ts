@@ -1,17 +1,9 @@
-import { Controller, Post, Body, HttpCode } from '@nestjs/common';
+import { Controller } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { CreateUserDto } from './dto/create-user.dto';
 
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
-
-  @Post()
-  @HttpCode(201)
-  create(@Body() createUserDto: CreateUserDto) {
-    console.log(createUserDto);
-    return this.usersService.create(createUserDto);
-  }
 
   // this actions should only be possible if you are the super Admin of the platform, for now I disable this routes
   //

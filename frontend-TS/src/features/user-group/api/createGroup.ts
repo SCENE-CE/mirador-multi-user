@@ -5,7 +5,7 @@ export const createGroup = async(userGroup:CreateGroupDto)=>{
   const token = storage.getToken()
 
   try{
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user-group/`,
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/group`,
     {
       method: "POST",
       headers:{

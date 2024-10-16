@@ -1,14 +1,9 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserGroup } from './entities/user-group.entity';
 import { Brackets, Repository } from 'typeorm';
 import { UserGroupTypes } from '../enum/user-group-types';
-import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { User_UserGroupRights } from '../enum/rights';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { CustomLogger } from '../Logger/CustomLogger.service';
@@ -16,36 +11,19 @@ import { CustomLogger } from '../Logger/CustomLogger.service';
 @Injectable()
 export class UserGroupService {
   private readonly logger = new CustomLogger();
-
+  //Importing function from LinkTable there cause circular dependencies error, this is described into the wiki there : https://github.com/SCENE-CE/mirador-multi-user/wiki/Backend
   constructor(
     @InjectRepository(UserGroup)
     private readonly userGroupRepository: Repository<UserGroup>,
-    private readonly linkUserGroupService: LinkUserGroupService,
   ) {}
+
   async create(createUserGroupDto: CreateUserGroupDto): Promise<UserGroup> {
     try {
       const groupToCreate = {
         ...createUserGroupDto,
-        type: UserGroupTypes.MULTI_USER,
         description: 'group description here',
       };
-      const userGroup = await this.userGroupRepository.save(groupToCreate);
-      for (const user of userGroup.users) {
-        if (user.id === createUserGroupDto.ownerId) {
-          await this.linkUserGroupService.create({
-            rights: User_UserGroupRights.ADMIN,
-            user: user,
-            user_group: userGroup,
-          });
-        } else {
-          await this.linkUserGroupService.create({
-            rights: User_UserGroupRights.READER,
-            user: user,
-            user_group: userGroup,
-          });
-        }
-      }
-      return userGroup;
+      return await this.userGroupRepository.save(groupToCreate);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -55,43 +33,15 @@ export class UserGroupService {
     }
   }
 
-  async createUserPersonalGroup(
-    createUserGroupDto: CreateUserGroupDto,
-  ): Promise<UserGroup> {
-    try {
-      const groupToCreate = {
-        ...createUserGroupDto,
-        type: UserGroupTypes.PERSONAL,
-      };
-
-      const userPersonalGroup =
-        await this.userGroupRepository.save(groupToCreate);
-
-      await this.linkUserGroupService.create({
-        rights: User_UserGroupRights.ADMIN,
-        user: createUserGroupDto.users[0],
-        user_group: userPersonalGroup,
-      });
-
-      return userPersonalGroup;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        'An error occurred while creating userGroup',
-        error,
-      );
-    }
-  }
-
-  async findUserGroupByNameAndId(userGroupName: string, id: number) {
+  async findUserGroupById(userGroupId: number) {
     try {
       return await this.userGroupRepository.findOne({
-        where: { name: userGroupName, id: id },
+        where: { id: userGroupId },
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `An error occurred while find userGroup with name: ${userGroupName}`,
+        `An error occurred while find userGroup with ID: ${userGroupId}`,
         error,
       );
     }
@@ -169,21 +119,11 @@ export class UserGroupService {
 
   async remove(groupId: number) {
     try {
-      const linkUserGroups =
-        await this.linkUserGroupService.findAllUsersForGroup(groupId);
-      console.log(linkUserGroups);
-      for (const linkUserGroup of linkUserGroups) {
-        await this.linkUserGroupService.RemoveAccessToUserGroup(
-          groupId,
-          linkUserGroup.user.id,
-        );
-      }
       const deleteData = await this.userGroupRepository.delete(groupId);
       if (deleteData.affected != 1) throw new NotFoundException(groupId);
       return deleteData;
     } catch (error) {
       this.logger.error(error.message, error.stack);
-
       throw new InternalServerErrorException(error);
     }
   }

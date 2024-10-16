@@ -127,7 +127,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
   const grantingAccessToGroup = async ( user_group_id: number) => {
     const user_group = groups.find((groups)=> groups.id === user_group_id)
-    await grantAccessToGroup(ProjectRights.READER, userToAdd!.user, user_group! )
+    await grantAccessToGroup(userToAdd!.user, user_group! )
   }
 
   const listOfUserPersonalGroup = useMemo(()=>{
