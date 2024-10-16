@@ -7,11 +7,15 @@ import {
   Unique,
 } from 'typeorm';
 import { UserGroup } from '../../user-group/entities/user-group.entity';
-import { ManifestGroupRights } from "../../enum/rights";
-import { Manifest } from "../../manifest/entities/manifest.entity";
+import { ManifestGroupRights } from '../../enum/rights';
+import { Manifest } from '../../manifest/entities/manifest.entity';
 
 @Entity()
-@Unique('constraint_right_manifest_userGroup', ['rights', 'manifest', 'user_group'])
+@Unique('constraint_right_manifest_userGroup', [
+  'rights',
+  'manifest',
+  'user_group',
+])
 export class LinkManifestGroup {
   @PrimaryGeneratedColumn()
   id: number;
