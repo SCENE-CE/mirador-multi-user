@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateUserGroupDto } from './dto/create-user-group.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserGroup } from './entities/user-group.entity';
@@ -118,23 +118,13 @@ export class UserGroupService {
   }
 
   async remove(groupId: number) {
-    // try {
-    //   const linkUserGroups =
-    //     await this.linkUserGroupService.findAllUsersForGroup(groupId);
-    //   console.log(linkUserGroups);
-    //   for (const linkUserGroup of linkUserGroups) {
-    //     await this.linkUserGroupService.RemoveAccessToUserGroup(
-    //       groupId,
-    //       linkUserGroup.user.id,
-    //     );
-    //   }
-    //   const deleteData = await this.userGroupRepository.delete(groupId);
-    //   if (deleteData.affected != 1) throw new NotFoundException(groupId);
-    //   return deleteData;
-    // } catch (error) {
-    //   this.logger.error(error.message, error.stack);
-    //
-    //   throw new InternalServerErrorException(error);
-    // }
+    try {
+      const deleteData = await this.userGroupRepository.delete(groupId);
+      if (deleteData.affected != 1) throw new NotFoundException(groupId);
+      return deleteData;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
+    }
   }
 }

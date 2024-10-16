@@ -1,7 +1,5 @@
 import {
   ConflictException,
-  forwardRef,
-  Inject,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -73,33 +71,39 @@ export class LinkUserGroupService {
     }
   }
 
+  async removeGroupFromLinkEntity(groupId: number) {
+    try {
+      const linkUserGroups = await this.findAllUsersForGroup(groupId);
+      console.log(linkUserGroups);
+      for (const linkUserGroup of linkUserGroups) {
+        await this.RemoveAccessToUserGroup(groupId, linkUserGroup.user.id);
+      }
+      return await this.groupService.remove(groupId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   async createUser(createUserDto: CreateUserDto) {
     try {
-      console.log('ENTER CREATE USER')
       const userToSave = createUserDto;
       userToSave.password = await bcrypt.hash(createUserDto.password, 10);
-      console.log('POST BCRYPT')
       const savedUser = await this.userService.create(userToSave);
-      console.log('POST User Creation')
-      console.log('---------------savedUser--------------------');
       console.log(savedUser);
-      const savedGroup = await this.groupService.create({
+      await this.groupService.create({
         name: savedUser.name,
         ownerId: savedUser.id,
         user: savedUser,
         type: UserGroupTypes.PERSONAL,
       });
-      console.log('POST GROUP CREATION')
-      console.log('savedGroup ', savedGroup);
       await this.emailService.sendMail({
         to: savedUser.mail,
         subject: 'Arvest account creation',
         userName: savedUser.name,
       });
 
-      console.log('-----------------------savedUser-----------------------')
-      console.log(savedUser)
-      console.log('BEFORE RETURN')
       return savedUser;
     } catch (error) {
       this.logger.error(error.message, error.stack);

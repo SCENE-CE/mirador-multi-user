@@ -1,13 +1,14 @@
 import {
-  Controller,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
   Get,
-  UseGuards, HttpCode
-} from "@nestjs/common";
+  HttpCode,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
@@ -43,10 +44,7 @@ export class LinkUserGroupController {
   @Post('/user')
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {
-    const toReturn = await this.linkUserGroupService.createUser(createUserDto);
-    console.log('toReturn create User Controller:')
-    console.log(toReturn)
-    return toReturn
+    return await this.linkUserGroupService.createUser(createUserDto);
   }
 
   @UseGuards(AuthGuard)
@@ -102,5 +100,12 @@ export class LinkUserGroupController {
     console.log('groupId', groupId);
     console.log('userId', userId);
     return this.linkUserGroupService.RemoveAccessToUserGroup(groupId, userId);
+  }
+
+  @UseGuards(AuthGuard)
+  @Delete(':groupId')
+  @UseGuards(AuthGuard)
+  remove(@Param('groupId') id: string) {
+    return this.linkUserGroupService.removeGroupFromLinkEntity(+id);
   }
 }
