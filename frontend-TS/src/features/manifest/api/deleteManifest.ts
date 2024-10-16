@@ -4,7 +4,7 @@ export const deleteManifest = async (manifestId: number) => {
   const token = storage.getToken();
   console.log(manifestId)
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/${manifestId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/${manifestId}`, {
       method: 'DELETE',
       headers: {
         "Authorization": `Bearer ${token}`,

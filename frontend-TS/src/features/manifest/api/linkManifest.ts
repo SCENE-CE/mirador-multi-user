@@ -4,7 +4,7 @@ import { UploadAndLinkManifestDto } from "../types/types.ts";
 export const linkManifest= async (createManifestDto:UploadAndLinkManifestDto) => {
   const token = storage.getToken();
 
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/link`, {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/link`, {
     method: 'POST',
     headers: {
       "Authorization": `Bearer ${token}`,

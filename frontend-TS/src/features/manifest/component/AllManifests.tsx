@@ -255,7 +255,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
   const handleUpdateManifest = async (manifestToUpdate: Manifest) => {
     try{
-      await updateManifest(manifestToUpdate)
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { rights, ...manifestDto } = manifestToUpdate;
+      await updateManifest(manifestDto)
       fetchManifestForUser();
     }catch(error){
       console.error("Error updating Manifest", error);

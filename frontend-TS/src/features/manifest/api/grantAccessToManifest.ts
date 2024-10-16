@@ -5,7 +5,7 @@ export const grantAccessToManifest = async (grantAccessToManifestDto:grantAccess
   const token = storage.getToken();
 console.log('grantAccessToManifestDto:',grantAccessToManifestDto)
   try{
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/add`,
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/add`,
       {
         method: 'POST',
         headers: {

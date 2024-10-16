@@ -13,12 +13,12 @@ import { LinkGroupProjectModule } from './link-group-project/link-group-project.
 import { LinkMediaGroupModule } from './link-media-group/link-media-group.module';
 import { LinkUserGroupModule } from './link-user-group/link-user-group.module';
 import { ManifestModule } from './manifest/manifest.module';
-import { GroupManifestModule } from './group-manifest/group-manifest.module';
 import dbConfiguration from './config/db.config';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { EmailServerModule } from './email/email.module';
 import { CustomLogger } from './Logger/CustomLogger.service';
+import { LinkManifestGroupModule } from "./link-manifest-group/link-manifest-group.module";
 
 @Module({
   imports: [
@@ -63,8 +63,8 @@ import { CustomLogger } from './Logger/CustomLogger.service';
     LinkGroupProjectModule,
     LinkMediaGroupModule,
     LinkUserGroupModule,
+    LinkManifestGroupModule,
     ManifestModule,
-    GroupManifestModule,
     EmailServerModule,
   ],
   controllers: [AppController],

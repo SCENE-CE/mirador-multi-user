@@ -4,7 +4,7 @@ import storage from "../../../utils/storage.ts";
 export const getAllManifestGroups = async (manifestId: number): Promise<ProjectGroup[]> => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/${manifestId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/${manifestId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
