@@ -8,7 +8,7 @@ export const uploadManifest= async (createManifestDto:UploadAndLinkManifestDto) 
   formData.append('idCreator', createManifestDto.idCreator.toString());
   formData.append('user_group', JSON.stringify(createManifestDto.user_group));
 
-  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/upload`, {
+  const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/upload`, {
     method: 'POST',
     headers: {
       "Authorization": `Bearer ${token}`,

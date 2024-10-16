@@ -6,7 +6,7 @@ export const createManifest = async (createManifestDto:manifestCreationDto) => {
   const token = storage.getToken();
   console.log('createManifestDto',createManifestDto);
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-manifest/manifest/creation`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/creation`, {
       method: "POST",
       headers: {
         "Authorization": `Bearer ${token}`,
