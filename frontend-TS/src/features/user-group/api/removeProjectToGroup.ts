@@ -4,7 +4,7 @@ import { RemoveProjectToGroupDto } from "../types/types.ts";
 export const removeProjectToGroup = async (dto:RemoveProjectToGroupDto)=>{
   const token = storage.getToken();
   try{
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/project/${dto.projectId}/${dto.groupId}`,{
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/project/${dto.projectId}/${dto.groupId}`,{
       method:"DELETE",
       headers:{
         "Authorization": `Bearer ${token}`,

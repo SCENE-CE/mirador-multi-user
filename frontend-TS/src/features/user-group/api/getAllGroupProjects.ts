@@ -3,7 +3,7 @@ import { ProjectUser } from "../../projects/types/types.ts";
 export const getAllGroupProjects = async (groupId: number) :Promise<ProjectUser[]> => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/${groupId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/${groupId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`

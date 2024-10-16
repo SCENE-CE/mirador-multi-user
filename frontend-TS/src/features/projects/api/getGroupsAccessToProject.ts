@@ -5,7 +5,7 @@ export const getGroupsAccessToProject = async (projectId: number): Promise<Proje
   const token = storage.getToken();
 
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/group-project/project/relation/${projectId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/project/relation/${projectId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`

@@ -32,6 +32,8 @@ export class LinkUserGroupService {
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
     try {
+      console.log('------------------linkUserGroupDto------------------')
+      console.log(linkUserGroupDto)
       const userToLink = await this.userService.findOne(
         linkUserGroupDto.userId,
       );
@@ -92,17 +94,24 @@ export class LinkUserGroupService {
       userToSave.password = await bcrypt.hash(createUserDto.password, 10);
       const savedUser = await this.userService.create(userToSave);
       console.log(savedUser);
-      await this.groupService.create({
+      const userPersonalGroup = await this.groupService.create({
         name: savedUser.name,
         ownerId: savedUser.id,
         user: savedUser,
         type: UserGroupTypes.PERSONAL,
       });
-      await this.emailService.sendMail({
-        to: savedUser.mail,
-        subject: 'Arvest account creation',
-        userName: savedUser.name,
+
+      await this.create({
+        rights: User_UserGroupRights.ADMIN,
+        userId: savedUser.id,
+        user_groupId: userPersonalGroup.id,
       });
+
+      // await this.emailService.sendMail({
+      //   to: savedUser.mail,
+      //   subject: 'Arvest account creation',
+      //   userName: savedUser.name,
+      // });
 
       return savedUser;
     } catch (error) {
@@ -126,6 +135,12 @@ export class LinkUserGroupService {
         ...createUserGroupDto,
         type: UserGroupTypes.MULTI_USER,
       });
+      console.log('------------------userGroup------------------')
+      console.log(userGroup)
+      console.log('------------------userGroup ID------------------')
+      console.log(userGroup.id)
+      console.log('------------------createUserGroupDto------------------')
+      console.log(createUserGroupDto)
       await this.create({
         rights: User_UserGroupRights.READER,
         userId: createUserGroupDto.user.id,
@@ -386,7 +401,6 @@ export class LinkUserGroupService {
         .where('user.id = :userId', { userId })
         .andWhere('group.type = :type', { type: UserGroupTypes.PERSONAL })
         .getOne();
-
       if (!personnalLinkUserGroup) {
         throw new Error(`No personal group found for user id: ${userId}`);
       }

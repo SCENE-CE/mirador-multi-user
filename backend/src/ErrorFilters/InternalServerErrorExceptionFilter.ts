@@ -21,12 +21,12 @@ export class InternalServerErrorFilter implements ExceptionFilter {
     console.error('Internal server error:', exception.message);
 
     // Send email using your email service
-    await this.emailService.sendInternalServerErrorNotification({
-      message: exception.message,
-      url: request.url,
-      method: request.method,
-      timestamp: new Date().toISOString(),
-    });
+    // await this.emailService.sendInternalServerErrorNotification({
+    //   message: exception.message,
+    //   url: request.url,
+    //   method: request.method,
+    //   timestamp: new Date().toISOString(),
+    // });
 
     // Send the response
     response.status(status).json({
