@@ -55,38 +55,6 @@ export class UserGroupService {
     }
   }
 
-  async searchForUserGroup(partialUserGroupName: string) {
-    try {
-      const partialUserGroupNameLength = partialUserGroupName.length;
-
-      const toReturn = await this.userGroupRepository
-        .createQueryBuilder('userGroup')
-        .leftJoin('userGroup.linkUserGroups', 'linkUserGroup')
-        .leftJoinAndSelect('linkUserGroup.user', 'user')
-        .addSelect(['user.id', 'user.name', 'user.mail'])
-        .addSelect(['linkUserGroup.id', 'linkUserGroup.rights'])
-        .where('userGroup.type = :type', { type: UserGroupTypes.MULTI_USER })
-        .andWhere(
-          new Brackets((qb) => {
-            qb.where('LEFT(userGroup.name, :length) = :partialUserGroupName', {
-              length: partialUserGroupNameLength,
-              partialUserGroupName,
-            });
-          }),
-        )
-        .limit(3)
-        .getMany();
-
-      return toReturn;
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        'error while searching for userGroup',
-        error,
-      );
-    }
-  }
-
   async findOne(id: number) {
     try {
       return await this.userGroupRepository.findOne({
