@@ -37,10 +37,7 @@ export class ProjectService {
   async findAll(userId: number): Promise<Project[]> {
     try {
       const projects = await this.projectRepository.find({
-        relations: {
-          owner: true,
-        },
-        where: { owner: { id: userId } },
+        where: { ownerId: userId },
       });
       return projects;
     } catch (error) {

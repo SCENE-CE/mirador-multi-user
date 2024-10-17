@@ -11,18 +11,26 @@ export class PoliciesGuard implements CanActivate {
     private caslAbilityFactory: CaslAbilityFactory,
   ) {}
   async canActivate(context: ExecutionContext): Promise<boolean> {
+    console.log('Enter can activate')
     const policyHandlers =
       this.reflector.get<PolicyHandler[]>(
         CHECK_POLICIES_KEY,
         context.getHandler(),
       ) || [];
+    console.log(context.switchToHttp().getRequest().user);
     const { user } = context.switchToHttp().getRequest();
     const ability = this.caslAbilityFactory.defineAbilityForUser(user);
 
-    return policyHandlers.every((handler) =>
+    const test = policyHandlers.every((handler) =>
       this.execPolicyHandler(handler, ability),
     );
+    console.log("test")
+    console.log(test)
+    return test;
   }
+
+
+
 
   private execPolicyHandler(handler: PolicyHandler, ability: AppAbility) {
     if (typeof handler === 'function') {

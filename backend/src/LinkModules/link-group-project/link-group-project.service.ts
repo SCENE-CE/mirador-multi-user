@@ -347,10 +347,10 @@ export class LinkGroupProjectService {
   async createProject(dto: CreateProjectDto) {
     try {
       const userPersonalGroup =
-        await this.linkUserGroupService.findUserPersonalGroup(dto.owner.id);
+        await this.linkUserGroupService.findUserPersonalGroup(dto.ownerId);
       if (!userPersonalGroup) {
         throw new NotFoundException(
-          `there is no user personal group for : ${dto.owner.id}`,
+          `there is no user personal group for : ${dto.ownerId}`,
         );
       }
       const project = await this.projectService.create(dto);
@@ -400,5 +400,9 @@ export class LinkGroupProjectService {
         error,
       );
     }
+  }
+
+  async groupHasAccesToProject(userId: number,groupId: number) {
+
   }
 }

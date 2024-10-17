@@ -29,12 +29,6 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'current_timestamp' })
   createdAt!: Date;
 
-  @OneToMany(() => Project, (project) => project.owner, {
-    onDelete: 'CASCADE',
-    onUpdate: 'CASCADE',
-  })
-  projects: Project[];
-
   @OneToMany(() => LinkUserGroup, (linkUserGroup) => linkUserGroup.user, {
     cascade: true,
     onDelete: 'CASCADE',

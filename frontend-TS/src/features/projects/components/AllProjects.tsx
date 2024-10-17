@@ -144,7 +144,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const InitializeProject = useCallback(async (workspace: IState, projectName: string) => {
     const response = await createProject({
         name: projectName,
-        owner: user,
+        ownerId: user.id,
         userWorkspace: workspace,
         metadata: {},
       }

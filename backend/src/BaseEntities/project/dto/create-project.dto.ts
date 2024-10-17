@@ -9,7 +9,7 @@ export class CreateProjectDto {
   @IsObject()
   userWorkspace: any;
 
-  owner: User;
+  ownerId: number;
 
   @IsObject()
   metadata: any;

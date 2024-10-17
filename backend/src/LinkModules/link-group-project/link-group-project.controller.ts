@@ -6,6 +6,8 @@ import {
   Param,
   Patch,
   Post,
+  Req,
+  SetMetadata,
   UseGuards,
 } from '@nestjs/common';
 import { LinkGroupProjectService } from './link-group-project.service';
@@ -14,6 +16,7 @@ import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.dto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
+import { PoliciesGuard } from '../../utils/casl/policies.guard';
 
 @Controller('link-group-project')
 export class LinkGroupProjectController {
@@ -61,9 +64,12 @@ export class LinkGroupProjectController {
     );
   }
 
-  @UseGuards(AuthGuard)
+  @SetMetadata('action', 'delete')
+  @UseGuards(AuthGuard, PoliciesGuard)
   @Delete('/delete/project/:projectId')
-  deleteProject(@Param('projectId') project_id: number) {
+  deleteProject(@Param('projectId') project_id: number, @Req() request) {
+    console.log('-------------------request-------------------');
+    console.log(request.user);
     return this.linkGroupProjectService.deleteProject(project_id);
   }
 
