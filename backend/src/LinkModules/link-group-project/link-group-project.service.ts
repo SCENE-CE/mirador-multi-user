@@ -19,6 +19,7 @@ import { removeProjectToGroupDto } from './dto/removeProjectToGroupDto';
 import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.dto';
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { Project } from '../../BaseEntities/project/entities/project.entity';
+import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -188,6 +189,41 @@ export class LinkGroupProjectService {
     }
   }
 
+  async updateAccessToProject(
+    updateAccessToProjectDto: UpdateAccessToProjectDto,
+  ) {
+    try {
+      const projectToUpdate = await this.projectService.findOne(
+        updateAccessToProjectDto.projectId,
+      );
+      const groupToUpdate = await this.groupService.findOne(
+        updateAccessToProjectDto.groupId,
+      );
+      console.log(updateAccessToProjectDto);
+      const linkGroupToUpdate = await this.linkGroupProjectRepository.findOne({
+        where: {
+          project: { id: projectToUpdate.id },
+          user_group: { id: groupToUpdate.id },
+        },
+      });
+      const updateRights = await this.linkGroupProjectRepository.update(
+        linkGroupToUpdate.id,
+        {
+          user_group: groupToUpdate,
+          project: projectToUpdate,
+          rights: updateAccessToProjectDto.rights,
+        }
+      );
+      return updateRights
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while trying to update access to project with id ${updateAccessToProjectDto.projectId} to group with id: ${updateAccessToProjectDto.groupId}`,
+        error,
+      );
+    }
+  }
+
   async addProjectsToGroup(dto: AddProjectToGroupDto) {
     const { groupId, projectsId } = dto;
 
@@ -217,8 +253,9 @@ export class LinkGroupProjectService {
       }
       return groupsForProject;
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `an error occured while trying to add project id ${dto.projectsId} to group id: ${dto.groupId}`,
+        `an error occurred while trying to add project id ${dto.projectsId} to group id: ${dto.groupId}`,
         error,
       );
     }
@@ -261,6 +298,7 @@ export class LinkGroupProjectService {
         groupToRemove,
       );
     } catch (error) {
+      this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while removing project id : ${dto.projectId} from group id ${dto.groupId}`,
         error,
