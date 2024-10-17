@@ -10,9 +10,10 @@ import {
 } from '@nestjs/common';
 import { LinkGroupProjectService } from './link-group-project.service';
 import { AuthGuard } from '../../auth/auth.guard';
-import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.dto';
+import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
+import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 
 @Controller('link-group-project')
 export class LinkGroupProjectController {
@@ -36,9 +37,8 @@ export class LinkGroupProjectController {
 
   @UseGuards(AuthGuard)
   @Patch('/updateProject/')
-  @UseGuards(AuthGuard)
-  update(@Body() UpdateProjectGroupDto: UpdateProjectGroupDto) {
-    return this.linkGroupProjectService.updateProject(UpdateProjectGroupDto);
+  update(@Body() updateProjectGroupDto: UpdateProjectGroupDto) {
+    return this.linkGroupProjectService.updateProject(updateProjectGroupDto);
   }
 
   @UseGuards(AuthGuard)
@@ -46,6 +46,18 @@ export class LinkGroupProjectController {
   addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
     return this.linkGroupProjectService.addProjectsToGroup(
       addProjectToGroupDto,
+    );
+  }
+
+  @UseGuards(AuthGuard)
+  @Patch('/change-rights')
+  updateAccessToProject(
+    @Body() updateAccessToProjectDto: UpdateAccessToProjectDto,
+  ) {
+    console.log('--------------updateAccessToProjectDto--------------');
+    console.log(updateAccessToProjectDto);
+    return this.linkGroupProjectService.updateAccessToProject(
+      updateAccessToProjectDto,
     );
   }
 

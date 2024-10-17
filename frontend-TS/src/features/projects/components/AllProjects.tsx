@@ -28,6 +28,7 @@ import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
+import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
 
 
 interface AllProjectsProps {
@@ -192,18 +193,14 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     return option.name
   };
 
-  const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number,ProjectUser:Project) => {
-    const groups:ProjectGroup[] = await getGroupsAccessToProject(projectId);
+  const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number) => {
 
-    const userGroup = groups.find((itemGroup) => itemGroup.user_group.id === group.id);
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const {rights, ...project } = ProjectUser
-    await updateProject({
-      project: { ...project},
-      id: userGroup!.id,
-      group: userGroup!.user_group,
-      rights: eventValue as ProjectRights
-    });
+    await updateAccessToProject(
+    projectId,
+     group.id,
+     eventValue as ProjectRights,
+    );
+
   };
 
   const listOfGroup: ListItem[] = useMemo(() => {
