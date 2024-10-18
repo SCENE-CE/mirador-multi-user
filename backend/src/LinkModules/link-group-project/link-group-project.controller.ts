@@ -32,7 +32,6 @@ export class LinkGroupProjectController {
     );
   }
 
-
   @UseGuards(AuthGuard)
   @Get('/project/relation/:projectId')
   getProjectRelation(@Param('projectId') projectId: number) {
@@ -112,16 +111,25 @@ export class LinkGroupProjectController {
     );
   }
 
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Delete('/project/:projectId/:groupId')
-  deleteGroupProjectLink(
+  async deleteGroupProjectLink(
     @Param('projectId') projectId: number,
     @Param('groupId') groupId: number,
+    @Req() request,
   ) {
-    return this.linkGroupProjectService.RemoveProjectToGroup({
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
       projectId,
-      groupId,
-    });
+      async () => {
+        return this.linkGroupProjectService.RemoveProjectToGroup({
+          projectId,
+          groupId,
+        });
+      },
+    );
   }
   //TODO: Check if this routes is usefull
   // @UseGuards(AuthGuard)
