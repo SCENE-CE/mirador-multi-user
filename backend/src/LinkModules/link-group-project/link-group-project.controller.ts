@@ -16,7 +16,7 @@ import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
 import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.dto';
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
-import { PoliciesGuard } from '../../utils/casl/policies.guard';
+import { ActionType } from '../../enum/actions';
 
 @Controller('link-group-project')
 export class LinkGroupProjectController {
@@ -32,45 +32,84 @@ export class LinkGroupProjectController {
     );
   }
 
+
   @UseGuards(AuthGuard)
   @Get('/project/relation/:projectId')
   getProjectRelation(@Param('projectId') projectId: number) {
     return this.linkGroupProjectService.getProjectRelations(projectId);
   }
 
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/updateProject/')
-  update(@Body() updateProjectGroupDto: UpdateProjectGroupDto) {
-    return this.linkGroupProjectService.updateProject(updateProjectGroupDto);
+  async update(
+    @Body() updateProjectGroupDto: UpdateProjectGroupDto,
+    @Req() request,
+  ) {
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      updateProjectGroupDto.project.id,
+      async () => {
+        return this.linkGroupProjectService.updateProject(
+          updateProjectGroupDto,
+        );
+      },
+    );
   }
 
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Post('/project/add')
-  addProjectToGroup(@Body() addProjectToGroupDto: AddProjectToGroupDto) {
-    return this.linkGroupProjectService.addProjectsToGroup(
-      addProjectToGroupDto,
+  async addProjectToGroup(
+    @Body() addProjectToGroupDto: AddProjectToGroupDto,
+    @Req() request,
+  ) {
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      addProjectToGroupDto.projectId,
+      async () => {
+        return this.linkGroupProjectService.addProjectsToGroup(
+          addProjectToGroupDto,
+        );
+      },
     );
   }
-
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/change-rights')
-  updateAccessToProject(
+  async updateAccessToProject(
     @Body() updateAccessToProjectDto: UpdateAccessToProjectDto,
+    @Req() request,
   ) {
-    console.log('--------------updateAccessToProjectDto--------------');
-    console.log(updateAccessToProjectDto);
-    return this.linkGroupProjectService.updateAccessToProject(
-      updateAccessToProjectDto,
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      updateAccessToProjectDto.projectId,
+      async () => {
+        return this.linkGroupProjectService.updateAccessToProject(
+          updateAccessToProjectDto,
+        );
+      },
     );
   }
 
-  @SetMetadata('action', 'delete')
-  @UseGuards(AuthGuard, PoliciesGuard)
+  @SetMetadata('action', ActionType.DELETE)
+  @UseGuards(AuthGuard)
   @Delete('/delete/project/:projectId')
-  deleteProject(@Param('projectId') project_id: number, @Req() request) {
-    console.log('-------------------request-------------------');
+  async deleteProject(@Param('projectId') project_id: number, @Req() request) {
     console.log(request.user);
-    return this.linkGroupProjectService.deleteProject(project_id);
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      project_id,
+      async (linkEntity) => {
+        return this.linkGroupProjectService.deleteProject(
+          linkEntity.project.id,
+        );
+      },
+    );
   }
 
   @UseGuards(AuthGuard)

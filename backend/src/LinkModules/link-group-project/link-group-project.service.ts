@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -7,7 +8,7 @@ import { CreateLinkGroupProjectDto } from './dto/create-link-group-project.dto';
 import { UpdateLinkGroupProjectDto } from './dto/update-link-group-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkGroupProject } from './entities/link-group-project.entity';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
 import { GroupProjectRights } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
@@ -20,6 +21,7 @@ import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.
 import { LinkUserGroupService } from '../link-user-group/link-user-group.service';
 import { Project } from '../../BaseEntities/project/entities/project.entity';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
+import { ActionType } from '../../enum/actions';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -212,9 +214,9 @@ export class LinkGroupProjectService {
           user_group: groupToUpdate,
           project: projectToUpdate,
           rights: updateAccessToProjectDto.rights,
-        }
+        },
       );
-      return updateRights
+      return updateRights;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -225,7 +227,7 @@ export class LinkGroupProjectService {
   }
 
   async addProjectsToGroup(dto: AddProjectToGroupDto) {
-    const { groupId, projectsId } = dto;
+    const { groupId, projectId } = dto;
 
     try {
       const userGroup = await this.groupService.findOne(groupId);
@@ -234,28 +236,23 @@ export class LinkGroupProjectService {
           `Group with id ${groupId} not found`,
         );
       }
-      const groupsForProject = [];
-      for (const projectId of projectsId) {
-        const project = await this.projectService.findOne(projectId);
-        if (!project) {
-          throw new InternalServerErrorException(
-            `Project with id ${projectId} not found`,
-          );
-        }
-        await this.create({
-          rights: dto.rights ? dto.rights : GroupProjectRights.READER,
-          user_group: userGroup,
-          project: project,
-        });
-
-        const groups = await this.findAllGroupProjectByUserGroupId(projectId);
-        groupsForProject.push(groups);
+      const project = await this.projectService.findOne(projectId);
+      if (!project) {
+        throw new InternalServerErrorException(
+          `Project with id ${projectId} not found`,
+        );
       }
-      return groupsForProject;
+      await this.create({
+        rights: dto.rights ? dto.rights : GroupProjectRights.READER,
+        user_group: userGroup,
+        project: project,
+      });
+
+      return await this.findAllGroupProjectByUserGroupId(projectId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `an error occurred while trying to add project id ${dto.projectsId} to group id: ${dto.groupId}`,
+        `an error occurred while trying to add project id ${dto.projectId} to group id: ${dto.groupId}`,
         error,
       );
     }
@@ -356,7 +353,7 @@ export class LinkGroupProjectService {
       const project = await this.projectService.create(dto);
       await this.addProjectsToGroup({
         groupId: userPersonalGroup.id,
-        projectsId: [project.id],
+        projectId: project.id,
         rights: GroupProjectRights.ADMIN,
       });
       return await this.getProjectRightForUser(
@@ -402,7 +399,78 @@ export class LinkGroupProjectService {
     }
   }
 
-  async groupHasAccesToProject(userId: number,groupId: number) {
+  async getHighestRightForProject(userId: number, projectId: number) {
+    const userGroups =
+      await this.linkUserGroupService.findALlGroupsForUser(userId);
 
+    const linkEntities = await this.linkGroupProjectRepository.find({
+      where: {
+        user_group: { id: In(userGroups.map((group) => group.id)) },
+        project: { id: projectId },
+      },
+      relations: ['project', 'user_group'],
+    });
+
+    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
+
+    return linkEntities.reduce((prev, current) => {
+      const prevRight = rightsPriority[prev.rights] || 0;
+      const currentRight = rightsPriority[current.rights] || 0;
+      return currentRight > prevRight ? current : prev;
+    });
+  }
+
+  async checkPolicies(
+    action: string,
+    userId: number,
+    projectId: number,
+    callback: (linkEntity: LinkGroupProject) => any,
+  ) {
+    try {
+      const linkEntity = await this.getHighestRightForProject(
+        userId,
+        projectId,
+      );
+
+      if (!linkEntity) {
+        return new ForbiddenException(
+          'User does not have access to this project or the project does not exist',
+        );
+      }
+      switch (action) {
+        case ActionType.READ:
+          if (
+            [
+              GroupProjectRights.READER,
+              GroupProjectRights.ADMIN,
+              GroupProjectRights.EDITOR,
+            ].includes(linkEntity.rights)
+          ) {
+            return callback(linkEntity);
+          }
+          break;
+        case ActionType.UPDATE:
+          if (
+            [GroupProjectRights.ADMIN, GroupProjectRights.EDITOR].includes(
+              linkEntity.rights,
+            )
+          ) {
+            return callback(linkEntity);
+          }
+          break;
+        case ActionType.DELETE:
+          if (linkEntity.rights === GroupProjectRights.ADMIN) {
+            return callback(linkEntity);
+          }
+          break;
+
+        default:
+          throw new InternalServerErrorException('Invalid action');
+      }
+      return new ForbiddenException('User is not allowed to do this action');
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
+    }
   }
 }

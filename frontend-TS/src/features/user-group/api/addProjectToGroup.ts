@@ -12,7 +12,7 @@ export const addProjectToGroup = async (dto:AddProjectToGroupDto)=>{
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({projectsId:dto.projectsId, groupId:dto.groupId})
+        body: JSON.stringify({projectsId:dto.projectId, groupId:dto.groupId})
       });
     const toReturn= await response.json();
     console.log(toReturn)

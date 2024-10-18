@@ -142,7 +142,7 @@ export class LinkUserGroupService {
       console.log('------------------createUserGroupDto------------------')
       console.log(createUserGroupDto)
       await this.create({
-        rights: User_UserGroupRights.READER,
+        rights: User_UserGroupRights.ADMIN,
         userId: createUserGroupDto.user.id,
         user_groupId: userGroup.id,
       });
