@@ -144,7 +144,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const InitializeProject = useCallback(async (workspace: IState, projectName: string) => {
     const response = await createProject({
         name: projectName,
-        owner: user,
+        ownerId: user.id,
         userWorkspace: workspace,
         metadata: {},
       }
@@ -182,7 +182,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const handleAddUser = async ( projectId: number) => {
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
-    await addProjectToGroup({ projectsId: [projectId], groupId:linkUserGroupToAdd!.user_group.id });
+    await addProjectToGroup({ projectId:projectId, groupId:linkUserGroupToAdd!.user_group.id });
   };
 
   const handleRemoveUser = async ( projectId: number, userToRemoveId: number) =>{

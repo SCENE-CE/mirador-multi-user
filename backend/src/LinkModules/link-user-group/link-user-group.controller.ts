@@ -59,6 +59,8 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Post('/access')
   grantAccess(@Body() grantAccessToGroupDto: CreateLinkUserGroupDto) {
+    console.log('------------------grantAccessToGroupDto------------------')
+    console.log(grantAccessToGroupDto)
     return this.linkUserGroupService.GrantAccessToUserGroup(
       grantAccessToGroupDto,
     );

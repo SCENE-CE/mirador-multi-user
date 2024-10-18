@@ -27,13 +27,8 @@ export class Project {
   @Column({ nullable: true })
   thumbnailUrl: string;
 
-  @ManyToOne(() => User, (user) => user.projects, {
-    nullable: false,
-    cascade: true,
-    eager: true,
-  })
-  @JoinColumn({ name: 'ownerId' })
-  owner: User;
+  @Column()
+  ownerId: number;
 
   @Column({ type: 'json' })
   userWorkspace: any;

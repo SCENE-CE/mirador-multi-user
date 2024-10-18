@@ -1,7 +1,7 @@
 import { GroupProjectRights } from '../../../enum/rights';
 
 export class AddProjectToGroupDto {
-  projectsId: number[];
+  projectId: number;
   groupId: number;
   rights?: GroupProjectRights;
 }

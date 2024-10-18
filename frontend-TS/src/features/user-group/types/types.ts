@@ -36,7 +36,7 @@ export type CreateGroupDto ={
 }
 
 export type AddProjectToGroupDto ={
-  projectsId:number[];
+  projectId:number;
   groupId:number;
 }
 

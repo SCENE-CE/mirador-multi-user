@@ -235,7 +235,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     } else {
       const project: CreateProjectDto = {
         name: 'new project',
-        owner: user,
+        ownerId: user.id,
         userWorkspace: miradorViewer!,
         metadata:{},
       };

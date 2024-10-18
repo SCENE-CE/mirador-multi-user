@@ -30,14 +30,14 @@ export type ProjectGroupUpdateDto = {
     id:number;
     name: string;
     userWorkspace:IState;
-    owner:User;
+    ownerId?:number;
   }
   rights?: ProjectRights;
   group?:UserGroup
 }
 export type CreateProjectDto = {
   name:string;
-  owner:User;
+  ownerId:number;
   userWorkspace:IState;
   metadata: Record<string, string>;
 }
