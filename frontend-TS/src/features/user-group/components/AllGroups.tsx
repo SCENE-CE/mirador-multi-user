@@ -42,7 +42,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   const [userPersonalGroupList, setUserPersonalGroupList] = useState<LinkUserGroup[]>([])
   const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
-  console.log('entering all groups')
   const itemsPerPage = 5;
 
   const currentPageData = useMemo(() => {
@@ -101,8 +100,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
   const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number) =>{
     const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
-    const changeAccess =await  ChangeAccessToGroup(groupId, {userId: userToUpdate!.user.id, groupId: group.id, rights: eventValue as ProjectRights} );
-    console.log(changeAccess)
+    await  ChangeAccessToGroup(groupId, {userId: userToUpdate!.user.id, groupId: group.id, rights: eventValue as ProjectRights} );
   }
 
   const HandleOpenModal =useCallback ((groupId: number)=>{
@@ -126,10 +124,8 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
   const grantingAccessToGroup = async ( user_group_id: number) => {
     const user_group = groups.find((groups)=> groups.id === user_group_id)
-    console.log('grantingAccessToGroup()')
     await grantAccessToGroup(userToAdd!.user, user_group! )
   }
-  console.log('renrender')
   const listOfUserPersonalGroup = useMemo(()=>{
     return userPersonalGroupList.map((userPersonalGroup) => ({
       id: userPersonalGroup.user.id,

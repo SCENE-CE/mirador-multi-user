@@ -1,25 +1,24 @@
 import {
-  ConflictException, ForbiddenException,
+  ConflictException,
+  ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException
-} from "@nestjs/common";
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkUserGroup } from './entities/link-user-group.entity';
 import { Brackets, QueryFailedError, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UserGroupTypes } from '../../enum/user-group-types';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
-import { MediaGroupRights, User_UserGroupRights } from "../../enum/rights";
+import { User_UserGroupRights } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { UsersService } from '../../BaseEntities/users/users.service';
 import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-user-group.dto';
 import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
-import { EmailServerService } from '../../utils/email/email.service';
-import { LinkMediaGroup } from "../link-media-group/entities/link-media-group.entity";
-import { ActionType } from "../../enum/actions";
+import { ActionType } from '../../enum/actions';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -29,13 +28,10 @@ export class LinkUserGroupService {
     private readonly linkUserGroupRepository: Repository<LinkUserGroup>,
     private groupService: UserGroupService,
     private userService: UsersService,
-    private readonly emailService: EmailServerService,
   ) {}
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
     try {
-      console.log('------------------linkUserGroupDto------------------')
-      console.log(linkUserGroupDto)
       const userToLink = await this.userService.findOne(
         linkUserGroupDto.userId,
       );
@@ -78,7 +74,6 @@ export class LinkUserGroupService {
   async removeGroupFromLinkEntity(groupId: number) {
     try {
       const linkUserGroups = await this.findAllUsersForGroup(groupId);
-      console.log(linkUserGroups);
       for (const linkUserGroup of linkUserGroups) {
         await this.RemoveAccessToUserGroup(groupId, linkUserGroup.user.id);
       }
@@ -95,7 +90,6 @@ export class LinkUserGroupService {
       const userToSave = createUserDto;
       userToSave.password = await bcrypt.hash(createUserDto.password, 10);
       const savedUser = await this.userService.create(userToSave);
-      console.log(savedUser);
       const userPersonalGroup = await this.groupService.create({
         name: savedUser.name,
         ownerId: savedUser.id,
@@ -137,12 +131,6 @@ export class LinkUserGroupService {
         ...createUserGroupDto,
         type: UserGroupTypes.MULTI_USER,
       });
-      console.log('------------------userGroup------------------')
-      console.log(userGroup)
-      console.log('------------------userGroup ID------------------')
-      console.log(userGroup.id)
-      console.log('------------------createUserGroupDto------------------')
-      console.log(createUserGroupDto)
       await this.create({
         rights: User_UserGroupRights.ADMIN,
         userId: createUserGroupDto.user.id,
@@ -453,10 +441,7 @@ export class LinkUserGroupService {
     callback: (linkEntity: LinkUserGroup) => any,
   ) {
     try {
-      const linkEntity = await this.getHighestRightForManifest(
-        groupId,
-        userId,
-      );
+      const linkEntity = await this.getHighestRightForManifest(groupId, userId);
       if (!linkEntity) {
         return new ForbiddenException(
           'User does not have access to this userGroup or the userGroup does not exist',
