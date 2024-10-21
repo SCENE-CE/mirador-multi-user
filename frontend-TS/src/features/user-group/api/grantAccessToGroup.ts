@@ -4,15 +4,15 @@ import { User } from "../../auth/types/types.ts";
 
 export const grantAccessToGroup = async (user : User, user_group : UserGroup) => {
   const token = storage.getToken();
+  console.log('user',user)
+  console.log('user_group',user_group)
   try {
     const payload = {
-      user: user,
-      user_group: user_group
+      userId: user.id,
+      user_groupId: user_group.id
     };
 
-    console.log("payload")
-    console.log(payload)
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/access/`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/access`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

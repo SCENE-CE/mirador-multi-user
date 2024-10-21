@@ -3,7 +3,6 @@ import storage from "../../../utils/storage.ts";
 
 export const addProjectToGroup = async (dto:AddProjectToGroupDto)=>{
   const token = storage.getToken();
-  console.log('add project to group dto',dto)
   try{
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/project/add`,
       {
@@ -12,11 +11,9 @@ export const addProjectToGroup = async (dto:AddProjectToGroupDto)=>{
           "Authorization": `Bearer ${token}`,
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({projectsId:dto.projectId, groupId:dto.groupId})
+        body: JSON.stringify({projectId:dto.projectId, groupId:dto.groupId})
       });
-    const toReturn= await response.json();
-    console.log(toReturn)
-    return toReturn
+    return await response.json()
   }catch(error){
     console.error(error);
   }

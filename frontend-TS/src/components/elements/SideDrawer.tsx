@@ -165,15 +165,18 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }
 
   const fetchUserPersonalGroup = async()=>{
+    try{
     const personalGroup = await getUserPersonalGroup(user.id)
     setUserPersonalGroup(personalGroup)
     return personalGroup
+    }catch(error){
+      console.log(error)
+    }
   }
 
   const fetchMediaForUser = async () => {
     const personalGroup = await fetchUserPersonalGroup();
     let medias = await getUserGroupMedias(personalGroup!.id);
-
     for (const group of groups) {
       const groupMedias = await getUserGroupMedias(group.id);
 
@@ -183,7 +186,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
       medias = [...medias, ...groupMediasFiltered];
     }
-
     setMedias(medias);
   };
   const getManifestFromUrl = async (manifestUrl:string) => {
@@ -205,7 +207,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         return { ...manifest, json: manifestJson };
       })
     );
-    console.log('updatedManifests',updatedManifests)
 
     setManifests(updatedManifests);
   };
@@ -293,7 +294,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     }
     return null;
   }, [userProjects, selectedProjectId]);
-
 
   return(
     <>

@@ -65,12 +65,14 @@ export class LinkGroupProjectController {
     @Body() addProjectToGroupDto: AddProjectToGroupDto,
     @Req() request,
   ) {
+    console.log('addProjectToGroupDto')
+    console.log(addProjectToGroupDto)
     return await this.linkGroupProjectService.checkPolicies(
       request.metadata.action,
       request.user.sub,
       addProjectToGroupDto.projectId,
       async () => {
-        return this.linkGroupProjectService.addProjectsToGroup(
+        return this.linkGroupProjectService.addProjectToGroup(
           addProjectToGroupDto,
         );
       },

@@ -42,7 +42,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   const [userPersonalGroupList, setUserPersonalGroupList] = useState<LinkUserGroup[]>([])
   const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
-
+  console.log('entering all groups')
   const itemsPerPage = 5;
 
   const currentPageData = useMemo(() => {
@@ -115,7 +115,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   },[groups, setGroups])
 
   const updateGroup= useCallback(async (groupUpdated: UserGroup) => {
-    console.log(groupUpdated)
     const dataForUpdate = {
       ...groupUpdated
     }
@@ -127,9 +126,10 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
   const grantingAccessToGroup = async ( user_group_id: number) => {
     const user_group = groups.find((groups)=> groups.id === user_group_id)
+    console.log('grantingAccessToGroup()')
     await grantAccessToGroup(userToAdd!.user, user_group! )
   }
-
+  console.log('renrender')
   const listOfUserPersonalGroup = useMemo(()=>{
     return userPersonalGroupList.map((userPersonalGroup) => ({
       id: userPersonalGroup.user.id,
@@ -146,8 +146,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
     return groups.filter((groups) => groups.name.startsWith(partialString))
   }
 
-
-
   const handleFiltered = (partialString:string)=>{
     if(partialString.length < 1){
       return setGroupFiltered([])
@@ -161,7 +159,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
       }
     }
   }
-  console.log('groupFiltered',groupFiltered)
+  console.log('groups',groups)
   return(
     <>
       <SidePanelMedia display={!!openModalGroupId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
