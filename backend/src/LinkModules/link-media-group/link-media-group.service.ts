@@ -143,7 +143,7 @@ export class LinkMediaGroupService {
       );
     }
   }
-  //TODO: Adapt logic for media that come from link and not uploads.
+
   async removeMedia(mediaId: number) {
     try {
       const mediaToRemove = await this.mediaService.findOne(mediaId);
