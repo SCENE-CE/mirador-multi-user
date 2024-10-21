@@ -226,9 +226,10 @@ export class LinkGroupProjectService {
     }
   }
 
-  async addProjectsToGroup(dto: AddProjectToGroupDto) {
+  async addProjectToGroup(dto: AddProjectToGroupDto) {
     const { groupId, projectId } = dto;
-
+    console.log('Enter add projects to Group')
+    console.log(dto)
     try {
       const userGroup = await this.groupService.findOne(groupId);
       if (!userGroup) {
@@ -247,7 +248,7 @@ export class LinkGroupProjectService {
         user_group: userGroup,
         project: project,
       });
-
+      console.log(projectId)
       return await this.findAllGroupProjectByUserGroupId(projectId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -351,7 +352,7 @@ export class LinkGroupProjectService {
         );
       }
       const project = await this.projectService.create(dto);
-      await this.addProjectsToGroup({
+      await this.addProjectToGroup({
         groupId: userPersonalGroup.id,
         projectId: project.id,
         rights: GroupProjectRights.ADMIN,

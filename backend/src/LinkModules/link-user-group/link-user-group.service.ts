@@ -1,16 +1,16 @@
 import {
-  ConflictException,
+  ConflictException, ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+  NotFoundException
+} from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkUserGroup } from './entities/link-user-group.entity';
 import { Brackets, QueryFailedError, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UserGroupTypes } from '../../enum/user-group-types';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
-import { User_UserGroupRights } from '../../enum/rights';
+import { MediaGroupRights, User_UserGroupRights } from "../../enum/rights";
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 import { UsersService } from '../../BaseEntities/users/users.service';
@@ -18,6 +18,8 @@ import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-use
 import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { EmailServerService } from '../../utils/email/email.service';
+import { LinkMediaGroup } from "../link-media-group/entities/link-media-group.entity";
+import { ActionType } from "../../enum/actions";
 
 @Injectable()
 export class LinkUserGroupService {
@@ -215,7 +217,6 @@ export class LinkUserGroupService {
       await this.linkUserGroupRepository.upsert(linkUserToUserGroup, {
         conflictPaths: ['rights', 'user', 'user_group'],
       });
-
       return linkUserToUserGroup;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -422,6 +423,79 @@ export class LinkUserGroupService {
         `an error occurred while removing linkUserGroup with id ${linkUserGroupId}`,
         error,
       );
+    }
+  }
+
+  async getHighestRightForManifest(groupId: number, userId: number) {
+    const linkEntities = await this.linkUserGroupRepository.find({
+      where: {
+        user_group: { id: groupId },
+        user: { id: userId },
+      },
+      relations: ['user', 'user_group'],
+    });
+
+    if (linkEntities.length === 0) {
+      return;
+    }
+    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
+    return linkEntities.reduce((prev, current) => {
+      const prevRight = rightsPriority[prev.rights] || 0;
+      const currentRight = rightsPriority[current.rights] || 0;
+      return currentRight > prevRight ? current : prev;
+    });
+  }
+
+  async checkPolicies(
+    action: string,
+    userId: number,
+    groupId: number,
+    callback: (linkEntity: LinkUserGroup) => any,
+  ) {
+    try {
+      const linkEntity = await this.getHighestRightForManifest(
+        groupId,
+        userId,
+      );
+      if (!linkEntity) {
+        return new ForbiddenException(
+          'User does not have access to this userGroup or the userGroup does not exist',
+        );
+      }
+      switch (action) {
+        case ActionType.READ:
+          if (
+            [
+              User_UserGroupRights.READER,
+              User_UserGroupRights.ADMIN,
+              User_UserGroupRights.EDITOR,
+            ].includes(linkEntity.rights)
+          ) {
+            return callback(linkEntity);
+          }
+          break;
+        case ActionType.UPDATE:
+          if (
+            [User_UserGroupRights.ADMIN, User_UserGroupRights.EDITOR].includes(
+              linkEntity.rights,
+            )
+          ) {
+            return callback(linkEntity);
+          }
+          break;
+        case ActionType.DELETE:
+          if (linkEntity.rights === User_UserGroupRights.ADMIN) {
+            return callback(linkEntity);
+          }
+          break;
+
+        default:
+          throw new InternalServerErrorException('Invalid action');
+      }
+      return new ForbiddenException('User is not allowed to do this action');
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
 }

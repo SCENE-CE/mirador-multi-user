@@ -90,7 +90,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         file: event.target.files[0],
       });
       fetchManifestForUser()
-      console.log(setCreateManifestIsOpen)
       setCreateManifestIsOpen(false)
     }
   },[fetchManifestForUser, manifests])
@@ -100,7 +99,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   },[setOpenModalManifestId, openModalManifestId]);
 
   const HandleCreateManifestIsOpen = ()=>{
-    console.log("toto")
     setCreateManifestIsOpen(!createManifestIsOpen)
   }
 
@@ -108,7 +106,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:() => setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)},
     { icon: <CreateIcon /> as ReactNode, name: 'Create',onClick: HandleCreateManifestIsOpen},
     { icon: <UploadFileIcon /> as ReactNode, name: 'Upload' , onClick: () => {
-        console.log(document.getElementById("hiddenFileInput"))
         document.getElementById("hiddenFileInput")?.click();
       }},
   ];
@@ -153,7 +150,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     fetchThumbnails();
   }, [fetchThumbnails]);
   const HandleLookingForManifests = async (partialString : string) =>{
-    console.log(partialString)
     const userManifests =  await lookingForManifests(partialString, userPersonalGroup.id)
     return userManifests
   }
@@ -191,7 +187,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
     if(response){
       const manifest = await response.json()
-      console.log(manifest)
       await linkManifest({
         idCreator: user.id,
         user_group: userPersonalGroup!,
