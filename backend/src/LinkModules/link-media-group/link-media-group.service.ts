@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   forwardRef,
   HttpException,
   HttpStatus,
@@ -18,7 +19,9 @@ import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateMediaDto } from '../../BaseEntities/media/dto/create-media.dto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import { join } from 'path';
-import fs from 'node:fs';
+import * as fs from 'fs';
+import { ActionType } from '../../enum/actions';
+import { mediaOrigin } from '../../enum/origins';
 
 @Injectable()
 export class LinkMediaGroupService {
@@ -27,7 +30,7 @@ export class LinkMediaGroupService {
   constructor(
     @InjectRepository(LinkMediaGroup)
     private readonly linkMediaGroupRepository: Repository<LinkMediaGroup>,
-    private readonly userGroupService: UserGroupService,
+    private readonly groupService: UserGroupService,
     @Inject(forwardRef(() => MediaService))
     private readonly mediaService: MediaService,
   ) {}
@@ -51,6 +54,8 @@ export class LinkMediaGroupService {
     try {
       const { idCreator, path, user_group } = mediaDto;
       const media = await this.mediaService.create(mediaDto);
+      console.log('mediaDto')
+      console.log(mediaDto)
       await this.addMediaToGroup({
         userGroupId: user_group.id,
         mediasId: [media.id],
@@ -82,8 +87,7 @@ export class LinkMediaGroupService {
           );
         }
 
-        const group =
-          await this.userGroupService.findUserGroupById(userGroupId);
+        const group = await this.groupService.findUserGroupById(userGroupId);
         const linkMediaGroup = await this.create({
           rights: dto.rights ? dto.rights : MediaGroupRights.READER,
           user_group: group,
@@ -139,41 +143,48 @@ export class LinkMediaGroupService {
       );
     }
   }
-
+  //TODO: Adapt logic for media that come from link and not uploads.
   async removeMedia(mediaId: number) {
     try {
       const mediaToRemove = await this.mediaService.findOne(mediaId);
       if (!mediaToRemove) {
         throw new HttpException('Media not found', HttpStatus.NOT_FOUND);
       }
+      console.log('mediaToRemove');
+      console.log(mediaToRemove);
+      if (mediaToRemove.origin === mediaOrigin.UPLOAD) {
+        const filePath = join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          '..',
+          'upload',
+          mediaToRemove.hash,
+          mediaToRemove.path,
+        );
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
 
-      const mediaGroups = await this.getAllMediaGroup(mediaId);
-      const hash = mediaToRemove.path.split('/')[3];
-      const filename = mediaToRemove.path.split('/')[4];
-      const filePath = join(
-        __dirname,
-        '..',
-        '..',
-        '..',
-        'upload',
-        hash,
-        filename,
-      );
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-
-        const dirPath = join(__dirname, '..', '..', '..', 'upload', hash);
-        if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
-          fs.rmdirSync(dirPath);
+          const dirPath = join(
+            __dirname,
+            '..',
+            '..',
+            '..',
+            '..',
+            'upload',
+            mediaToRemove.hash,
+          );
+          if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
+            fs.rmdirSync(dirPath);
+          }
         }
-        await this.mediaService.remove(mediaId);
-        return {
-          status: HttpStatus.OK,
-          message: 'File and associated records deleted successfully',
-        };
-      } else {
-        throw new HttpException('File not found', HttpStatus.NOT_FOUND);
       }
+      await this.mediaService.remove(mediaId);
+      return {
+        status: HttpStatus.OK,
+        message: 'File and associated records deleted successfully',
+      };
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new HttpException(
@@ -322,6 +333,82 @@ export class LinkMediaGroupService {
         'An error occurred while removing the linkMediaGroup',
         error,
       );
+    }
+  }
+
+  async getHighestRightForManifest(groupId: number, mediaId: number) {
+    const linkEntities = await this.linkMediaGroupRepository.find({
+      where: {
+        user_group: { id: groupId },
+        media: { id: mediaId },
+      },
+      relations: ['media', 'user_group'],
+    });
+    if (linkEntities.length === 0) {
+      return;
+    }
+    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
+    return linkEntities.reduce((prev, current) => {
+      const prevRight = rightsPriority[prev.rights] || 0;
+      const currentRight = rightsPriority[current.rights] || 0;
+      return currentRight > prevRight ? current : prev;
+    });
+  }
+
+  async checkPolicies(
+    action: string,
+    userId: number,
+    manifestId: number,
+    callback: (linkEntity: LinkMediaGroup) => any,
+  ) {
+    try {
+      const userPersonalGroup =
+        await this.groupService.findUserPersonalGroup(userId);
+
+      const linkEntity = await this.getHighestRightForManifest(
+        userPersonalGroup.id,
+        manifestId,
+      );
+
+      if (!linkEntity) {
+        return new ForbiddenException(
+          'User does not have access to this media or the media does not exist',
+        );
+      }
+      switch (action) {
+        case ActionType.READ:
+          if (
+            [
+              MediaGroupRights.READER,
+              MediaGroupRights.ADMIN,
+              MediaGroupRights.EDITOR,
+            ].includes(linkEntity.rights)
+          ) {
+            return callback(linkEntity);
+          }
+          break;
+        case ActionType.UPDATE:
+          if (
+            [MediaGroupRights.ADMIN, MediaGroupRights.EDITOR].includes(
+              linkEntity.rights,
+            )
+          ) {
+            return callback(linkEntity);
+          }
+          break;
+        case ActionType.DELETE:
+          if (linkEntity.rights === MediaGroupRights.ADMIN) {
+            return callback(linkEntity);
+          }
+          break;
+
+        default:
+          throw new InternalServerErrorException('Invalid action');
+      }
+      return new ForbiddenException('User is not allowed to do this action');
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
 }

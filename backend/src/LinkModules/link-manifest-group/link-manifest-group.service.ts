@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -18,9 +19,10 @@ import { UserGroupService } from '../../BaseEntities/user-group/user-group.servi
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { join } from 'path';
-import fs from 'node:fs';
+import * as fs from 'fs';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { UpdateManifestDto } from '../../BaseEntities/manifest/dto/update-manifest.dto';
+import { ActionType } from '../../enum/actions';
 
 @Injectable()
 export class LinkManifestGroupService {
@@ -160,6 +162,7 @@ export class LinkManifestGroupService {
         '..',
         '..',
         '..',
+        '..',
         'upload',
         manifestToRemove.hash,
         manifestToRemove.path,
@@ -168,6 +171,7 @@ export class LinkManifestGroupService {
         fs.unlinkSync(filePath);
         const dirPath = join(
           __dirname,
+          '..',
           '..',
           '..',
           '..',
@@ -351,6 +355,82 @@ export class LinkManifestGroupService {
         'An error occurred while removing the linkManifestGroup',
         error.message,
       );
+    }
+  }
+
+  async getHighestRightForManifest(groupId: number, manifestId: number) {
+    const linkEntities = await this.linkManifestGroupRepository.find({
+      where: {
+        user_group: { id: groupId },
+        manifest: { id: manifestId },
+      },
+      relations: ['manifest', 'user_group'],
+    });
+    if (linkEntities.length === 0) {
+      return;
+    }
+    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
+    return linkEntities.reduce((prev, current) => {
+      const prevRight = rightsPriority[prev.rights] || 0;
+      const currentRight = rightsPriority[current.rights] || 0;
+      return currentRight > prevRight ? current : prev;
+    });
+  }
+
+  async checkPolicies(
+    action: string,
+    userId: number,
+    manifestId: number,
+    callback: (linkEntity: LinkManifestGroup) => any,
+  ) {
+    try {
+      const userPersonalGroup =
+        await this.groupService.findUserPersonalGroup(userId);
+
+      const linkEntity = await this.getHighestRightForManifest(
+        userPersonalGroup.id,
+        manifestId,
+      );
+
+      if (!linkEntity) {
+        return new ForbiddenException(
+          'User does not have access to this manifest or the manifest does not exist',
+        );
+      }
+      switch (action) {
+        case ActionType.READ:
+          if (
+            [
+              ManifestGroupRights.READER,
+              ManifestGroupRights.ADMIN,
+              ManifestGroupRights.EDITOR,
+            ].includes(linkEntity.rights)
+          ) {
+            return callback(linkEntity);
+          }
+          break;
+        case ActionType.UPDATE:
+          if (
+            [ManifestGroupRights.ADMIN, ManifestGroupRights.EDITOR].includes(
+              linkEntity.rights,
+            )
+          ) {
+            return callback(linkEntity);
+          }
+          break;
+        case ActionType.DELETE:
+          if (linkEntity.rights === ManifestGroupRights.ADMIN) {
+            return callback(linkEntity);
+          }
+          break;
+
+        default:
+          throw new InternalServerErrorException('Invalid action');
+      }
+      return new ForbiddenException('User is not allowed to do this action');
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
 }

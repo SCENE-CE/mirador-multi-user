@@ -9,6 +9,7 @@ import {
   Patch,
   Post,
   Req,
+  SetMetadata,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -26,18 +27,13 @@ import { manifestCreationDto } from './dto/manifestCreationDto';
 import { UpdateManifestDto } from '../../BaseEntities/manifest/dto/update-manifest.dto';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
+import { ActionType } from '../../enum/actions';
 
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
   constructor(
     private readonly linkManifestGroupService: LinkManifestGroupService,
   ) {}
-
-  @UseGuards(AuthGuard)
-  @Get()
-  async findAll() {
-    return await this.linkManifestGroupService.findAll();
-  }
 
   @UseGuards(AuthGuard)
   @Get('/group/:userGroupId')
@@ -154,30 +150,61 @@ export class LinkManifestGroupController {
     return this.linkManifestGroupService.getAllManifestsGroup(manifestId);
   }
 
+  @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId')
-  async deleteManifest(@Param('manifestId') manifestId: number) {
-    console.log(manifestId);
-    return this.linkManifestGroupService.removeManifest(manifestId);
+  async deleteManifest(
+    @Param('manifestId') manifestId: number,
+    @Req() request,
+  ) {
+    return await this.linkManifestGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      manifestId,
+      async () => {
+        return this.linkManifestGroupService.removeManifest(manifestId);
+      },
+    );
   }
 
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('manifest')
-  async updateManifest(@Body() updateManifestDto: UpdateManifestDto) {
-    return this.linkManifestGroupService.updateManifest(updateManifestDto);
+  async updateManifest(
+    @Body() updateManifestDto: UpdateManifestDto,
+    @Req() request,
+  ) {
+    return await this.linkManifestGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      updateManifestDto.id,
+      async () => {
+        return this.linkManifestGroupService.updateManifest(updateManifestDto);
+      },
+    );
   }
 
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/relation')
   async updateManifestGroupRelation(
     @Body() updateManifestGroupRelation: UpdateManifestGroupRelation,
+    @Req() request,
   ) {
     const { manifestId, userGroupId, rights } = updateManifestGroupRelation;
-    return this.linkManifestGroupService.updateAccessToManifest({
+
+    return await this.linkManifestGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
       manifestId,
-      userGroupId,
-      rights,
-    });
+      async () => {
+        return this.linkManifestGroupService.updateAccessToManifest({
+          manifestId,
+          userGroupId,
+          rights,
+        });
+      },
+    );
   }
 
   @UseGuards(AuthGuard)
@@ -186,15 +213,24 @@ export class LinkManifestGroupController {
     return this.linkManifestGroupService.addManifestToGroup(addManifestToGroup);
   }
 
+  @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId/:groupId')
   async deleteManifestById(
     @Param('manifestId') manifestId: number,
     @Param('groupId') groupId: number,
+    @Req() request,
   ) {
-    return await this.linkManifestGroupService.removeAccesToManifest(
-      groupId,
+    return await this.linkManifestGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
       manifestId,
+      async () => {
+        return await this.linkManifestGroupService.removeAccesToManifest(
+          groupId,
+          manifestId,
+        );
+      },
     );
   }
 }

@@ -410,7 +410,9 @@ export class LinkGroupProjectService {
       },
       relations: ['project', 'user_group'],
     });
-
+    if (linkEntities.length === 0) {
+      return;
+    }
     const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
 
     return linkEntities.reduce((prev, current) => {

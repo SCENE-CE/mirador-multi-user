@@ -8,6 +8,7 @@ import {
   Post,
   Req,
   SetMetadata,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { LinkGroupProjectService } from './link-group-project.service';
@@ -164,7 +165,13 @@ export class LinkGroupProjectController {
 
   @UseGuards(AuthGuard)
   @Get('/user/projects/:userId')
-  getAllUsersProjects(@Param('userId') userId: number) {
-    return this.linkGroupProjectService.findAllUserProjects(userId);
+  async getAllUsersProjects(@Param('userId') userId: number, @Req() request) {
+    if (request.user.sub == userId) {
+      return await this.linkGroupProjectService.findAllUserProjects(userId);
+    } else {
+      return new UnauthorizedException(
+        'you are not allowed to request for this projects',
+      );
+    }
   }
 }

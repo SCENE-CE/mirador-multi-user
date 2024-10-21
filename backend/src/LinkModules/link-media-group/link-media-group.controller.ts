@@ -8,6 +8,7 @@ import {
   Patch,
   Post,
   Req,
+  SetMetadata,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -25,6 +26,7 @@ import { UpdateMediaDto } from '../../BaseEntities/media/dto/update-media.dto';
 import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import * as fs from 'fs';
+import { ActionType } from '../../enum/actions';
 
 @Controller('link-media-group')
 export class LinkMediaGroupController {
@@ -82,7 +84,7 @@ export class LinkMediaGroupController {
       user_group: createMediaDto.user_group,
       hash: `${(req as any).generatedHash}`,
       url: `${req.body.imageUrl}`,
-      origin: mediaOrigin.UPLOAD,
+      origin: mediaOrigin.LINK,
     };
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }
@@ -99,28 +101,56 @@ export class LinkMediaGroupController {
     return this.linkMediaGroupService.getAllMediaGroup(mediaId);
   }
 
+  @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete('/media/:mediaId')
-  async deleteMedia(@Param('mediaId') mediaId: number) {
-    return this.linkMediaGroupService.removeMedia(mediaId);
+  async deleteMedia(@Param('mediaId') mediaId: number, @Req() request) {
+    return await this.linkMediaGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      mediaId,
+      async () => {
+        return this.linkMediaGroupService.removeMedia(mediaId);
+      },
+    );
   }
 
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/media')
-  async updateMedia(@Body() updateGroupMediaDto: UpdateMediaDto) {
-    return this.linkMediaGroupService.updateMedia(updateGroupMediaDto);
+  async updateMedia(
+    @Body() updateGroupMediaDto: UpdateMediaDto,
+    @Req() request,
+  ) {
+    return await this.linkMediaGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      updateGroupMediaDto.id,
+      async () => {
+        return this.linkMediaGroupService.updateMedia(updateGroupMediaDto);
+      },
+    );
   }
 
+  @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/relation')
   async updateMediaGroupRelation(
     @Body() updateMediaGroupRelationDto: UpdateMediaGroupRelationDto,
+    @Req() request,
   ) {
     const { mediaId, userGroupId, rights } = updateMediaGroupRelationDto;
-    return this.linkMediaGroupService.updateMediaGroupRelation(
+    return await this.linkMediaGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
       mediaId,
-      userGroupId,
-      rights,
+      async () => {
+        return this.linkMediaGroupService.updateMediaGroupRelation(
+          mediaId,
+          userGroupId,
+          rights,
+        );
+      },
     );
   }
 
@@ -130,16 +160,24 @@ export class LinkMediaGroupController {
     return this.linkMediaGroupService.addMediaToGroup(addMediaToGroupDto);
   }
 
+  @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete('/media/:mediaId/:groupId')
   async deleteMediaById(
     @Param('mediaId') mediaId: number,
     @Param('groupId') groupId: number,
+    @Req() request,
   ) {
-    console.log('DELETE MEDIA GROUP RELATION');
-    return await this.linkMediaGroupService.removeAccesToMedia(
-      groupId,
+    return await this.linkMediaGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
       mediaId,
+      async () => {
+        return await this.linkMediaGroupService.removeAccesToMedia(
+          groupId,
+          mediaId,
+        );
+      },
     );
   }
 }

@@ -10,6 +10,7 @@ import { Repository } from 'typeorm';
 import { User_UserGroupRights } from '../../enum/rights';
 import { UpdateUserGroupDto } from './dto/update-user-group.dto';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
+import { UserGroupTypes } from '../../enum/user-group-types';
 
 @Injectable()
 export class UserGroupService {
@@ -93,6 +94,20 @@ export class UserGroupService {
       const deleteData = await this.userGroupRepository.delete(groupId);
       if (deleteData.affected != 1) throw new NotFoundException(groupId);
       return deleteData;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async findUserPersonalGroup(userId: number) {
+    try {
+      const toreturn = await this.userGroupRepository.findOne({
+        where: { ownerId: userId, type: UserGroupTypes.PERSONAL },
+      });
+      console.log('toreturn');
+      console.log(toreturn);
+      return toreturn
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
