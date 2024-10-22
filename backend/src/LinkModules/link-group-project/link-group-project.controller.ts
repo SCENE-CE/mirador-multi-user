@@ -18,6 +18,7 @@ import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
+import { ApiBody } from "@nestjs/swagger";
 
 @Controller('link-group-project')
 export class LinkGroupProjectController {
@@ -39,6 +40,7 @@ export class LinkGroupProjectController {
     return this.linkGroupProjectService.getProjectRelations(projectId);
   }
 
+  @ApiBody({ type: UpdateProjectGroupDto })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/updateProject/')
@@ -58,6 +60,7 @@ export class LinkGroupProjectController {
     );
   }
 
+  @ApiBody({ type: AddProjectToGroupDto })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Post('/project/add')
@@ -65,8 +68,8 @@ export class LinkGroupProjectController {
     @Body() addProjectToGroupDto: AddProjectToGroupDto,
     @Req() request,
   ) {
-    console.log('addProjectToGroupDto')
-    console.log(addProjectToGroupDto)
+    console.log('typeof addProjectToGroupDto.groupId')
+    console.log(typeof addProjectToGroupDto.groupId)
     return await this.linkGroupProjectService.checkPolicies(
       request.metadata.action,
       request.user.sub,
@@ -78,6 +81,8 @@ export class LinkGroupProjectController {
       },
     );
   }
+
+  @ApiBody({ type: UpdateAccessToProjectDto })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/change-rights')
@@ -159,6 +164,7 @@ export class LinkGroupProjectController {
     );
   }
 
+  @ApiBody({ type: CreateProjectDto })
   @UseGuards(AuthGuard)
   @Post('/project/')
   createProject(@Body() createProjectDto: CreateProjectDto) {

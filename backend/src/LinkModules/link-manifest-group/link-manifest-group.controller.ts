@@ -28,6 +28,10 @@ import { UpdateManifestDto } from '../../BaseEntities/manifest/dto/update-manife
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ActionType } from '../../enum/actions';
+import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
+import { ApiBody } from "@nestjs/swagger";
+import { AddProjectToGroupDto } from "../link-group-project/dto/addProjectToGroupDto";
+import { CreateLinkGroupManifestDto } from "./dto/CreateLinkGroupManifestDto";
 
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
@@ -42,7 +46,7 @@ export class LinkManifestGroupController {
       userGroupId,
     );
   }
-
+  @ApiBody({ type: CreateGroupManifestDto })
   @UseGuards(AuthGuard)
   @Post('/manifest/upload')
   @UseInterceptors(
@@ -65,13 +69,13 @@ export class LinkManifestGroupController {
     }),
   )
   uploadManifest(
-    @Body() createGroupManifestDto,
+    @Body() createGroupManifestDto: CreateGroupManifestDto,
     @Req() req,
     @UploadedFile() file,
   ) {
     console.log('UPLOAD MANIFEST');
     console.log(createGroupManifestDto.thumbnailUrl);
-    const userGroup = JSON.parse(createGroupManifestDto.user_group);
+    const userGroup = createGroupManifestDto.user_group;
     const manifestToCreate = {
       ...createGroupManifestDto,
       name: file.originalname,
@@ -86,9 +90,10 @@ export class LinkManifestGroupController {
     return this.linkManifestGroupService.create(manifestToCreate);
   }
 
+  @ApiBody({ type: CreateGroupManifestDto })
   @UseGuards(AuthGuard)
   @Post('/manifest/link')
-  linkManifest(@Body() createLinkDto) {
+  linkManifest(@Body() createLinkDto: CreateLinkGroupManifestDto) {
     const manifestToCreate = {
       ...createLinkDto,
       description: 'your manifest description',
@@ -97,6 +102,7 @@ export class LinkManifestGroupController {
     return this.linkManifestGroupService.create(manifestToCreate);
   }
 
+  @ApiBody({ type: manifestCreationDto })
   @UseGuards(AuthGuard)
   @Post('/manifest/creation')
   @UseInterceptors(MediaInterceptor)
@@ -167,6 +173,7 @@ export class LinkManifestGroupController {
     );
   }
 
+  @ApiBody({ type: UpdateManifestDto })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('manifest')
@@ -183,7 +190,7 @@ export class LinkManifestGroupController {
       },
     );
   }
-
+  @ApiBody({ type: UpdateManifestGroupRelation })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/relation')
@@ -206,7 +213,7 @@ export class LinkManifestGroupController {
       },
     );
   }
-
+  @ApiBody({ type: AddManifestToGroupDto })
   @UseGuards(AuthGuard)
   @Post('/manifest/add')
   addManifestToGroup(@Body() addManifestToGroup: AddManifestToGroupDto) {
