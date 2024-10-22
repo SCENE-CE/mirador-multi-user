@@ -68,12 +68,13 @@ export class ProjectService {
   async findProjectsByPartialNameAndUserGroup(
     partialProjectName: string,
     userGroupId: number,
-  ): Promise<Project[]> {
+  ): Promise<Partial<Project>[]> {
     try {
       const partialProjectNameLength = partialProjectName.length;
 
       return await this.projectRepository
         .createQueryBuilder('project')
+        .select(['project.id', 'project.name'])
         .innerJoin('project.linkGroupProjectsIds', 'linkGroupProject')
         .innerJoin('linkGroupProject.user_group', 'userGroup')
         .where('userGroup.id = :id', { id: userGroupId })
@@ -90,8 +91,10 @@ export class ProjectService {
         .getMany();
     } catch (error) {
       this.logger.error(error.message, error.stack);
+      throw new Error('Failed to find projects by partial name and user group');
     }
   }
+
 
   async findUsersProject(userId: number) {
     try {
