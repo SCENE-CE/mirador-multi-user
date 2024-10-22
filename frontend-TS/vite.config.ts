@@ -31,6 +31,7 @@ export default defineConfig({
         '.js': 'jsx',
       },
     },
+    exclude: ['@hcaptcha/types'],
   },
   server:{
     host:true,
@@ -42,7 +43,7 @@ export default defineConfig({
   resolve: {
     alias: {
       'mirador-annotation-editor/annotationAdapter/LocalStorageAdapter':
-        'path/to/mirador-annotation-editor/annotationAdapter/LocalStorageAdapter'
+        'path/to/mirador-annotation-editor/annotationAdapter/LocalStorageAdapter',
     }
 
   }

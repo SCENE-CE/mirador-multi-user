@@ -6,12 +6,12 @@ import { LoginFormData, LoginSchema } from "../types/types.ts";
 import { useLogin } from "../../../utils/auth.tsx";
 import { LoginCredentialsDTO } from "../api/login.ts";
 import { useNavigate } from "react-router-dom";
-
+import '@hcaptcha/types';
 
 export const LoginForm = ()=>{
   const navigate = useNavigate(); // Use hooks at the top level
-
   const { mutateAsync:loginUser } = useLogin();
+
 
   const {
     register,
@@ -20,6 +20,8 @@ export const LoginForm = ()=>{
   } = useForm<LoginFormData>({
     resolver: zodResolver(LoginSchema), // Apply the zodResolver
   });
+
+
 
   const onSubmit = async (data: LoginCredentialsDTO) => {
     try {
@@ -74,5 +76,5 @@ export const LoginForm = ()=>{
         </Grid>
       </Grid>
     </form>
-)
+  )
 }

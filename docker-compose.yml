@@ -21,9 +21,11 @@ services:
       args:
         VITE_BACKEND_URL: ${BACKEND_URL}
         VITE_CADDY_URL: ${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}
+        MODE: ${MODE}
     environment:
       VITE_BACKEND_URL: ${BACKEND_URL}
       VITE_CADDY_URL: ${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}
+      MODE: ${MODE}
     depends_on:
       - backend
     restart: always

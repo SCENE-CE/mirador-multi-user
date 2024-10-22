@@ -13,12 +13,14 @@ ARG VITE_BACKEND_URL
 # Echo the build arguments and set environment variables in the same step
 RUN echo "VITE_BACKEND_URL: $VITE_BACKEND_URL" && \
     echo "VITE_CADDY_URL: $VITE_CADDY_URL" && \
+    echo "MODE: $MODE" && \
     export VITE_BACKEND_URL=$VITE_BACKEND_URL && \
-    export VITE_CADDY_URL=$VITE_CADDY_URL
-
+    export VITE_CADDY_URL=$VITE_CADDY_URL && \
+    export MODE=$MODE
 # Set the environment variables for future steps
 ENV VITE_BACKEND_URL=$VITE_BACKEND_URL
 ENV VITE_CADDY_URL=$VITE_CADDY_URL
+ENV MODE=$MODE
 
 # Copy application code (excluding what's defined in .dockerignore)
 COPY . .

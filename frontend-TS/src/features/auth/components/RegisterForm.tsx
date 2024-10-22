@@ -6,11 +6,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useRegister } from "../../../utils/auth.tsx";
 import { RegisterCredentialsDTO } from "../api/register.ts";
 import { useNavigate } from "react-router-dom";
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export const RegisterForm = () => {
   const navigate = useNavigate(); // Use hooks at the top level
+  const [token, setToken] = useState<any>(null);
+  const captchaRef = useRef(null);
 
+  const onLoad = () => {
+    // this reaches out to the hCaptcha JS API and runs the
+    // execute function on it. you can use other functions as
+    // documented here:
+    // https://docs.hcaptcha.com/configuration#jsapi
+    hcaptcha.execute();
+  };
   //this is a hook from React-Query that allow us to use createUser(data) bellow
   const { mutateAsync: createUser } = useRegister();
   const {
@@ -35,6 +45,13 @@ export const RegisterForm = () => {
       setMessage(error.toString());
     }
   };
+
+  useEffect(() => {
+
+    if (token)
+      console.log(`hCaptcha Token: ${token}`);
+
+  }, [token]);
 
   return (
     <form>
@@ -86,6 +103,14 @@ export const RegisterForm = () => {
             error={errors.confirmPassword}
           />
         </Grid>
+        <form>
+          <HCaptcha
+            sitekey="your-sitekey"
+            onLoad={onLoad}
+            onVerify={setToken}
+            ref={captchaRef}
+          />
+        </form>
         <Grid item container>
           <Button
             type="submit"
