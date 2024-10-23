@@ -124,13 +124,6 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
               <Grid item container>
                 <CardActions>
                   <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
-                    <Grid item>
-                      {DefaultButton &&(
-                        <Tooltip title={"Open project"}>
-                          {DefaultButton}
-                        </Tooltip>
-                      )}
-                    </Grid>
                     {id  && (
                       <>
                         <Grid item>
@@ -138,6 +131,13 @@ const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
                         </Grid>
                       </>
                     )}
+                    <Grid item>
+                      {DefaultButton &&(
+                        <Tooltip title={"Open project"}>
+                          {DefaultButton}
+                        </Tooltip>
+                      )}
+                    </Grid>
                   </Grid>
                 </CardActions>
               </Grid>

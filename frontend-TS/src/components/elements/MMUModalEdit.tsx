@@ -68,7 +68,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   const [openModal, setOpenModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<{ [key: string]: string }>(metadata || {});
 
-
+  console.log('metadataFormData',metadataFormData)
   const handeUpdateMetadata = (updateData:any)=>{
     setMetadataFormData(updateData)
   }

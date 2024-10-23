@@ -29,7 +29,7 @@ import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
-
+import SettingsIcon from '@mui/icons-material/Settings';
 
 interface AllProjectsProps {
   user: User;
@@ -285,8 +285,8 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                         openModal={openModalProjectId === projectUser.id}
                         DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
-                        EditorButton={<ModalButton  tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                        ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
+                        EditorButton={<ModalButton  tooltipButton={"Configuration"} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<SettingsIcon />} disabled={false}/>}
+                        ReaderButton={<ModalButton tooltipButton={"Configuration"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<SettingsIcon />} disabled={true}/>}
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
@@ -333,7 +333,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}
                       openModal={openModalProjectId === searchedProject.id}
                       DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(searchedProject.userWorkspace,searchedProject)} disabled={false} icon={<OpenInNewIcon/>}/>}
-                      EditorButton={<ModalButton tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(searchedProject.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                      EditorButton={<ModalButton tooltipButton={"Configuration"} onClickFunction={()=>HandleOpenModal(searchedProject.id)} icon={<SettingsIcon />} disabled={false}/>}
                       ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                       id={searchedProject.id}
                       rights={searchedProject.rights!}
@@ -368,7 +368,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                           HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                           openModal={openModalProjectId === projectUser.id}
                           DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
-                          EditorButton={<ModalButton  tooltipButton={"Edit Project"} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                          EditorButton={<ModalButton  tooltipButton={"Configuration"} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<SettingsIcon />} disabled={false}/>}
                           ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
                           id={projectUser.id}
                           rights={projectUser.rights!}
