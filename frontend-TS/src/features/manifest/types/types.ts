@@ -37,7 +37,6 @@ export type manifestCreationDto = {
   idCreator:number,
   manifestMedias:ManifestCreationMedia[]
   name:string,
-  user_group: UserGroup,
   manifestThumbnail:string,
 }
 export type MediaItem = {
@@ -51,10 +50,12 @@ export type ManifestCreationMedia = {
 
 export type UploadAndLinkManifestDto = {
   name?:string
+  url?:string;
   idCreator:number
-  user_group:UserGroup;
+  user_group?:UserGroup;
   file?:File;
   path?:string;
+  rights?:ManifestGroupRights
 }
 
 export type ManifestItem = {

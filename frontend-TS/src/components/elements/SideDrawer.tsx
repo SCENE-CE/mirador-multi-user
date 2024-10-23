@@ -43,6 +43,7 @@ import { Manifest } from "../../features/manifest/types/types.ts";
 import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups.ts";
 import { UserSettings } from "../../features/user-setting/UserSettings.tsx";
+import { SidePanelManifest } from "../../features/manifest/component/SidePanelManifest.tsx";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -166,9 +167,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const fetchUserPersonalGroup = async()=>{
     try{
-    const personalGroup = await getUserPersonalGroup(user.id)
-    setUserPersonalGroup(personalGroup)
-    return personalGroup
+      const personalGroup = await getUserPersonalGroup(user.id)
+      console.log('personalGroup')
+      console.log(personalGroup)
+      setUserPersonalGroup(personalGroup)
+      return personalGroup
     }catch(error){
       console.log(error)
     }
@@ -363,15 +366,17 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       </Drawer>
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {selectedProjectId && projectSelected &&(
-          <MiradorViewer
-            miradorState={miradorState!}
-            setMiradorState={handleSetMiradorState}
-            project={projectSelected}
-            saveMiradorState={saveMiradorState}
-            viewer={viewer}
-            setViewer={setViewer}
-            ref={myRef}
-          />
+          <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup!} user={user} fetchManifestForUser={fetchManifestForUser} display={true}>
+            <MiradorViewer
+              miradorState={miradorState!}
+              setMiradorState={handleSetMiradorState}
+              project={projectSelected}
+              saveMiradorState={saveMiradorState}
+              viewer={viewer}
+              setViewer={setViewer}
+              ref={myRef}
+            />
+          </SidePanelManifest>
         )
         }
         {user && user.id && selectedContent === CONTENT.PROJECTS && (

@@ -86,7 +86,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     if (event.target.files) {
       await uploadManifest({
         idCreator: user.id,
-        user_group: userPersonalGroup!,
         file: event.target.files[0],
       });
       fetchManifestForUser()
@@ -187,11 +186,15 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
     if(response){
       const manifest = await response.json()
+      console.log('userId',user.id)
       await linkManifest({
+        url: path,
+        rights: ManifestGroupRights.ADMIN,
         idCreator: user.id,
-        user_group: userPersonalGroup!,
         path: path,
-        name: manifest.label ? manifest.label : "new Manifest",
+        name: manifest.label.en
+          ? manifest.label.en[0]
+          : "new Manifest",
       });
       fetchManifestForUser()
       setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)
@@ -206,7 +209,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       await createManifest({
         manifestMedias : items,
         name: manifestTitle,
-        user_group: userPersonalGroup,
         idCreator:user.id,
         manifestThumbnail:manifestThumbnail
       })

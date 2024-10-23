@@ -45,6 +45,10 @@ export class Manifest {
   @Column()
   idCreator: number;
 
+  @IsString()
+  @Column({ nullable: true })
+  url: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',

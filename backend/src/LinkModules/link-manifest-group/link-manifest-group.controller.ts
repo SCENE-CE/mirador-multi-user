@@ -29,9 +29,8 @@ import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relatio
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ActionType } from '../../enum/actions';
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
-import { ApiBody } from "@nestjs/swagger";
-import { AddProjectToGroupDto } from "../link-group-project/dto/addProjectToGroupDto";
-import { CreateLinkGroupManifestDto } from "./dto/CreateLinkGroupManifestDto";
+import { ApiBody } from '@nestjs/swagger';
+import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
 
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
@@ -74,20 +73,18 @@ export class LinkManifestGroupController {
     @UploadedFile() file,
   ) {
     console.log('UPLOAD MANIFEST');
-    console.log(createGroupManifestDto.thumbnailUrl);
-    const userGroup = createGroupManifestDto.user_group;
+    console.log(createGroupManifestDto);
     const manifestToCreate = {
-      ...createGroupManifestDto,
-      name: file.originalname,
-      description: 'your manifest description',
-      user_group: userGroup,
-      hash: `${(req as any).generatedHash}`,
-      path: `${file.filename}`,
       rights: ManifestGroupRights.ADMIN,
       origin: manifestOrigin.UPLOAD,
+      path: `${file.filename}`,
+      hash: `${(req as any).generatedHash}`,
+      description: 'your manifest description',
+      name: file.originalname,
+      idCreator: createGroupManifestDto.idCreator,
     };
 
-    return this.linkManifestGroupService.create(manifestToCreate);
+    return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
 
   @ApiBody({ type: CreateGroupManifestDto })
@@ -99,7 +96,7 @@ export class LinkManifestGroupController {
       description: 'your manifest description',
       origin: manifestOrigin.LINK,
     };
-    return this.linkManifestGroupService.create(manifestToCreate);
+    return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
 
   @ApiBody({ type: manifestCreationDto })
@@ -130,7 +127,6 @@ export class LinkManifestGroupController {
       const manifestToCreate = {
         name: label,
         description: 'your manifest description',
-        user_group: createManifestDto.user_group,
         hash: hash,
         path: `${label}.json`,
         idCreator: createManifestDto.idCreator,
@@ -139,7 +135,7 @@ export class LinkManifestGroupController {
         thumbnailUrl: createManifestDto.manifestThumbnail,
       };
 
-      return await this.linkManifestGroupService.createGroupManifest(
+      return await this.linkManifestGroupService.createManifest(
         manifestToCreate,
       );
     } catch (error) {
