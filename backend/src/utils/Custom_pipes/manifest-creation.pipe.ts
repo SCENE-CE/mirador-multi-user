@@ -64,7 +64,6 @@ export class MediaInterceptor implements NestInterceptor {
         if (contentType && contentType.startsWith('image')) {
           const imageMetadata = await sharp(mediaBuffer).metadata();
           const { width, height } = imageMetadata;
-console.log('after image metadata')
           manifestToCreate.items.push({
             id: media.value,
             type: 'Canvas',

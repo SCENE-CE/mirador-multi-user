@@ -35,12 +35,51 @@ export class LinkManifestGroupService {
     private readonly groupService: UserGroupService,
   ) {}
 
+  async createManifest(createManifestDto) {
+    try {
+      console.log('ENTER CREATE MANIFEST');
+
+      console.log('createManifestDto');
+      console.log(createManifestDto);
+      let userGroup = null;
+      if (!createManifestDto.user_group) {
+        userGroup = await this.groupService.findUserPersonalGroup(
+          createManifestDto.idCreator,
+        );
+      }
+      const manifestCreation = await this.manifestService.create({
+        origin: createManifestDto.origin,
+        description: createManifestDto.description,
+        name: createManifestDto.name,
+        idCreator: createManifestDto.idCreator,
+        url: createManifestDto.url ? createManifestDto.url : null,
+        path: createManifestDto.path ? createManifestDto.path : null,
+        hash: createManifestDto.hash ? createManifestDto.hash : null,
+      });
+      console.log('manifestCreation');
+      console.log(manifestCreation);
+      return this.create({ ...createManifestDto, manifest: manifestCreation, user_group: createManifestDto.user_group ? createManifestDto.user_group : userGroup });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while creating linkGroupManifest, ${error.message}`,
+      );
+    }
+  }
+
   async create(createLinkGroupManifestDto: CreateLinkGroupManifestDto) {
+    console.log(
+      '----------------------createLinkGroupManifestDto----------------------',
+    );
+    console.log(createLinkGroupManifestDto);
     try {
       const linkGroupManifest: LinkManifestGroup =
         this.linkManifestGroupRepository.create({
-          ...createLinkGroupManifestDto,
+          manifest: createLinkGroupManifestDto.manifest,
+          user_group: createLinkGroupManifestDto.user_group,
+          rights: createLinkGroupManifestDto.rights,
         });
+      console.log('linkGroupManifest', linkGroupManifest);
       return await this.linkManifestGroupRepository.upsert(linkGroupManifest, {
         conflictPaths: ['rights', 'manifest', 'user_group'],
       });
@@ -54,11 +93,9 @@ export class LinkManifestGroupService {
 
   async createGroupManifest(createGroupManifestDto: CreateGroupManifestDto) {
     try {
-      const { idCreator, path, user_group } = createGroupManifestDto;
-      console.log('createGroupManifestDto', createGroupManifestDto);
-      const manifest = await this.manifestService.create(
-        createGroupManifestDto,
-      );
+      const { idCreator, path, user_group, manifest } = createGroupManifestDto;
+      console.log('--------------------manifest.id--------------------');
+      console.log(manifest.id);
       await this.addManifestToGroup({
         userGroupId: user_group.id,
         manifestId: manifest.id,

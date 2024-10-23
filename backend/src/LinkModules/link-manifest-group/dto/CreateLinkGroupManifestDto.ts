@@ -9,7 +9,7 @@ export class CreateLinkGroupManifestDto {
   rights: ManifestGroupRights;
 
   @IsOptional()
-  manifest?: Manifest;
+  manifest: Manifest;
 
   @IsNotEmpty()
   user_group: UserGroup;

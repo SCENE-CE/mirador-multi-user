@@ -168,6 +168,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const fetchUserPersonalGroup = async()=>{
     try{
       const personalGroup = await getUserPersonalGroup(user.id)
+      console.log('personalGroup')
+      console.log(personalGroup)
       setUserPersonalGroup(personalGroup)
       return personalGroup
     }catch(error){
