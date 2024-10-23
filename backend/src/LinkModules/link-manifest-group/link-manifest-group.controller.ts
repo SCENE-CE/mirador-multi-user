@@ -82,7 +82,6 @@ export class LinkManifestGroupController {
       description: 'your manifest description',
       name: file.originalname,
       idCreator: createGroupManifestDto.idCreator,
-
     };
 
     return this.linkManifestGroupService.createManifest(manifestToCreate);
@@ -128,7 +127,6 @@ export class LinkManifestGroupController {
       const manifestToCreate = {
         name: label,
         description: 'your manifest description',
-        user_group: createManifestDto.user_group,
         hash: hash,
         path: `${label}.json`,
         idCreator: createManifestDto.idCreator,

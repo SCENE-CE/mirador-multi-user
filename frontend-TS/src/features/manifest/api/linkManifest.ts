@@ -3,6 +3,7 @@ import { UploadAndLinkManifestDto } from "../types/types.ts";
 
 export const linkManifest= async (createManifestDto:UploadAndLinkManifestDto) => {
   const token = storage.getToken();
+  console.log(createManifestDto);
 
   const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/link`, {
     method: 'POST',

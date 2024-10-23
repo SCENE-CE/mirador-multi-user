@@ -37,7 +37,6 @@ export type manifestCreationDto = {
   idCreator:number,
   manifestMedias:ManifestCreationMedia[]
   name:string,
-  user_group: UserGroup,
   manifestThumbnail:string,
 }
 export type MediaItem = {

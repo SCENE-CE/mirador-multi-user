@@ -37,16 +37,9 @@ export class LinkManifestGroupService {
 
   async createManifest(createManifestDto) {
     try {
-      console.log('ENTER CREATE MANIFEST');
-
-      console.log('createManifestDto');
-      console.log(createManifestDto);
-      let userGroup = null;
-      if (!createManifestDto.user_group) {
-        userGroup = await this.groupService.findUserPersonalGroup(
-          createManifestDto.idCreator,
-        );
-      }
+      const userGroup = await this.groupService.findUserPersonalGroup(
+        createManifestDto.idCreator,
+      );
       const manifestCreation = await this.manifestService.create({
         origin: createManifestDto.origin,
         description: createManifestDto.description,
@@ -58,7 +51,11 @@ export class LinkManifestGroupService {
       });
       console.log('manifestCreation');
       console.log(manifestCreation);
-      return this.create({ ...createManifestDto, manifest: manifestCreation, user_group: createManifestDto.user_group ? createManifestDto.user_group : userGroup });
+      return this.create({
+        ...createManifestDto,
+        manifest: manifestCreation,
+        user_group: userGroup,
+      });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -67,7 +64,7 @@ export class LinkManifestGroupService {
     }
   }
 
-  async create(createLinkGroupManifestDto: CreateLinkGroupManifestDto) {
+  async create(createLinkGroupManifestDto) {
     console.log(
       '----------------------createLinkGroupManifestDto----------------------',
     );
