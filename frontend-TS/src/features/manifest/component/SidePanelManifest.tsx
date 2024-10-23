@@ -12,6 +12,7 @@ import { PaginationControls } from "../../../components/elements/Pagination.tsx"
 import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
 import placeholder from "../../../assets/Placeholder.svg";
 import { linkManifest } from "../api/linkManifest.ts";
+import { lookingForManifests } from "../api/loonkingForManifests.ts";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -93,8 +94,8 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
   }
 
   const HandleLookingForManifest = async (partialString : string) =>{
-    console.log("TO DO : Code looking for manifest", partialString)
-    return manifest
+    const userManifests =  await lookingForManifests(partialString, userPersonalGroup.id)
+    return userManifests
   }
 
   const getOptionLabelForManifestSearchBar = (option:Manifest): string => {
@@ -169,6 +170,8 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
   useEffect(() => {
     fetchThumbnails();
   }, [fetchThumbnails]);
+
+  console.log(thumbnailUrls)
 
   return (
     <div>
@@ -249,8 +252,8 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
                       alt={manifest.name}
                       loading="lazy"
                       sx={{
-                        width: 150,
-                        height: 150,
+                        width: "100%",
+                        height: "100%",
                         objectFit: 'cover', // Ensures cropping behavior
                         '@media(min-resolution: 200px)': {
                           width: 150 * 2,
