@@ -102,11 +102,11 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }
 
   const actions = [
-    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:() => setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)},
     { icon: <CreateIcon /> as ReactNode, name: 'Create',onClick: HandleCreateManifestIsOpen},
     { icon: <UploadFileIcon /> as ReactNode, name: 'Upload' , onClick: () => {
         document.getElementById("hiddenFileInput")?.click();
       }},
+    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:() => setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)},
   ];
 
   const fetchThumbnails = useCallback(async () => {
