@@ -32,7 +32,7 @@ export class Media {
 
   @IsString()
   @Column()
-  name: string;
+  title: string;
 
   @Column({ type: 'json', nullable: true })
   metadata: any;

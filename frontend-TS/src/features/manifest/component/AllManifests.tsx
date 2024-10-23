@@ -118,7 +118,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
         let manifestUrl = '';
         if (manifest.origin === manifestOrigin.UPLOAD) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.name}`;
+          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
         } else if (manifest.origin === manifestOrigin.LINK) {
           manifestUrl = manifest.path;
         } else {
@@ -154,7 +154,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }
 
   const getOptionLabelForManifestSearchBar = (option:Manifest): string => {
-    return option.name;
+    return option.title;
   };
 
 
@@ -192,7 +192,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
         rights: ManifestGroupRights.ADMIN,
         idCreator: user.id,
         path: path,
-        name: manifest.label.en
+        title: manifest.label.en
           ? manifest.label.en[0]
           : "new Manifest",
       });
@@ -208,7 +208,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     try {
       await createManifest({
         manifestMedias : items,
-        name: manifestTitle,
+        title: manifestTitle,
         idCreator:user.id,
         manifestThumbnail:manifestThumbnail
       })
@@ -241,7 +241,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
       return setManifestFiltered([])
     }
     if(partialString.length > 0 ){
-      const manifetsFiltered = manifests.filter((manifest) =>manifest.name.startsWith(partialString))
+      const manifetsFiltered = manifests.filter((manifest) =>manifest.title.startsWith(partialString))
       if(manifetsFiltered.length >= 1){
         setManifestFiltered(manifetsFiltered)
       }else{
@@ -271,13 +271,13 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }
 
   const getOptionLabel = (option: UserGroup): string => {
-    return option.name
+    return option.title
   };
 
   const listOfGroup: ListItem[] = useMemo(() => {
     return groupList.map((projectGroup) => ({
       id: projectGroup.user_group.id,
-      name: projectGroup.user_group.name,
+      title: projectGroup.user_group.title,
       rights: projectGroup.rights
     }));
   }, [groupList]);
@@ -345,7 +345,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     getOptionLabel={getOptionLabel}
                     id={manifest.id}
                     item={manifest}
-                    itemLabel={manifest.name}
+                    itemLabel={manifest.title}
                     itemOwner={user}
                     listOfItem={listOfGroup}
                     metadata={manifest.metadata}
@@ -375,7 +375,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     description={manifest.description}
                     HandleOpenModal={()=>HandleOpenModal(manifest.id)}
                     openModal={openModalManifestId === manifest.id}
-                    itemLabel={manifest.name}
+                    itemLabel={manifest.title}
                     itemOwner={user}
                     item={manifest}
                     thumbnailUrl={thumbnailUrls[index]}
@@ -399,7 +399,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     description={searchedManifest.description}
                     HandleOpenModal={()=>HandleOpenModal(searchedManifest.id)}
                     openModal={openModalManifestId === searchedManifest.id}
-                    itemLabel={searchedManifest.name}
+                    itemLabel={searchedManifest.title}
                     itemOwner={user}
                     item={searchedManifest}
                     thumbnailUrl={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}

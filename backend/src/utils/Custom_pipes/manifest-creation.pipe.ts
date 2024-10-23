@@ -15,15 +15,15 @@ export class MediaInterceptor implements NestInterceptor {
     next: CallHandler,
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
-    const { manifestMedias, name, manifestThumbnail } = request.body;
+    const { manifestMedias, title, manifestThumbnail } = request.body;
     if (!manifestMedias || !Array.isArray(manifestMedias)) {
       throw new BadRequestException(
         'Manifest media items are required and must be an array.',
       );
     }
 
-    if (!name) {
-      throw new BadRequestException('Manifest name is required.');
+    if (!title) {
+      throw new BadRequestException('Manifest title is required.');
     }
 
     // Create the initial structure for the manifest
@@ -31,7 +31,7 @@ export class MediaInterceptor implements NestInterceptor {
       '@context': 'https://iiif.io/api/presentation/3/context.json',
       id: '',
       type: 'Manifest',
-      label: { en: [name] },
+      label: { en: [title] },
       items: [],
       thumbnail: {
         ['@id']: manifestThumbnail,

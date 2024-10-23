@@ -7,7 +7,7 @@ import { Box, Typography } from "@mui/material";
 import { MMUToolTip } from "../../../components/elements/MMUTootlTip.tsx";
 
 interface MediaField {
-  name: string;
+  title: string;
   value: string;
 }
 
@@ -27,7 +27,7 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
   const [warningWrongUrl, setWarningWrongUrl] = useState(false)
 
   const handleNewItemGroup = () => {
-    setItems([...items, { media: [{ name: "media-1", value: "" }] }]);
+    setItems([...items, { media: [{ title: "media-1", value: "" }] }]);
   };
 
   const handleManifestTitleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -53,7 +53,7 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
   const handleNewMediaField = (itemIndex: number) => {
     const updatedItems = [...items];
     updatedItems[itemIndex].media.push({
-      name: `media-${items[itemIndex].media.length + 1}`,
+      title: `media-${items[itemIndex].media.length + 1}`,
       value: '',
     });
     setItems(updatedItems);
@@ -156,7 +156,7 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
                   <Grid item key={mediaIndex} container spacing={2} alignItems="center">
                     <Grid item xs>
                       <FieldForm
-                        name={media.name}
+                        name={media.title}
                         placeholder={`Media url`}
                         label={`Media ${mediaIndex + 1} URL`}
                         value={media.value}

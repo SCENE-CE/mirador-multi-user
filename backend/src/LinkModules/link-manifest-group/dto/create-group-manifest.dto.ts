@@ -8,7 +8,7 @@ export class CreateGroupManifestDto {
 
   idCreator: number;
 
-  name: string;
+  title: string;
   @IsOptional()
   thumbnailUrl: string;
 

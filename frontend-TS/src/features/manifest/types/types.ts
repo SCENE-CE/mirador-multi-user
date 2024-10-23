@@ -7,7 +7,7 @@ export type Manifest = {
   id:number
   idCreator:number,
   json?:any
-  name:string,
+  title:string,
   origin:manifestOrigin,
   path:string,
   updated_at:Date,
@@ -36,11 +36,11 @@ export enum manifestOrigin {
 export type manifestCreationDto = {
   idCreator:number,
   manifestMedias:ManifestCreationMedia[]
-  name:string,
+  title:string,
   manifestThumbnail:string,
 }
 export type MediaItem = {
-  name: string;
+  title: string;
   value: string;
 };
 
@@ -49,7 +49,7 @@ export type ManifestCreationMedia = {
 };
 
 export type UploadAndLinkManifestDto = {
-  name?:string
+  title?:string
   url?:string;
   idCreator:number
   user_group?:UserGroup;

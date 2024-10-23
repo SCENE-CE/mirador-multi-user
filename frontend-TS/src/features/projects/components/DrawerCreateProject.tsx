@@ -51,7 +51,7 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
             <form onSubmit={handleSubmit}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>Project's name:</label>
+                  <label>Project's title:</label>
                 </Grid>
                 <Grid item sx={{ width: '70%' }}>
                   <TextField

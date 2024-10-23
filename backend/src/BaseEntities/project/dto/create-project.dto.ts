@@ -3,7 +3,7 @@ import { IsNotEmpty, IsObject, IsString } from 'class-validator';
 export class CreateProjectDto {
   @IsNotEmpty()
   @IsString()
-  name: string;
+  title: string;
 
   @IsObject()
   userWorkspace: any;

@@ -23,7 +23,7 @@ export type Media={
   hash:string
   id:number
   idCreator:number,
-  name:string,
+  title:string,
   origin:mediaOrigin
   path?:string,
   rights:MediaGroupRights

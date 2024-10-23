@@ -84,7 +84,7 @@ export class ManifestService {
         .innerJoin('manifest.linkManifestGroup', 'linkManifestGroup')
         .innerJoin('linkManifestGroup.user_group', 'userGroup')
         .where('userGroup.id = :id', { id: userGroupId })
-        .andWhere('LEFT(manifest.name, :length) = :partialString', {
+        .andWhere('LEFT(manifest.title, :length) = :partialString', {
           length: partialStringLength,
           partialString,
         })

@@ -4,7 +4,7 @@ import { UserGroupTypes } from '../../../enum/user-group-types';
 
 export class CreateUserGroupDto {
   @IsString()
-  name: string;
+  title: string;
 
   ownerId: number;
 

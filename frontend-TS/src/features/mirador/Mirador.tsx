@@ -18,7 +18,7 @@ interface MiradorViewerHandle {
 
 interface MiradorViewerProps {
   miradorState: IMiradorState,
-  saveMiradorState: (state:IMiradorState, name:string) => void,
+  saveMiradorState: (state:IMiradorState, title:string) => void,
   project:Project
   setMiradorState:(state:IState)=>void
   setViewer: Dispatch<any>
@@ -59,7 +59,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
           ...miradorAnnotationEditorVideo]);
       }
       if(!miradorState){
-        saveMiradorState(loadingMiradorViewer.store.getState(),project.name);
+        saveMiradorState(loadingMiradorViewer.store.getState(),project.title);
       }
 
 

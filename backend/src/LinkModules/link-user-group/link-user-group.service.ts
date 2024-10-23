@@ -91,7 +91,7 @@ export class LinkUserGroupService {
       userToSave.password = await bcrypt.hash(createUserDto.password, 10);
       const savedUser = await this.userService.create(userToSave);
       const userPersonalGroup = await this.groupService.create({
-        name: savedUser.name,
+        title: savedUser.name,
         ownerId: savedUser.id,
         user: savedUser,
         type: UserGroupTypes.PERSONAL,
@@ -343,7 +343,7 @@ export class LinkUserGroupService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        'An error occurred while trying to search for user group with partial name',
+        'An error occurred while trying to search for user group with partial title',
         error,
       );
     }
@@ -359,10 +359,10 @@ export class LinkUserGroupService {
           'linkUserGroup.id',
           'linkUserGroup.rights',
           'userGroup.id',
-          'userGroup.name',
+          'userGroup.title',
           'user.id',
         ])
-        .where('userGroup.name LIKE :partialString', {
+        .where('userGroup.title LIKE :partialString', {
           partialString: `%${partialGroupName}%`,
         })
         .orWhere('user.name LIKE :partialString', {

@@ -99,7 +99,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
   }
 
   const getOptionLabelForManifestSearchBar = (option:Manifest): string => {
-    return option.name;
+    return option.title;
   };
 
   const handleLinkManifest = useCallback (async (path: string) => {
@@ -118,7 +118,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
         idCreator: user.id,
         user_group: userPersonalGroup!,
         path: path,
-        name: manifest.label.en
+        title: manifest.label.en
           ? manifest.label.en[0]
           : "new Manifest",
       });
@@ -141,7 +141,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
 
         let manifestUrl = '';
         if (manifest.origin === manifestOrigin.UPLOAD) {
-          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.name}`;
+          manifestUrl = `${caddyUrl}/${manifest.hash}/${manifest.title}`;
         } else if (manifest.origin === manifestOrigin.LINK) {
           manifestUrl = manifest.path;
         } else {
@@ -216,7 +216,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
                     <Box
                       component="img"
                       src={''}
-                      alt={searchedManifest.name}
+                      alt={searchedManifest.title}
                       loading="lazy"
                       sx={{
                         width: 150,
@@ -249,7 +249,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
                     <Box
                       component="img"
                       src={thumbnailUrls[index]}
-                      alt={manifest.name}
+                      alt={manifest.title}
                       loading="lazy"
                       sx={{
                         width: "100%",

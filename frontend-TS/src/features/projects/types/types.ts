@@ -4,7 +4,7 @@ import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
 
 export type Project = {
   id:number;
-  name: string;
+  title: string;
   userWorkspace:IState;
   owner:User;
   rights?: ProjectRights;
@@ -28,7 +28,7 @@ export type ProjectGroupUpdateDto = {
   id?:number,
   project :{
     id:number;
-    name: string;
+    title: string;
     userWorkspace:IState;
     ownerId?:number;
   }
@@ -36,7 +36,7 @@ export type ProjectGroupUpdateDto = {
   group?:UserGroup
 }
 export type CreateProjectDto = {
-  name:string;
+  title:string;
   ownerId:number;
   userWorkspace:IState;
   metadata: Record<string, string>;

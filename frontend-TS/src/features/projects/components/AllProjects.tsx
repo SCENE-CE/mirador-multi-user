@@ -143,7 +143,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const InitializeProject = useCallback(async (workspace: IState, projectName: string) => {
     const response = await createProject({
-        name: projectName,
+        title: projectName,
         ownerId: user.id,
         userWorkspace: workspace,
         metadata: {},
@@ -190,7 +190,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   }
 
   const getOptionLabel = (option: UserGroup): string => {
-    return option.name
+    return option.title
   };
 
   const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number) => {
@@ -206,13 +206,13 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const listOfGroup: ListItem[] = useMemo(() => {
     return groupList.map((projectGroup) => ({
       id: projectGroup.user_group.id,
-      name: projectGroup.user_group.name,
+      title: projectGroup.user_group.title,
       rights: projectGroup.rights
     }));
   }, [groupList]);
 
   const getOptionLabelForProjectSearchBar = (option: Project): string => {
-    return option.name;
+    return option.title;
   };
 
   const handleLookingForUserGroups = async (partialString: string) => {
@@ -237,7 +237,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
       return setProjectFiltered([])
     }
     if(partialString.length > 0 ){
-      const filteredProjects = userProjects.filter((project)=>project.name.startsWith(partialString))
+      const filteredProjects = userProjects.filter((project)=>project.title.startsWith(partialString))
       if(filteredProjects.length >= 1){
         setProjectFiltered(filteredProjects)
       }else{
@@ -294,7 +294,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         AddAccessListItemFunction={handleAddUser}
                         handleSelectorChange={handleChangeRights}
                         item={projectUser}
-                        itemLabel={projectUser.name}
+                        itemLabel={projectUser.title}
                         itemOwner={projectUser.owner}
                         listOfItem={listOfGroup}
                         searchModalEditItem={handleLookingForUserGroups}
@@ -342,7 +342,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       AddAccessListItemFunction={handleAddUser}
                       handleSelectorChange={handleChangeRights}
                       item={searchedProject}
-                      itemLabel={searchedProject.name}
+                      itemLabel={searchedProject.title}
                       itemOwner={searchedProject}
                       listOfItem={listOfGroup}
                       searchModalEditItem={lookingForUsers}
@@ -377,7 +377,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                           AddAccessListItemFunction={handleAddUser}
                           handleSelectorChange={handleChangeRights}
                           item={projectUser}
-                          itemLabel={projectUser.name}
+                          itemLabel={projectUser.title}
                           itemOwner={projectUser.owner}
                           listOfItem={listOfGroup}
                           searchModalEditItem={handleLookingForUserGroups}

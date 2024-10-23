@@ -43,7 +43,7 @@ export class LinkManifestGroupService {
       const manifestCreation = await this.manifestService.create({
         origin: createManifestDto.origin,
         description: createManifestDto.description,
-        name: createManifestDto.name,
+        title: createManifestDto.title,
         idCreator: createManifestDto.idCreator,
         url: createManifestDto.url ? createManifestDto.url : null,
         path: createManifestDto.path ? createManifestDto.path : null,
