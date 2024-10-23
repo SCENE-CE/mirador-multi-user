@@ -118,7 +118,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   }
 
   const getOptionLabelForMediaSearchBar = (option:Media): string => {
-    return option.name;
+    return option.title;
   };
 
   const handleSetSearchMedia = (mediaQuery:Media)=>{
@@ -136,12 +136,12 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   }
 
   const getOptionLabel = (option: UserGroup): string => {
-    return option.name
+    return option.title
   };
   const listOfGroup: ListItem[] = useMemo(() => {
     return groupList.map((projectGroup) => ({
       id: projectGroup.user_group.id,
-      name: projectGroup.user_group.name,
+      title: projectGroup.user_group.title,
       rights: projectGroup.rights
     }));
   }, [groupList]);
@@ -179,7 +179,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       return setMediaFiltered([])
     }
     if(partialString.length > 0 ){
-      const filteredMedia = medias.filter((media)=>media.name.startsWith(partialString))
+      const filteredMedia = medias.filter((media)=>media.title.startsWith(partialString))
       if(filteredMedia.length >= 1){
         setMediaFiltered(filteredMedia)
       }else{
@@ -248,7 +248,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                       getOptionLabel={getOptionLabel}
                       id={media.id}
                       item={media}
-                      itemLabel={media.name}
+                      itemLabel={media.title}
                       itemOwner={user}
                       listOfItem={listOfGroup}
                       metadata={media.metadata}
@@ -282,7 +282,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     description={searchedMedia.description}
                     HandleOpenModal={()=>HandleOpenModal(searchedMedia.id)}
                     openModal={openModalMediaId === searchedMedia.id}
-                    itemLabel={searchedMedia.name}
+                    itemLabel={searchedMedia.title}
                     DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={searchedMedia.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`):()=>HandleCopyToClipBoard(searchedMedia.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
                     EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(searchedMedia.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     itemOwner={user}
@@ -318,7 +318,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                       description={media.description}
                       HandleOpenModal={()=>HandleOpenModal(media.id)}
                       openModal={openModalMediaId === media.id}
-                      itemLabel={media.name}
+                      itemLabel={media.title}
                       DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={media.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) : ()=>HandleCopyToClipBoard(media.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
                       EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
                       itemOwner={user}

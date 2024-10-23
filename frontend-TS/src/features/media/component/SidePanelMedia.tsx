@@ -128,7 +128,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   }
 
   const getOptionLabelForMediaSearchBar = (option:Media): string => {
-    return option.name;
+    return option.title;
   };
 
   const createMediaWithLink = async (link: string) => {
@@ -193,7 +193,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
                     <Box
                       component="img"
                       src={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
-                      alt={searchedMedia.name}
+                      alt={searchedMedia.title}
                       loading="lazy"
                       sx={{
                         width: 150,
@@ -223,7 +223,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
                     <Box
                       component="img"
                       src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
-                      alt={media.name}
+                      alt={media.title}
                       loading="lazy"
                       sx={{
                         width: 150,

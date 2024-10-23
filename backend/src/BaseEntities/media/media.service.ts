@@ -92,7 +92,7 @@ export class MediaService {
         .innerJoin('media.linkMediaGroup', 'linkMediaGroup')
         .innerJoin('linkMediaGroup.user_group', 'userGroup')
         .where('userGroup.id = :id', { id: userGroupId })
-        .andWhere('LEFT(media.name, :length) = :partialString', {
+        .andWhere('LEFT(media.title, :length) = :partialString', {
           length: partialStringLength,
           partialString,
         })

@@ -8,5 +8,5 @@ export class manifestCreationDto {
   @IsObject()
   processedManifest: any;
   @IsString()
-  name: string;
+  title: string;
 }

@@ -32,7 +32,7 @@ export class Manifest {
 
   @IsString()
   @Column()
-  name: string;
+  title: string;
 
   @IsString()
   @Column()

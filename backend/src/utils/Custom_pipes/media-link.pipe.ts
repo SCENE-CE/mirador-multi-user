@@ -17,32 +17,34 @@ export class MediaLinkInterceptor implements NestInterceptor {
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
-    const request = context.switchToHttp().getRequest();
-    const imageFetch = await fetch(request.body.imageUrl);
-
-    if (!imageFetch.ok) {
-      throw new Error('Failed to fetch image');
-    }
-
-    const arrayBuffer = await imageFetch.arrayBuffer();
-    const imageBuffer = Buffer.from(arrayBuffer);
-
-
-    const hash = generateAlphanumericSHA1Hash(
-      `${Date.now().toString()}${Math.random().toString(36)}`,
-    );
-    const uploadBasePath = './upload';
-    const uploadPath = join(uploadBasePath, hash);
-
-    if (!fs.existsSync(uploadBasePath)) {
-      fs.mkdirSync(uploadBasePath, { recursive: true });
-    }
-
-    fs.mkdirSync(uploadPath, { recursive: true });
-
-    const processedFilePath = join(uploadPath, `thumbnail.webp`);
-    request.generatedHash = hash;
     try {
+      console.log('media interceptor')
+      const request = context.switchToHttp().getRequest();
+      console.log(request.body)
+      const imageFetch = await fetch(request.body.imageUrl);
+      if (!imageFetch.ok) {
+        throw new Error('Failed to fetch image');
+      }
+      console.log('after fetch')
+
+      const arrayBuffer = await imageFetch.arrayBuffer();
+      const imageBuffer = Buffer.from(arrayBuffer);
+
+
+      const hash = generateAlphanumericSHA1Hash(
+        `${Date.now().toString()}${Math.random().toString(36)}`,
+      );
+      const uploadBasePath = './upload';
+      const uploadPath = join(uploadBasePath, hash);
+
+      if (!fs.existsSync(uploadBasePath)) {
+        fs.mkdirSync(uploadBasePath, { recursive: true });
+      }
+
+      fs.mkdirSync(uploadPath, { recursive: true });
+
+      const processedFilePath = join(uploadPath, `thumbnail.webp`);
+      request.generatedHash = hash;
       const buffer = await sharp(imageBuffer)
         .resize(200, 200)
         .webp({ effort: 3 })

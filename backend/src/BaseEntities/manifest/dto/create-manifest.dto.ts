@@ -6,7 +6,7 @@ export class CreateManifestDto {
 
   idCreator: number;
 
-  name: string;
+  title: string;
 
   url?: string;
 

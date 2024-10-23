@@ -74,13 +74,13 @@ export class ProjectService {
 
       return await this.projectRepository
         .createQueryBuilder('project')
-        .select(['project.id', 'project.name'])
+        .select(['project.id', 'project.title'])
         .innerJoin('project.linkGroupProjectsIds', 'linkGroupProject')
         .innerJoin('linkGroupProject.user_group', 'userGroup')
         .where('userGroup.id = :id', { id: userGroupId })
         .andWhere(
           new Brackets((qb) => {
-            qb.where('LEFT(project.name, :length) = :partialProjectName', {
+            qb.where('LEFT(project.title, :length) = :partialProjectName', {
               length: partialProjectNameLength,
               partialProjectName,
             });
@@ -91,10 +91,11 @@ export class ProjectService {
         .getMany();
     } catch (error) {
       this.logger.error(error.message, error.stack);
-      throw new Error('Failed to find projects by partial name and user group');
+      throw new Error(
+        'Failed to find projects by partial title and user group',
+      );
     }
   }
-
 
   async findUsersProject(userId: number) {
     try {

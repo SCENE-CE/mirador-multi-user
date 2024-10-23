@@ -6,7 +6,7 @@ export class CreateMediaDto {
 
   idCreator: number;
 
-  name: string;
+  title: string;
 
   description: string;
   @IsOptional()

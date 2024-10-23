@@ -80,9 +80,11 @@ export class LinkManifestGroupController {
       path: `${file.filename}`,
       hash: `${(req as any).generatedHash}`,
       description: 'your manifest description',
-      name: file.originalname,
+      title: file.originalname,
       idCreator: createGroupManifestDto.idCreator,
     };
+    console.log('----------------manifestToCreate----------------')
+    console.log(manifestToCreate)
 
     return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
@@ -104,9 +106,9 @@ export class LinkManifestGroupController {
   @Post('/manifest/creation')
   @UseInterceptors(MediaInterceptor)
   async createManifest(@Body() createManifestDto: manifestCreationDto) {
-    const label = createManifestDto.name;
+    const label = createManifestDto.title;
     if (!label) {
-      throw new BadRequestException('Manifest label is required');
+      throw new BadRequestException('Manifest title is required');
     }
 
     const hash = generateAlphanumericSHA1Hash(
@@ -125,7 +127,7 @@ export class LinkManifestGroupController {
       await fs.promises.writeFile(filePath, manifestJson);
 
       const manifestToCreate = {
-        name: label,
+        title: label,
         description: 'your manifest description',
         hash: hash,
         path: `${label}.json`,

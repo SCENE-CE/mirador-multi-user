@@ -21,7 +21,7 @@ export type LinkUserGroup = {
 
 export type UserGroup = {
   id:number;
-  name:string;
+  title:string;
   ownerId:number;
   description:string;
   type:UserGroupTypes;
@@ -30,7 +30,7 @@ export type UserGroup = {
 }
 
 export type CreateGroupDto ={
-  name: string;
+  title: string;
   ownerId: number;
   user: User;
 }

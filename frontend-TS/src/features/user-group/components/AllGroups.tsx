@@ -63,10 +63,10 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
       fetchGroups()
     },[openModalGroupId, user]
   )
-  const handleCreateGroup = async (name:string)=>{
+  const handleCreateGroup = async (title:string)=>{
     try{
       const userGroupToCreate : CreateGroupDto = {
-        name: name,
+        title: title,
         ownerId: user.id,
         user: user
       }
@@ -83,8 +83,8 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
 
   const getOptionLabel = (option: UserGroup): string => {
-    if(option.name){
-      return option.name
+    if(option.title){
+      return option.title
     }
     return ''
   };
@@ -129,7 +129,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   const listOfUserPersonalGroup = useMemo(()=>{
     return userPersonalGroupList.map((userPersonalGroup) => ({
       id: userPersonalGroup.user.id,
-      name: userPersonalGroup.user.name,
+      title: userPersonalGroup.user.name,
       rights: userPersonalGroup.rights
     }))
   },[userPersonalGroupList])
@@ -139,7 +139,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   }
 
   const handleLookingForGroup =(partialString:string)=>{
-    return groups.filter((groups) => groups.name.startsWith(partialString))
+    return groups.filter((groups) => groups.title.startsWith(partialString))
   }
 
   const handleFiltered = (partialString:string)=>{
@@ -147,7 +147,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
       return setGroupFiltered([])
     }
     if(partialString.length > 0 ){
-      const groupsFiltered = groups.filter((group)=>group.name.startsWith(partialString))
+      const groupsFiltered = groups.filter((group)=>group.title.startsWith(partialString))
       if(groupsFiltered.length >= 1){
         setGroupFiltered(groupsFiltered)
       }else{
@@ -181,7 +181,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   thumbnailUrl={group.thumbnailUrl ? group.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}
                   rights={group.rights!}
-                  itemLabel={group.name}
+                  itemLabel={group.title}
                   openModal={openModalGroupId === group.id}
                   getOptionLabel={getOptionLabelForEditModal}
                   deleteItem={handleDeleteGroup}
@@ -211,7 +211,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   thumbnailUrl={selectedUserGroup.thumbnailUrl ? selectedUserGroup.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}
                   rights={selectedUserGroup.rights!}
-                  itemLabel={selectedUserGroup.name}
+                  itemLabel={selectedUserGroup.title}
                   openModal={openModalGroupId === selectedUserGroup.id}
                   getOptionLabel={getOptionLabel}
                   deleteItem={handleDeleteGroup}
@@ -241,7 +241,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   thumbnailUrl={group.thumbnailUrl ? group.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}
                   rights={group.rights!}
-                  itemLabel={group.name}
+                  itemLabel={group.title}
                   openModal={openModalGroupId === group.id}
                   getOptionLabel={getOptionLabelForEditModal}
                   deleteItem={handleDeleteGroup}

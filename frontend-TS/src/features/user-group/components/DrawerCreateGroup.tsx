@@ -5,7 +5,7 @@ import { ChangeEvent, useCallback, useState, KeyboardEvent } from "react";
 interface IDrawerCreateGroupProps{
   modalCreateGroup: boolean
   toggleModalGroupCreation:()=>void
-  handleCreatGroup:(name:string) => void
+  handleCreatGroup:(title:string) => void
 }
 
 export const DrawerCreateGroup = ({modalCreateGroup, toggleModalGroupCreation, handleCreatGroup}: IDrawerCreateGroupProps) => {
@@ -59,7 +59,7 @@ export const DrawerCreateGroup = ({modalCreateGroup, toggleModalGroupCreation, h
           <Grid>
             <Grid item container alignItems="center" spacing={2}>
               <Grid item>
-                <Typography>Group's name :</Typography>
+                <Typography>Group's title :</Typography>
               </Grid>
               <Grid item sx={{ width: '70%' }}>
                 <TextField

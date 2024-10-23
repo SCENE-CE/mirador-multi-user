@@ -62,7 +62,7 @@ export class LinkMediaGroupController {
     const userGroup = JSON.parse(CreateMediaDto.user_group);
     const mediaToCreate = {
       ...CreateMediaDto,
-      name: file.originalname,
+      title: file.originalname,
       description: 'your media description',
       user_group: userGroup,
       path: `${file.filename}`,
@@ -76,10 +76,11 @@ export class LinkMediaGroupController {
   @Post('/media/link')
   @UseInterceptors(MediaLinkInterceptor)
   @HttpCode(201)
-  async linkManifest(@Body() createMediaDto, @Req() req) {
+  async linkMedia(@Body() createMediaDto, @Req() req) {
+    console.log('link media')
     const mediaToCreate = {
       ...createMediaDto,
-      name: `${req.body.imageUrl}`,
+      title: `${req.body.imageUrl}`,
       description: 'your media description',
       user_group: createMediaDto.user_group,
       hash: `${(req as any).generatedHash}`,

@@ -75,7 +75,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   const handleUpdateItem =  () => {
     const itemToUpdate = {...item,
       thumbnailUrl:newItemThumbnailUrl,
-      name:newItemName,
+      title:newItemName,
       description:newItemDescription,
       metadata:metadataFormData,
     }
@@ -86,7 +86,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
   };
 
 
-  const handleChangeName = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemName(e.target.value);
   }
 
@@ -144,8 +144,8 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
           >
             <TextField
               type="text"
-              label="Name"
-              onChange={handleChangeName}
+              label="title"
+              onChange={handleChangeTitle}
               variant="outlined"
               defaultValue={itemLabel}
               fullWidth
