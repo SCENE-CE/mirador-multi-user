@@ -1,5 +1,32 @@
 export const dublinCoreSample = [
   {
+    "term": "title",
+    "label": "Title",
+    "uri": "http://purl.org/dc/terms/title",
+    "definition": "A name given to the resource."
+  },
+  {
+    "term": "description",
+    "label": "Description",
+    "uri": "http://purl.org/dc/terms/description",
+    "definition": "An account of the resource.",
+    "comment": "Description may include but is not limited to: an abstract, a table of contents, a graphical representation, or a free-text account of the resource."
+  },
+  {
+    "term": "creator",
+    "label": "Creator",
+    "uri": "http://purl.org/dc/terms/creator",
+    "definition": "An entity primarily responsible for making the resource.",
+    "comment": "Examples of a Creator include a person, an organization, or a service."
+  },
+  {
+    "term": "date",
+    "label": "Date",
+    "uri": "http://purl.org/dc/terms/date",
+    "definition": "A point or period of time associated with an event in the lifecycle of the resource.",
+    "comment": "Date may be used to express temporal information at any level of granularity. Recommended best practice is to use an encoding scheme, such as the W3CDTF profile of ISO 8601 [W3CDTF]."
+  },
+  {
     "term": "abstract",
     "label": "Abstract",
     "uri": "http://purl.org/dc/terms/abstract",
@@ -83,20 +110,6 @@ export const dublinCoreSample = [
     "definition": "Date of creation of the resource."
   },
   {
-    "term": "creator",
-    "label": "Creator",
-    "uri": "http://purl.org/dc/terms/creator",
-    "definition": "An entity primarily responsible for making the resource.",
-    "comment": "Examples of a Creator include a person, an organization, or a service."
-  },
-  {
-    "term": "date",
-    "label": "Date",
-    "uri": "http://purl.org/dc/terms/date",
-    "definition": "A point or period of time associated with an event in the lifecycle of the resource.",
-    "comment": "Date may be used to express temporal information at any level of granularity. Recommended best practice is to use an encoding scheme, such as the W3CDTF profile of ISO 8601 [W3CDTF]."
-  },
-  {
     "term": "dateAccepted",
     "label": "Date Accepted",
     "uri": "http://purl.org/dc/terms/dateAccepted",
@@ -115,13 +128,6 @@ export const dublinCoreSample = [
     "uri": "http://purl.org/dc/terms/dateSubmitted",
     "definition": "Date of submission of the resource.",
     "comment": "Examples of resources to which a Date Submitted may be relevant are a thesis (submitted to a university department) or an article (submitted to a journal)."
-  },
-  {
-    "term": "description",
-    "label": "Description",
-    "uri": "http://purl.org/dc/terms/description",
-    "definition": "An account of the resource.",
-    "comment": "Description may include but is not limited to: an abstract, a table of contents, a graphical representation, or a free-text account of the resource."
   },
   {
     "term": "educationLevel",
@@ -332,12 +338,6 @@ export const dublinCoreSample = [
     "label": "Temporal Coverage",
     "uri": "http://purl.org/dc/terms/temporal",
     "definition": "Temporal characteristics of the resource."
-  },
-  {
-    "term": "title",
-    "label": "Title",
-    "uri": "http://purl.org/dc/terms/title",
-    "definition": "A name given to the resource."
   },
   {
     "term": "type",
