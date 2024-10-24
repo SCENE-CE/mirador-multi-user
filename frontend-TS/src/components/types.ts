@@ -3,7 +3,7 @@ import { User } from "../features/auth/types/types.ts";
 
 export type ListItem = {
   id:number
-  name?:string
+  title?:string
   rights?: ProjectRights
 
 }
