@@ -37,7 +37,7 @@ interface IMMUCardProps<T,G,O,X> {
   isGroups?:boolean
 }
 
-const MMUCard = <T extends { id: number },G, O, X extends { id:number} > (
+const MMUCard = <T extends { id: number, created_at:Date },G, O, X extends { id:number} > (
   {
     id,
     rights,

@@ -5,7 +5,6 @@ export type ListItem = {
   id:number
   title?:string
   rights?: ProjectRights
-
 }
 
 export type SelectorItem = {

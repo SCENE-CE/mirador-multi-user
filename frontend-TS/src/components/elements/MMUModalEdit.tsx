@@ -11,6 +11,10 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { MediaGroupRights } from "../../features/media/types/types.ts";
 import MetadataForm from "./metadataForm.tsx";
 import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import dayjs, { Dayjs } from "dayjs";
 
 interface ModalItemProps<T, G,O> {
   itemOwner: O,
@@ -37,7 +41,7 @@ interface ModalItemProps<T, G,O> {
   isGroups?:boolean
 }
 
-export const MMUModalEdit = <O, T extends { id: number }, G>(
+export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
   {
     itemLabel,
     setItemToAdd,
@@ -62,22 +66,24 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
     metadata,
     isGroups,
   }: ModalItemProps<T, G, O>) => {
-  const [newItemName, setNewItemName] = useState(itemLabel);
+  const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
+  const [newItemDate, setNewItemDate] = useState<Dayjs | null>(dayjs(item.created_at));
+  const [newItemMetadataCreator, setNewItemMetadataCreator] = useState(metadata?.creator ? metadata.creator : null);
   const [openModal, setOpenModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<{ [key: string]: string }>(metadata || {});
 
-  console.log('metadataFormData',metadataFormData)
+  console.log('item',item)
   const handeUpdateMetadata = (updateData:any)=>{
     setMetadataFormData(updateData)
   }
   const handleUpdateItem =  () => {
     const itemToUpdate = {...item,
       thumbnailUrl:newItemThumbnailUrl,
-      title:newItemName,
+      title:newItemTitle,
       description:newItemDescription,
-      metadata:metadataFormData,
+      metadata: { ...metadataFormData, date: newItemDate, title: newItemTitle, description: newItemDescription,creator:newItemMetadataCreator},
     }
     //TODO : remove this later
     if(updateItem){
@@ -87,11 +93,15 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
 
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
-    setNewItemName(e.target.value);
+    setNewItemTitle(e.target.value);
   }
 
   const handleChangeThumbnailUrl = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemThumbnailUrl(e.target.value);
+  }
+
+  const handleChangeCreator= (e:ChangeEvent<HTMLInputElement>) =>{
+    setNewItemMetadataCreator(e.target.value)
   }
 
   const handleChangeDescription=(e: ChangeEvent<HTMLInputElement>) => {
@@ -133,10 +143,11 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
           flexDirection="column"
           justifyContent="space-between"
           alignItems="center"
+          spacing={2}
         >
           <Grid
             item
-            sx={{ minHeight: '100px', width: '100%' }}
+            sx={{ minHeight: '50px', width: '100%' }}
             container
             flexDirection="row"
             justifyContent="space-between"
@@ -153,7 +164,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
           </Grid>
           <Grid
             item
-            sx={{ minHeight: '100px', width: '100%' }}
+            sx={{ minHeight: '50px', width: '100%' }}
             container
             flexDirection="row"
             justifyContent="space-between"
@@ -168,6 +179,38 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
               multiline
               fullWidth
             />
+          </Grid>
+          <Grid
+            item
+            sx={{ minHeight: '50px', width: '100%' }}
+            container
+            justifyContent="flex-end"
+            alignItems="center"
+          >
+            <TextField
+              type="text"
+              label="Creator"
+              onChange={handleChangeCreator}
+              variant="outlined"
+              defaultValue={newItemMetadataCreator}
+              multiline
+              fullWidth
+            />
+          </Grid>
+          <Grid
+            item
+            sx={{ minHeight: '50px', width: '100%' }}
+            container
+            justifyContent="flex-start"
+            alignItems="center"
+          >
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label={"created at"}
+                onChange={(newValue)=>setNewItemDate(newValue)}
+                value={newItemDate }
+              />
+            </LocalizationProvider>
           </Grid>
           <Grid
             item
@@ -194,7 +237,7 @@ export const MMUModalEdit = <O, T extends { id: number }, G>(
           >
             {
               !isGroups && (
-                <MetadataForm setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
+                <MetadataForm item={item} setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
               )
             }
           </Grid>
