@@ -8,9 +8,10 @@ import {
   Patch,
   Post,
   Req,
-  SetMetadata, UnauthorizedException,
-  UseGuards
-} from "@nestjs/common";
+  SetMetadata,
+  UnauthorizedException,
+  UseGuards,
+} from '@nestjs/common';
 import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';
@@ -18,16 +19,24 @@ import { AuthGuard } from '../../auth/auth.guard';
 import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-user-group.dto';
 import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import { ActionType } from '../../enum/actions';
+import { ApiOkResponse } from '@nestjs/swagger';
+import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
+import { LinkUserGroup } from './entities/link-user-group.entity';
 
 @Controller('link-user-group')
 export class LinkUserGroupController {
   constructor(private readonly linkUserGroupService: LinkUserGroupService) {}
 
+  @ApiOkResponse({
+    description: 'Return all users for group and there rights',
+    type: LinkUserGroup,
+    isArray: true,
+  })
   @SetMetadata('action', ActionType.READ)
   @UseGuards(AuthGuard)
   @Get('/users/:groupId')
   async getAllUsersForGroup(@Param('groupId') groupId: number, @Req() request) {
-    console.log('enter getAllUsersForGroup')
+    console.log('enter getAllUsersForGroup');
     return await this.linkUserGroupService.checkPolicies(
       request.metadata.action,
       request.user.sub,
@@ -38,6 +47,11 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOkResponse({
+    description: 'The groups the user can access and his rights on them',
+    type: LinkGroupProject,
+    isArray: true,
+  })
   @SetMetadata('action', ActionType.READ)
   @UseGuards(AuthGuard)
   @Get('/groups/:userId')
@@ -68,6 +82,11 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.createUserGroup(createUserGroupDto);
   }
 
+  @ApiOkResponse({
+    description: 'The project and the rights of the user on it',
+    type: LinkGroupProject,
+    isArray: false,
+  })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Post('/access')
@@ -99,6 +118,11 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.searchForGroups(partialString);
   }
 
+  @ApiOkResponse({
+    description: "The personal user's userGroup",
+    type: LinkGroupProject,
+    isArray: true,
+  })
   @UseGuards(AuthGuard)
   @Get('/user-personal-group/:userId')
   getUserPersonalGroup(@Param('userId') userId: number, @Req() request) {
@@ -110,6 +134,11 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOkResponse({
+    description: "The project updated and the user's rights on it",
+    type: LinkGroupProject,
+    isArray: true,
+  })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/change-access')

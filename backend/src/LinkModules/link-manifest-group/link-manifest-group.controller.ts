@@ -4,6 +4,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   InternalServerErrorException,
   Param,
   Patch,
@@ -29,8 +30,10 @@ import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relatio
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ActionType } from '../../enum/actions';
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
-import { ApiBody } from '@nestjs/swagger';
+import { ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
+import { LinkManifestGroup } from './entities/link-manifest-group.entity';
+import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
 
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
@@ -38,6 +41,11 @@ export class LinkManifestGroupController {
     private readonly linkManifestGroupService: LinkManifestGroupService,
   ) {}
 
+  @ApiOkResponse({
+    description: "The manifests and the user's right on it",
+    type: LinkManifestGroup,
+    isArray: true,
+  })
   @UseGuards(AuthGuard)
   @Get('/group/:userGroupId')
   async getManifestByUserGroupId(@Param('userGroupId') userGroupId: number) {
@@ -45,6 +53,12 @@ export class LinkManifestGroupController {
       userGroupId,
     );
   }
+
+  @ApiOkResponse({
+    description: "The manifest and the user's right on it",
+    type: LinkManifestGroup,
+    isArray: false,
+  })
   @ApiBody({ type: CreateGroupManifestDto })
   @UseGuards(AuthGuard)
   @Post('/manifest/upload')
@@ -72,8 +86,6 @@ export class LinkManifestGroupController {
     @Req() req,
     @UploadedFile() file,
   ) {
-    console.log('UPLOAD MANIFEST');
-    console.log(createGroupManifestDto);
     const manifestToCreate = {
       rights: ManifestGroupRights.ADMIN,
       origin: manifestOrigin.UPLOAD,
@@ -83,12 +95,14 @@ export class LinkManifestGroupController {
       title: file.originalname,
       idCreator: createGroupManifestDto.idCreator,
     };
-    console.log('----------------manifestToCreate----------------')
-    console.log(manifestToCreate)
-
     return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
 
+  @ApiOkResponse({
+    description: "The manifest and the user's right on it",
+    type: LinkManifestGroup,
+    isArray: false,
+  })
   @ApiBody({ type: CreateGroupManifestDto })
   @UseGuards(AuthGuard)
   @Post('/manifest/link')
@@ -101,6 +115,11 @@ export class LinkManifestGroupController {
     return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
 
+  @ApiOkResponse({
+    description: "The manifest and the user's right on it",
+    type: LinkManifestGroup,
+    isArray: false,
+  })
   @ApiBody({ type: manifestCreationDto })
   @UseGuards(AuthGuard)
   @Post('/manifest/creation')
@@ -171,6 +190,11 @@ export class LinkManifestGroupController {
     );
   }
 
+  @ApiOkResponse({
+    description: 'The manifest updated',
+    type: Manifest,
+    isArray: false,
+  })
   @ApiBody({ type: UpdateManifestDto })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
@@ -188,8 +212,10 @@ export class LinkManifestGroupController {
       },
     );
   }
+
   @ApiBody({ type: UpdateManifestGroupRelation })
   @SetMetadata('action', ActionType.UPDATE)
+  @HttpCode(204)
   @UseGuards(AuthGuard)
   @Patch('/relation')
   async updateManifestGroupRelation(
@@ -211,6 +237,12 @@ export class LinkManifestGroupController {
       },
     );
   }
+
+  @ApiOkResponse({
+    description: 'The manifests and the users rights on them',
+    type: LinkManifestGroup,
+    isArray: true,
+  })
   @ApiBody({ type: AddManifestToGroupDto })
   @UseGuards(AuthGuard)
   @Post('/manifest/add')

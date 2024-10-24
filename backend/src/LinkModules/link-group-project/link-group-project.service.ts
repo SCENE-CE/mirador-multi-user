@@ -184,6 +184,8 @@ export class LinkGroupProjectService {
           dto.project,
         );
       }
+      console.log('-------------------projectToReturn-------------------')
+      console.log(projectToReturn)
       return projectToReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -216,6 +218,7 @@ export class LinkGroupProjectService {
           rights: updateAccessToProjectDto.rights,
         },
       );
+
       return updateRights;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -225,6 +228,7 @@ export class LinkGroupProjectService {
       );
     }
   }
+
 
   async addProjectToGroup(dto: AddProjectToGroupDto) {
     const { groupId, projectId } = dto;
@@ -335,6 +339,8 @@ export class LinkGroupProjectService {
         );
         userProjects.push(userPorject);
       }
+      console.log('------------------userProjects------------------')
+      console.log(userProjects)
       return userProjects;
     } catch (error) {
       this.logger.error(error.message, error.stack);

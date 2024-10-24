@@ -27,6 +27,10 @@ import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import * as fs from 'fs';
 import { ActionType } from '../../enum/actions';
+import { ApiOkResponse } from "@nestjs/swagger";
+import { LinkGroupProject } from "../link-group-project/entities/link-group-project.entity";
+import { LinkMediaGroup } from "./entities/link-media-group.entity";
+import { Media } from "../../BaseEntities/media/entities/media.entity";
 
 @Controller('link-media-group')
 export class LinkMediaGroupController {
@@ -90,6 +94,11 @@ export class LinkMediaGroupController {
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }
 
+  @ApiOkResponse({
+    description: 'The medias user have access and his rights on them',
+    type: LinkMediaGroup,
+    isArray: true,
+  })
   @UseGuards(AuthGuard)
   @Get('/group/:userGroupId')
   async getMediaByUserGroupId(@Param('userGroupId') userGroupId: number) {
@@ -116,6 +125,11 @@ export class LinkMediaGroupController {
     );
   }
 
+  @ApiOkResponse({
+    description: 'The media updated',
+    type: Media,
+    isArray: false,
+  })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/media')
@@ -133,8 +147,10 @@ export class LinkMediaGroupController {
     );
   }
 
+
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
+  @HttpCode(204)
   @Patch('/relation')
   async updateMediaGroupRelation(
     @Body() updateMediaGroupRelationDto: UpdateMediaGroupRelationDto,
@@ -155,6 +171,11 @@ export class LinkMediaGroupController {
     );
   }
 
+  @ApiOkResponse({
+    description: 'The media updated',
+    type: Media,
+    isArray: true,
+  })
   @UseGuards(AuthGuard)
   @Post('/media/add')
   addMediaToGroup(@Body() addMediaToGroupDto: AddMediaToGroupDto) {
