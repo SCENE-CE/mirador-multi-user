@@ -390,6 +390,7 @@ export class LinkGroupProjectService {
           userProjects.filter((project) => !projects.includes(project)),
         );
       }
+      console.log(projects)
       return projects;
     } catch (error) {
       this.logger.error(error.message, error.stack);

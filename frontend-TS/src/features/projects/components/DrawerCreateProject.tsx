@@ -1,16 +1,14 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
-import IState from "../../mirador/interface/IState.ts";
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
 
 interface IDrawerCreateProjectProps{
   modalCreateProjectIsOpen: boolean
   toggleModalProjectCreation:()=>void
-  InitializeProject:(workspace: IState, projectName:string) => void
-  projectWorkspace:IState
+  InitializeProject:(projectName:string) => void
 }
 
-export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCreation,InitializeProject,projectWorkspace}:IDrawerCreateProjectProps)=>{
+export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCreation,InitializeProject}:IDrawerCreateProjectProps)=>{
   const [projectName, setProjectName] = useState('');
 
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
@@ -19,7 +17,7 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    InitializeProject(projectWorkspace, projectName);
+    InitializeProject(projectName);
   };
   return(
     <>

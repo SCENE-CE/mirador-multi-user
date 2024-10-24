@@ -11,6 +11,7 @@ export type Project = {
   description:string
   thumbnailUrl?:string
   metadata: Record<string, string>;
+  created_at?:Date;
 }
 
 export type ProjectGroup = {
@@ -38,7 +39,7 @@ export type ProjectGroupUpdateDto = {
 export type CreateProjectDto = {
   title:string;
   ownerId:number;
-  userWorkspace:IState;
+  userWorkspace:IState | undefined;
   metadata: Record<string, string>;
 }
 

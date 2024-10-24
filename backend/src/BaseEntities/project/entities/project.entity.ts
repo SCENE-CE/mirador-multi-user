@@ -30,8 +30,8 @@ export class Project {
   @Column()
   ownerId: number;
 
-  @Column({ type: 'json' })
-  userWorkspace: any;
+  @Column({ type: 'json', nullable: true })
+  userWorkspace?: any;
 
   @Column({ type: 'json', nullable: true })
   metadata: any;

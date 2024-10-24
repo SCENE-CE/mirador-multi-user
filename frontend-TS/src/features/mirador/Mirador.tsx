@@ -28,7 +28,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
    const { miradorState, saveMiradorState, project, setMiradorState, setViewer } = props;
     const viewerRef = useRef<HTMLDivElement | null>(null);
   const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
-
+  console.log('miradorState',miradorState)
    useImperativeHandle(ref, () => ({
      saveProject: () => {
      console.log(miradorViewer.store.getState())

@@ -42,20 +42,6 @@ interface AllProjectsProps {
   setMedias:Dispatch<SetStateAction<Media[]>>
 }
 
-const emptyWorkspace: IState = {
-  catalog: [],
-  companionWindows: {},
-  config: {
-    selectedTheme: "light"
-  },
-  elasticLayout: {},
-  layers: {},
-  manifests: {},
-  viewers: {},
-  windows: {},
-  workspace: {},
-};
-
 export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSelectedProjectId,userProjects,setUserProjects,handleSetMiradorState }:AllProjectsProps) => {
   const [searchedProject, setSearchedProject] = useState<Project|null>(null);
   const [userPersonalGroup, setUserPersonalGroup] = useState<UserGroup>()
@@ -145,20 +131,17 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setOpenModalProjectId(openModalProjectId === projectId ? null : projectId);
   },[setOpenModalProjectId, openModalProjectId])
 
-  const InitializeProject = useCallback(async (workspace: IState, projectName: string) => {
+  const InitializeProject = useCallback(async (projectName: string) => {
     const response = await createProject({
         title: projectName,
         ownerId: user.id,
-        userWorkspace: workspace,
+        userWorkspace: undefined,
         metadata: {},
       }
     )
-    setUserProjects( [...userProjects,
-      response]
-    );
     HandleOpenModal(response.id)
     toggleModalProjectCreation()
-  },[HandleOpenModal,initializeMirador, setUserProjects, toggleModalProjectCreation, user, userProjects])
+  },[HandleOpenModal, setUserProjects, toggleModalProjectCreation, user, userProjects])
 
   const handleLookingForProject = async (partialProjectName: string) => {
     const userProjectArray = await lookingForProject(partialProjectName, userPersonalGroup!.id)
@@ -178,8 +161,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
       setSearchedProject(null);
     }
   }
-
-
 
   const handleAddUser = async ( projectId: number) => {
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
@@ -252,7 +233,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setMedias(medias);
   }
 
-  console.log('openModalProjectId',openModalProjectId)
   return (
     <>
       <SidePanelMedia display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
@@ -315,7 +295,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                   <div>
                     <DrawerCreateProject
                       InitializeProject={InitializeProject}
-                      projectWorkspace={emptyWorkspace}
                       toggleModalProjectCreation={toggleModalProjectCreation}
                       modalCreateProjectIsOpen={modalCreateProjectIsOpen}/>
                   </div>
@@ -396,7 +375,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                     <div>
                       <DrawerCreateProject
                         InitializeProject={InitializeProject}
-                        projectWorkspace={emptyWorkspace}
                         toggleModalProjectCreation={toggleModalProjectCreation}
                         modalCreateProjectIsOpen={modalCreateProjectIsOpen}/>
                     </div>
