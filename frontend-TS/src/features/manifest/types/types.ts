@@ -1,7 +1,8 @@
 import { UserGroup } from "../../user-group/types/types.ts";
+import { Dayjs } from "dayjs";
 
 export type Manifest = {
-  created_at:Date,
+  created_at:Dayjs,
   description:string,
   hash:string,
   id:number

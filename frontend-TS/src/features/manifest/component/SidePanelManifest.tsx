@@ -1,6 +1,4 @@
 import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Manifest, ManifestGroupRights, manifestOrigin } from "../types/types.ts";
@@ -13,6 +11,8 @@ import { DrawerLinkManifest } from "./DrawerLinkManifest.tsx";
 import placeholder from "../../../assets/Placeholder.svg";
 import { linkManifest } from "../api/linkManifest.ts";
 import { lookingForManifests } from "../api/loonkingForManifests.ts";
+import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
+import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -36,11 +36,13 @@ const CustomButton = styled(Button)({
 
 const ToggleButton = styled(IconButton)(({ open }: { open: boolean }) => ({
   position: 'fixed',
-  top: 16,
-  right: open ? 415 : 15,
+  top: 100,
+  right: open ? 340 : -60,
   zIndex: 9999,
   transition: 'right 0.3s ease',
-  backgroundColor: '#fff',
+  '&:hover': {
+    backgroundColor: 'transparent',
+  },
 }));
 
 const handleCopyToClipBoard = async (path: string) => {
@@ -103,16 +105,14 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
   };
 
   const handleLinkManifest = useCallback (async (path: string) => {
-    console.log('ENTER HANDLE LINK MANIFEST')
     const response = await fetch(path,{
       method:"GET"
     })
-    console.log('response',response)
     if(response){
       const manifest = await response.json()
       console.log('Fetched manifest',manifest)
       console.log(manifest.label.en[0])
-      const manifestToCreate = await linkManifest({
+      await linkManifest({
         url: path,
         rights: ManifestGroupRights.ADMIN,
         idCreator: user.id,
@@ -122,10 +122,8 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
           ? manifest.label.en[0]
           : "new Manifest",
       });
-      console.log('manifestToCreate',manifestToCreate)
       fetchManifestForUser()
       setModalLinkManifestIsOpen(!modalLinkManifestIsOpen)
-      console.log('OUT OF HANDLE LINK MANIFEST')
       return toast.success('manifest created')
     }
     return toast.error('manifest could not be created')
@@ -163,7 +161,6 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
         }
       })
     );
-    console.log('urls',urls)
     setThumbnailUrls(urls);
   }, [currentPageData, caddyUrl]);
 
@@ -178,7 +175,7 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
       {display && (
         <ToggleButton
           open={open} onClick={toggleDrawer}>
-          {open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          {open ? <CloseButton text="Manifests"/> : <OpenButton text="Manifests"/>}
         </ToggleButton>
       )
 
