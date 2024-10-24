@@ -1,6 +1,4 @@
 import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Media } from "../types/types.ts";
@@ -14,6 +12,8 @@ import AddLinkIcon from "@mui/icons-material/AddLink";
 import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
 import { createMediaLink } from "../api/createMediaWithLink.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
+import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
+import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -49,11 +49,13 @@ const CustomButton = styled(Button)({
 
 const ToggleButton = styled(IconButton)(({ open }: { open: boolean }) => ({
   position: 'fixed',
-  top: 16,
-  right: open ? 515 : 15,
+  top: 80,
+  right: open ? 450 : -50,
   zIndex: 9999,
   transition: 'right 0.3s ease',
-  backgroundColor: '#fff',
+  '&:hover': {
+    backgroundColor: 'transparent',
+  },
 }));
 
 const handleCopyToClipBoard = async (path: string) => {
@@ -77,7 +79,7 @@ interface PopUpMediaProps {
 const caddyUrl = import.meta.env.VITE_CADDY_URL
 
 export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, user,fetchMediaForUser}: PopUpMediaProps) => {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
@@ -145,7 +147,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
       {display && (
         <ToggleButton
           open={open} onClick={toggleDrawer}>
-          {open ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+          {open ? <CloseButton text="Medias"/> : <OpenButton text="Medias"/>}
         </ToggleButton>
       )
 
