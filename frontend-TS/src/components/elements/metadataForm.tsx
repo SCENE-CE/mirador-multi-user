@@ -37,7 +37,7 @@ const MetadataForm = <T extends NonNullable<unknown>,>({metadataFormData,setMeta
   };
 
   return (
-    <Accordion component={Paper} elevation={1}>
+    <Accordion component={Paper} elevation={1} sx={{ minHeight:'55px' }}>
       <AccordionSummary
         expandIcon={<ExpandMoreIcon />}
         aria-controls="metadata-content"
