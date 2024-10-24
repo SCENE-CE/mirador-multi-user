@@ -351,7 +351,10 @@ export class LinkGroupProjectService {
           `there is no user personal group for : ${dto.ownerId}`,
         );
       }
-      const project = await this.projectService.create(dto);
+      const project = await this.projectService.create({
+        ...dto,
+        metadata: { creator: userPersonalGroup.title },
+      });
       await this.addProjectToGroup({
         groupId: userPersonalGroup.id,
         projectId: project.id,
