@@ -268,7 +268,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             {
               !groupFiltered && (
                 <Grid item container justifyContent="center" alignItems="center">
-                  <Typography variant="h6" component="h2">There is no group matching your research.</Typography>
+                  <Typography variant="h6" component="h2">There is no group matching your filter.</Typography>
                 </Grid>
               )
             }

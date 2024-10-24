@@ -159,7 +159,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       }) as Project[];
 
     const sortedProjects = uniqueProjects.sort((a, b) => {
-      return new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime();
+      return b.created_at!.toDate().getTime() - a.created_at!.toDate().getTime();
     });
 
     setUserProjects(sortedProjects);

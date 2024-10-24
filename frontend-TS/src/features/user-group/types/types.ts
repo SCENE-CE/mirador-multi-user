@@ -1,4 +1,5 @@
 import { User } from "../../auth/types/types.ts";
+import { Dayjs } from "dayjs";
 
 export enum UserGroupTypes {
   PERSONAL = 'personal',
@@ -26,7 +27,8 @@ export type UserGroup = {
   description:string;
   type:UserGroupTypes;
   rights?:ProjectRights;
-  thumbnailUrl?:string
+  thumbnailUrl?:string;
+  created_at:Dayjs;
 }
 
 export type CreateGroupDto ={

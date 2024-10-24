@@ -327,7 +327,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
               container
               justifyContent={"center"}
             >
-              <Typography variant="h6" component="h2">No manifests yet, start to work when clicking on the + button.</Typography>
+              <Typography variant="h6" component="h2">No manifest yet, click "NEW MANIFEST" to add one.</Typography>
             </Grid>
           )}
           {!searchedManifest && !createManifestIsOpen && manifestFiltered && manifestFiltered.length < 1 &&(
@@ -337,7 +337,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                   <MMUCard
                     AddAccessListItemFunction={handleGrantAccess}
                     DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                    EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     HandleOpenModal={()=>HandleOpenModal(manifest.id)}
                     deleteItem={handleDeleteManifest}
                     description={manifest.description}
@@ -379,7 +379,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     itemOwner={user}
                     item={manifest}
                     thumbnailUrl={thumbnailUrls[index]}
-                    EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     updateItem={handleUpdateManifest}
                     deleteItem={handleDeleteManifest}
                   />
@@ -414,7 +414,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           {
             !manifestFiltered && (
               <Grid item container justifyContent="center" alignItems="center">
-                <Typography variant="h6" component="h2">There is no manifest matching your research.</Typography>
+                <Typography variant="h6" component="h2">There is no manifest matching your filter.</Typography>
               </Grid>
             )
           }

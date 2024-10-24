@@ -1,4 +1,5 @@
 import { UserGroup } from "../../user-group/types/types.ts";
+import { Dayjs } from "dayjs";
 
 export type CreateMediaDto = {
   idCreator:number
@@ -18,7 +19,7 @@ export enum mediaOrigin {
 }
 
 export type Media={
-  created_at:Date,
+  created_at:Dayjs,
   description:string,
   hash:string
   id:number
@@ -27,7 +28,7 @@ export type Media={
   origin:mediaOrigin
   path?:string,
   rights:MediaGroupRights
-  updated_at:Date,
+  updated_at:Dayjs,
   url:string,
   metadata: Record<string, string>;
 }

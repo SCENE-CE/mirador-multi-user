@@ -1,6 +1,7 @@
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
 import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { Dayjs } from "dayjs";
 
 export type Project = {
   id:number;
@@ -11,7 +12,7 @@ export type Project = {
   description:string
   thumbnailUrl?:string
   metadata: Record<string, string>;
-  created_at?:Date;
+  created_at:Dayjs;
 }
 
 export type ProjectGroup = {

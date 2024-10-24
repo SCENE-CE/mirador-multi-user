@@ -227,7 +227,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
             container
             justifyContent={"center"}
           >
-            <Typography variant="h6" component="h2">No medias yet, start to work when clicking on "Upload Medias" button.</Typography>
+            <Typography variant="h6" component="h2">No medias yet, click "NEW MEDIAS" to add one.</Typography>
           </Grid>
         )}
         {
@@ -346,7 +346,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
         {
           !mediaFiltered && (
             <Grid item container justifyContent="center" alignItems="center">
-              <Typography variant="h6" component="h2">There is no media matching your research.</Typography>
+              <Typography variant="h6" component="h2">There is no media matching your filter.</Typography>
             </Grid>
           )
         }

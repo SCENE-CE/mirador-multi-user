@@ -252,7 +252,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                 container
                 justifyContent={"center"}
               >
-                <Typography variant="h6" component="h2">No projects yet, start to work when clicking on "New project" button.</Typography>
+                <Typography variant="h6" component="h2">No projects yet,click "NEW PROJECT" to add one.</Typography>
               </Grid>
             )}
             {!selectedProjectId && projectFiltered && projectFiltered.length < 1 && !searchedProject && userProjects && (
@@ -385,7 +385,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
             {
               !projectFiltered && (
                 <Grid item container justifyContent="center" alignItems="center">
-                  <Typography variant="h6" component="h2">There is no project matching your research.</Typography>
+                  <Typography variant="h6" component="h2">There is no project matching your filter.</Typography>
                 </Grid>
               )
             }
