@@ -7,6 +7,7 @@ import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
 import {  MediaGroupRights } from "../../features/media/types/types.ts";
 import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
+import { Dayjs } from "dayjs";
 
 interface IMMUCardProps<T,G,O,X> {
   id: number;
@@ -37,7 +38,7 @@ interface IMMUCardProps<T,G,O,X> {
   isGroups?:boolean
 }
 
-const MMUCard = <T extends { id: number, created_at:Date },G, O, X extends { id:number} > (
+const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id:number} > (
   {
     id,
     rights,

@@ -49,8 +49,12 @@ const MetadataForm = <T extends NonNullable<unknown>,>({metadataFormData,setMeta
         <form style={{ width: "100%" }} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
             {dublinCoreSample
-              .filter((field) => !doesItemContainMetadataField(field.term))
-              .map((field) =>(
+              .filter((field) => {
+                if (field.term.toLowerCase() === 'date' && 'created_at' in item) return false;
+                if (field.term.toLowerCase() === 'creator' && 'ownerId' in item) return false;
+                return !doesItemContainMetadataField(field.term);
+              })
+              .map((field)  =>(
               <MetadataField
                 key={field.term}
                 field={field}
