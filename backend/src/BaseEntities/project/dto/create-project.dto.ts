@@ -1,12 +1,13 @@
-import { IsNotEmpty, IsObject, IsString } from 'class-validator';
+import { IsNotEmpty, IsObject, IsOptional, IsString } from "class-validator";
 
 export class CreateProjectDto {
   @IsNotEmpty()
   @IsString()
   title: string;
 
+  @IsOptional()
   @IsObject()
-  userWorkspace: any;
+  userWorkspace?: any;
 
   ownerId: number;
 

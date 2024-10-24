@@ -34,6 +34,7 @@ export const ItemList = <G,>({
                                handleSearchModalEditItem,
                                setSearchInput,
                              }: IProjectUserGroup<G>): JSX.Element => {
+  console.log('items',items)
   return (
     <Grid container item spacing={2}>
       <Grid container item alignItems="center" spacing={2}>
@@ -64,7 +65,7 @@ export const ItemList = <G,>({
           item ? (
             <Grid key={item.id} item container flexDirection="row" alignItems="center" justifyContent="center">
               <Grid item sx={{ flexGrow: 1 }}>
-                <Typography>{item.name}</Typography>
+                <Typography>{item.title}</Typography>
               </Grid>
               {children && (
                 <Grid item>

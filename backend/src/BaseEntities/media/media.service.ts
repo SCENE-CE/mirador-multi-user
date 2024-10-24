@@ -20,7 +20,10 @@ export class MediaService {
 
   async create(createMediaDto: CreateMediaDto) {
     try {
-      const media = this.mediaRepository.create({ ...createMediaDto });
+      const media = this.mediaRepository.create({
+        ...createMediaDto,
+        metadata: { creator: createMediaDto.user_group.title },
+      });
       return await this.mediaRepository.save(media);
     } catch (error) {
       this.logger.error(error.message, error.stack);

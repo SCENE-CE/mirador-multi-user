@@ -17,4 +17,6 @@ export class CreateManifestDto {
   origin: manifestOrigin;
 
   description: string;
+
+  metadata:any;
 }

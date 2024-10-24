@@ -72,7 +72,6 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   alignItems: 'center',
   justifyContent: 'flex-end',
   padding: theme.spacing(0, 1),
-  // necessary for content to be below app bar
   ...theme.mixins.toolbar,
 }));
 
@@ -136,7 +135,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   };
 
   const handleSaveProject = useCallback((newProject:Project)=>{
-    return setUserProjects([...userProjects, newProject]);
+    return setUserProjects([ newProject,...userProjects]);
 
   },[setUserProjects])
 
@@ -153,13 +152,18 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     handleSetCreateManifestIsOpen(false)
   }
 
-  const HandleSetUserProjects=(userProjects:Project[])=>{
-    const uniqueProjects = Array.from(new Set(userProjects.map((project:Project) => project.id)))
+  const HandleSetUserProjects = (userProjects: Project[]) => {
+    const uniqueProjects = Array.from(new Set(userProjects.map((project: Project) => project.id)))
       .map(id => {
-        return userProjects.find((project:Project) => project.id === id);
+        return userProjects.find((project: Project) => project.id === id);
       }) as Project[];
-    setUserProjects(uniqueProjects);
-  }
+
+    const sortedProjects = uniqueProjects.sort((a, b) => {
+      return new Date(b.created_at!).getTime() - new Date(a.created_at!).getTime();
+    });
+
+    setUserProjects(sortedProjects);
+  };
 
   const HandleSetMiradorState =(state:IState | undefined)=>{
     setMiradorState(state)
@@ -234,11 +238,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const { rights, ...projectWithoutRights } = projectToUpdate;
         await updateProject({ project: projectWithoutRights  }!)
-        toast.success(`Project ${projectWithoutRights.name} saved`);
+        toast.success(`Project ${projectWithoutRights.title} saved`);
       }
     } else {
       const project: CreateProjectDto = {
-        name: 'new project',
+        title: 'new project',
         ownerId: user.id,
         userWorkspace: miradorViewer!,
         metadata:{},
@@ -249,6 +253,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         handleSaveProject({
           ...r,
           ...project,
+          userWorkspace: miradorViewer!,
           id: r.id
         });
       }
@@ -335,9 +340,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           selectedProjectId && (
             <>
               <List >
-                <Tooltip title={projectSelected!.name}>
+                <Tooltip title={projectSelected!.title}>
                   <ListItem sx={{padding:0}}>
-                    <ItemButton icon={<WorkIcon/>} text={projectSelected!.name} open={open} selected={false} action={()=>console.log('')}/>
+                    <ItemButton icon={<WorkIcon/>} text={projectSelected!.title} open={open} selected={false} action={()=>console.log('')}/>
                   </ListItem>
                 </Tooltip>
                 <Divider/>

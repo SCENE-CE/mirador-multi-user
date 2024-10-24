@@ -12,23 +12,28 @@ import { FormEvent, useCallback } from "react";
 import { dublinCoreSample } from "../../utils/dublinCoreSample.ts";
 import MetadataField from "./metadataField.tsx";
 
-interface MetadataFormProps {
+interface MetadataFormProps<T> {
   setMetadataFormData: (data: any) => void;
   metadataFormData:Record<string, string>
+  item:T
 }
 
-const MetadataForm = ({metadataFormData,setMetadataFormData}:MetadataFormProps) => {
+const MetadataForm = <T extends NonNullable<unknown>,>({metadataFormData,setMetadataFormData,item}:MetadataFormProps<T>) => {
 
-
+  console.log('metadataFormData',metadataFormData)
   const handleInputChange = useCallback((term: string, value: string) => {
     setMetadataFormData((prevMetadata: { [x: string]: string; }) => {
-      if (prevMetadata[term] === value) return prevMetadata; // Avoid re-renders if value hasn't changed
+      if (prevMetadata[term] === value) return prevMetadata;
       return { ...prevMetadata, [term]: value };
     });
   }, []);
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Submitted Metadata: ", metadataFormData);
+  };
+
+  const doesItemContainMetadataField = (fieldTerm: string): boolean => {
+    return Object.keys(item).some(itemKey => itemKey.toLowerCase() === fieldTerm.toLowerCase());
   };
 
   return (
@@ -43,7 +48,9 @@ const MetadataForm = ({metadataFormData,setMetadataFormData}:MetadataFormProps) 
       <AccordionDetails style={{ maxHeight: "400px", overflowY: "auto" }}>
         <form style={{ width: "100%" }} onSubmit={handleSubmit}>
           <Grid container spacing={2}>
-            {dublinCoreSample.map((field) => (
+            {dublinCoreSample
+              .filter((field) => !doesItemContainMetadataField(field.term))
+              .map((field) =>(
               <MetadataField
                 key={field.term}
                 field={field}

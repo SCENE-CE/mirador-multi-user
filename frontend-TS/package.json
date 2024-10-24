@@ -18,8 +18,10 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.16.4",
     "@mui/styled-engine-sc": "^6.0.0-alpha.18",
+    "@mui/x-date-pickers": "^7.21.0",
     "@tanstack/react-query": "^5.32.0",
     "@types/node": "^20.12.7",
+    "dayjs": "^1.11.13",
     "iiif-manifest-editor": "^1.0.3",
     "manifest-editor": "^1.0.2",
     "mirador": "npm:mirador-video@^1.0.6",
@@ -50,7 +52,7 @@
     "typescript": "^5.4.5",
     "vite": "^5.3.5"
   },
-  "overrides" : {
+  "overrides": {
     "mirador-annotation-editor": {
       "mirador": "npm:mirador-video@^1.0.6"
     }
