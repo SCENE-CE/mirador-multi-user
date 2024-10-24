@@ -141,6 +141,10 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setModalCreateProjectIsOpen(!modalCreateProjectIsOpen);
   },[modalCreateProjectIsOpen,setModalCreateProjectIsOpen])
 
+  const HandleOpenModal =useCallback ((projectId: number)=>{
+    setOpenModalProjectId(openModalProjectId === projectId ? null : projectId);
+  },[setOpenModalProjectId, openModalProjectId])
+
   const InitializeProject = useCallback(async (workspace: IState, projectName: string) => {
     const response = await createProject({
         title: projectName,
@@ -152,9 +156,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setUserProjects( [...userProjects,
       response]
     );
-    initializeMirador(undefined, response)
+    HandleOpenModal(response.id)
     toggleModalProjectCreation()
-  },[initializeMirador, setUserProjects, toggleModalProjectCreation, user, userProjects])
+  },[HandleOpenModal,initializeMirador, setUserProjects, toggleModalProjectCreation, user, userProjects])
 
   const handleLookingForProject = async (partialProjectName: string) => {
     const userProjectArray = await lookingForProject(partialProjectName, userPersonalGroup!.id)
@@ -175,9 +179,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     }
   }
 
-  const HandleOpenModal =useCallback ((projectId: number)=>{
-    setOpenModalProjectId(openModalProjectId === projectId ? null : projectId);
-  },[setOpenModalProjectId, openModalProjectId])
 
 
   const handleAddUser = async ( projectId: number) => {
