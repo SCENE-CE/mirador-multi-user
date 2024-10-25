@@ -47,7 +47,7 @@ export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: I
           projectGroup.user_group ? (
             <Grid key={projectGroup.id} item container flexDirection="row" alignItems="center">
               <Grid item sx={{ flexGrow: 1 }}>
-                <Typography>{projectGroup.user_group.name}</Typography>
+                <Typography>{projectGroup.user_group.title}</Typography>
               </Grid>
               <Grid item container alignItems="center" justifyContent="flex-end" sx={{ width: 'auto' }}>
                 <Grid item>
