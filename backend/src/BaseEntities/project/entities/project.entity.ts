@@ -10,6 +10,7 @@ import {
 import { User } from '../../users/entities/user.entity';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
+import { Tag } from "../../tag/entities/tag.entity";
 
 @Entity()
 export class Project {
@@ -49,4 +50,8 @@ export class Project {
     },
   )
   linkGroupProjectsIds: LinkGroupProject[];
+
+  @ManyToOne(() => Tag)
+  @JoinColumn({ name: 'tagId' })
+  tag: Tag;
 }

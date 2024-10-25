@@ -1,7 +1,8 @@
 import {
   Column,
   Entity,
-  Index,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -11,6 +12,7 @@ import { LinkMediaGroup } from '../../../LinkModules/link-media-group/entities/l
 import { UserGroupTypes } from '../../../enum/user-group-types';
 import { LinkUserGroup } from '../../../LinkModules/link-user-group/entities/link-user-group.entity';
 import { LinkManifestGroup } from '../../../LinkModules/link-manifest-group/entities/link-manifest-group.entity';
+import { Tag } from '../../tag/entities/tag.entity';
 
 @Entity()
 export class UserGroup {
@@ -53,4 +55,8 @@ export class UserGroup {
     (linkManifestGroup) => linkManifestGroup.user_group,
   )
   linkManifestGroup: LinkManifestGroup[];
+
+  @ManyToOne(() => Tag)
+  @JoinColumn({ name: 'tagId' })
+  tag: Tag;
 }

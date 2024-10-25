@@ -1,4 +1,4 @@
-import {  Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { UserGroupService } from './user-group.service';
 import { UserGroupController } from './user-group.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -7,6 +7,7 @@ import { LinkGroupProject } from '../../LinkModules/link-group-project/entities/
 import { LinkMediaGroup } from '../../LinkModules/link-media-group/entities/link-media-group.entity';
 import { Media } from '../media/entities/media.entity';
 import { LinkUserGroup } from '../../LinkModules/link-user-group/entities/link-user-group.entity';
+import { Tag } from '../tag/entities/tag.entity';
 
 @Module({
   exports: [UserGroupService],
@@ -17,6 +18,7 @@ import { LinkUserGroup } from '../../LinkModules/link-user-group/entities/link-u
       LinkMediaGroup,
       LinkUserGroup,
       Media,
+      Tag
     ]),
   ],
   controllers: [UserGroupController],

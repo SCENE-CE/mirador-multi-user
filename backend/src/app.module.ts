@@ -19,6 +19,8 @@ import { PugAdapter } from '@nestjs-modules/mailer/dist/adapters/pug.adapter';
 import { EmailServerModule } from './utils/email/email.module';
 import { CustomLogger } from './utils/Logger/CustomLogger.service';
 import { LinkManifestGroupModule } from './LinkModules/link-manifest-group/link-manifest-group.module';
+import { TagModule } from './BaseEntities/tag/tag.module';
+import { TaggingModule } from './LinkModules/tagging/tagging.module';
 
 @Module({
   imports: [
@@ -66,6 +68,8 @@ import { LinkManifestGroupModule } from './LinkModules/link-manifest-group/link-
     LinkManifestGroupModule,
     ManifestModule,
     EmailServerModule,
+    TagModule,
+    TaggingModule,
   ],
   controllers: [AppController],
   providers: [
