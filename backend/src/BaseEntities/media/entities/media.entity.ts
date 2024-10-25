@@ -1,14 +1,15 @@
 import {
   Column,
   CreateDateColumn,
-  Entity,
+  Entity, JoinColumn, ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+  UpdateDateColumn
+} from "typeorm";
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkMediaGroup } from '../../../LinkModules/link-media-group/entities/link-media-group.entity';
 import { mediaOrigin } from '../../../enum/origins';
+import { Tag } from "../../tag/entities/tag.entity";
 
 @Entity()
 export class Media {
@@ -63,4 +64,8 @@ export class Media {
 
   @OneToMany(() => LinkMediaGroup, (linkMediaGroup) => linkMediaGroup.media)
   linkMediaGroup: LinkMediaGroup;
+
+  @ManyToOne(() => Tag)
+  @JoinColumn({ name: 'tagId' })
+  tag: Tag;
 }

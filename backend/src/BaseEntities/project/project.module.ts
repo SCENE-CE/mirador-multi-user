@@ -6,10 +6,13 @@ import { Project } from './entities/project.entity';
 import { CaslAbilityFactory } from '../../utils/casl/casl-ability.factory/casl-ability.factory';
 import { LinkGroupProject } from '../../LinkModules/link-group-project/entities/link-group-project.entity';
 import { UserGroup } from '../user-group/entities/user-group.entity';
+import { Tag } from '../tag/entities/tag.entity';
 
 @Module({
   exports: [ProjectService],
-  imports: [TypeOrmModule.forFeature([Project, LinkGroupProject, UserGroup])],
+  imports: [
+    TypeOrmModule.forFeature([Project, LinkGroupProject, UserGroup, Tag]),
+  ],
   controllers: [ProjectController],
   providers: [ProjectService, CaslAbilityFactory],
 })
