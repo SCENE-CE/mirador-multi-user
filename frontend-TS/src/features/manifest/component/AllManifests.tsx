@@ -31,6 +31,7 @@ import { grantAccessToManifest } from "../api/grantAccessToManifest.ts";
 import { getAllManifestGroups } from "../api/getAllManifestGroups.ts";
 import { ListItem } from "../../../components/types.ts";
 import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
+import { ObjectTypes } from "../../tag/type.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -335,6 +336,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
               {currentPageData.map((manifest, index) => (
                 <Grid item key={manifest.id}>
                   <MMUCard
+                    objectTypes={ObjectTypes.MANIFEST}
                     AddAccessListItemFunction={handleGrantAccess}
                     DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                     EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
@@ -368,6 +370,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
               {manifestFiltered.map((manifest, index) => (
                 <Grid item key={manifest.id}>
                   <MMUCard
+                    objectTypes={ObjectTypes.MANIFEST}
                     metadata={manifest.metadata}
                     DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`): ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                     id={manifest.id}
@@ -392,6 +395,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
               <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                 <Grid item key={searchedManifest.id}>
                   <MMUCard
+                    objectTypes={ObjectTypes.MANIFEST}
                     metadata={searchedManifest.metadata}
                     DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={ searchedManifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) : ()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
                     id={searchedManifest.id}

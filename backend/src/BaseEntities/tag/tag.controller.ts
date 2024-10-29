@@ -16,10 +16,11 @@ export class TagController {
     return this.tagService.createTag(tagCreationDto);
   }
 
-  @Post('/looking-for-tag/:partialTagName')
+  @Post('/looking-for-tag/:partialTagTitle')
   async lookingForTagByPartialName(
-    @Param('partialTagName') partialTagName: string,
+    @Param('partialTagTitle') partialTagTitle: string,
   ) {
-    return this.tagService.findTagsByPartialName(partialTagName);
+    console.log('toto')
+    return this.tagService.findTagsByPartialTitle(partialTagTitle);
   }
 }

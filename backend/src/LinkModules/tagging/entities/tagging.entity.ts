@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { Tag } from '../../../BaseEntities/tag/entities/tag.entity';
 import { UserGroup } from '../../../BaseEntities/user-group/entities/user-group.entity';
+import { ObjectTypes } from '../../../enum/ObjectTypes';
 
 @Entity()
 export class Tagging {
@@ -18,6 +19,9 @@ export class Tagging {
 
   @Column()
   objectId: number;
+
+  @Column({ type: 'enum', enum: ObjectTypes })
+  objectTypes: ObjectTypes;
 
   @ManyToOne(() => Tag)
   @JoinColumn({ name: 'tagId' })

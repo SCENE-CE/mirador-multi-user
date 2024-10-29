@@ -30,6 +30,7 @@ import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
 import SettingsIcon from '@mui/icons-material/Settings';
+import { ObjectTypes } from "../../tag/type.ts";
 
 interface AllProjectsProps {
   user: User;
@@ -260,6 +261,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                 {currentPageData.map((projectUser) => (
                     <Grid item key={projectUser.id}>
                       <MMUCard
+                        objectTypes={ObjectTypes.PROJECT}
                         thumbnailUrl={projectUser.thumbnailUrl ? projectUser.thumbnailUrl : null }
                         searchBarLabel={"Search"}
                         description={projectUser.description}
@@ -307,6 +309,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                 <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                   <Grid item>
                     <MMUCard
+                      objectTypes={ObjectTypes.PROJECT}
                       metadata={searchedProject.metadata}
                       searchBarLabel={"Search Users"}
                       description={searchedProject.description}
@@ -342,6 +345,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                   {projectFiltered.map((projectUser) => (
                       <Grid item key={projectUser.id}>
                         <MMUCard
+                          objectTypes={ObjectTypes.PROJECT}
                           metadata={projectUser.metadata}
                           searchBarLabel={"Search"}
                           description={projectUser.description}

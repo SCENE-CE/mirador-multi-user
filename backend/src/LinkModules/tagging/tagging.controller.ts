@@ -11,6 +11,7 @@ import {
 import { TaggingService } from './tagging.service';
 import { ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '../../auth/auth.guard';
+import { ObjectTypes } from "../../enum/ObjectTypes";
 
 @Controller('tagging')
 export class TaggingController {
@@ -30,14 +31,16 @@ export class TaggingController {
   @UseGuards(AuthGuard)
   @Post('assign')
   async assignTagToObject(
-    @Body('tagName') tagName: string,
+    @Body('tagTitle') tagTitle: string,
     @Body('objectId') objectId: number,
+    @Body('objectType') objectTypes: ObjectTypes,
     @Req() request,
   ) {
     await this.taggingService.assignTagToObject(
-      tagName,
+      tagTitle,
       objectId,
       request.user.sub,
+      objectTypes,
     );
   }
 
@@ -57,12 +60,12 @@ export class TaggingController {
     },
   })
   async removeTagFromObject(
-    @Body('tagName') tagName: string,
-    @Body('objectType') objectType: string,
+    @Body('tagTitle') tagTitle: string,
+    @Body('objectType') objectType: ObjectTypes,
     @Body('objectId') objectId: number,
   ) {
     return await this.taggingService.removeTagFromObject(
-      tagName,
+      tagTitle,
       objectType,
       objectId,
     );

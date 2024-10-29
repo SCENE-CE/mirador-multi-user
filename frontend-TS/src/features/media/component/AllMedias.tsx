@@ -27,6 +27,7 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
 import { createMediaLink } from "../api/createMediaWithLink.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
+import { ObjectTypes } from "../../tag/type.ts";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -237,6 +238,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                 currentPageData.map((media)=>(
                   <Grid item key={media.id}>
                     <MMUCard
+                      objectTypes={ObjectTypes.MEDIA}
                       AddAccessListItemFunction={handleGrantAccess}
                       DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={media.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`):()=>HandleCopyToClipBoard(media.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
                       EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
@@ -276,6 +278,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               {
                 <Grid item key={searchedMedia.id}>
                   <MMUCard
+                    objectTypes={ObjectTypes.MANIFEST}
                     metadata={searchedMedia.metadata}
                     id={searchedMedia.id}
                     rights={ProjectRights.ADMIN}
@@ -312,6 +315,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                 mediaFiltered.map((media)=>(
                   <Grid item key={media.id}>
                     <MMUCard
+                      objectTypes={ObjectTypes.MANIFEST}
                       metadata={media.metadata}
                       id={media.id}
                       rights={ProjectRights.ADMIN}

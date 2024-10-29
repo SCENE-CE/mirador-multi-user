@@ -23,18 +23,18 @@ interface IProjectUserGroup<G> {
   searchBarLabel: string;
 }
 
-export const ItemList = <G,>({
-                               items,
-                               children,
-                               removeItem,
-                               searchBarLabel,
-                               handleAddAccessListItem,
-                               setItemToAdd,
-                               handleGetOptionLabel,
-                               handleSearchModalEditItem,
-                               setSearchInput,
-                             }: IProjectUserGroup<G>): JSX.Element => {
-  console.log('items',items)
+export const ItemList = <G,>(
+  {
+    items,
+    children,
+    removeItem,
+    searchBarLabel,
+    handleAddAccessListItem,
+    setItemToAdd,
+    handleGetOptionLabel,
+    handleSearchModalEditItem,
+    setSearchInput,
+  }: IProjectUserGroup<G>): JSX.Element => {
   return (
     <Grid container item spacing={2}>
       <Grid container item alignItems="center" spacing={2}>

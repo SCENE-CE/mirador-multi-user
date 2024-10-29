@@ -5,6 +5,7 @@ import { DeleteResult, Repository } from 'typeorm';
 import { TagService } from '../../BaseEntities/tag/tag.service';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
+import { ObjectTypes } from '../../enum/ObjectTypes';
 
 @Injectable()
 export class TaggingService {
@@ -18,17 +19,27 @@ export class TaggingService {
   ) {}
 
   async assignTagToObject(
-    tagName: string,
+    tagTitle: string,
     objectId: number,
     userPersonalGroupId: number,
+    objectTypes: ObjectTypes,
   ): Promise<Tagging> {
     try {
       const userPersonalGroup =
         await this.userGroupService.findUserPersonalGroup(userPersonalGroupId);
-      const tag = await this.tagsService.findTagByName(tagName);
+      console.log(tagTitle);
+      let tag = await this.tagsService.findTagByName(tagTitle);
+      console.log('tag');
+      console.log(tag);
+      if (!tag) {
+        tag = await this.tagsService.createTag({ title: tagTitle });
+      }
+      console.log('userPersonalGroup');
+      console.log(userPersonalGroup);
       const tagging = this.taggingRepository.create({
-        tagId: tag.id,
+        tag: tag,
         objectId,
+        objectTypes,
         user: userPersonalGroup,
       });
       return await this.taggingRepository.save(tagging);
@@ -57,16 +68,21 @@ export class TaggingService {
   }
 
   async removeTagFromObject(
-    tagName: string,
-    objectType: string,
+    tagTitle: string,
+    objectTypes: ObjectTypes,
     objectId: number,
   ): Promise<DeleteResult> {
     const taggingForObject = await this.getTagsForObject(objectId);
     const tagToRemove = taggingForObject.find(
-      (tagging) => tagging.tag.name === tagName,
+      (tagging) => tagging.tag.title === tagTitle && tagging.objectTypes === objectTypes,
     );
+    if (!tagToRemove) {
+      throw new Error(`Tag with title "${tagTitle}" not found for the specified object.`);
+    }
+
     return await this.taggingRepository.delete({
-      tagId: tagToRemove.id,
+      tagId: tagToRemove.tagId,
+      objectTypes: tagToRemove.objectTypes,
       objectId,
     });
   }

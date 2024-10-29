@@ -13,16 +13,17 @@ interface IUsersSearchBarProps<T>{
   label:string
   setFilter?:(myarray:any[])=>void
   handleFiltered?:(partialString:string)=>void
+  setUserInput?:(input:string)=>void
 }
 
-export const SearchBar = <T,>({handleFiltered,setFilter,label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
+export const SearchBar = <T,>({setUserInput,handleFiltered,setFilter,label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
   const [suggestions, setSuggestions]=useState<T[]>([]);
 
   const HandlefetchData = async(partialDataName:string)=>{
     try{
       const data = await fetchFunction(partialDataName);
       if(data){
-      setSuggestions(data);
+        setSuggestions(data);
       }
     } catch (error) {
       console.error('Error fetching address data:', error);
@@ -33,10 +34,12 @@ export const SearchBar = <T,>({handleFiltered,setFilter,label,getOptionLabel,set
   }, 500);
 
   const handleInputChange= async (_event: SyntheticEvent, value: string) => {
-    if(handleFiltered){
-    handleFiltered(value)
+    if(setUserInput){
+      setUserInput(value)
     }
-    console.log(value)
+    if(handleFiltered){
+      handleFiltered(value)
+    }
     if(setSearchInput){
       setSearchInput(value);
     }

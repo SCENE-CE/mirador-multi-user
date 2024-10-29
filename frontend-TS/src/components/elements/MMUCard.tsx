@@ -8,6 +8,7 @@ import { ProjectRights } from "../../features/user-group/types/types.ts";
 import {  MediaGroupRights } from "../../features/media/types/types.ts";
 import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
 import { Dayjs } from "dayjs";
+import { ObjectTypes } from "../../features/tag/type.ts";
 
 interface IMMUCardProps<T,G,O,X> {
   id: number;
@@ -36,6 +37,7 @@ interface IMMUCardProps<T,G,O,X> {
   thumbnailUrl?:string | null
   metadata?: Record<string, string>;
   isGroups?:boolean
+  objectTypes:ObjectTypes
 }
 
 const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id:number} > (
@@ -65,7 +67,8 @@ const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id
     searchBarLabel,
     thumbnailUrl,
     metadata,
-    isGroups
+    isGroups,
+    objectTypes
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -151,6 +154,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id
               children={
                 <>
                   <MMUModalEdit
+                    objectTypes={objectTypes}
                     isGroups={isGroups}
                     metadata={metadata?metadata:undefined}
                     thumbnailUrl={thumbnailUrl}

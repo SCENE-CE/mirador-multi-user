@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from './entities/tag.entity';
-import { Like, Repository } from "typeorm";
+import { Like, Repository } from 'typeorm';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 
@@ -16,12 +16,8 @@ export class TagService {
 
   async createTag(tagCreationDto: CreateTagDto): Promise<Tag> {
     try {
-      console.log(tagCreationDto.name);
       const tag = this.tagRepository.create({ ...tagCreationDto });
-      console.log(tag);
-      const dbCreation = await this.tagRepository.save(tag);
-      console.log(dbCreation);
-      return dbCreation;
+      return await this.tagRepository.save(tag);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -45,7 +41,7 @@ export class TagService {
 
   async findTagByName(name: string) {
     try {
-      return await this.tagRepository.findOne({ where: { name: name } });
+      return await this.tagRepository.findOne({ where: { title: name } });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -55,9 +51,10 @@ export class TagService {
     }
   }
 
-  async findTagsByPartialName(partialName: string): Promise<Tag[]> {
+  async findTagsByPartialTitle(partialTagTitle: string): Promise<Tag[]> {
     return await this.tagRepository.find({
-      where: { name: Like(`%${partialName}%`) },
+      select: ['title'],
+      where: { title: Like(`%${partialTagTitle}%`) },
     });
   }
 }
