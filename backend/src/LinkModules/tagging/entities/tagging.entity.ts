@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Tag } from '../../../BaseEntities/tag/entities/tag.entity';
+import { UserGroup } from '../../../BaseEntities/user-group/entities/user-group.entity';
 
 @Entity()
 export class Tagging {
@@ -24,4 +25,9 @@ export class Tagging {
   @ManyToOne(() => Tag)
   @JoinColumn({ name: 'tagId' })
   tag: Tag;
+
+
+  @ManyToOne(() => Tag)
+  @JoinColumn({ name: 'userPersonalGroupId' })
+  user: UserGroup;
 }

@@ -1,10 +1,21 @@
-import { Controller, Post, Body, Delete, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  Get,
+  Param,
+  UseGuards,
+  Req, HttpCode
+} from "@nestjs/common";
 import { TaggingService } from './tagging.service';
 import { ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { AuthGuard } from '../../auth/auth.guard';
 
 @Controller('tagging')
 export class TaggingController {
   constructor(private readonly taggingService: TaggingService) {}
+
   @ApiOperation({ summary: 'Assign a tag to an object' })
   @ApiBody({
     schema: {
@@ -20,13 +31,20 @@ export class TaggingController {
       required: ['tagName', 'objectType', 'objectId'],
     },
   })
+  @UseGuards(AuthGuard)
   @Post('assign')
   async assignTagToObject(
     @Body('tagName') tagName: string,
     @Body('objectType') objectType: string,
     @Body('objectId') objectId: number,
+    @Req() request,
   ) {
-    await this.taggingService.assignTagToObject(tagName, objectType, objectId);
+    await this.taggingService.assignTagToObject(
+      tagName,
+      objectType,
+      objectId,
+      request.user.sub,
+    );
   }
 
   @Delete('remove')
@@ -48,12 +66,13 @@ export class TaggingController {
       required: ['tagName', 'objectType', 'objectId'],
     },
   })
+  @HttpCode(200)
   async removeTagFromObject(
     @Body('tagName') tagName: string,
     @Body('objectType') objectType: string,
     @Body('objectId') objectId: number,
   ) {
-    await this.taggingService.removeTagFromObject(
+    return await this.taggingService.removeTagFromObject(
       tagName,
       objectType,
       objectId,

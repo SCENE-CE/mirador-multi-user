@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from './entities/tag.entity';
 import { Repository } from 'typeorm';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
+import { CreateTagDto } from './dto/create-tag.dto';
 
 @Injectable()
 export class TagService {
@@ -13,13 +14,14 @@ export class TagService {
     private readonly tagRepository: Repository<Tag>,
   ) {}
 
-  async createTag(name: string, isCustom = false): Promise<Tag> {
+  async createTag(tagCreationDto: CreateTagDto): Promise<Tag> {
     try {
-      const tag = this.tagRepository.create({ name, isCustom });
-
-      await this.tagRepository.upsert(tag, ['name']);
-
-      return this.tagRepository.findOneOrFail({ where: { name } });
+      console.log(tagCreationDto.name);
+      const tag = this.tagRepository.create({ ...tagCreationDto });
+      console.log(tag);
+      const dbCreation = await this.tagRepository.save(tag);
+      console.log(dbCreation);
+      return dbCreation;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -36,6 +38,18 @@ export class TagService {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while finding the tags',
+        error,
+      );
+    }
+  }
+
+  async findTagByName(name: string) {
+    try {
+      return await this.tagRepository.findOne({ where: { name: name } });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while finding the tag',
         error,
       );
     }

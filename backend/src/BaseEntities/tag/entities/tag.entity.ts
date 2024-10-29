@@ -7,7 +7,4 @@ export class Tag {
 
   @Column({ unique: true })
   name: string;
-
-  @Column({ default: false })
-  isCustom: boolean;
 }
