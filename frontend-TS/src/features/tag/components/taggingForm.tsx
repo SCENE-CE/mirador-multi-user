@@ -65,7 +65,7 @@ export const TaggingForm = ({object,objectTypes}:ITaggingFormProps)=>{
         <Typography variant="h6">Tagging</Typography>
       </AccordionSummary>
       <AccordionDetails style={{ maxHeight: "400px", overflowY: "auto" }}>
-        <form style={{ width: '100%' }} onSubmit={() => console.log('taggingFormSubmit')}>
+        <form style={{ width: '100%', marginBottom:"10px" }} onSubmit={() => console.log('taggingFormSubmit')}>
           <Grid item>
             <SearchBar
               setUserInput={setUserInput}
@@ -78,7 +78,7 @@ export const TaggingForm = ({object,objectTypes}:ITaggingFormProps)=>{
             />
           </Grid>
         </form>
-        <Grid>
+        <Grid container spacing={2}>
           {tags.map((tagging) => (
             <Grid item key={tagging.id}>
               <Chip label={tagging.tag.title} onDelete={()=>handleRemoveTag(tagging.tag.title)} />

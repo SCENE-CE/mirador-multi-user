@@ -27,22 +27,26 @@ export class TaggingService {
     try {
       const userPersonalGroup =
         await this.userGroupService.findUserPersonalGroup(userPersonalGroupId);
-      console.log(tagTitle);
       let tag = await this.tagsService.findTagByName(tagTitle);
-      console.log('tag');
-      console.log(tag);
       if (!tag) {
         tag = await this.tagsService.createTag({ title: tagTitle });
       }
-      console.log('userPersonalGroup');
-      console.log(userPersonalGroup);
       const tagging = this.taggingRepository.create({
         tag: tag,
         objectId,
         objectTypes,
-        user: userPersonalGroup,
       });
-      return await this.taggingRepository.save(tagging);
+      await this.taggingRepository.upsert(tagging, {
+        conflictPaths: ['tag', 'objectTypes', 'objectId', 'user'],
+      });
+
+      return this.taggingRepository.findOne({
+        where: {
+          tag: tag,
+          objectId: objectId,
+          objectTypes: objectTypes,
+        },
+      });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -74,10 +78,13 @@ export class TaggingService {
   ): Promise<DeleteResult> {
     const taggingForObject = await this.getTagsForObject(objectId);
     const tagToRemove = taggingForObject.find(
-      (tagging) => tagging.tag.title === tagTitle && tagging.objectTypes === objectTypes,
+      (tagging) =>
+        tagging.tag.title === tagTitle && tagging.objectTypes === objectTypes,
     );
     if (!tagToRemove) {
-      throw new Error(`Tag with title "${tagTitle}" not found for the specified object.`);
+      throw new Error(
+        `Tag with title "${tagTitle}" not found for the specified object.`,
+      );
     }
 
     return await this.taggingRepository.delete({

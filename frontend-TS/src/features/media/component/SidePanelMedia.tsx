@@ -1,5 +1,5 @@
 import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
-import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
+import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Media } from "../types/types.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
@@ -14,6 +14,7 @@ import { createMediaLink } from "../api/createMediaWithLink.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
+import { getTagsForObject } from "../../tag/api/getTagsForObject.ts";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -83,8 +84,27 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
+  const [mediasTags, setMediasTags] = useState([]);
 
   const itemsPerPage = 9;
+
+  useEffect(() => {
+    const fetchTags = async () => {
+      const allTags = await Promise.all(medias.map((media) => getTagsForObject(media.id)));
+
+      // Extract titles and flatten the array
+      const tagTitles = allTags
+        .flat()
+        .map(tag => tag.title);
+
+      // Remove duplicates by converting to a Set and back to an array
+      const uniqueTitles = [...new Set(tagTitles)];
+
+      setMediasTags(uniqueTitles);
+    };
+
+    fetchTags();
+  }, [medias]);
 
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
@@ -142,6 +162,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
     }
   };
 
+console.log(mediasTags)
   return (
     <div>
       {display && (
