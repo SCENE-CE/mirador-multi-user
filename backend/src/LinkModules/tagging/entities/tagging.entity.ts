@@ -17,15 +17,11 @@ export class Tagging {
   tagId: number;
 
   @Column()
-  objectType: string;
-
-  @Column()
   objectId: number;
 
   @ManyToOne(() => Tag)
   @JoinColumn({ name: 'tagId' })
   tag: Tag;
-
 
   @ManyToOne(() => Tag)
   @JoinColumn({ name: 'userPersonalGroupId' })

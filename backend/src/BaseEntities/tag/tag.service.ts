@@ -1,7 +1,7 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Tag } from './entities/tag.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from "typeorm";
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { CreateTagDto } from './dto/create-tag.dto';
 
@@ -53,5 +53,11 @@ export class TagService {
         error,
       );
     }
+  }
+
+  async findTagsByPartialName(partialName: string): Promise<Tag[]> {
+    return await this.tagRepository.find({
+      where: { name: Like(`%${partialName}%`) },
+    });
   }
 }

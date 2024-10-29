@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Post } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { TagService } from './tag.service';
-import { CreateTagDto } from "./dto/create-tag.dto";
+import { CreateTagDto } from './dto/create-tag.dto';
 
 @Controller('tag')
 export class TagController {
@@ -14,5 +14,12 @@ export class TagController {
   @Post()
   async createTag(@Body() tagCreationDto: CreateTagDto) {
     return this.tagService.createTag(tagCreationDto);
+  }
+
+  @Post('/looking-for-tag/:partialTagName')
+  async lookingForTagByPartialName(
+    @Param('partialTagName') partialTagName: string,
+  ) {
+    return this.tagService.findTagsByPartialName(partialTagName);
   }
 }

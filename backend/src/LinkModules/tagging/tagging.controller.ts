@@ -22,10 +22,6 @@ export class TaggingController {
       type: 'object',
       properties: {
         tagName: { type: 'string', description: 'Name of the tag to assign' },
-        objectType: {
-          type: 'string',
-          description: 'Type of the object (e.g., media, project, group)',
-        },
         objectId: { type: 'number', description: 'ID of the object to tag' },
       },
       required: ['tagName', 'objectType', 'objectId'],
@@ -35,13 +31,11 @@ export class TaggingController {
   @Post('assign')
   async assignTagToObject(
     @Body('tagName') tagName: string,
-    @Body('objectType') objectType: string,
     @Body('objectId') objectId: number,
     @Req() request,
   ) {
     await this.taggingService.assignTagToObject(
       tagName,
-      objectType,
       objectId,
       request.user.sub,
     );
@@ -54,10 +48,6 @@ export class TaggingController {
       type: 'object',
       properties: {
         tagName: { type: 'string', description: 'Name of the tag to remove' },
-        objectType: {
-          type: 'string',
-          description: 'Type of the object (e.g., media, project, group)',
-        },
         objectId: {
           type: 'number',
           description: 'ID of the object from which to remove the tag',

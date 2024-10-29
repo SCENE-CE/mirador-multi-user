@@ -19,7 +19,6 @@ export class TaggingService {
 
   async assignTagToObject(
     tagName: string,
-    objectType: string,
     objectId: number,
     userPersonalGroupId: number,
   ): Promise<Tagging> {
@@ -29,7 +28,6 @@ export class TaggingService {
       const tag = await this.tagsService.findTagByName(tagName);
       const tagging = this.taggingRepository.create({
         tagId: tag.id,
-        objectType,
         objectId,
         user: userPersonalGroup,
       });
@@ -69,7 +67,6 @@ export class TaggingService {
     );
     return await this.taggingRepository.delete({
       tagId: tagToRemove.id,
-      objectType,
       objectId,
     });
   }
