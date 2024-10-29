@@ -6,8 +6,8 @@ import {
   Get,
   Param,
   UseGuards,
-  Req, HttpCode
-} from "@nestjs/common";
+  Req,
+} from '@nestjs/common';
 import { TaggingService } from './tagging.service';
 import { ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '../../auth/auth.guard';
@@ -66,7 +66,6 @@ export class TaggingController {
       required: ['tagName', 'objectType', 'objectId'],
     },
   })
-  @HttpCode(200)
   async removeTagFromObject(
     @Body('tagName') tagName: string,
     @Body('objectType') objectType: string,
@@ -79,7 +78,7 @@ export class TaggingController {
     );
   }
 
-  @Get('tags-for-object/:objectType/:objectId')
+  @Get('tags-for-object/:objectId')
   @ApiOperation({ summary: 'Get tags for a specific object' })
   @ApiParam({
     name: 'objectType',
@@ -91,10 +90,7 @@ export class TaggingController {
     type: Number,
     description: 'ID of the object to retrieve tags for',
   })
-  async getTagsForObject(
-    @Param('objectType') objectType: string,
-    @Param('objectId') objectId: number,
-  ) {
-    return await this.taggingService.getTagsForObject(objectType, objectId);
+  async getTagsForObject(@Param('objectId') objectId: number) {
+    return await this.taggingService.getTagsForObject(objectId);
   }
 }

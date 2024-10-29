@@ -43,13 +43,10 @@ export class TaggingService {
     }
   }
 
-  async getTagsForObject(
-    objectType: string,
-    objectId: number,
-  ): Promise<Tagging[]> {
+  async getTagsForObject(objectId: number): Promise<Tagging[]> {
     try {
       return this.taggingRepository.find({
-        where: { objectType, objectId },
+        where: { objectId },
         relations: ['tag'],
       });
     } catch (error) {
@@ -66,7 +63,7 @@ export class TaggingService {
     objectType: string,
     objectId: number,
   ): Promise<DeleteResult> {
-    const taggingForObject = await this.getTagsForObject(objectType, objectId);
+    const taggingForObject = await this.getTagsForObject(objectId);
     const tagToRemove = taggingForObject.find(
       (tagging) => tagging.tag.name === tagName,
     );
