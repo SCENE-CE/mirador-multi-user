@@ -88,7 +88,12 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   const [currentPage, setCurrentPage] = useState(1);
   const [mediasTags, setMediasTags] = useState<Tag[]>([]);
   const [tagFilter ,setTagFilter] = useState<Tag|null>(null);
+  const [showAllTags, setShowAllTags] = useState(false);
   const itemsPerPage = 9;
+
+  const handleShowAllTags = () => {
+    setShowAllTags(!showAllTags);
+  };
 
   useEffect(() => {
     const fetchTags = async () => {
@@ -228,7 +233,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
               </Tooltip>
             </Grid>
           </Grid>
-          <Grid item container spacing={2} sx={{padding:'0 0 0 20px'}}>
+          <Grid item container spacing={2} sx={{padding:'0 0 0 20px', maxWidth:500}}>
             {
               tagFilter &&(
                 <Grid item>
@@ -236,42 +241,54 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
                 </Grid>
               )
             }
-            {mediasTags.map((tag) => (
-              <Grid item key={tag.id}>
-                <TagChip tag={tag} onClick={()=>handleFilterByTag(tag)} />
-              </Grid>
-            ))}
+              {mediasTags.slice(0, showAllTags ? mediasTags.length : 3).map((tag) => (
+                <Grid item key={tag.id}>
+                  <TagChip
+                    tag={tag}
+                    onClick={() => handleFilterByTag(tag)}
+                    color={tagFilter?.id === tag.id ? "primary" : "default"}
+                  />
+                </Grid>
+              ))}
+              {!showAllTags && mediasTags.length > 1 && (
+                <Grid item>
+                  <TagChip tag={{ title: '...', id: -1 }} onClick={handleShowAllTags} color="default" />
+                </Grid>
+              )}
+            {showAllTags && mediasTags.length > 1 && (
+                <Grid item>
+                  <TagChip tag={{ title: 'x', id: -1 }} onClick={handleShowAllTags} color="error" />
+                </Grid>
+              )}
           </Grid>
           {
             searchedMedia &&(
-              <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width:500 }} cols={3} rowHeight={164}>
+              <ImageList sx={{ minWidth: 500,maxWidth:500, padding: 1, width:500 }} cols={3} rowHeight={164}>
 
-                <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width: 500 }} cols={3} rowHeight={164}>
-                  <CustomImageItem key={searchedMedia.path}>
-                    <Box
-                      component="img"
-                      src={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
-                      alt={searchedMedia.title}
-                      loading="lazy"
-                      sx={{
-                        width: 150,
-                        height: 150,
-                        objectFit: 'cover', // Ensures cropping behavior
-                        '@media(min-resolution: 2dppx)': {
-                          width: 150 * 2,
-                          height: 150 * 2,
-                        },
-                      }}
-                    />
-                    <CustomButton
-                      className="overlayButton"
-                      disableRipple
-                      onClick={searchedMedia.path ? () => handleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`) :() => handleCopyToClipBoard(`${searchedMedia.url}`) }
-                    >
-                      Copy URL to clipboard
-                    </CustomButton>
-                  </CustomImageItem>
-                </ImageList>
+                <CustomImageItem key={searchedMedia.path}>
+                  <Box
+                    component="img"
+                    src={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
+                    alt={searchedMedia.title}
+                    loading="lazy"
+                    sx={{
+                      width: 150,
+                      height: 150,
+                      objectFit: 'cover',
+                      '@media(min-resolution: 2dppx)': {
+                        width: 150 * 2,
+                        height: 150 * 2,
+                      },
+                    }}
+                  />
+                  <CustomButton
+                    className="overlayButton"
+                    disableRipple
+                    onClick={searchedMedia.path ? () => handleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`) :() => handleCopyToClipBoard(`${searchedMedia.url}`) }
+                  >
+                    Copy URL to clipboard
+                  </CustomButton>
+                </CustomImageItem>
               </ImageList>
             )
           }

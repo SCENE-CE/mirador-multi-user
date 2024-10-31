@@ -81,7 +81,9 @@ export const TaggingForm = ({object,objectTypes}:ITaggingFormProps)=>{
         </form>
         <Grid container spacing={2}>
           {tags.map((tagging) => (
-            <TagChip tag={tagging.tag} handleRemoveTag={handleRemoveTag}/>
+            <Grid item>
+              <TagChip tag={tagging.tag} handleRemoveTag={handleRemoveTag}/>
+            </Grid>
           ))}
         </Grid>
       </AccordionDetails>
