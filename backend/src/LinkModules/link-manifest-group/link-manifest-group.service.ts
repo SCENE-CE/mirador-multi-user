@@ -9,7 +9,6 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Repository } from 'typeorm';
-import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
 import { ManifestGroupRights } from '../../enum/rights';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
@@ -50,8 +49,6 @@ export class LinkManifestGroupService {
         hash: createManifestDto.hash ? createManifestDto.hash : null,
         metadata: { creator: userGroup.title },
       });
-      console.log('manifestCreation');
-      console.log(manifestCreation);
       return this.create({
         ...createManifestDto,
         manifest: manifestCreation,
@@ -66,10 +63,7 @@ export class LinkManifestGroupService {
   }
 
   async create(createLinkGroupManifestDto) {
-    console.log(
-      '----------------------createLinkGroupManifestDto----------------------',
-    );
-    console.log(createLinkGroupManifestDto);
+
     try {
       const linkGroupManifest: LinkManifestGroup =
         this.linkManifestGroupRepository.create({
@@ -77,7 +71,6 @@ export class LinkManifestGroupService {
           user_group: createLinkGroupManifestDto.user_group,
           rights: createLinkGroupManifestDto.rights,
         });
-      console.log('linkGroupManifest', linkGroupManifest);
       return await this.linkManifestGroupRepository.upsert(linkGroupManifest, {
         conflictPaths: ['rights', 'manifest', 'user_group'],
       });
@@ -92,8 +85,6 @@ export class LinkManifestGroupService {
   async createGroupManifest(createGroupManifestDto: CreateGroupManifestDto) {
     try {
       const { idCreator, path, user_group, manifest } = createGroupManifestDto;
-      console.log('--------------------manifest.id--------------------');
-      console.log(manifest.id);
       await this.addManifestToGroup({
         userGroupId: user_group.id,
         manifestId: manifest.id,
@@ -124,7 +115,7 @@ export class LinkManifestGroupService {
           `Project with id ${manifestId} not found`,
         );
       }
-      const linkManifestGroup = await this.create({
+      await this.create({
         rights: addManifestToGroupDto.rights
           ? addManifestToGroupDto.rights
           : ManifestGroupRights.READER,

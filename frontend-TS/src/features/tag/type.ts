@@ -1,6 +1,7 @@
 export type Tag = {
   title:string
   id:number
+  objectsTaggedId?:number[]
 }
 
 export enum ObjectTypes {

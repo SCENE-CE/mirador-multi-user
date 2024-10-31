@@ -1,4 +1,4 @@
-import { Accordion, AccordionDetails, AccordionSummary, Chip, Grid, Paper, Typography } from "@mui/material";
+import { Accordion, AccordionDetails, AccordionSummary, Grid, Paper, Typography } from "@mui/material";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForTags } from "../api/lookingForTags.ts";
@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { ObjectTypes, Tag, Tagging } from "../type.ts";
 import { getTagsForObject } from "../api/getTagsForObject.ts";
 import { removeTag } from "../api/RemoveTag.ts";
+import { TagChip } from "./TagChip.tsx";
 
 interface ITaggingFormProps{
   object:{id:number},
@@ -80,9 +81,7 @@ export const TaggingForm = ({object,objectTypes}:ITaggingFormProps)=>{
         </form>
         <Grid container spacing={2}>
           {tags.map((tagging) => (
-            <Grid item key={tagging.id}>
-              <Chip label={tagging.tag.title} onDelete={()=>handleRemoveTag(tagging.tag.title)} />
-            </Grid>
+            <TagChip tag={tagging.tag} handleRemoveTag={handleRemoveTag}/>
           ))}
         </Grid>
       </AccordionDetails>
