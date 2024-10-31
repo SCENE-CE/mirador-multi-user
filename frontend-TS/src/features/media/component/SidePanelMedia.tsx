@@ -1,5 +1,5 @@
-import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
-import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
+import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip, Chip } from "@mui/material";
+import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Media } from "../types/types.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
@@ -14,6 +14,9 @@ import { createMediaLink } from "../api/createMediaWithLink.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
+import { getTagsForObject } from "../../tag/api/getTagsForObject.ts";
+import { Tag } from "../../tag/type.ts";
+import { TagChip } from "../../tag/components/TagChip.tsx";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -83,14 +86,52 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [mediasTags, setMediasTags] = useState<Tag[]>([]);
+  const [tagFilter ,setTagFilter] = useState<Tag|null>(null);
   const itemsPerPage = 9;
 
+  useEffect(() => {
+    const fetchTags = async () => {
+      const allTags = await Promise.all(
+        medias.map((media) =>
+          getTagsForObject(media.id).then(tags => ({ mediaId: media.id, tags }))
+        )
+      );
+      console.log('allTags', allTags);
+
+      const tagsWithMedia = allTags.flatMap(({ mediaId, tags }) =>
+        tags.map((tagObj: { tag: Tag; }) => ({
+          id: tagObj.tag.id,
+          title: tagObj.tag.title,
+          mediaId
+        }))
+      );
+
+      const tagMap = new Map();
+      tagsWithMedia.forEach(({ id, title, mediaId }) => {
+        if (!tagMap.has(id)) {
+          tagMap.set(id, { id, title, objectsTaggedId: [mediaId] });
+        } else {
+          tagMap.get(id).objectsTaggedId.push(mediaId);
+        }
+      });
+
+      const uniqueTagsWithMedia = Array.from(tagMap.values());
+      setMediasTags(uniqueTagsWithMedia);
+    };
+
+    fetchTags();
+  }, [medias]);
+
   const currentPageData = useMemo(() => {
+    const filteredMedias = tagFilter?.objectsTaggedId
+      ? medias.filter(media => tagFilter.objectsTaggedId!.includes(media.id))
+      : medias;
+
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return medias.slice(start, end);
-  }, [currentPage, medias]);
+    return filteredMedias.slice(start, end);
+  }, [currentPage, itemsPerPage, medias, tagFilter]);
 
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
@@ -99,23 +140,20 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   };
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.files);
     if (event.target.files) {
-      console.log(userPersonalGroup)
-      const mediaCreation= await createMedia({
+      await createMedia({
         idCreator: user.id,
         user_group: userPersonalGroup!,
         file: event.target.files[0],
       });
-      console.log('mediaCreation',mediaCreation)
       fetchMediaForUser()
     }
   },[fetchMediaForUser, user.id, userPersonalGroup,medias])
 
   const handleSetSearchMedia = (mediaQuery:Media)=>{
-    if(mediaQuery){
+    if(mediaQuery?.description){
       const  searchedMedia = medias.find(media => media.id === mediaQuery.id)
-      setSearchedMedia(searchedMedia!)
+      return setSearchedMedia(searchedMedia!)
     }else{
       setSearchedMedia(null);
     }
@@ -141,6 +179,10 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
       console.error('Error fetching the image:', error);
     }
   };
+
+  const handleFilterByTag = (tag:Tag)=>{
+    return setTagFilter(tag)
+  }
 
   return (
     <div>
@@ -186,8 +228,22 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
               </Tooltip>
             </Grid>
           </Grid>
+          <Grid item container spacing={2} sx={{padding:'0 0 0 20px'}}>
+            {
+              tagFilter &&(
+                <Grid item>
+                  <Chip color="error" label={"remove tag"} onClick={()=>setTagFilter(null)} />
+                </Grid>
+              )
+            }
+            {mediasTags.map((tag) => (
+              <Grid item key={tag.id}>
+                <TagChip tag={tag} onClick={()=>handleFilterByTag(tag)} />
+              </Grid>
+            ))}
+          </Grid>
           {
-            searchedMedia ?(
+            searchedMedia &&(
               <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width:500 }} cols={3} rowHeight={164}>
 
                 <ImageList sx={{ minWidth: 500, height: 450, padding: 1, width: 500 }} cols={3} rowHeight={164}>
@@ -217,37 +273,38 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
                   </CustomImageItem>
                 </ImageList>
               </ImageList>
-
-            ):(
-              <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
-                {currentPageData.map((media) => (
-                  <CustomImageItem key={media.hash}>
-                    <Box
-                      component="img"
-                      src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
-                      alt={media.title}
-                      loading="lazy"
-                      sx={{
-                        width: 150,
-                        height: 150,
-                        objectFit: 'cover', // Ensures cropping behavior
-                        '@media(min-resolution: 2dppx)': {
-                          width: 150 * 2,
-                          height: 150 * 2,
-                        },
-                      }}
-                    />
-                    <CustomButton
-                      className="overlayButton"
-                      disableRipple
-                      onClick={media.path ? () => handleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) :() => handleCopyToClipBoard(`${media.url}`) }
-                    >
-                      Copy path to clipboard
-                    </CustomButton>
-                  </CustomImageItem>
-                ))}
-              </ImageList>
             )
+          }
+          {searchedMedia === null &&(
+            <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
+              {currentPageData.map((media) => (
+                <CustomImageItem key={media.hash}>
+                  <Box
+                    component="img"
+                    src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
+                    alt={media.title}
+                    loading="lazy"
+                    sx={{
+                      width: 150,
+                      height: 150,
+                      objectFit: 'cover', // Ensures cropping behavior
+                      '@media(min-resolution: 2dppx)': {
+                        width: 150 * 2,
+                        height: 150 * 2,
+                      },
+                    }}
+                  />
+                  <CustomButton
+                    className="overlayButton"
+                    disableRipple
+                    onClick={media.path ? () => handleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) :() => handleCopyToClipBoard(`${media.url}`) }
+                  >
+                    Copy path to clipboard
+                  </CustomButton>
+                </CustomImageItem>
+              ))}
+            </ImageList>
+          )
           }
           <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
         </Drawer>

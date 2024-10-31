@@ -23,6 +23,7 @@ import { SidePanelMedia } from "../../media/component/SidePanelMedia.tsx";
 import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
+import { ObjectTypes } from "../../tag/type.ts";
 
 
 interface allGroupsProps {
@@ -178,6 +179,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             {groups && groupFiltered && groupFiltered.length < 1 &&!selectedUserGroup && currentPageData.map((group) => (
               <Grid item key={group.id}>
                 <MMUCard
+                  objectTypes={ObjectTypes.PROJECT}
                   isGroups={true}
                   thumbnailUrl={group.thumbnailUrl ? group.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}
@@ -208,6 +210,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             {selectedUserGroup &&(
               <Grid item>
                 <MMUCard
+                  objectTypes={ObjectTypes.PROJECT}
                   isGroups={true}
                   thumbnailUrl={selectedUserGroup.thumbnailUrl ? selectedUserGroup.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}
@@ -238,6 +241,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             {groups && groupFiltered && groupFiltered.length > 0 &&!selectedUserGroup && groupFiltered.map((group) => (
               <Grid item key={group.id}>
                 <MMUCard
+                  objectTypes={ObjectTypes.PROJECT}
                   isGroups={true}
                   thumbnailUrl={group.thumbnailUrl ? group.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}

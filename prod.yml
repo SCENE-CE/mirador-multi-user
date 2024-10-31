@@ -5,4 +5,4 @@ services:
         - ENV=PROD
     backend:
       volumes:
-        - ${UPLOAD_FOLDER}:/app/upload
+        - ${HTTP_FOLDER}:/app/upload

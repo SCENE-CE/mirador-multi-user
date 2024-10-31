@@ -6,8 +6,5 @@ export class Tag {
   id: number;
 
   @Column({ unique: true })
-  name: string;
-
-  @Column({ default: false })
-  isCustom: boolean;
+  title: string;
 }

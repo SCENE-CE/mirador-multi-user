@@ -15,6 +15,8 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
+import { TaggingForm } from "../../features/tag/components/taggingForm.tsx";
+import { ObjectTypes } from "../../features/tag/type.ts";
 
 interface ModalItemProps<T, G,O> {
   itemOwner: O,
@@ -39,6 +41,7 @@ interface ModalItemProps<T, G,O> {
   thumbnailUrl?:string | null
   metadata?: Record<string, string>;
   isGroups?:boolean
+  objectTypes:ObjectTypes
 }
 
 export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
@@ -65,6 +68,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
     thumbnailUrl,
     metadata,
     isGroups,
+    objectTypes,
   }: ModalItemProps<T, G, O>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
@@ -240,6 +244,14 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
                 <MetadataForm item={item} setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
               )
             }
+          </Grid>
+          <Grid
+          item
+          container
+          justifyContent="flex-end"
+          alignItems="center"
+          >
+            <TaggingForm objectTypes={objectTypes} object={item}/>
           </Grid>
         </Grid>
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(

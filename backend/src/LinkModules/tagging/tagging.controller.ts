@@ -1,32 +1,47 @@
-import { Controller, Post, Body, Delete, Get, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Delete,
+  Get,
+  Param,
+  UseGuards,
+  Req,
+} from '@nestjs/common';
 import { TaggingService } from './tagging.service';
 import { ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { AuthGuard } from '../../auth/auth.guard';
+import { ObjectTypes } from "../../enum/ObjectTypes";
 
 @Controller('tagging')
 export class TaggingController {
   constructor(private readonly taggingService: TaggingService) {}
+
   @ApiOperation({ summary: 'Assign a tag to an object' })
   @ApiBody({
     schema: {
       type: 'object',
       properties: {
         tagName: { type: 'string', description: 'Name of the tag to assign' },
-        objectType: {
-          type: 'string',
-          description: 'Type of the object (e.g., media, project, group)',
-        },
         objectId: { type: 'number', description: 'ID of the object to tag' },
       },
       required: ['tagName', 'objectType', 'objectId'],
     },
   })
+  @UseGuards(AuthGuard)
   @Post('assign')
   async assignTagToObject(
-    @Body('tagName') tagName: string,
-    @Body('objectType') objectType: string,
+    @Body('tagTitle') tagTitle: string,
     @Body('objectId') objectId: number,
+    @Body('objectType') objectTypes: ObjectTypes,
+    @Req() request,
   ) {
-    await this.taggingService.assignTagToObject(tagName, objectType, objectId);
+    await this.taggingService.assignTagToObject(
+      tagTitle,
+      objectId,
+      request.user.sub,
+      objectTypes,
+    );
   }
 
   @Delete('remove')
@@ -36,10 +51,6 @@ export class TaggingController {
       type: 'object',
       properties: {
         tagName: { type: 'string', description: 'Name of the tag to remove' },
-        objectType: {
-          type: 'string',
-          description: 'Type of the object (e.g., media, project, group)',
-        },
         objectId: {
           type: 'number',
           description: 'ID of the object from which to remove the tag',
@@ -49,18 +60,18 @@ export class TaggingController {
     },
   })
   async removeTagFromObject(
-    @Body('tagName') tagName: string,
-    @Body('objectType') objectType: string,
+    @Body('tagTitle') tagTitle: string,
+    @Body('objectType') objectType: ObjectTypes,
     @Body('objectId') objectId: number,
   ) {
-    await this.taggingService.removeTagFromObject(
-      tagName,
+    return await this.taggingService.removeTagFromObject(
+      tagTitle,
       objectType,
       objectId,
     );
   }
 
-  @Get('tags-for-object/:objectType/:objectId')
+  @Get('tags-for-object/:objectId')
   @ApiOperation({ summary: 'Get tags for a specific object' })
   @ApiParam({
     name: 'objectType',
@@ -72,10 +83,7 @@ export class TaggingController {
     type: Number,
     description: 'ID of the object to retrieve tags for',
   })
-  async getTagsForObject(
-    @Param('objectType') objectType: string,
-    @Param('objectId') objectId: number,
-  ) {
-    return await this.taggingService.getTagsForObject(objectType, objectId);
+  async getTagsForObject(@Param('objectId') objectId: number) {
+    return await this.taggingService.getTagsForObject(objectId);
   }
 }
