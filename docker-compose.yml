@@ -71,7 +71,7 @@ services:
       - CORS_ALLOWED_HOSTS
       - WEBPACK_MODE=development
     volumes:
-      - ./backend/$HTTP_FOLDER:/srv
+      - $HTTP_FOLDER:/srv
       - ./caddy/Caddyfile:/etc/caddy/Caddyfile
     networks:
       - app-network
