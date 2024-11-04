@@ -109,7 +109,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id
       <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
         <Grid item container flexDirection="row" alignItems="center" justifyContent="flex-start" spacing={2}>
           <Grid item xs={12} sm={4}>
-            <img src={thumbnailUrl? thumbnailUrl : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain"}} />
+            <img src={thumbnailUrl? thumbnailUrl : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain", marginLeft:"10px"}} />
           </Grid>
           <Grid item xs={12} sm={4}>
             <Tooltip title={itemLabel} placement="bottom-start" sx={{ fontSize: '3rem', maxWidth: '200px' }}>
