@@ -372,15 +372,17 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         {selectedProjectId && projectSelected &&(
           <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup!} user={user} fetchManifestForUser={fetchManifestForUser} display={true}>
-            <MiradorViewer
-              miradorState={miradorState!}
-              setMiradorState={handleSetMiradorState}
-              project={projectSelected}
-              saveMiradorState={saveMiradorState}
-              viewer={viewer}
-              setViewer={setViewer}
-              ref={myRef}
-            />
+            <Box sx={{ flexGrow: 1, p: 3 }}>
+              <MiradorViewer
+                miradorState={miradorState!}
+                setMiradorState={handleSetMiradorState}
+                project={projectSelected}
+                saveMiradorState={saveMiradorState}
+                viewer={viewer}
+                setViewer={setViewer}
+                ref={myRef}
+              />
+            </Box>
           </SidePanelManifest>
         )
         }

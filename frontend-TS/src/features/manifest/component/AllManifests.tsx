@@ -424,7 +424,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           }
           {
             createManifestIsOpen &&(
-              <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '70%'}}>
+              <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '100%'}}>
                 <SidePanelMedia display={true} medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user}>
                   <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm}/>
                 </SidePanelMedia>
@@ -437,7 +437,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
               modalCreateManifestIsOpen={modalLinkManifestIsOpen}
               toggleModalManifestCreation={()=>setModalLinkManifestSIsOpen(!modalLinkManifestIsOpen)} />
           </Grid>
-          <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
+          {!createManifestIsOpen&&(
+            <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
+          )}
         </Grid>
       </SidePanelMedia>
     </>

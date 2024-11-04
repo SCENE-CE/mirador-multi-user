@@ -327,7 +327,13 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
         </Drawer>
       )
       }
-      <Box sx={{ padding: 2 }}>
+      <Box
+        sx={{
+        flexGrow: 1,
+        padding: 2,
+        transition: 'margin 0.3s ease',
+        marginRight: open ? '500px' : '0px',
+      }}>
         {children}
       </Box>
       <Grid>
