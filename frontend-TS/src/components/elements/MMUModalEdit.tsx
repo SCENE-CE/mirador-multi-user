@@ -15,7 +15,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
-import { TaggingForm } from "../../features/tag/components/taggingForm.tsx";
 import { ObjectTypes } from "../../features/tag/type.ts";
 
 interface ModalItemProps<T, G,O> {
@@ -41,7 +40,7 @@ interface ModalItemProps<T, G,O> {
   thumbnailUrl?:string | null
   metadata?: Record<string, string>;
   isGroups?:boolean
-  objectTypes:ObjectTypes
+  objectTypes?:ObjectTypes
 }
 
 export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
@@ -68,7 +67,6 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
     thumbnailUrl,
     metadata,
     isGroups,
-    objectTypes,
   }: ModalItemProps<T, G, O>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
@@ -78,7 +76,6 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
   const [openModal, setOpenModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<{ [key: string]: string }>(metadata || {});
 
-  console.log('item',item)
   const handeUpdateMetadata = (updateData:any)=>{
     setMetadataFormData(updateData)
   }
@@ -245,14 +242,14 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
               )
             }
           </Grid>
-          <Grid
-          item
-          container
-          justifyContent="flex-end"
-          alignItems="center"
-          >
-            <TaggingForm objectTypes={objectTypes} object={item}/>
-          </Grid>
+          {/*<Grid*/}
+          {/*item*/}
+          {/*container*/}
+          {/*justifyContent="flex-end"*/}
+          {/*alignItems="center"*/}
+          {/*>*/}
+          {/*  <TaggingForm objectTypes={objectTypes} object={item}/>*/}
+          {/*</Grid>*/}
         </Grid>
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
           <Grid item sx={{marginTop:'10px'}}>

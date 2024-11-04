@@ -1,5 +1,5 @@
-import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip, Chip } from "@mui/material";
-import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
+import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
+import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Media } from "../types/types.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
@@ -14,9 +14,6 @@ import { createMediaLink } from "../api/createMediaWithLink.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
-import { getTagsForObject } from "../../tag/api/getTagsForObject.ts";
-import { Tag } from "../../tag/type.ts";
-import { TagChip } from "../../tag/components/TagChip.tsx";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -86,57 +83,63 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
-  const [mediasTags, setMediasTags] = useState<Tag[]>([]);
-  const [tagFilter ,setTagFilter] = useState<Tag|null>(null);
-  const [showAllTags, setShowAllTags] = useState(false);
+  // const [mediasTags, setMediasTags] = useState<Tag[]>([]);
+  // const [tagFilter ,setTagFilter] = useState<Tag|null>(null);
+  // const [showAllTags, setShowAllTags] = useState(false);
   const itemsPerPage = 9;
 
-  const handleShowAllTags = () => {
-    setShowAllTags(!showAllTags);
-  };
+  // const handleShowAllTags = () => {
+  //   setShowAllTags(!showAllTags);
+  // };
 
-  useEffect(() => {
-    const fetchTags = async () => {
-      const allTags = await Promise.all(
-        medias.map((media) =>
-          getTagsForObject(media.id).then(tags => ({ mediaId: media.id, tags }))
-        )
-      );
-      console.log('allTags', allTags);
+  // useEffect(() => {
+  //   const fetchTags = async () => {
+  //     const allTags = await Promise.all(
+  //       medias.map((media) =>
+  //         getTagsForObject(media.id).then(tags => ({ mediaId: media.id, tags }))
+  //       )
+  //     );
+  //     console.log('allTags', allTags);
+  //
+  //     const tagsWithMedia = allTags.flatMap(({ mediaId, tags }) =>
+  //       tags.map((tagObj: { tag: Tag; }) => ({
+  //         id: tagObj.tag.id,
+  //         title: tagObj.tag.title,
+  //         mediaId
+  //       }))
+  //     );
+  //
+  //     const tagMap = new Map();
+  //     tagsWithMedia.forEach(({ id, title, mediaId }) => {
+  //       if (!tagMap.has(id)) {
+  //         tagMap.set(id, { id, title, objectsTaggedId: [mediaId] });
+  //       } else {
+  //         tagMap.get(id).objectsTaggedId.push(mediaId);
+  //       }
+  //     });
+  //
+  //     const uniqueTagsWithMedia = Array.from(tagMap.values());
+  //     setMediasTags(uniqueTagsWithMedia);
+  //   };
+  //
+  //   fetchTags();
+  // }, [medias]);
 
-      const tagsWithMedia = allTags.flatMap(({ mediaId, tags }) =>
-        tags.map((tagObj: { tag: Tag; }) => ({
-          id: tagObj.tag.id,
-          title: tagObj.tag.title,
-          mediaId
-        }))
-      );
-
-      const tagMap = new Map();
-      tagsWithMedia.forEach(({ id, title, mediaId }) => {
-        if (!tagMap.has(id)) {
-          tagMap.set(id, { id, title, objectsTaggedId: [mediaId] });
-        } else {
-          tagMap.get(id).objectsTaggedId.push(mediaId);
-        }
-      });
-
-      const uniqueTagsWithMedia = Array.from(tagMap.values());
-      setMediasTags(uniqueTagsWithMedia);
-    };
-
-    fetchTags();
-  }, [medias]);
+  // const currentPageData = useMemo(() => {
+  //   const filteredMedias = tagFilter?.objectsTaggedId
+  //     ? medias.filter(media => tagFilter.objectsTaggedId!.includes(media.id))
+  //     : medias;
+  //
+  //   const start = (currentPage - 1) * itemsPerPage;
+  //   const end = start + itemsPerPage;
+  //   return filteredMedias.slice(start, end);
+  // }, [currentPage, itemsPerPage, medias, tagFilter]);
 
   const currentPageData = useMemo(() => {
-    const filteredMedias = tagFilter?.objectsTaggedId
-      ? medias.filter(media => tagFilter.objectsTaggedId!.includes(media.id))
-      : medias;
-
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return filteredMedias.slice(start, end);
-  }, [currentPage, itemsPerPage, medias, tagFilter]);
+    return medias.slice(start, end);
+  }, [currentPage, medias]);
 
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
@@ -185,9 +188,9 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
     }
   };
 
-  const handleFilterByTag = (tag:Tag)=>{
-    return setTagFilter(tag)
-  }
+  // const handleFilterByTag = (tag:Tag)=>{
+  //   return setTagFilter(tag)
+  // }
 
   return (
     <div>
@@ -233,34 +236,34 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
               </Tooltip>
             </Grid>
           </Grid>
-          <Grid item container spacing={2} sx={{padding:'0 0 0 20px', maxWidth:500}}>
-            {
-              tagFilter &&(
-                <Grid item>
-                  <Chip color="error" label={"remove tag"} onClick={()=>setTagFilter(null)} />
-                </Grid>
-              )
-            }
-              {mediasTags.slice(0, showAllTags ? mediasTags.length : 3).map((tag) => (
-                <Grid item key={tag.id}>
-                  <TagChip
-                    tag={tag}
-                    onClick={() => handleFilterByTag(tag)}
-                    color={tagFilter?.id === tag.id ? "primary" : "default"}
-                  />
-                </Grid>
-              ))}
-              {!showAllTags && mediasTags.length > 1 && (
-                <Grid item>
-                  <TagChip tag={{ title: '...', id: -1 }} onClick={handleShowAllTags} color="default" />
-                </Grid>
-              )}
-            {showAllTags && mediasTags.length > 1 && (
-                <Grid item>
-                  <TagChip tag={{ title: 'x', id: -1 }} onClick={handleShowAllTags} color="error" />
-                </Grid>
-              )}
-          </Grid>
+          {/*<Grid item container spacing={2} sx={{padding:'0 0 0 20px', maxWidth:500}}>*/}
+          {/*  {*/}
+          {/*    tagFilter &&(*/}
+          {/*      <Grid item>*/}
+          {/*        <Chip color="error" label={"remove tag"} onClick={()=>setTagFilter(null)} />*/}
+          {/*      </Grid>*/}
+          {/*    )*/}
+          {/*  }*/}
+          {/*    {mediasTags.slice(0, showAllTags ? mediasTags.length : 3).map((tag) => (*/}
+          {/*      <Grid item key={tag.id}>*/}
+          {/*        <TagChip*/}
+          {/*          tag={tag}*/}
+          {/*          onClick={() => handleFilterByTag(tag)}*/}
+          {/*          color={tagFilter?.id === tag.id ? "primary" : "default"}*/}
+          {/*        />*/}
+          {/*      </Grid>*/}
+          {/*    ))}*/}
+          {/*    {!showAllTags && mediasTags.length > 1 && (*/}
+          {/*      <Grid item>*/}
+          {/*        <TagChip tag={{ title: '...', id: -1 }} onClick={handleShowAllTags} color="default" />*/}
+          {/*      </Grid>*/}
+          {/*    )}*/}
+          {/*  {showAllTags && mediasTags.length > 1 && (*/}
+          {/*      <Grid item>*/}
+          {/*        <TagChip tag={{ title: 'x', id: -1 }} onClick={handleShowAllTags} color="error" />*/}
+          {/*      </Grid>*/}
+          {/*    )}*/}
+          {/*</Grid>*/}
           {
             searchedMedia &&(
               <ImageList sx={{ minWidth: 500,maxWidth:500, padding: 1, width:500 }} cols={3} rowHeight={164}>
