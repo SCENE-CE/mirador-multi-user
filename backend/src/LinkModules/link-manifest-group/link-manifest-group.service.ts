@@ -47,7 +47,7 @@ export class LinkManifestGroupService {
         url: createManifestDto.url ? createManifestDto.url : null,
         path: createManifestDto.path ? createManifestDto.path : null,
         hash: createManifestDto.hash ? createManifestDto.hash : null,
-        metadata: { creator: userGroup.title },
+        metadata: {},
       });
       return this.create({
         ...createManifestDto,

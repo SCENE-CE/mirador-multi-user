@@ -263,6 +263,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }
   const handleDeleteManifest=async (manifestId: number) => {
     await deleteManifest(manifestId)
+    setOpenModalManifestId(null)
     fetchManifestForUser()
   }
 
