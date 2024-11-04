@@ -1,4 +1,15 @@
-import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
+import {
+  Drawer,
+  IconButton,
+  Box,
+  styled,
+  Button,
+  ImageList,
+  ImageListItem,
+  Grid,
+  Tooltip,
+  ImageListItemBar
+} from "@mui/material";
 import { ReactNode, useCallback, useEffect, useMemo, useState } from "react";
 import toast from "react-hot-toast";
 import { Manifest, ManifestGroupRights, manifestOrigin } from "../types/types.ts";
@@ -14,19 +25,9 @@ import { lookingForManifests } from "../api/loonkingForManifests.ts";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
 
-const CustomImageItem = styled(ImageListItem)({
-  position: 'relative',
-  "&:hover img": {
-    opacity: 0.4,
-  },
-  "&:hover .overlayButton": {
-    opacity: 1,
-  }
-});
-
 const CustomButton = styled(Button)({
   position: 'absolute',
-  top: "50%",
+  top: "40%",
   left: "50%",
   transform: "translate(-50%, -50%)",
   textAlign: "center",
@@ -44,6 +45,13 @@ const ToggleButton = styled(IconButton)(({ open }: { open: boolean }) => ({
     backgroundColor: 'transparent',
   },
 }));
+
+const StyledImageListItem = styled(ImageListItem)({
+  position: 'relative',
+  '&:hover .overlayButton': {
+    opacity: 1,
+  },
+});
 
 const handleCopyToClipBoard = async (path: string) => {
   try {
@@ -168,8 +176,8 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
     fetchThumbnails();
   }, [fetchThumbnails]);
 
-  console.log(thumbnailUrls)
-
+  console.log("thumbnailUrls",thumbnailUrls)
+console.log('manifest',manifest)
   return (
     <div>
       {display && (
@@ -181,7 +189,6 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
 
       }
       {display && (
-
         <Drawer
           open={open}
           anchor="right"
@@ -206,66 +213,49 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
           </Grid>
           {
             searchedManifest ?(
-              <ImageList sx={{ minWidth: 400, height: 450, padding: 1, width:400 }} cols={3} rowHeight={164}>
-
-                <ImageList sx={{ minWidth: 400, height: 450, padding: 1, width: 400 }} cols={3} rowHeight={164}>
-                  <CustomImageItem key={searchedManifest.thumbnailUrl}>
-                    <Box
-                      component="img"
-                      src={''}
-                      alt={searchedManifest.title}
-                      loading="lazy"
-                      sx={{
-                        width: 150,
-                        height: 150,
-                        objectFit: 'cover',
-                        '@media(min-resolution: 200px)': {
-                          width: 150 * 2,
-                          height: 150 * 2,
-                        },
-                      }}
-                    />
-                    <CustomButton
-                      className="overlayButton"
-                      disableRipple
-                      onClick={
-                        searchedManifest.path ? () => handleCopyToClipBoard(
-                            `${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) :
-                          () => handleCopyToClipBoard(`${searchedManifest.path}`) }
-                    >
-                      Copy URL to clipboard
-                    </CustomButton>
-                  </CustomImageItem>
-                </ImageList>
+              <ImageList sx={{ minWidth: 400, padding: 1, width:400 }} cols={2} rowHeight={164}>
+                <StyledImageListItem>
+                  <img
+                    srcSet={`${searchedManifest.thumbnailUrl}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                    src={`${searchedManifest.thumbnailUrl}?w=248&fit=crop&auto=format`}
+                    alt={searchedManifest.title}
+                    loading="lazy"
+                  />
+                  <ImageListItemBar
+                    title={searchedManifest.title}
+                  />
+                  <CustomButton
+                    className="overlayButton"
+                    disableRipple
+                    onClick={searchedManifest.path ? () => handleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) :() => handleCopyToClipBoard(`${searchedManifest.path}`) }
+                  >
+                    Copy path to clipboard
+                  </CustomButton>
+                </StyledImageListItem>
               </ImageList>
-
             ):(
               <ImageList sx={{ minWidth: 400, padding: 1, width:400 }} cols={2} rowHeight={164}>
                 {currentPageData.map((manifest, index) => (
-                  <CustomImageItem key={manifest.hash}>
-                    <Box
-                      component="img"
-                      src={thumbnailUrls[index]}
-                      alt={manifest.title}
-                      loading="lazy"
-                      sx={{
-                        width: "100%",
-                        height: "100%",
-                        objectFit: 'cover', // Ensures cropping behavior
-                        '@media(min-resolution: 200px)': {
-                          width: 150 * 2,
-                          height: 150 * 2,
-                        },
-                      }}
-                    />
-                    <CustomButton
-                      className="overlayButton"
-                      disableRipple
-                      onClick={manifest.path ? () => handleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) :() => handleCopyToClipBoard(`${manifest.path}`) }
-                    >
-                      Copy path to clipboard
-                    </CustomButton>
-                  </CustomImageItem>
+                  <>
+                    <StyledImageListItem key={manifest.id}>
+                      <img
+                        srcSet={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                        src={`${thumbnailUrls[index]}?w=248&fit=crop&auto=format`}
+                        alt={manifest.title}
+                        loading="lazy"
+                      />
+                      <ImageListItemBar
+                        title={manifest.title}
+                      />
+                      <CustomButton
+                        className="overlayButton"
+                        disableRipple
+                        onClick={manifest.path ? () => handleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) :() => handleCopyToClipBoard(`${manifest.path}`) }
+                      >
+                        Copy path to clipboard
+                      </CustomButton>
+                    </StyledImageListItem>
+                  </>
                 ))}
               </ImageList>
             )

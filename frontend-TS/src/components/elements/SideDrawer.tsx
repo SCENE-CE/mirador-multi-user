@@ -340,13 +340,13 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           selectedProjectId && (
             <>
               <List >
-                <Tooltip title={projectSelected!.title}>
+                <Tooltip title={projectSelected!.title} placement="left">
                   <ListItem sx={{padding:0}}>
                     <ItemButton icon={<WorkIcon/>} text={projectSelected!.title} open={open} selected={false} action={()=>console.log('')}/>
                   </ListItem>
                 </Tooltip>
                 <Divider/>
-                <Tooltip title="Save">
+                <Tooltip title="Save" placement="left">
                   <ListItem sx={{padding:0}}>
                     <ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Project" action={saveProject}/>
                   </ListItem>
