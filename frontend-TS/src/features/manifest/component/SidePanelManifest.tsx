@@ -274,7 +274,14 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
         </Drawer>
       )
       }
-      <Box sx={{ padding: 2 }}>
+      <Box
+        sx={{
+          flexGrow: 1,
+          padding: 2,
+          transition: 'margin 0.3s ease',
+          marginRight: open ? '400px' : '0px',
+        }}
+      >
         {children}
       </Box>
       <Grid>

@@ -25,22 +25,22 @@ interface MiradorViewerProps {
   viewer:any
 }
 const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props, ref) => {
-   const { miradorState, saveMiradorState, project, setMiradorState, setViewer } = props;
-    const viewerRef = useRef<HTMLDivElement | null>(null);
+  const { miradorState, saveMiradorState, project, setMiradorState, setViewer } = props;
+  const viewerRef = useRef<HTMLDivElement | null>(null);
   const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
   console.log('miradorState',miradorState)
-   useImperativeHandle(ref, () => ({
-     saveProject: () => {
-     console.log(miradorViewer.store.getState())
-     },
-     setViewer: ()=>{
-       const viewer : IState = miradorViewer.store.getState()
-       setViewer(viewer);
-       return viewer
-     }
-   }));
+  useImperativeHandle(ref, () => ({
+    saveProject: () => {
+      console.log(miradorViewer.store.getState())
+    },
+    setViewer: ()=>{
+      const viewer : IState = miradorViewer.store.getState()
+      setViewer(viewer);
+      return viewer
+    }
+  }));
 
-   useEffect(() => {
+  useEffect(() => {
     if (viewerRef.current) {
       const config = {
         id: viewerRef.current.id,
@@ -78,7 +78,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
 
   return(
-        <div ref={viewerRef} id="mirador" style={{height:'100vh'}}></div>
+      <div ref={viewerRef} id="mirador" style={{height:'100vh'}}></div>
   )
 });
 

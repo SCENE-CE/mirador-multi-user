@@ -72,12 +72,9 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
     setItems(updatedItems);
   };
 
-//TODO: implement logic to display thumbnail of the media add to the form if it's available in db
-
   return (
     <Grid container direction="column" spacing={4}>
       <Grid item container>
-
         <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
           <Grid item>
             <FieldForm
@@ -145,8 +142,6 @@ export const ManifestCreationForm = ({ handleSubmit}:IManifestCreationFormProps)
           </Grid>
         </Paper>
       </Grid>
-
-
       {items.map((item, itemIndex) => (
         <Grid item key={itemIndex}>
           <Paper elevation={3} style={{ padding: '20px', width: '100%' }}>
