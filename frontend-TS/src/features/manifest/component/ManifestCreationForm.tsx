@@ -12,7 +12,7 @@ interface MediaField {
 }
 
 interface ItemGroup {
-  media: MediaField;
+  media: MediaField[];
 }
 
 interface IManifestCreationFormProps {
@@ -26,7 +26,8 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
   const [warningWrongUrl, setWarningWrongUrl] = useState(false);
 
   const handleNewItemGroup = () => {
-    setItems([...items, { media: { title: "media-1", value: "" } }]);
+    const newCanvasIndex = items.length + 1;
+    setItems([...items, { media: [{ title: `media-${newCanvasIndex}`, value: "" }] }]);
   };
 
   const handleManifestTitleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -39,7 +40,7 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
 
   const handleMediaChange = (itemIndex: number, value: string) => {
     const updatedItems = [...items];
-    updatedItems[itemIndex].media.value = value;
+    updatedItems[itemIndex].media[0].value = value;
     setItems(updatedItems);
   };
 
@@ -121,19 +122,19 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
               <Grid item container spacing={2} alignItems="center">
                 <Grid item xs>
                   <FieldForm
-                    name={item.media.title}
+                    name={item.media[0].title}
                     placeholder="Media URL"
                     label="Media URL"
-                    value={item.media.value}
+                    value={item.media[0].value}
                     onChange={(e) => handleMediaChange(itemIndex, e.target.value)}
                   />
                 </Grid>
-                {item.media.value && (
+                {item.media[0].value && (
                   <Grid item>
                     <Box
                       component="img"
-                      src={item.media.value}
-                      alt={item.media.value}
+                      src={item.media[0].value}
+                      alt={item.media[0].value}
                       loading="lazy"
                       sx={{
                         width: 50,

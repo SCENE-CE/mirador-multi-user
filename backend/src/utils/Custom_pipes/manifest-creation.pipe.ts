@@ -22,6 +22,7 @@ export class MediaInterceptor implements NestInterceptor {
       );
     }
 
+    console.log(manifestMedias);
     if (!title) {
       throw new BadRequestException('Manifest title is required.');
     }
@@ -45,6 +46,7 @@ export class MediaInterceptor implements NestInterceptor {
 
     const fetchMediaForItem = async (media) => {
       try {
+        console.log(media);
         const url = media.value.replace(
           /^(http|https):\/\/localhost:\d+\//,
           '$1://caddy/',
@@ -64,22 +66,25 @@ export class MediaInterceptor implements NestInterceptor {
         if (contentType && contentType.startsWith('image')) {
           const imageMetadata = await sharp(mediaBuffer).metadata();
           const { width, height } = imageMetadata;
+          const timeStamp = Date.now();
+          const timeStamp2 = Date.now();
+          const timeStamp3 = Date.now();
           manifestToCreate.items.push({
-            id: media.value,
+            id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
             type: 'Canvas',
             height,
             width,
             label: { en: ['Image Item'] },
             items: [
               {
-                id: `${media.value}/annotation/${Date.now()}`,
+                id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
                 type: 'AnnotationPage',
                 items: [
                   {
-                    id: `${media.value}/annotation/${Date.now()}`,
+                    id: `https://example.org/${timeStamp}/annotation/${Date.now()}`,
                     type: 'Annotation',
                     motivation: 'painting',
-                    target: media.value,
+                    target: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
                     body: {
                       id: media.value,
                       type: 'Image',
