@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { AuthGuard } from '../../auth/auth.guard';
-
+import { ApiBearerAuth } from "@nestjs/swagger";
+@ApiBearerAuth()
 @Controller('media')
 export class MediaController {
   constructor(private readonly mediaService: MediaService) {}

@@ -9,10 +9,10 @@ import {
   Req,
 } from '@nestjs/common';
 import { TaggingService } from './tagging.service';
-import { ApiBody, ApiOperation, ApiParam } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiParam } from "@nestjs/swagger";
 import { AuthGuard } from '../../auth/auth.guard';
 import { ObjectTypes } from "../../enum/ObjectTypes";
-
+@ApiBearerAuth()
 @Controller('tagging')
 export class TaggingController {
   constructor(private readonly taggingService: TaggingService) {}

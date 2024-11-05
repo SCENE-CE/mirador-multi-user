@@ -11,9 +11,10 @@ import {
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
+import { ApiBearerAuth } from "@nestjs/swagger";
 
 //TODO: Implement Validators fo Params
-
+@ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
