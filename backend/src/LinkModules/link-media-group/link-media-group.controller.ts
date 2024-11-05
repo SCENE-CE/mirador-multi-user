@@ -27,11 +27,11 @@ import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import * as fs from 'fs';
 import { ActionType } from '../../enum/actions';
-import { ApiOkResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse } from "@nestjs/swagger";
 import { LinkGroupProject } from "../link-group-project/entities/link-group-project.entity";
 import { LinkMediaGroup } from "./entities/link-media-group.entity";
 import { Media } from "../../BaseEntities/media/entities/media.entity";
-
+@ApiBearerAuth()
 @Controller('link-media-group')
 export class LinkMediaGroupController {
   constructor(private readonly linkMediaGroupService: LinkMediaGroupService) {}

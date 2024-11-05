@@ -19,9 +19,9 @@ import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
-import { ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse } from '@nestjs/swagger';
 import { LinkGroupProject } from './entities/link-group-project.entity';
-
+@ApiBearerAuth()
 @Controller('link-group-project')
 export class LinkGroupProjectController {
   constructor(

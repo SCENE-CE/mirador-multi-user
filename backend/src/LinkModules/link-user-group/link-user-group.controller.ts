@@ -19,10 +19,10 @@ import { AuthGuard } from '../../auth/auth.guard';
 import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-user-group.dto';
 import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import { ActionType } from '../../enum/actions';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse } from "@nestjs/swagger";
 import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
 import { LinkUserGroup } from './entities/link-user-group.entity';
-
+@ApiBearerAuth()
 @Controller('link-user-group')
 export class LinkUserGroupController {
   constructor(private readonly linkUserGroupService: LinkUserGroupService) {}
@@ -61,6 +61,10 @@ export class LinkUserGroupController {
     }
   }
 
+  @ApiOkResponse({
+    description: 'Does the user can access to userGroup ?',
+    isArray: false,
+  })
   @UseGuards(AuthGuard)
   @Get('/access/:userId/:groupId')
   getAccessToGroup(
@@ -70,12 +74,22 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.getAccessForUserToGroup(userId, groupId);
   }
 
+  @ApiOkResponse({
+    description: 'The user creation route',
+    type: CreateUserDto,
+    isArray: false,
+  })
   @Post('/user')
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {
     return await this.linkUserGroupService.createUser(createUserDto);
   }
 
+  @ApiOkResponse({
+    description: 'The group creation route',
+    type: CreateUserGroupDto,
+    isArray: false,
+  })
   @UseGuards(AuthGuard)
   @Post('/group')
   createGroup(@Body() createUserGroupDto: CreateUserGroupDto) {
@@ -106,12 +120,20 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOkResponse({
+    description: 'Looking for for user',
+    isArray: false,
+  })
   @UseGuards(AuthGuard)
   @Get('/looking-for-user/:partialString')
   lookingForUser(@Param('partialString') partialString: string) {
     return this.linkUserGroupService.searchForUserGroup(partialString);
   }
 
+  @ApiOkResponse({
+    description: 'Looking for userGroup',
+    isArray: false,
+  })
   @UseGuards(AuthGuard)
   @Get('/looking-for-userGroups/:partialString')
   lookingForUserGroups(@Param('partialString') partialString: string) {
@@ -160,6 +182,10 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOkResponse({
+    description: 'Remove access to userGroup',
+    isArray: false,
+  })
   @SetMetadata('action', ActionType.DELETE)
   @Delete('/remove-access/:groupId/:userId')
   async removeAccess(

@@ -6,7 +6,8 @@ import {
 } from '@nestjs/common';
 import { ManifestService } from './manifest.service';
 import { AuthGuard } from '../../auth/auth.guard';
-
+import { ApiBearerAuth } from "@nestjs/swagger";
+@ApiBearerAuth()
 @Controller('manifest')
 export class ManifestController {
   constructor(private readonly manifestService: ManifestService) {}

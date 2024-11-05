@@ -8,7 +8,8 @@ import {
 } from '@nestjs/common';
 import { UserGroupService } from './user-group.service';
 import { AuthGuard } from '../../auth/auth.guard';
-
+import { ApiBearerAuth } from "@nestjs/swagger";
+@ApiBearerAuth()
 @Controller('user-group')
 export class UserGroupController {
   constructor(private readonly userGroupService: UserGroupService) {}

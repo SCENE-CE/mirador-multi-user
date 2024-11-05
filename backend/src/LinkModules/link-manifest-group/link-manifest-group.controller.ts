@@ -30,11 +30,11 @@ import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relatio
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ActionType } from '../../enum/actions';
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
-import { ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse } from "@nestjs/swagger";
 import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
-
+@ApiBearerAuth()
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
   constructor(
