@@ -23,6 +23,7 @@ export const SearchBar = <T,>({setUserInput,handleFiltered,setFilter,label,getOp
     try{
       const data = await fetchFunction(partialDataName);
       if(data){
+        console.log('data',data)
         setSuggestions(data);
       }
     } catch (error) {

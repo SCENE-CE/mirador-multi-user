@@ -2,15 +2,16 @@ import {
   Body,
   Controller,
   Delete,
-  Get, HttpCode,
+  Get,
+  HttpCode,
   Param,
   Patch,
   Post,
   Req,
   SetMetadata,
   UnauthorizedException,
-  UseGuards
-} from "@nestjs/common";
+  UseGuards,
+} from '@nestjs/common';
 import { LinkGroupProjectService } from './link-group-project.service';
 import { AuthGuard } from '../../auth/auth.guard';
 import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
@@ -166,8 +167,7 @@ export class LinkGroupProjectController {
   // }
 
   @ApiOkResponse({
-    description:
-      'The project and rights for the user on it',
+    description: 'The project and rights for the user on it',
     type: LinkGroupProject,
     isArray: true,
   })
@@ -191,8 +191,7 @@ export class LinkGroupProjectController {
   }
 
   @ApiOkResponse({
-    description:
-      'The project user have access and his rights on it',
+    description: 'The project user have access and his rights on it',
     type: LinkGroupProject,
     isArray: true,
   })

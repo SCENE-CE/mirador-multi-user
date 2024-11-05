@@ -187,7 +187,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
 
     if(response){
       const manifest = await response.json()
-      console.log('userId',user.id)
       await linkManifest({
         url: path,
         rights: ManifestGroupRights.ADMIN,
@@ -223,12 +222,14 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const handleLookingForUserGroups = async (partialString: string): Promise<UserGroup[]> => {
     if (partialString.length > 0) {
       const linkUserGroups: LinkUserGroup[] = await lookingForUserGroups(partialString);
+      console.log(linkUserGroups)
       const uniqueUserGroups: UserGroup[] = linkUserGroups
         .map((linkUserGroup) => linkUserGroup.user_group)
         .filter(
           (group, index, self) =>
             index === self.findIndex((g) => g.id === group.id),
         );
+      console.log('uniqueUserGroups',uniqueUserGroups)
       setUserGroupSearch(linkUserGroups);
       return uniqueUserGroups;
     } else {
