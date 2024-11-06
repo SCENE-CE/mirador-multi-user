@@ -10,6 +10,9 @@ import { Dispatch, ReactNode, SetStateAction } from "react";
 import DeleteIcon from '@mui/icons-material/Delete';
 import { SearchBar } from "./SearchBar.tsx";
 import { MMUToolTip } from "./MMUTootlTip.tsx";
+import { UserGroupTypes } from "../../features/user-group/types/types.ts";
+import PersonIcon from "@mui/icons-material/Person";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 interface IProjectUserGroup<G> {
   items: ListItem[];
@@ -37,6 +40,7 @@ export const ItemList = <G,>(
     setSearchInput,
     getGroupByOption,
   }: IProjectUserGroup<G>): JSX.Element => {
+  console.log('items',items)
   return (
     <Grid container item spacing={2}>
       <Grid container item alignItems="center" spacing={2}>
@@ -66,9 +70,20 @@ export const ItemList = <G,>(
       <Grid item container flexDirection="column" spacing={1}>
         {items && items.map((item) => (
           item ? (
-            <Grid key={item.id} item container flexDirection="row" alignItems="center" justifyContent="center">
-              <Grid item sx={{ flexGrow: 1 }}>
-                <Typography>{item.title}</Typography>
+            <Grid key={item.id} item container spacing={1} flexDirection="row" alignItems="center" justifyContent="spaceBetween">
+              <Grid item container xs={8}>
+                <Grid item sx={{ flexGrow: 1 }}>
+                  <Typography>{item.title}</Typography>
+                </Grid>
+                <Grid item>
+                  {
+                    item.type === UserGroupTypes.PERSONAL ? (
+                      <PersonIcon/>
+                    ):(
+                      <GroupsIcon/>
+                    )
+                  }
+                </Grid>
               </Grid>
               {children && (
                 <Grid item>

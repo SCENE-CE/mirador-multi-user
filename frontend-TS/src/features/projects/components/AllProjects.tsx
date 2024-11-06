@@ -190,7 +190,8 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     return groupList.map((projectGroup) => ({
       id: projectGroup.user_group.id,
       title: projectGroup.user_group.title,
-      rights: projectGroup.rights
+      rights: projectGroup.rights,
+      type:projectGroup.user_group.type
     }));
   }, [groupList]);
 

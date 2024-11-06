@@ -1,10 +1,11 @@
-import { ProjectRights } from "../features/user-group/types/types.ts";
+import { ProjectRights, UserGroupTypes } from "../features/user-group/types/types.ts";
 import { User } from "../features/auth/types/types.ts";
 
 export type ListItem = {
   id:number
   title?:string
   rights?: ProjectRights
+  type?:UserGroupTypes
 }
 
 export type SelectorItem = {
