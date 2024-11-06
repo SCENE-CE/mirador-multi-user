@@ -30,7 +30,12 @@ import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relatio
 import { AddManifestToGroupDto } from './dto/add-manifest-to-group.dto';
 import { ActionType } from '../../enum/actions';
 import { CreateGroupManifestDto } from './dto/create-group-manifest.dto';
-import { ApiBearerAuth, ApiBody, ApiOkResponse } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
@@ -41,6 +46,7 @@ export class LinkManifestGroupController {
     private readonly linkManifestGroupService: LinkManifestGroupService,
   ) {}
 
+  @ApiOperation({ summary: 'Get All manifest a specific group can access' })
   @ApiOkResponse({
     description: "The manifests and the user's right on it",
     type: LinkManifestGroup,
@@ -53,7 +59,7 @@ export class LinkManifestGroupController {
       userGroupId,
     );
   }
-
+  @ApiOperation({ summary: 'upload a manifest' })
   @ApiOkResponse({
     description: "The manifest and the user's right on it",
     type: LinkManifestGroup,
@@ -97,7 +103,7 @@ export class LinkManifestGroupController {
     };
     return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
-
+  @ApiOperation({ summary: 'Create a manifest with a link a manifest' })
   @ApiOkResponse({
     description: "The manifest and the user's right on it",
     type: LinkManifestGroup,
@@ -114,7 +120,7 @@ export class LinkManifestGroupController {
     };
     return this.linkManifestGroupService.createManifest(manifestToCreate);
   }
-
+  @ApiOperation({ summary: 'Create a manifest with a json' })
   @ApiOkResponse({
     description: "The manifest and the user's right on it",
     type: LinkManifestGroup,
@@ -167,6 +173,9 @@ export class LinkManifestGroupController {
     }
   }
 
+  @ApiOperation({
+    summary: 'Get all group that can access a manifest with his Id',
+  })
   @UseGuards(AuthGuard)
   @Get('/manifest/:manifestId')
   async getManifestById(@Param('manifestId') manifestId: number) {
@@ -189,7 +198,7 @@ export class LinkManifestGroupController {
       },
     );
   }
-
+  @ApiOperation({ summary: 'Update a manifest object' })
   @ApiOkResponse({
     description: 'The manifest updated',
     type: Manifest,
@@ -212,7 +221,7 @@ export class LinkManifestGroupController {
       },
     );
   }
-
+  @ApiOperation({ summary: 'Update the relation between a manifest and a group' })
   @ApiBody({ type: UpdateManifestGroupRelation })
   @SetMetadata('action', ActionType.UPDATE)
   @HttpCode(204)
@@ -237,7 +246,7 @@ export class LinkManifestGroupController {
       },
     );
   }
-
+  @ApiOperation({ summary: 'Grant access to a manifest' })
   @ApiOkResponse({
     description: 'The manifests and the users rights on them',
     type: LinkManifestGroup,
@@ -250,6 +259,7 @@ export class LinkManifestGroupController {
     return this.linkManifestGroupService.addManifestToGroup(addManifestToGroup);
   }
 
+  @ApiOperation({ summary: 'remove access to a manifest' })
   @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete('/manifest/:manifestId/:groupId')

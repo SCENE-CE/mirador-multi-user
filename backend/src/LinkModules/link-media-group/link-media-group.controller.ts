@@ -27,7 +27,7 @@ import { UpdateMediaGroupRelationDto } from './dto/updateMediaGroupRelationDto';
 import { AddMediaToGroupDto } from './dto/addMediaToGroupDto';
 import * as fs from 'fs';
 import { ActionType } from '../../enum/actions';
-import { ApiBearerAuth, ApiOkResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { LinkGroupProject } from "../link-group-project/entities/link-group-project.entity";
 import { LinkMediaGroup } from "./entities/link-media-group.entity";
 import { Media } from "../../BaseEntities/media/entities/media.entity";
@@ -35,6 +35,7 @@ import { Media } from "../../BaseEntities/media/entities/media.entity";
 @Controller('link-media-group')
 export class LinkMediaGroupController {
   constructor(private readonly linkMediaGroupService: LinkMediaGroupService) {}
+  @ApiOperation({ summary: 'Upload a media' })
   @UseGuards(AuthGuard)
   @Post('/media/upload')
   @UseInterceptors(
@@ -76,6 +77,7 @@ export class LinkMediaGroupController {
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }
 
+  @ApiOperation({ summary: 'Create a media with an url' })
   @UseGuards(AuthGuard)
   @Post('/media/link')
   @UseInterceptors(MediaLinkInterceptor)
@@ -94,6 +96,7 @@ export class LinkMediaGroupController {
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }
 
+  @ApiOperation({ summary: 'Get all media for a specific group' })
   @ApiOkResponse({
     description: 'The medias user have access and his rights on them',
     type: LinkMediaGroup,
@@ -105,12 +108,14 @@ export class LinkMediaGroupController {
     return this.linkMediaGroupService.getAllMediasForUserGroup(userGroupId);
   }
 
+  @ApiOperation({ summary: 'Get all group that can access a specific media' })
   @UseGuards(AuthGuard)
   @Get('/media/:mediaId')
   async getMediaById(@Param('mediaId') mediaId: number) {
     return this.linkMediaGroupService.getAllMediaGroup(mediaId);
   }
 
+  @ApiOperation({ summary: 'Delete a media' })
   @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete('/media/:mediaId')
@@ -124,7 +129,7 @@ export class LinkMediaGroupController {
       },
     );
   }
-
+  @ApiOperation({ summary: 'Update a media' })
   @ApiOkResponse({
     description: 'The media updated',
     type: Media,
@@ -147,7 +152,7 @@ export class LinkMediaGroupController {
     );
   }
 
-
+  @ApiOperation({ summary: 'update media and group relation' })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @HttpCode(204)
@@ -170,7 +175,7 @@ export class LinkMediaGroupController {
       },
     );
   }
-
+  @ApiOperation({ summary: 'Grant access to media' })
   @ApiOkResponse({
     description: 'The media updated',
     type: Media,
@@ -182,6 +187,7 @@ export class LinkMediaGroupController {
     return this.linkMediaGroupService.addMediaToGroup(addMediaToGroupDto);
   }
 
+  @ApiOperation({ summary: 'Remove access to a media' })
   @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete('/media/:mediaId/:groupId')

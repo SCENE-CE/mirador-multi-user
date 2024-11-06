@@ -6,22 +6,22 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 @Controller('tag')
 export class TagController {
   constructor(private readonly tagService: TagService) {}
-
-  @Get()
-  async getAllTags() {
-    return this.tagService.getAllTags();
-  }
-
-  @Post()
-  async createTag(@Body() tagCreationDto: CreateTagDto) {
-    return this.tagService.createTag(tagCreationDto);
-  }
-
-  @Post('/looking-for-tag/:partialTagTitle')
-  async lookingForTagByPartialName(
-    @Param('partialTagTitle') partialTagTitle: string,
-  ) {
-    console.log('toto')
-    return this.tagService.findTagsByPartialTitle(partialTagTitle);
-  }
+  //
+  // @Get()
+  // async getAllTags() {
+  //   return this.tagService.getAllTags();
+  // }
+  //
+  // @Post()
+  // async createTag(@Body() tagCreationDto: CreateTagDto) {
+  //   return this.tagService.createTag(tagCreationDto);
+  // }
+  //
+  // @Post('/looking-for-tag/:partialTagTitle')
+  // async lookingForTagByPartialName(
+  //   @Param('partialTagTitle') partialTagTitle: string,
+  // ) {
+  //   console.log('toto')
+  //   return this.tagService.findTagsByPartialTitle(partialTagTitle);
+  // }
 }

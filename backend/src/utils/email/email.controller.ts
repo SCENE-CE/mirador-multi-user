@@ -6,8 +6,8 @@ import { CreateEmailServerDto } from './Dto/createEmailServerDto';
 export class EmailServerController {
   constructor(private readonly EmailService: EmailServerService) {}
   //UNCOMMENT FOR TESTS : you'll need to uncomment the service too.
-  @Post('test')
-  testEMail(@Body() createEmailServerDto: CreateEmailServerDto) {
-    // return this.EmailService.sendMailSandBox(createEmailServerDto);
-  }
+  // @Post('test')
+  // testEMail(@Body() createEmailServerDto: CreateEmailServerDto) {
+  //   // return this.EmailService.sendMailSandBox(createEmailServerDto);
+  // }
 }

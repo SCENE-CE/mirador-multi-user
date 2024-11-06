@@ -19,7 +19,7 @@ import { AuthGuard } from '../../auth/auth.guard';
 import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-user-group.dto';
 import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import { ActionType } from '../../enum/actions';
-import { ApiBearerAuth, ApiOkResponse } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
 import { LinkUserGroup } from './entities/link-user-group.entity';
 @ApiBearerAuth()
@@ -27,6 +27,7 @@ import { LinkUserGroup } from './entities/link-user-group.entity';
 export class LinkUserGroupController {
   constructor(private readonly linkUserGroupService: LinkUserGroupService) {}
 
+  @ApiOperation({ summary: 'Return all user that are part of the group' })
   @ApiOkResponse({
     description: 'Return all users for group and there rights',
     type: LinkUserGroup,
@@ -47,6 +48,7 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOperation({ summary: 'Find all groups where a user is part of the group' })
   @ApiOkResponse({
     description: 'The groups the user can access and his rights on them',
     type: LinkGroupProject,
@@ -61,6 +63,7 @@ export class LinkUserGroupController {
     }
   }
 
+  @ApiOperation({ summary: 'Get the rights of the users on the group' })
   @ApiOkResponse({
     description: 'Does the user can access to userGroup ?',
     isArray: false,
@@ -74,6 +77,8 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.getAccessForUserToGroup(userId, groupId);
   }
 
+
+  @ApiOperation({ summary: 'Create a user' })
   @ApiOkResponse({
     description: 'The user creation route',
     type: CreateUserDto,
@@ -85,6 +90,7 @@ export class LinkUserGroupController {
     return await this.linkUserGroupService.createUser(createUserDto);
   }
 
+  @ApiOperation({ summary: 'Create a group' })
   @ApiOkResponse({
     description: 'The group creation route',
     type: CreateUserGroupDto,
@@ -96,6 +102,7 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.createUserGroup(createUserGroupDto);
   }
 
+  @ApiOperation({ summary: 'Grant access to a group to a user' })
   @ApiOkResponse({
     description: 'The project and the rights of the user on it',
     type: LinkGroupProject,
@@ -120,6 +127,7 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOperation({ summary: 'search for a user personnalGroup with a string matching the start of his title' })
   @ApiOkResponse({
     description: 'Looking for for user',
     isArray: false,
@@ -130,6 +138,7 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.searchForUserGroup(partialString);
   }
 
+  @ApiOperation({ summary: 'search for a group with a string matching the start of his title' })
   @ApiOkResponse({
     description: 'Looking for userGroup',
     isArray: false,
@@ -140,6 +149,7 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.searchForGroups(partialString);
   }
 
+  @ApiOperation({ summary: 'Get your personnal group' })
   @ApiOkResponse({
     description: "The personal user's userGroup",
     type: LinkGroupProject,
@@ -156,6 +166,7 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOperation({ summary: 'Change access to a group for a specific user' })
   @ApiOkResponse({
     description: "The project updated and the user's rights on it",
     type: LinkGroupProject,
@@ -182,6 +193,7 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOperation({ summary: 'Remove access to a group' })
   @ApiOkResponse({
     description: 'Remove access to userGroup',
     isArray: false,
@@ -206,6 +218,7 @@ export class LinkUserGroupController {
     );
   }
 
+  @ApiOperation({ summary: 'Remove a user from a group' })
   @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete(':groupId')

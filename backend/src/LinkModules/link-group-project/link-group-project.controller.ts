@@ -19,7 +19,7 @@ import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
-import { ApiBearerAuth, ApiBody, ApiOkResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
 import { LinkGroupProject } from './entities/link-group-project.entity';
 @ApiBearerAuth()
 @Controller('link-group-project')
@@ -28,6 +28,7 @@ export class LinkGroupProjectController {
     private readonly linkGroupProjectService: LinkGroupProjectService,
   ) {}
 
+  @ApiOperation({ summary: 'Find all Link between group and project for a specific group Id' })
   @UseGuards(AuthGuard)
   @Get('/:groupId')
   async getAllGroupProjects(@Param('groupId') groupId: number) {
@@ -41,7 +42,7 @@ export class LinkGroupProjectController {
   getProjectRelation(@Param('projectId') projectId: number) {
     return this.linkGroupProjectService.getProjectRelations(projectId);
   }
-
+  @ApiOperation({ summary: 'Update project relation and rights on it' })
   @ApiBody({ type: UpdateProjectGroupDto })
   @ApiOkResponse({
     description: 'The project user have access and his rights on it',
@@ -67,6 +68,7 @@ export class LinkGroupProjectController {
     );
   }
 
+  @ApiOperation({ summary: 'Allow a group to acces a project' })
   @ApiBody({ type: AddProjectToGroupDto })
   @ApiOkResponse({
     description:
@@ -95,6 +97,7 @@ export class LinkGroupProjectController {
     );
   }
 
+  @ApiOperation({ summary: 'Change access to a project for a specific group' })
   @ApiBody({ type: UpdateAccessToProjectDto })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
@@ -116,6 +119,7 @@ export class LinkGroupProjectController {
     );
   }
 
+  @ApiOperation({ summary: 'delete a project' })
   @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
   @Delete('/delete/project/:projectId')
@@ -133,6 +137,7 @@ export class LinkGroupProjectController {
     );
   }
 
+  @ApiOperation({ summary: 'Remove access to a project to a specific group' })
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Delete('/project/:projectId/:groupId')
@@ -166,6 +171,7 @@ export class LinkGroupProjectController {
   //   );
   // }
 
+  @ApiOperation({ summary: 'Search for a project that a specific group can access' })
   @ApiOkResponse({
     description: 'The project and rights for the user on it',
     type: LinkGroupProject,
@@ -182,7 +188,7 @@ export class LinkGroupProjectController {
       userId,
     );
   }
-
+  @ApiOperation({ summary: 'Project creation' })
   @ApiBody({ type: CreateProjectDto })
   @UseGuards(AuthGuard)
   @Post('/project/')
@@ -190,6 +196,7 @@ export class LinkGroupProjectController {
     return this.linkGroupProjectService.createProject(createProjectDto);
   }
 
+  @ApiOperation({ summary: 'Get all users that can access the project' })
   @ApiOkResponse({
     description: 'The project user have access and his rights on it',
     type: LinkGroupProject,

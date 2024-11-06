@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { MediaService } from './media.service';
 import { AuthGuard } from '../../auth/auth.guard';
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 @ApiBearerAuth()
 @Controller('media')
 export class MediaController {
@@ -35,7 +35,7 @@ export class MediaController {
   // remove(@Param('id') id: string) {
   //   return this.mediaService.remove(+id);
   // }
-
+  @ApiOperation({ summary: 'Find a media by hist title for a specific group' })
   @UseGuards(AuthGuard)
   @Get('/search/:UserGroupId/:partialString')
   lookingForMedia(

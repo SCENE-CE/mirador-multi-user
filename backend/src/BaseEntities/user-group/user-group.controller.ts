@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { UserGroupService } from './user-group.service';
 import { AuthGuard } from '../../auth/auth.guard';
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 @ApiBearerAuth()
 @Controller('user-group')
 export class UserGroupController {
@@ -34,6 +34,7 @@ export class UserGroupController {
   //   return this.userGroupService.searchForUserGroup(partialUserGroupName);
   // }
 
+  @ApiOperation({ summary: 'update a group' })
   @UseGuards(AuthGuard)
   @Patch('/update')
   updateGroup(@Body() updateDate) {
@@ -43,6 +44,7 @@ export class UserGroupController {
     return this.userGroupService.updateGroup(restOfGroupUpdated);
   }
 
+  @ApiOperation({ summary: 'delete a group' })
   @UseGuards(AuthGuard)
   @Delete(':groupId')
   @UseGuards(AuthGuard)
