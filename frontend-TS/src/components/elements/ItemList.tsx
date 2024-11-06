@@ -21,6 +21,7 @@ interface IProjectUserGroup<G> {
   setItemToAdd?: Dispatch<SetStateAction<G | null>>,
   handleAddAccessListItem: () => void;
   searchBarLabel: string;
+  getGroupByOption?:(option:any)=>string;
 }
 
 export const ItemList = <G,>(
@@ -34,6 +35,7 @@ export const ItemList = <G,>(
     handleGetOptionLabel,
     handleSearchModalEditItem,
     setSearchInput,
+    getGroupByOption,
   }: IProjectUserGroup<G>): JSX.Element => {
   return (
     <Grid container item spacing={2}>
@@ -58,6 +60,7 @@ export const ItemList = <G,>(
           fetchFunction={handleSearchModalEditItem}
           setSearchInput={setSearchInput}
           actionButtonLabel={"ADD"}
+          groupByOption={getGroupByOption}
         />
       </Grid>
       <Grid item container flexDirection="column" spacing={1}>

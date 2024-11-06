@@ -14,9 +14,25 @@ interface IUsersSearchBarProps<T>{
   setFilter?:(myarray:any[])=>void
   handleFiltered?:(partialString:string)=>void
   setUserInput?:(input:string)=>void
+  groupByOption?:(option:any)=>string
 }
 
-export const SearchBar = <T,>({setUserInput,handleFiltered,setFilter,label,getOptionLabel,setSearchedData, setSelectedData,fetchFunction,handleAdd,setSearchInput,actionButtonLabel}:IUsersSearchBarProps<T>) => {
+export const SearchBar = <T,>(
+  {
+    setUserInput,
+    handleFiltered,
+    setFilter,
+    label,
+    getOptionLabel,
+    setSearchedData,
+    setSelectedData,
+    fetchFunction,
+    handleAdd,
+    setSearchInput,
+    actionButtonLabel,
+    groupByOption
+  }:IUsersSearchBarProps<T>
+) => {
   const [suggestions, setSuggestions]=useState<T[]>([]);
 
   const HandlefetchData = async(partialDataName:string)=>{
@@ -80,6 +96,7 @@ export const SearchBar = <T,>({setUserInput,handleFiltered,setFilter,label,getOp
               clearOnBlur={false}
               renderInput={(params) => <TextField {...params} label={label} />}
               getOptionLabel={getOptionLabel}
+              groupBy={groupByOption ? groupByOption : undefined}
             />
           </Grid>
           <Grid item>

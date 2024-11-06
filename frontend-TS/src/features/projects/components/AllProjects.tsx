@@ -12,7 +12,7 @@ import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
-import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
@@ -229,6 +229,15 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     }
   }
 
+  const getGroupByOption=(option:UserGroup):string =>{
+    if(option.type === UserGroupTypes.MULTI_USER ){
+      return 'Groups'
+    }
+    else{
+      return 'Users'
+    }
+  }
+
   const fetchMediaForUser = async()=>{
     const medias = await getUserGroupMedias(userPersonalGroup!.id)
     setMedias(medias);
@@ -287,6 +296,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         removeAccessListItemFunction={handleRemoveUser}
                         setItemList={setGroupList}
                         metadata={projectUser.metadata}
+                        getGroupByOption={getGroupByOption}
                       />
                     </Grid>
                   )
@@ -334,6 +344,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       updateItem={updateUserProject}
                       removeAccessListItemFunction={handleRemoveUser}
                       setItemList={setGroupList}
+                      getGroupByOption={getGroupByOption}
                     />
                   </Grid>
                 </Grid>
@@ -370,6 +381,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                           updateItem={updateUserProject}
                           removeAccessListItemFunction={handleRemoveUser}
                           setItemList={setGroupList}
+                          getGroupByOption={getGroupByOption}
                         />
                       </Grid>
                     )
