@@ -132,6 +132,9 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   }
 
   const handleGrantAccess = async (mediaId:number) =>{
+    if(userToAdd == null){
+      toast.error("select an item in the list")
+    }
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
     await addMediaToGroup(mediaId, linkUserGroupToAdd!.user_group.id)
   }

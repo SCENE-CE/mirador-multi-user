@@ -269,6 +269,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }
 
   const handleGrantAccess = async (manifestId:number) =>{
+    if(userToAdd == null){
+      toast.error("select an item in the list")
+    }
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
     await grantAccessToManifest({ manifestId: manifestId, userGroupId: linkUserGroupToAdd!.user_group.id })
   }
