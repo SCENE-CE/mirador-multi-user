@@ -1,6 +1,6 @@
 import { Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, ReactNode, useCallback, useEffect, useMemo, useState } from "react";
-import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { LinkUserGroup, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
 import { User } from "../../auth/types/types.ts";
 import { Manifest, ManifestCreationMedia, ManifestGroupRights, manifestOrigin } from "../types/types.ts";
 import { uploadManifest } from "../api/uploadManifest.ts";
@@ -269,6 +269,9 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   }
 
   const handleGrantAccess = async (manifestId:number) =>{
+    if(userToAdd == null){
+      toast.error("select an item in the list")
+    }
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
     await grantAccessToManifest({ manifestId: manifestId, userGroupId: linkUserGroupToAdd!.user_group.id })
   }
@@ -276,6 +279,15 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const getOptionLabel = (option: UserGroup): string => {
     return option.title
   };
+
+  const getGroupByOption=(option:UserGroup):string =>{
+    if(option.type === UserGroupTypes.MULTI_USER ){
+      return 'Groups'
+    }
+    else{
+      return 'Users'
+    }
+  }
 
   const listOfGroup: ListItem[] = useMemo(() => {
     return groupList.map((projectGroup) => ({
@@ -347,6 +359,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     description={manifest.description}
                     getAccessToItem={getAllManifestGroups}
                     getOptionLabel={getOptionLabel}
+                    getGroupByOption={getGroupByOption}
                     id={manifest.id}
                     item={manifest}
                     itemLabel={manifest.title}
@@ -373,20 +386,30 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 <Grid item key={manifest.id}>
                   <MMUCard
                     objectTypes={ObjectTypes.MANIFEST}
-                    metadata={manifest.metadata}
-                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`): ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                    id={manifest.id}
-                    rights={ProjectRights.ADMIN}
-                    description={manifest.description}
+                    AddAccessListItemFunction={handleGrantAccess}
+                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     HandleOpenModal={()=>HandleOpenModal(manifest.id)}
-                    openModal={openModalManifestId === manifest.id}
+                    deleteItem={handleDeleteManifest}
+                    description={manifest.description}
+                    getAccessToItem={getAllManifestGroups}
+                    getOptionLabel={getOptionLabel}
+                    getGroupByOption={getGroupByOption}
+                    id={manifest.id}
+                    item={manifest}
                     itemLabel={manifest.title}
                     itemOwner={user}
-                    item={manifest}
+                    listOfItem={listOfGroup}
+                    metadata={manifest.metadata}
+                    openModal={openModalManifestId === manifest.id}
+                    rights={manifest.rights!}
+                    searchBarLabel={"Search"}
+                    searchModalEditItem={handleLookingForUserGroups}
+                    setItemToAdd={setUserToAdd}
+                    setItemList={setGroupList}
                     thumbnailUrl={thumbnailUrls[index]}
-                    EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     updateItem={handleUpdateManifest}
-                    deleteItem={handleDeleteManifest}
+                    handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
               ))}
@@ -398,19 +421,30 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                 <Grid item key={searchedManifest.id}>
                   <MMUCard
                     objectTypes={ObjectTypes.MANIFEST}
-                    metadata={searchedManifest.metadata}
-                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={ searchedManifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) : ()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                    id={searchedManifest.id}
-                    rights={ProjectRights.ADMIN}
-                    description={searchedManifest.description}
+                    AddAccessListItemFunction={handleGrantAccess}
+                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={searchedManifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) : ()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(searchedManifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     HandleOpenModal={()=>HandleOpenModal(searchedManifest.id)}
-                    openModal={openModalManifestId === searchedManifest.id}
+                    deleteItem={handleDeleteManifest}
+                    description={searchedManifest.description}
+                    getAccessToItem={getAllManifestGroups}
+                    getOptionLabel={getOptionLabel}
+                    getGroupByOption={getGroupByOption}
+                    id={searchedManifest.id}
+                    item={searchedManifest}
                     itemLabel={searchedManifest.title}
                     itemOwner={user}
-                    item={searchedManifest}
-                    thumbnailUrl={searchedManifestIndex ? thumbnailUrls[searchedManifestIndex] : placeholder}
+                    listOfItem={listOfGroup}
+                    metadata={searchedManifest.metadata}
+                    openModal={openModalManifestId === searchedManifest.id}
+                    rights={searchedManifest.rights!}
+                    searchBarLabel={"Search"}
+                    searchModalEditItem={handleLookingForUserGroups}
+                    setItemToAdd={setUserToAdd}
+                    setItemList={setGroupList}
+                    thumbnailUrl={thumbnailUrls[searchedManifestIndex!]}
                     updateItem={handleUpdateManifest}
-                    deleteItem={handleDeleteManifest}
+                    handleSelectorChange={handleChangeRights}
                   />
                 </Grid>
               </Grid>

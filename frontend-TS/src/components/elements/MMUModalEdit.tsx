@@ -41,6 +41,7 @@ interface ModalItemProps<T, G,O> {
   metadata?: Record<string, string>;
   isGroups?:boolean
   objectTypes?:ObjectTypes
+  getGroupByOption?:(option:any)=>string
 }
 
 export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
@@ -67,6 +68,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
     thumbnailUrl,
     metadata,
     isGroups,
+    getGroupByOption,
   }: ModalItemProps<T, G, O>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
@@ -253,7 +255,17 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
         </Grid>
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
           <Grid item sx={{marginTop:'10px'}}>
-            <ItemList handleAddAccessListItem={handleAddAccessListItem} setItemToAdd={setItemToAdd} items={listOfItem} handleSearchModalEditItem={handleSearchModalEditItem} removeItem={handleDeleteAccessListItem} searchBarLabel={searchBarLabel} setSearchInput={setSearchInput} handleGetOptionLabel={handleGetOtpionLabel}>
+            <ItemList
+              handleAddAccessListItem={handleAddAccessListItem}
+              setItemToAdd={setItemToAdd}
+              items={listOfItem}
+              handleSearchModalEditItem={handleSearchModalEditItem}
+              removeItem={handleDeleteAccessListItem}
+              searchBarLabel={searchBarLabel}
+              setSearchInput={setSearchInput}
+              handleGetOptionLabel={handleGetOtpionLabel}
+              getGroupByOption={getGroupByOption}
+            >
               {(accessListItem) => (
                 <Selector
                   selectorItems={rightsSelectorItems}

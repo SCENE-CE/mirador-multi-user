@@ -2,7 +2,7 @@ import { Grid, styled, Typography } from "@mui/material";
 import { ChangeEvent, Dispatch, ReactNode, SetStateAction, useCallback, useMemo, useState } from "react";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
-import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
 import { Media, MediaGroupRights} from "../types/types.ts";
 import toast from "react-hot-toast";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
@@ -132,6 +132,9 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   }
 
   const handleGrantAccess = async (mediaId:number) =>{
+    if(userToAdd == null){
+      toast.error("select an item in the list")
+    }
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
     await addMediaToGroup(mediaId, linkUserGroupToAdd!.user_group.id)
   }
@@ -207,6 +210,15 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       console.error('Error fetching the image:', error);
     }
   };
+
+  const getGroupByOption=(option:UserGroup):string =>{
+    if(option.type === UserGroupTypes.MULTI_USER ){
+      return 'Groups'
+    }
+    else{
+      return 'Users'
+    }
+  }
   console.log('medias',medias)
   return(
     <>
@@ -264,6 +276,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                       thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
                       updateItem={HandleUpdateMedia}
                       handleSelectorChange={handleChangeRights}
+                      getGroupByOption={getGroupByOption}
                     />
                   </Grid>
                 ))
@@ -302,6 +315,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                     setItemToAdd={setUserToAdd}
                     getAccessToItem={getAllMediaGroups}
                     handleSelectorChange={handleChangeRights}
+                    getGroupByOption={getGroupByOption}
                   />
                 </Grid>
               }
@@ -339,6 +353,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
                       setItemToAdd={setUserToAdd}
                       getAccessToItem={getAllMediaGroups}
                       handleSelectorChange={handleChangeRights}
+                      getGroupByOption={getGroupByOption}
                     />
                   </Grid>
                 ))

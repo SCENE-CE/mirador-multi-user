@@ -38,6 +38,7 @@ interface IMMUCardProps<T,G,O,X> {
   metadata?: Record<string, string>;
   isGroups?:boolean
   objectTypes:ObjectTypes
+  getGroupByOption?:(option:any)=>string
 }
 
 const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id:number} > (
@@ -68,7 +69,8 @@ const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id
     thumbnailUrl,
     metadata,
     isGroups,
-    objectTypes
+    objectTypes,
+    getGroupByOption
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -168,6 +170,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id
                     itemOwner={itemOwner}
                     deleteItem={deleteItem}
                     getOptionLabel={getOptionLabel}
+                    getGroupByOption={getGroupByOption}
                     setSearchInput={setSearchInput}
                     handleAddAccessListItem={handleAddAccessListItem}
                     item={item}

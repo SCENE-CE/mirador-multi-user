@@ -12,7 +12,7 @@ import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
-import { LinkUserGroup, ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
@@ -31,6 +31,7 @@ import { PaginationControls } from "../../../components/elements/Pagination.tsx"
 import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { ObjectTypes } from "../../tag/type.ts";
+import toast from "react-hot-toast";
 
 interface AllProjectsProps {
   user: User;
@@ -164,6 +165,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   }
 
   const handleAddUser = async ( projectId: number) => {
+    if(userToAdd == null){
+      toast.error("select an item in the list")
+    }
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
     await addProjectToGroup({ projectId:projectId, groupId:linkUserGroupToAdd!.user_group.id });
   };
@@ -179,9 +183,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number) => {
 
     await updateAccessToProject(
-    projectId,
-     group.id,
-     eventValue as ProjectRights,
+      projectId,
+      group.id,
+      eventValue as ProjectRights,
     );
 
   };
@@ -190,7 +194,8 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     return groupList.map((projectGroup) => ({
       id: projectGroup.user_group.id,
       title: projectGroup.user_group.title,
-      rights: projectGroup.rights
+      rights: projectGroup.rights,
+      type:projectGroup.user_group.type
     }));
   }, [groupList]);
 
@@ -201,14 +206,14 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const handleLookingForUserGroups = async (partialString: string) => {
     if(partialString.length > 0){
 
-    const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
-    const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
-      .filter(
-        (group, index, self) =>
-          index === self.findIndex((g) => g.id === group.id),
-      );
-    setUserGroupSearch(linkUserGroups);
-    return uniqueUserGroups
+      const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
+      const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
+        .filter(
+          (group, index, self) =>
+            index === self.findIndex((g) => g.id === group.id),
+        );
+      setUserGroupSearch(linkUserGroups);
+      return uniqueUserGroups
     }else{
       setUserGroupSearch([])
       return []
@@ -226,6 +231,15 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
       }else{
         setProjectFiltered(undefined)
       }
+    }
+  }
+
+  const getGroupByOption=(option:UserGroup):string =>{
+    if(option.type === UserGroupTypes.MULTI_USER ){
+      return 'Groups'
+    }
+    else{
+      return 'Users'
     }
   }
 
@@ -287,6 +301,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         removeAccessListItemFunction={handleRemoveUser}
                         setItemList={setGroupList}
                         metadata={projectUser.metadata}
+                        getGroupByOption={getGroupByOption}
                       />
                     </Grid>
                   )
@@ -334,6 +349,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       updateItem={updateUserProject}
                       removeAccessListItemFunction={handleRemoveUser}
                       setItemList={setGroupList}
+                      getGroupByOption={getGroupByOption}
                     />
                   </Grid>
                 </Grid>
@@ -370,6 +386,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                           updateItem={updateUserProject}
                           removeAccessListItemFunction={handleRemoveUser}
                           setItemList={setGroupList}
+                          getGroupByOption={getGroupByOption}
                         />
                       </Grid>
                     )

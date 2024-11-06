@@ -1,18 +1,11 @@
-import {
-  Divider,
-  FormControl,
-  Grid,
-  InputLabel,
-  MenuItem,
-  Select, SelectChangeEvent,
-  Typography
-} from "@mui/material";
+import { Divider, FormControl, Grid, InputLabel, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import { ProjectGroup, ProjectUser } from "../types/types.ts";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ProjectRights } from "../../user-group/types/types.ts";
+import { ProjectRights, UserGroupTypes } from "../../user-group/types/types.ts";
 import { updateProject } from "../api/updateProject.ts";
 import { BigSpinner } from "../../../components/elements/spinner.tsx";
-
+import PersonIcon from '@mui/icons-material/Person';
+import GroupsIcon from '@mui/icons-material/Groups';
 interface IProjectUserGroup {
   projectUser: ProjectUser;
   groupList: ProjectGroup[];
@@ -48,6 +41,15 @@ export const ProjectUserGroupList = ({ projectUser, groupList, setGroupList }: I
             <Grid key={projectGroup.id} item container flexDirection="row" alignItems="center">
               <Grid item sx={{ flexGrow: 1 }}>
                 <Typography>{projectGroup.user_group.title}</Typography>
+              </Grid>
+              <Grid>
+                {
+                  projectGroup.user_group.type === UserGroupTypes.PERSONAL ? (
+                    <PersonIcon/>
+                  ):(
+                    <GroupsIcon/>
+                  )
+                }
               </Grid>
               <Grid item container alignItems="center" justifyContent="flex-end" sx={{ width: 'auto' }}>
                 <Grid item>

@@ -24,6 +24,7 @@ import { Media } from "../../media/types/types.ts";
 import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { ObjectTypes } from "../../tag/type.ts";
+import toast from "react-hot-toast";
 
 
 interface allGroupsProps {
@@ -125,6 +126,9 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
 
   const grantingAccessToGroup = async ( user_group_id: number) => {
+    if(userToAdd == null){
+      toast.error("select an item in the list")
+    }
     const user_group = groups.find((groups)=> groups.id === user_group_id)
     await grantAccessToGroup(userToAdd!.user, user_group! )
   }
