@@ -31,6 +31,7 @@ import { PaginationControls } from "../../../components/elements/Pagination.tsx"
 import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { ObjectTypes } from "../../tag/type.ts";
+import toast from "react-hot-toast";
 
 interface AllProjectsProps {
   user: User;
@@ -164,6 +165,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   }
 
   const handleAddUser = async ( projectId: number) => {
+    if(userToAdd == null){
+      toast.error("select a user in the list")
+    }
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
     await addProjectToGroup({ projectId:projectId, groupId:linkUserGroupToAdd!.user_group.id });
   };
@@ -179,9 +183,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const handleChangeRights = async (group: ListItem, eventValue: string, projectId: number) => {
 
     await updateAccessToProject(
-    projectId,
-     group.id,
-     eventValue as ProjectRights,
+      projectId,
+      group.id,
+      eventValue as ProjectRights,
     );
 
   };
@@ -202,14 +206,14 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const handleLookingForUserGroups = async (partialString: string) => {
     if(partialString.length > 0){
 
-    const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
-    const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
-      .filter(
-        (group, index, self) =>
-          index === self.findIndex((g) => g.id === group.id),
-      );
-    setUserGroupSearch(linkUserGroups);
-    return uniqueUserGroups
+      const linkUserGroups : LinkUserGroup[] = await lookingForUserGroups(partialString);
+      const uniqueUserGroups : UserGroup[] = linkUserGroups.map((linkUserGroup) => linkUserGroup.user_group)
+        .filter(
+          (group, index, self) =>
+            index === self.findIndex((g) => g.id === group.id),
+        );
+      setUserGroupSearch(linkUserGroups);
+      return uniqueUserGroups
     }else{
       setUserGroupSearch([])
       return []
