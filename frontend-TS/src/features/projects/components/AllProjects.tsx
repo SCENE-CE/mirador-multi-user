@@ -32,6 +32,7 @@ import { updateAccessToProject } from "../api/UpdateAccessToProject.ts";
 import SettingsIcon from '@mui/icons-material/Settings';
 import { ObjectTypes } from "../../tag/type.ts";
 import toast from "react-hot-toast";
+import { duplicateProject } from "../api/duplicateProject.ts";
 
 interface AllProjectsProps {
   user: User;
@@ -248,6 +249,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setMedias(medias);
   }
 
+  const handleDuplicateProject = async (projectId: number) => {
+    await duplicateProject(projectId);
+  };
   return (
     <>
       <SidePanelMedia display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
@@ -275,6 +279,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                 {currentPageData.map((projectUser) => (
                     <Grid item key={projectUser.id}>
                       <MMUCard
+                        duplicateItem={handleDuplicateProject}
                         objectTypes={ObjectTypes.PROJECT}
                         thumbnailUrl={projectUser.thumbnailUrl ? projectUser.thumbnailUrl : null }
                         searchBarLabel={"Search"}
@@ -324,6 +329,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                 <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
                   <Grid item>
                     <MMUCard
+                      duplicateItem={handleDuplicateProject}
                       objectTypes={ObjectTypes.PROJECT}
                       metadata={searchedProject.metadata}
                       searchBarLabel={"Search Users"}
@@ -361,6 +367,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                   {projectFiltered.map((projectUser) => (
                       <Grid item key={projectUser.id}>
                         <MMUCard
+                          duplicateItem={handleDuplicateProject}
                           objectTypes={ObjectTypes.PROJECT}
                           metadata={projectUser.metadata}
                           searchBarLabel={"Search"}

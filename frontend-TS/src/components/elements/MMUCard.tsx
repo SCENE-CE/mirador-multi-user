@@ -24,6 +24,7 @@ interface IMMUCardProps<T,G,O,X> {
   listOfItem?: ListItem[],
   itemOwner:O,
   deleteItem?: (itemId: number) => void,
+  duplicateItem: (itemId: number) => void,
   getOptionLabel?: (option: any, searchInput: string) => string,
   AddAccessListItemFunction?: (itemId: number ) => Promise<void>,
   item : T,
@@ -70,7 +71,8 @@ const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id
     metadata,
     isGroups,
     objectTypes,
-    getGroupByOption
+    getGroupByOption,
+    duplicateItem
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
@@ -180,7 +182,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id
                     updateItem={updateItem}
                     rights={rights}
                     handleDeleteAccessListItem={handleRemoveAccessListItem}
-                  />
+                   duplicateItem={duplicateItem}/>
                 </>
               }/>
         </Grid>
