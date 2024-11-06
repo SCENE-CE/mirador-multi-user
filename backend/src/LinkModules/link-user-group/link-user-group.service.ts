@@ -3,22 +3,22 @@ import {
   ForbiddenException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LinkUserGroup } from './entities/link-user-group.entity';
-import { Brackets, QueryFailedError, Repository } from 'typeorm';
-import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
-import { UserGroupTypes } from '../../enum/user-group-types';
-import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
-import { User_UserGroupRights } from '../../enum/rights';
-import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
-import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
-import { UsersService } from '../../BaseEntities/users/users.service';
-import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-user-group.dto';
-import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
-import * as bcrypt from 'bcrypt';
-import { ActionType } from '../../enum/actions';
+  NotFoundException
+} from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { LinkUserGroup } from "./entities/link-user-group.entity";
+import { Brackets, QueryFailedError, Repository } from "typeorm";
+import { CreateLinkUserGroupDto } from "./dto/create-link-user-group.dto";
+import { UserGroupTypes } from "../../enum/user-group-types";
+import { UserGroup } from "../../BaseEntities/user-group/entities/user-group.entity";
+import { User_UserGroupRights } from "../../enum/rights";
+import { CustomLogger } from "../../utils/Logger/CustomLogger.service";
+import { UserGroupService } from "../../BaseEntities/user-group/user-group.service";
+import { UsersService } from "../../BaseEntities/users/users.service";
+import { CreateUserGroupDto } from "../../BaseEntities/user-group/dto/create-user-group.dto";
+import { CreateUserDto } from "../../BaseEntities/users/dto/create-user.dto";
+import * as bcrypt from "bcrypt";
+import { ActionType } from "../../enum/actions";
 
 @Injectable()
 export class LinkUserGroupService {
@@ -338,6 +338,7 @@ export class LinkUserGroupService {
         .limit(3)
         .getMany();
 
+      console.log('search for userGroup toReturn');
       console.log(toReturn);
       return toReturn;
     } catch (error) {
@@ -360,6 +361,7 @@ export class LinkUserGroupService {
           'linkUserGroup.rights',
           'userGroup.id',
           'userGroup.title',
+          'userGroup.type',
           'user.id',
         ])
         .where('userGroup.title LIKE :partialString', {
@@ -372,7 +374,7 @@ export class LinkUserGroupService {
           partialString: `%${partialGroupName}%`,
         })
         .limit(3)
-        .getMany();
+        .getMany()
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
