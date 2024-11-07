@@ -83,6 +83,8 @@ export class LinkGroupProjectService {
         where: { user_group: { id: userId } },
         relations: ['project'],
       });
+      console.log('------------------request------------------');
+      console.log(request);
       return request;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -114,7 +116,6 @@ export class LinkGroupProjectService {
 
   async duplicateProject(projectId: number): Promise<LinkGroupProject> {
     try {
-      console.log('service');
       const originalProject = await this.linkGroupProjectRepository.findOne({
         where: { project: { id: projectId } },
         relations: ['project', 'user_group'],
@@ -122,16 +123,11 @@ export class LinkGroupProjectService {
       if (!originalProject) {
         throw new NotFoundException(`Object with ID ${projectId} not found`);
       }
-      console.log('-----------------originalProject-----------------');
-      console.log(originalProject);
-      const toReturn = await this.createProject({
+      return await this.createProject({
         title: originalProject.project.title,
         ownerId: originalProject.project.ownerId,
         metadata: originalProject.project.metadata,
       });
-      console.log('------------toReturn------------')
-      console.log(toReturn)
-      return toReturn
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -424,6 +420,7 @@ export class LinkGroupProjectService {
           userProjects.filter((project) => !projects.includes(project)),
         );
       }
+      console.log('------------------projects------------------');
       console.log(projects);
       return projects;
     } catch (error) {

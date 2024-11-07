@@ -147,6 +147,11 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
     HandleOpenModalEdit()
   };
 
+  const confirmDuplicate = (itemId:number)=>{
+    duplicateItem(itemId)
+    setOpenDuplicateModal(!openDuplicateModal)
+  }
+
   return (
     <Grid container sx={{overflow:'scroll'}}>
       <Grid item container flexDirection="column">
@@ -356,8 +361,8 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
             <MMUModal width={400} openModal={openDuplicateModal} setOpenModal={handleConfirmDuplicateItem}>
               <Grid>
                 <Typography> Are you sure you want to duplicate <b>{itemLabel}</b> ?</Typography>
-                <Button onClick={()=>duplicateItem(item.id)}>Yes</Button>
-                <Button>No</Button>
+                <Button onClick={()=>confirmDuplicate(item.id)}>Yes</Button>
+                <Button onClick={()=>setOpenDuplicateModal(!openDuplicateModal)}>No</Button>
               </Grid>
             </MMUModal>
           </Grid>

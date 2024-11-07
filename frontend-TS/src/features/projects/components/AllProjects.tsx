@@ -152,7 +152,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     for(const projectUser of userProjectArray){
       projectArray.push(projectUser.project)
     }
-    console.log(projectArray);
     return projectArray;
   }
 
@@ -251,7 +250,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const handleDuplicateProject = async (projectId: number) => {
     await duplicateProject(projectId);
+    setOpenModalProjectId(null)
   };
+
   return (
     <>
       <SidePanelMedia display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>

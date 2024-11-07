@@ -215,7 +215,8 @@ export class LinkGroupProjectController {
   @Get('/user/projects/:userId')
   async getAllUsersProjects(@Param('userId') userId: number, @Req() request) {
     if (request.user.sub == userId) {
-      return await this.linkGroupProjectService.findAllUserProjects(userId);
+      const toreturn = await this.linkGroupProjectService.findAllUserProjects(userId);
+      return toreturn;
     } else {
       return new UnauthorizedException(
         'you are not allowed to request for this projects',
@@ -235,7 +236,6 @@ export class LinkGroupProjectController {
     @Param('projectId') projectId: number,
     @Req() request,
   ) {
-    console.log('controller')
     return await this.linkGroupProjectService.checkPolicies(
       request.metadata.action,
       request.user.sub,
