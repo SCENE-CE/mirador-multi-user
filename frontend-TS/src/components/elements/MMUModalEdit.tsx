@@ -301,33 +301,34 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
             flexDirection="row"
             sx={{ paddingTop: "20px" }}
           >
-            <Grid item>
-              {rights === ProjectRights.ADMIN && (
-                <Tooltip title={"Delete item"}>
-                  <Button
-                    color="error"
-                    onClick={handleConfirmDeleteItemModal}
-                    variant="contained"
-                  >
-                    DELETE
-                  </Button>
-                </Tooltip>
-              )}
+            <Grid item container xs={5} spacing={3}>
+              <Grid item>
+                {rights === ProjectRights.ADMIN && (
+                  <Tooltip title={"Delete item"}>
+                    <Button
+                      color="error"
+                      onClick={handleConfirmDeleteItemModal}
+                      variant="contained"
+                    >
+                      DELETE
+                    </Button>
+                  </Tooltip>
+                )}
+              </Grid>
+              <Grid item>
+                {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
+                  <Tooltip title="Duplicate">
+                    <Button
+                      color="primary"
+                      onClick={handleDuplicateModal}
+                      variant="contained"
+                    >
+                      DUPLICATE
+                    </Button>
+                  </Tooltip>
+                )}
+              </Grid>
             </Grid>
-            <Grid item>
-              {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
-                <Tooltip title="Duplicate">
-                  <Button
-                    color="primary"
-                    onClick={handleDuplicateModal}
-                    variant="contained"
-                  >
-                    DUPLICATE
-                  </Button>
-                </Tooltip>
-              )}
-            </Grid>
-
             <Grid
               item
               container
