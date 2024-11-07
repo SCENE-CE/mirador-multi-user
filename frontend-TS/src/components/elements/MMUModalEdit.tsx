@@ -1,4 +1,4 @@
-import { Button, Grid, SelectChangeEvent, TextField, Tooltip } from "@mui/material";
+import { Button, Grid, SelectChangeEvent, TextField, Tooltip, Typography } from "@mui/material";
 import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { ItemList } from "./ItemList.tsx";
@@ -17,12 +17,14 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
 
+
 interface ModalItemProps<T, G,O> {
   itemOwner: O,
   item: T,
   itemLabel: string,
   updateItem?: (newItem: T) => void,
   deleteItem?: (itemId: number) => void,
+  duplicateItem: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem?:(partialString:string)=>Promise<any[]> | any[]
   getOptionLabel?: (option: G, searchInput: string) => string,
@@ -69,13 +71,15 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
     metadata,
     isGroups,
     getGroupByOption,
+    duplicateItem,
   }: ModalItemProps<T, G, O>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
   const [newItemDate, setNewItemDate] = useState<Dayjs | null>(dayjs(item.created_at));
   const [newItemMetadataCreator, setNewItemMetadataCreator] = useState(metadata?.creator ? metadata.creator : null);
-  const [openModal, setOpenModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [openDuplicateModal, setOpenDuplicateModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<{ [key: string]: string }>(metadata || {});
 
   const handeUpdateMetadata = (updateData:any)=>{
@@ -112,7 +116,14 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
   }
 
   const handleConfirmDeleteItemModal =() => {
-    setOpenModal(!openModal);
+    setOpenDeleteModal(!openDeleteModal);
+  }
+  const handleConfirmDuplicateItem =() => {
+    setOpenDuplicateModal(!openDuplicateModal);
+  }
+
+  const handleDuplicateModal = ()=>{
+    setOpenDuplicateModal(!openDuplicateModal)
   }
 
   useEffect(() => {
@@ -135,6 +146,11 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
     handleUpdateItem();
     HandleOpenModalEdit()
   };
+
+  const confirmDuplicate = (itemId:number)=>{
+    duplicateItem(itemId)
+    setOpenDuplicateModal(!openDuplicateModal)
+  }
 
   return (
     <Grid container sx={{overflow:'scroll'}}>
@@ -285,20 +301,34 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
             flexDirection="row"
             sx={{ paddingTop: "20px" }}
           >
-            <Grid item>
-              {rights === ProjectRights.ADMIN && (
-                <Tooltip title={"Delete item"}>
-                  <Button
-                    color="error"
-                    onClick={handleConfirmDeleteItemModal}
-                    variant="contained"
-                  >
-                    DELETE
-                  </Button>
-                </Tooltip>
-              )}
+            <Grid item container xs={5} spacing={3}>
+              <Grid item>
+                {rights === ProjectRights.ADMIN && (
+                  <Tooltip title={"Delete item"}>
+                    <Button
+                      color="error"
+                      onClick={handleConfirmDeleteItemModal}
+                      variant="contained"
+                    >
+                      DELETE
+                    </Button>
+                  </Tooltip>
+                )}
+              </Grid>
+              <Grid item>
+                {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
+                  <Tooltip title="Duplicate">
+                    <Button
+                      color="primary"
+                      onClick={handleDuplicateModal}
+                      variant="contained"
+                    >
+                      DUPLICATE
+                    </Button>
+                  </Tooltip>
+                )}
+              </Grid>
             </Grid>
-
             <Grid
               item
               container
@@ -322,18 +352,22 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
                 </Button>
               </Grid>
             </Grid>
-
-            <MMUModal width={400} openModal={openModal} setOpenModal={handleConfirmDeleteItemModal}>
+            <MMUModal width={400} openModal={openDeleteModal} setOpenModal={handleConfirmDeleteItemModal}>
               <ModalConfirmDelete
                 deleteItem={deleteItem}
                 itemId={item.id}
                 itemName={itemLabel}
               />
             </MMUModal>
+            <MMUModal width={400} openModal={openDuplicateModal} setOpenModal={handleConfirmDuplicateItem}>
+              <Grid>
+                <Typography> Are you sure you want to duplicate <b>{itemLabel}</b> ?</Typography>
+                <Button onClick={()=>confirmDuplicate(item.id)}>Yes</Button>
+                <Button onClick={()=>setOpenDuplicateModal(!openDuplicateModal)}>No</Button>
+              </Grid>
+            </MMUModal>
           </Grid>
         )}
-
-
       </Grid>
     </Grid>
   )

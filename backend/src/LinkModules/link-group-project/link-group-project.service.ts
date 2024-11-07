@@ -83,6 +83,8 @@ export class LinkGroupProjectService {
         where: { user_group: { id: userId } },
         relations: ['project'],
       });
+      console.log('------------------request------------------');
+      console.log(request);
       return request;
     } catch (error) {
       throw new InternalServerErrorException(
@@ -109,6 +111,26 @@ export class LinkGroupProjectService {
         'An error occurred while updating the linkGroupProject',
         error,
       );
+    }
+  }
+
+  async duplicateProject(projectId: number): Promise<LinkGroupProject> {
+    try {
+      const originalProject = await this.linkGroupProjectRepository.findOne({
+        where: { project: { id: projectId } },
+        relations: ['project', 'user_group'],
+      });
+      if (!originalProject) {
+        throw new NotFoundException(`Object with ID ${projectId} not found`);
+      }
+      return await this.createProject({
+        title: originalProject.project.title,
+        ownerId: originalProject.project.ownerId,
+        metadata: originalProject.project.metadata,
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
     }
   }
 
@@ -184,8 +206,8 @@ export class LinkGroupProjectService {
           dto.project,
         );
       }
-      console.log('-------------------projectToReturn-------------------')
-      console.log(projectToReturn)
+      console.log('-------------------projectToReturn-------------------');
+      console.log(projectToReturn);
       return projectToReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -229,11 +251,10 @@ export class LinkGroupProjectService {
     }
   }
 
-
   async addProjectToGroup(dto: AddProjectToGroupDto) {
     const { groupId, projectId } = dto;
-    console.log('Enter add projects to Group')
-    console.log(dto)
+    console.log('Enter add projects to Group');
+    console.log(dto);
     try {
       const userGroup = await this.groupService.findOne(groupId);
       if (!userGroup) {
@@ -252,7 +273,7 @@ export class LinkGroupProjectService {
         user_group: userGroup,
         project: project,
       });
-      console.log(projectId)
+      console.log(projectId);
       return await this.findAllGroupProjectByUserGroupId(projectId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -339,8 +360,8 @@ export class LinkGroupProjectService {
         );
         userProjects.push(userPorject);
       }
-      console.log('------------------userProjects------------------')
-      console.log(userProjects)
+      console.log('------------------userProjects------------------');
+      console.log(userProjects);
       return userProjects;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -399,7 +420,8 @@ export class LinkGroupProjectService {
           userProjects.filter((project) => !projects.includes(project)),
         );
       }
-      console.log(projects)
+      console.log('------------------projects------------------');
+      console.log(projects);
       return projects;
     } catch (error) {
       this.logger.error(error.message, error.stack);

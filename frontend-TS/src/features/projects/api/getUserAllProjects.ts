@@ -1,4 +1,5 @@
 import storage from "../../../utils/storage.ts";
+import dayjs from "dayjs";
 
 export const getUserAllProjects = async (userPersonalGroupId: number) => {
   const token = storage.getToken();
@@ -10,7 +11,12 @@ export const getUserAllProjects = async (userPersonalGroupId: number) => {
       }
     });
 
-    return await response.json();
+    const projectData=  await response.json();
+    //convert created_at to dayJS for materialUI input in editModal
+    return projectData.map((project: any) => ({
+      ...project,
+      created_at: dayjs(project.created_at),
+    }));
   } catch (error) {
     throw error;
   }

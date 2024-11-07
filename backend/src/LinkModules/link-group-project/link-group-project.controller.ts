@@ -19,7 +19,12 @@ import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.
 import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
 import { LinkGroupProject } from './entities/link-group-project.entity';
 @ApiBearerAuth()
 @Controller('link-group-project')
@@ -28,7 +33,9 @@ export class LinkGroupProjectController {
     private readonly linkGroupProjectService: LinkGroupProjectService,
   ) {}
 
-  @ApiOperation({ summary: 'Find all Link between group and project for a specific group Id' })
+  @ApiOperation({
+    summary: 'Find all Link between group and project for a specific group Id',
+  })
   @UseGuards(AuthGuard)
   @Get('/:groupId')
   async getAllGroupProjects(@Param('groupId') groupId: number) {
@@ -171,7 +178,9 @@ export class LinkGroupProjectController {
   //   );
   // }
 
-  @ApiOperation({ summary: 'Search for a project that a specific group can access' })
+  @ApiOperation({
+    summary: 'Search for a project that a specific group can access',
+  })
   @ApiOkResponse({
     description: 'The project and rights for the user on it',
     type: LinkGroupProject,
@@ -206,11 +215,34 @@ export class LinkGroupProjectController {
   @Get('/user/projects/:userId')
   async getAllUsersProjects(@Param('userId') userId: number, @Req() request) {
     if (request.user.sub == userId) {
-      return await this.linkGroupProjectService.findAllUserProjects(userId);
+      const toreturn = await this.linkGroupProjectService.findAllUserProjects(userId);
+      return toreturn;
     } else {
       return new UnauthorizedException(
         'you are not allowed to request for this projects',
       );
     }
+  }
+  @ApiOperation({ summary: 'Duplicate a project' })
+  @ApiOkResponse({
+    description: 'Duplicate a project',
+    type: LinkGroupProject,
+    isArray: true,
+  })
+  @SetMetadata('action', ActionType.UPDATE)
+  @UseGuards(AuthGuard)
+  @Post('/project/duplicate/:projectId')
+  async duplicateProject(
+    @Param('projectId') projectId: number,
+    @Req() request,
+  ) {
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      projectId,
+      async () => {
+        return this.linkGroupProjectService.duplicateProject(projectId);
+      },
+    );
   }
 }
