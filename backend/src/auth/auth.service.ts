@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, UnauthorizedException } from "@nestjs/common";
+import {
+  ForbiddenException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../BaseEntities/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -15,11 +19,9 @@ export class AuthService {
     console.log('mail', mail);
     console.log('pass', pass);
 
-    if(!user) {
+    if (!user) {
       throw new ForbiddenException();
     }
-
-    // TODO password must be hashed before sending by front !!!
     const isMatch = await bcrypt.compare(pass, user.password);
     console.log(isMatch);
 

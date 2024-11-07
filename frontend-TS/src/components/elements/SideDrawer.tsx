@@ -172,8 +172,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const fetchUserPersonalGroup = async()=>{
     try{
       const personalGroup = await getUserPersonalGroup(user.id)
-      console.log('personalGroup')
-      console.log(personalGroup)
       setUserPersonalGroup(personalGroup)
       return personalGroup
     }catch(error){
@@ -429,7 +427,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         }
         {
           user && user.id && selectedContent === CONTENT.SETTING &&(
-            <UserSettings/>
+            <UserSettings user={user}/>
           )
         }
         {modalDisconectIsOpen &&(
