@@ -10,6 +10,13 @@ export type User = {
   userGroups:UserGroup[];
 }
 
+export type UpdateUserDto={
+  mail?:string,
+  name?:string,
+  password?:string,
+  newPassword?:string,
+}
+
 export type UserResponse = {
   "access_token":string;
   "user": User

@@ -1,11 +1,34 @@
-import { Controller } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  ForbiddenException,
+  Patch,
+  Req,
+  UseGuards,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UsersService } from './users.service';
-import { ApiBearerAuth } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
+import { AuthGuard } from '../../auth/auth.guard';
+import { UpdateUserDto } from './dto/update-user.dto';
 @ApiBearerAuth()
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
+  @ApiOperation({ summary: 'Update users credentials' })
+  @ApiOkResponse({
+    description: 'Update users credentials',
+    type: UpdateUserDto,
+    isArray: false,
+  })
+  @UseGuards(AuthGuard)
+  @Patch('update')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  updateUser(@Body() updateUserDto: UpdateUserDto, @Req() request) {
+    return this.usersService.updateUser(request.user.sub, updateUserDto);
+  }
   // this actions should only be possible if you are the super Admin of the platform, for now I disable this routes
   //
   // @UseGuards(AuthGuard)
