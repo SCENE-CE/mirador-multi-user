@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkUserGroup } from './entities/link-user-group.entity';
-import { Brackets, QueryFailedError, Repository } from 'typeorm';
+import { Brackets, Repository } from 'typeorm';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UserGroupTypes } from '../../enum/user-group-types';
 import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
@@ -92,6 +92,7 @@ export class LinkUserGroupService {
       const userToSave = createUserDto;
       userToSave.password = await bcrypt.hash(createUserDto.password, 10);
       const savedUser = await this.userService.create(userToSave);
+
       const userPersonalGroup = await this.groupService.create({
         title: savedUser.name,
         ownerId: savedUser.id,
@@ -104,7 +105,6 @@ export class LinkUserGroupService {
         userId: savedUser.id,
         user_groupId: userPersonalGroup.id,
       });
-
       await this.emailService.sendMail({
         to: savedUser.mail,
         subject: 'Arvest account creation',
@@ -114,7 +114,8 @@ export class LinkUserGroupService {
       return savedUser;
     } catch (error) {
       this.logger.error(error.message, error.stack);
-      if (error instanceof QueryFailedError) {
+      if (error.status === 409) {
+        this.logger.warn(error.message);
         throw new ConflictException('User creation failed', error.message);
       } else {
         this.logger.error(error.message, error.stack);

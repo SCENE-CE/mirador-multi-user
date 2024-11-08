@@ -40,8 +40,6 @@ export class UsersService {
         const hashedUpdatedPassword = await bcrypt.hash(newPassword, 10);
         dto = { ...dto, password: hashedUpdatedPassword };
       }
-      console.log('dto')
-      console.log(dto)
       return await this.userRepository.update(userId, dto);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -52,25 +50,19 @@ export class UsersService {
   }
   async create(dto: CreateUserDto): Promise<User> {
     try {
-      const existingUser = await this.userRepository.findOne({
-        where: { mail: dto.mail },
-      });
-      console.log('existingUser');
-      console.log(existingUser);
-      if (existingUser) {
-        throw new ConflictException('A user with this email already exists.');
-      }
       return await this.userRepository.save(dto);
     } catch (error) {
-      this.logger.error(error.message, error.stack);
       if (error instanceof QueryFailedError) {
-        throw new ConflictException('User creation failed', error.message);
-      } else {
-        this.logger.error(error.message, error.stack);
-        throw new InternalServerErrorException(
-          'An error occurred while creating the user',
-        );
+        this.logger.warn(`Conflict during user creation: ${error.message}`);
+        throw new ConflictException('A user with this email already exists.');
       }
+      this.logger.error(
+        `Unexpected error during user creation: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'An unexpected error occurred while creating the user',
+      );
     }
   }
 
