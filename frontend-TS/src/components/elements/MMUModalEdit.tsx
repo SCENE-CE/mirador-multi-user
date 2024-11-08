@@ -166,7 +166,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
         >
           <Grid
             item
-            sx={{ minHeight: '50px', width: '100%' }}
+            sx={{ minHeight: '50px', width: '100%', marginTop:'10px' }}
             container
             flexDirection="row"
             justifyContent="space-between"
