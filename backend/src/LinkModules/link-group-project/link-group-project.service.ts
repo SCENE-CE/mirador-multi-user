@@ -515,6 +515,7 @@ export class LinkGroupProjectService {
 
       fs.mkdirSync(uploadPath, { recursive: true });
       const workspaceData = {
+        generated_at: Date.now(),
         workspace: project.userWorkspace,
       };
       const workspaceJsonPath = `${uploadPath}/workspace.json`;
@@ -528,10 +529,10 @@ export class LinkGroupProjectService {
         snapShotHash: hash,
       });
 
-      console.log('----------------updateProject----------------')
-      console.log(updateProject)
+      console.log('----------------updateProject----------------');
+      console.log(updateProject);
       return {
-        snapShotPath: `${hash}/workspace.json`,
+        snapShotHash: `${hash}`,
       };
     } catch (error) {
       this.logger.error(error.message, error.stack);

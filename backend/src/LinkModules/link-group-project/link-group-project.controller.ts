@@ -248,6 +248,8 @@ export class LinkGroupProjectController {
   @UseGuards(AuthGuard)
   @Get('/snapshot/:projectId')
   async generateSnapshot(@Param('projectId') projectId: number) {
-    return await this.linkGroupProjectService.generateProjectSnapshot(projectId);
+    return await this.linkGroupProjectService.generateProjectSnapshot(
+      projectId,
+    );
   }
 }
