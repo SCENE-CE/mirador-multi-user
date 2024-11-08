@@ -11,9 +11,9 @@ interface IShareLinkProps {
   snapShotHash:string,
 }
 export const ShareLink =({ itemId, snapShotHash }:IShareLinkProps)=>{
-  const [projectUrl, setProjetUrl] = useState<string|null>(snapShotHash);
-
   const baseUrl = window.location.origin + window.location.pathname.split('/app')[0];
+  const [projectUrl, setProjetUrl] = useState<string|null>(`${baseUrl}/mirador/${snapShotHash}/workspace.json`);
+
   const HandleCopyToClipBoard = async () => {
     await navigator.clipboard.writeText(projectUrl!);
     console.log(projectUrl);
