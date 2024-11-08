@@ -48,6 +48,9 @@ import { TaggingModule } from './LinkModules/tagging/tagging.module';
         socketTimeout: 5000,
         connectionTimeout: 5000,
       },
+      defaults: {
+        from: `"${process.env.NAME_MAIL}" <${process.env.FROM_MAIL}>`,
+      },
       template: {
         dir: __dirname + './template/notification',
         adapter: new PugAdapter({ inlineCssEnabled: true }),

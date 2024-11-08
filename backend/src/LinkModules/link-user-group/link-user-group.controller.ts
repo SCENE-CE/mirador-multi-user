@@ -87,6 +87,7 @@ export class LinkUserGroupController {
   @Post('/user')
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {
+    console.log('enter create user')
     return await this.linkUserGroupService.createUser(createUserDto);
   }
 

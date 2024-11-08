@@ -56,6 +56,8 @@ services:
       SWAGGER_USER: ${SWAGGER_USER}
       SWAGGER_PASSWORD: ${SWAGGER_PASSWORD}
       ADMIN_MAIL: ${ADMIN_MAIL}
+      FROM_MAIL: ${FROM_MAIL}
+      NAME_MAIL: ${NAME_MAIL}
       LOG_LEVEL : ${LOG_LEVEL}
     depends_on:
       - db
