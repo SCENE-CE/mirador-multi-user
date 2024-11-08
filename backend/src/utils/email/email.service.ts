@@ -4,6 +4,8 @@ import { MailService } from './IMailService';
 import { CreateEmailServerDto } from './Dto/createEmailServerDto';
 import { accountCreationTemplate } from './templates/accountCreation';
 import { CustomLogger } from '../Logger/CustomLogger.service';
+import { ConfirmationEmailDto } from './Dto/ConfirmationEmailDto';
+import { confirmationEmailTemplate } from "./templates/confirmationEMail";
 @Injectable()
 export class EmailServerService implements MailService {
   private readonly logger = new CustomLogger();
@@ -11,7 +13,7 @@ export class EmailServerService implements MailService {
   constructor(private readonly mailerMain: MailerMain) {}
 
   async sendMail(email: CreateEmailServerDto): Promise<void> {
-    try{
+    try {
       const renderedTemplate = this._bodyTemplate(email.userName);
       const plainText = `Hello ${email.userName}, your account was successfully created!`;
 
@@ -32,6 +34,12 @@ export class EmailServerService implements MailService {
     // Use the template function to generate the HTML content
     return accountCreationTemplate({
       userName: userName,
+    });
+  }
+  private _confirmMailTemplate(url: string): string {
+    // Use the template function to generate the HTML content
+    return confirmationEmailTemplate({
+      url: url,
     });
   }
 
@@ -68,7 +76,7 @@ export class EmailServerService implements MailService {
     method: string;
     timestamp: string;
   }) {
-    console.log('Send mail internal server error')
+    console.log('Send mail internal server error');
     const subject = `Internal Server Error: ${details.url}`;
     const body = `
       An internal server error occurred:
@@ -78,8 +86,25 @@ export class EmailServerService implements MailService {
       - Timestamp: ${details.timestamp}
     `;
 
+    await this._processSendEmail(process.env.ADMIN_MAIL, subject, body, body);
+  }
 
-    await this._processSendEmail( process.env.ADMIN_MAIL,subject,body,body);
+  async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<void> {
+    try {
+      const renderedTemplate = this._confirmMailTemplate(email.url);
+      const plainText = `Welcome to Arvest. To confirm the email address, click here: ${email.url}`;
+
+      const toReturn = await this._processSendEmail(
+        email.to,
+        email.subject,
+        plainText,
+        renderedTemplate,
+      );
+      return toReturn;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException('an error occurred', error);
+    }
   }
 
   async _processSendEmail(to, subject, text, body): Promise<void> {

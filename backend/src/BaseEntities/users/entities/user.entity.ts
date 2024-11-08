@@ -29,6 +29,9 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'current_timestamp' })
   createdAt!: Date;
 
+  @Column({ default: false })
+  isEmailConfirmed: boolean;
+
   @OneToMany(() => LinkUserGroup, (linkUserGroup) => linkUserGroup.user, {
     cascade: true,
     onDelete: 'CASCADE',

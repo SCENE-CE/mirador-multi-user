@@ -21,6 +21,7 @@ import { CustomLogger } from './utils/Logger/CustomLogger.service';
 import { LinkManifestGroupModule } from './LinkModules/link-manifest-group/link-manifest-group.module';
 import { TagModule } from './BaseEntities/tag/tag.module';
 import { TaggingModule } from './LinkModules/tagging/tagging.module';
+import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
 
 @Module({
   imports: [
@@ -73,6 +74,7 @@ import { TaggingModule } from './LinkModules/tagging/tagging.module';
     EmailServerModule,
     TagModule,
     TaggingModule,
+    EmailConfirmationModule,
   ],
   controllers: [AppController],
   providers: [
