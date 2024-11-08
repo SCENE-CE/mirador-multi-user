@@ -40,8 +40,8 @@ export const ShareLink =({ itemId, snapShotHash }:IShareLinkProps)=>{
               <>
                 <Grid item xs={8}>
                   <TextField
-                    label="ProjectUrl"
-                    value={projectUrl? `${baseUrl}/mirador/${projectUrl}`:''}
+                    label="Project snapshot Url"
+                    value={projectUrl? `${projectUrl}`:''}
                     disabled
                     fullWidth
                     defaultValue={projectUrl}
