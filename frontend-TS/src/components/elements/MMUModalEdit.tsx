@@ -46,7 +46,7 @@ interface ModalItemProps<T, G,O> {
   getGroupByOption?:(option:any)=>string
 }
 
-export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
+export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapShotHash:string }, G>(
   {
     itemLabel,
     setItemToAdd,
@@ -272,6 +272,8 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs }, G>(
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
           <Grid item sx={{marginTop:'10px'}}>
             <ItemList
+              item={item}
+              snapShotHash={item.snapShotHash}
               handleAddAccessListItem={handleAddAccessListItem}
               setItemToAdd={setItemToAdd}
               items={listOfItem}

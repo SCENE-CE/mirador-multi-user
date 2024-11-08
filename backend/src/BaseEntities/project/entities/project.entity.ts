@@ -10,7 +10,7 @@ import {
 import { User } from '../../users/entities/user.entity';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
-import { Tag } from "../../tag/entities/tag.entity";
+import { Tag } from '../../tag/entities/tag.entity';
 
 @Entity()
 export class Project {
@@ -37,6 +37,9 @@ export class Project {
   @Column({ type: 'json', nullable: true })
   metadata: any;
 
+  @Column({ nullable: true })
+  snapShotHash: string;
+
   @CreateDateColumn({
     type: 'timestamp',
     default: () => 'CURRENT_TIMESTAMP(6)',
@@ -45,7 +48,8 @@ export class Project {
 
   @OneToMany(
     () => LinkGroupProject,
-    (linkGroupProject) => linkGroupProject.project,{
+    (linkGroupProject) => linkGroupProject.project,
+    {
       onDelete: 'CASCADE',
     },
   )
