@@ -10,22 +10,18 @@ import {
   Req,
   SetMetadata,
   UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
-import { LinkGroupProjectService } from './link-group-project.service';
-import { AuthGuard } from '../../auth/auth.guard';
-import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
-import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.dto';
-import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
-import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
-import { ActionType } from '../../enum/actions';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOkResponse,
-  ApiOperation,
-} from '@nestjs/swagger';
-import { LinkGroupProject } from './entities/link-group-project.entity';
+  UseGuards
+} from "@nestjs/common";
+import { LinkGroupProjectService } from "./link-group-project.service";
+import { AuthGuard } from "../../auth/auth.guard";
+import { AddProjectToGroupDto } from "./dto/addProjectToGroupDto";
+import { CreateProjectDto } from "../../BaseEntities/project/dto/create-project.dto";
+import { UpdateProjectGroupDto } from "./dto/updateProjectGroupDto";
+import { UpdateAccessToProjectDto } from "./dto/updateAccessToProjectDto";
+import { ActionType } from "../../enum/actions";
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { LinkGroupProject } from "./entities/link-group-project.entity";
+
 @ApiBearerAuth()
 @Controller('link-group-project')
 export class LinkGroupProjectController {
@@ -215,7 +211,8 @@ export class LinkGroupProjectController {
   @Get('/user/projects/:userId')
   async getAllUsersProjects(@Param('userId') userId: number, @Req() request) {
     if (request.user.sub == userId) {
-      const toreturn = await this.linkGroupProjectService.findAllUserProjects(userId);
+      const toreturn =
+        await this.linkGroupProjectService.findAllUserProjects(userId);
       return toreturn;
     } else {
       return new UnauthorizedException(
@@ -243,6 +240,16 @@ export class LinkGroupProjectController {
       async () => {
         return this.linkGroupProjectService.duplicateProject(projectId);
       },
+    );
+  }
+
+  @ApiOperation({ summary: 'Create project snapshot' })
+  @SetMetadata('action', ActionType.UPDATE)
+  @UseGuards(AuthGuard)
+  @Get('/snapshot/:projectId')
+  async generateSnapshot(@Param('projectId') projectId: number) {
+    return await this.linkGroupProjectService.generateProjectSnapshot(
+      projectId,
     );
   }
 }

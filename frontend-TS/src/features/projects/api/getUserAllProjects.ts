@@ -12,6 +12,7 @@ export const getUserAllProjects = async (userPersonalGroupId: number) => {
     });
 
     const projectData=  await response.json();
+    console.log(projectData)
     //convert created_at to dayJS for materialUI input in editModal
     return projectData.map((project: any) => ({
       ...project,

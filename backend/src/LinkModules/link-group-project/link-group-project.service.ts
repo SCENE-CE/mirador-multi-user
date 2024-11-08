@@ -22,6 +22,8 @@ import { LinkUserGroupService } from '../link-user-group/link-user-group.service
 import { Project } from '../../BaseEntities/project/entities/project.entity';
 import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
 import { ActionType } from '../../enum/actions';
+import { generateAlphanumericSHA1Hash } from '../../utils/hashGenerator';
+import * as fs from 'fs';
 
 @Injectable()
 export class LinkGroupProjectService {
@@ -206,8 +208,6 @@ export class LinkGroupProjectService {
           dto.project,
         );
       }
-      console.log('-------------------projectToReturn-------------------');
-      console.log(projectToReturn);
       return projectToReturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -360,8 +360,6 @@ export class LinkGroupProjectService {
         );
         userProjects.push(userPorject);
       }
-      console.log('------------------userProjects------------------');
-      console.log(userProjects);
       return userProjects;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -420,8 +418,6 @@ export class LinkGroupProjectService {
           userProjects.filter((project) => !projects.includes(project)),
         );
       }
-      console.log('------------------projects------------------');
-      console.log(projects);
       return projects;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -503,6 +499,41 @@ export class LinkGroupProjectService {
           throw new InternalServerErrorException('Invalid action');
       }
       return new ForbiddenException('User is not allowed to do this action');
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
+    }
+  }
+
+  async generateProjectSnapshot(projectId: number) {
+    try {
+      const project = await this.projectService.findOne(projectId);
+      const hash = generateAlphanumericSHA1Hash(
+        `${project.title}${Date.now().toString()}`,
+      );
+      const uploadPath = `./upload/${hash}`;
+
+      fs.mkdirSync(uploadPath, { recursive: true });
+      const workspaceData = {
+        generated_at: Date.now(),
+        workspace: project.userWorkspace,
+      };
+      const workspaceJsonPath = `${uploadPath}/workspace.json`;
+      fs.writeFileSync(
+        workspaceJsonPath,
+        JSON.stringify(workspaceData, null, 2),
+        'utf-8',
+      );
+      const updateProject = await this.projectService.update(projectId, {
+        id: projectId,
+        snapShotHash: hash,
+      });
+
+      console.log('----------------updateProject----------------');
+      console.log(updateProject);
+      return {
+        snapShotHash: `${hash}`,
+      };
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(`an error occurred`, error);
