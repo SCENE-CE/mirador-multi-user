@@ -99,12 +99,15 @@ export class EmailServerService implements MailService {
 
   async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<void> {
     try {
-      const token = this.jwtService.sign({
-        secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
-        expiresIn: `2100s`,
-      });
+      const token = this.jwtService.sign(
+        { email: email.to },
+        {
+          secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
+          expiresIn: '2100s',
+        },
+      );
 
-      const url = `${process.env.FRONTEND_URL}token=${token}`;
+      const url = `${process.env.FRONTEND_URL}/token/${token}`;
 
       const renderedTemplate = this._confirmMailTemplate(url, email.userName);
       const plainText = `Welcome to Arvest. To confirm the email address, click here: ${url}`;

@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   Injectable,
@@ -124,6 +125,18 @@ export class LinkUserGroupService {
         );
       }
     }
+  }
+
+  public async resendConfirmationLink(email: string) {
+    const user = await this.userService.findOneByMail(email);
+    if (user.isEmailConfirmed) {
+      throw new BadRequestException('Email already confirmed');
+    }
+    await this.emailService.sendConfirmationEmail({
+      to: user.mail,
+      subject: 'Arvest account creation',
+      userName: user.name,
+    });
   }
 
   async createUserGroup(
