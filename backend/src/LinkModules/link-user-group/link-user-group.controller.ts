@@ -3,15 +3,15 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
+  HttpCode, InternalServerErrorException,
   Param,
   Patch,
   Post,
   Req,
   SetMetadata,
   UnauthorizedException,
-  UseGuards,
-} from '@nestjs/common';
+  UseGuards
+} from "@nestjs/common";
 import { LinkUserGroupService } from './link-user-group.service';
 import { CreateLinkUserGroupDto } from './dto/create-link-user-group.dto';
 import { UpdateLinkUserGroupDto } from './dto/update-link-user-group.dto';

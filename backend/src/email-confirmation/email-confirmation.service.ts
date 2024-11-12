@@ -1,28 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { ConfigService } from '@nestjs/config';
-import { EmailServerService } from '../utils/email/email.service';
+import { UsersService } from '../BaseEntities/users/users.service';
 
 @Injectable()
 export class EmailConfirmationService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly configService: ConfigService,
-    private readonly emailService: EmailServerService,
+    private readonly usersService: UsersService,
   ) {}
 
-  public sendVerificationLink(email: string) {
-    const token = this.jwtService.sign({
-      secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
-      expiresIn: `2100s`,
-    });
+  public async confirmEmail(email: string) {
+    const user = await this.usersService.getByEmail(email);
+    if (user.isEmailConfirmed) {
+      throw new BadRequestException('Email already confirmed');
+    }
+    await this.usersService.markEmailAsConfirmed(email);
+  }
 
-    const url = `${this.configService.get('EMAIL_CONFIRMATION_URL')}?token=${token}`;
+  public async decodeConfirmationToken(token: string) {
+    try {
+      const payload = await this.jwtService.verify(token, {
+        secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
+      });
 
-    return this.emailService.sendConfirmationEmail({
-      to: email,
-      subject: 'Email confirmation',
-      url: url,
-    });
+      if (typeof payload === 'object' && 'email' in payload) {
+        return payload.email;
+      }
+      throw new BadRequestException();
+    } catch (error) {
+      if (error?.name === 'TokenExpiredError') {
+        throw new BadRequestException('Email confirmation token expired');
+      }
+      throw new BadRequestException('Bad confirmation token');
+    }
   }
 }

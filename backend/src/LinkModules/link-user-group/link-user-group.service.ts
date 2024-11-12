@@ -105,7 +105,7 @@ export class LinkUserGroupService {
         userId: savedUser.id,
         user_groupId: userPersonalGroup.id,
       });
-      await this.emailService.sendMail({
+      await this.emailService.sendConfirmationEmail({
         to: savedUser.mail,
         subject: 'Arvest account creation',
         userName: savedUser.name,

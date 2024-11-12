@@ -46,8 +46,9 @@ import { EmailConfirmationModule } from './email-confirmation/email-confirmation
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASSWORD,
         },
-        socketTimeout: 5000,
-        connectionTimeout: 5000,
+        socketTimeout: 10000,
+        connectionTimeout: 10000,
+        debug: true,
       },
       defaults: {
         from: `"${process.env.NAME_MAIL}" <${process.env.FROM_MAIL}>`,
