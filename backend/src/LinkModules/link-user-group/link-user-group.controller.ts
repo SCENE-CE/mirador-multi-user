@@ -19,7 +19,7 @@ import { AuthGuard } from '../../auth/auth.guard';
 import { CreateUserGroupDto } from '../../BaseEntities/user-group/dto/create-user-group.dto';
 import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import { ActionType } from '../../enum/actions';
-import { ApiBearerAuth, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
 import { LinkUserGroup } from './entities/link-user-group.entity';
 @ApiBearerAuth()
@@ -48,7 +48,9 @@ export class LinkUserGroupController {
     );
   }
 
-  @ApiOperation({ summary: 'Find all groups where a user is part of the group' })
+  @ApiOperation({
+    summary: 'Find all groups where a user is part of the group',
+  })
   @ApiOkResponse({
     description: 'The groups the user can access and his rights on them',
     type: LinkGroupProject,
@@ -77,7 +79,6 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.getAccessForUserToGroup(userId, groupId);
   }
 
-
   @ApiOperation({ summary: 'Create a user' })
   @ApiOkResponse({
     description: 'The user creation route',
@@ -87,7 +88,7 @@ export class LinkUserGroupController {
   @Post('/user')
   @HttpCode(201)
   async createUser(@Body() createUserDto: CreateUserDto) {
-    console.log('enter create user')
+    console.log('enter create user');
     return await this.linkUserGroupService.createUser(createUserDto);
   }
 
@@ -128,7 +129,18 @@ export class LinkUserGroupController {
     );
   }
 
-  @ApiOperation({ summary: 'search for a user personnalGroup with a string matching the start of his title' })
+
+  @ApiOperation({ summary: 'Resend mail for confirmation to the user' })
+  @Get('resend-confirmation-link/:email')
+  async resendConfirmationLink(@Param('email') email: string) {
+    console.log('resending mail controller')
+    await this.linkUserGroupService.resendConfirmationLink(email);
+  }
+
+  @ApiOperation({
+    summary:
+      'search for a user personnalGroup with a string matching the start of his title',
+  })
   @ApiOkResponse({
     description: 'Looking for for user',
     isArray: false,
@@ -139,7 +151,9 @@ export class LinkUserGroupController {
     return this.linkUserGroupService.searchForUserGroup(partialString);
   }
 
-  @ApiOperation({ summary: 'search for a group with a string matching the start of his title' })
+  @ApiOperation({
+    summary: 'search for a group with a string matching the start of his title',
+  })
   @ApiOkResponse({
     description: 'Looking for userGroup',
     isArray: false,

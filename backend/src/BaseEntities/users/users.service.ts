@@ -1,4 +1,5 @@
 import {
+  BadGatewayException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -82,6 +83,30 @@ export class UsersService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new NotFoundException(`User not found :${id}`);
+    }
+  }
+
+  async markEmailAsConfirmed(mail: string) {
+    try {
+      return this.userRepository.update(
+        { mail },
+        {
+          isEmailConfirmed: true,
+        },
+      );
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new NotFoundException(`User no found ${mail}`);
+    }
+  }
+  async getByEmail(mail: string) {
+    try {
+      return await this.userRepository.findOne({ where: { mail: mail } });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new BadGatewayException(
+        `Impossible to update user with mail : ${mail}`,
+      );
     }
   }
 }

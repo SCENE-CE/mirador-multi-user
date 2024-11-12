@@ -21,6 +21,7 @@ import { CustomLogger } from './utils/Logger/CustomLogger.service';
 import { LinkManifestGroupModule } from './LinkModules/link-manifest-group/link-manifest-group.module';
 import { TagModule } from './BaseEntities/tag/tag.module';
 import { TaggingModule } from './LinkModules/tagging/tagging.module';
+import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
 
 @Module({
   imports: [
@@ -45,8 +46,9 @@ import { TaggingModule } from './LinkModules/tagging/tagging.module';
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASSWORD,
         },
-        socketTimeout: 5000,
-        connectionTimeout: 5000,
+        socketTimeout: 10000,
+        connectionTimeout: 10000,
+        debug: true,
       },
       defaults: {
         from: `"${process.env.NAME_MAIL}" <${process.env.FROM_MAIL}>`,
@@ -73,6 +75,7 @@ import { TaggingModule } from './LinkModules/tagging/tagging.module';
     EmailServerModule,
     TagModule,
     TaggingModule,
+    EmailConfirmationModule,
   ],
   controllers: [AppController],
   providers: [

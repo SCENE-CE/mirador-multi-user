@@ -28,7 +28,11 @@ export class AuthService {
     if (!isMatch) {
       throw new UnauthorizedException();
     }
-    const payload = { sub: user.id, user: user.name };
+    const payload = {
+      sub: user.id,
+      user: user.name,
+      isEmailConfirmed: user.isEmailConfirmed,
+    };
 
     return {
       access_token: await this.jwtService.signAsync(payload),
