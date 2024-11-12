@@ -29,7 +29,7 @@ export const NotConfirmedAccount = ({}) => {
   return (
     <Grid container direction="column" alignItems="center" spacing={2}>
       <Grid item>
-        <Typography variant="h6" color="error">
+        <Typography variant="h6">
           You must confirm your email
         </Typography>
       </Grid>

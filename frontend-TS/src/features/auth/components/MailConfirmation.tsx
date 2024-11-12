@@ -30,9 +30,14 @@ export const MailConfirmation = () => {
   };
 
   return (
-    <Grid container alignItems="center" justifyContent="center">
+    <Grid container alignItems="center" justifyContent="center" sx={{ height:"100vh", width:"100vw"}}>
       <Grid item>
-        <Button onClick={handleConfirmMail}>Confirm Email</Button>
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleConfirmMail}>
+          Confirm Email
+        </Button>
       </Grid>
     </Grid>
   );
