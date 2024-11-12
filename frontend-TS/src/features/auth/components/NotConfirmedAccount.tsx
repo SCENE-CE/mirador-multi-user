@@ -2,6 +2,7 @@ import { Button, CircularProgress, Grid, TextField, Typography } from "@mui/mate
 import { ResendConfirmationMail } from "../api/resendConfirmationMail.ts";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { Layout } from "./layout.tsx";
 
 
 export const NotConfirmedAccount = ({}) => {
@@ -27,43 +28,44 @@ export const NotConfirmedAccount = ({}) => {
   };
 
   return (
-    <Grid container direction="column" alignItems="center" spacing={2}>
-      <Grid item>
-        <Typography variant="h6">
-          You must confirm your email
-        </Typography>
-      </Grid>
-      <Grid item>
-        <TextField
-          label="Email Address"
-          variant="outlined"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          fullWidth
-        />
-      </Grid>
-      <Grid item>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleResendConfirmation}
-          disabled={isLoading || success || !email}
-        >
-          {isLoading ? <CircularProgress size={24} /> : 'Resend Confirmation Link'}
-        </Button>
-      </Grid>
-      {error && (
+    <Layout title="You must confirm your email">
+      <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2}>
         <Grid item>
-          <Typography color="error">{error}</Typography>
-        </Grid>
-      )}
-      {success && (
-        <Grid item>
-          <Typography color="primary">
-            Confirmation link has been resent. You will be redirected shortly.
+          <Typography variant="h6">
           </Typography>
         </Grid>
-      )}
-    </Grid>
+        <Grid item>
+          <TextField
+            label="Email Address"
+            variant="outlined"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            fullWidth
+          />
+        </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleResendConfirmation}
+            disabled={isLoading || success || !email}
+          >
+            {isLoading ? <CircularProgress size={24} /> : 'Resend Confirmation Link'}
+          </Button>
+        </Grid>
+        {error && (
+          <Grid item>
+            <Typography color="error">{error}</Typography>
+          </Grid>
+        )}
+        {success && (
+          <Grid item>
+            <Typography color="primary">
+              Confirmation link has been resent. You will be redirected shortly.
+            </Typography>
+          </Grid>
+        )}
+      </Grid>
+    </Layout>
   );
 };
