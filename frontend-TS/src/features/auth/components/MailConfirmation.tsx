@@ -2,6 +2,7 @@ import { Button, Grid } from "@mui/material";
 import { confirmationMail } from "../api/confirmationMail.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
+import { Layout } from "./layout.tsx";
 
 export const MailConfirmation = () => {
   const location = useLocation();
@@ -19,8 +20,8 @@ export const MailConfirmation = () => {
     if (token) {
       const returnData = await confirmationMail(token);
       if(returnData.status === 201){
-      toast.success(returnData.message);
-      navigate("/");
+        toast.success(returnData.message);
+        navigate("/");
       }else{
         toast.error('an error occurred')
       }
@@ -30,15 +31,15 @@ export const MailConfirmation = () => {
   };
 
   return (
-    <Grid container alignItems="center" justifyContent="center" sx={{ height:"100vh", width:"100vw"}}>
-      <Grid item>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleConfirmMail}>
-          Confirm Email
-        </Button>
-      </Grid>
-    </Grid>
+    <Layout title="Confirmation Mail">
+        <Grid item>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleConfirmMail}>
+            Confirm Email
+          </Button>
+        </Grid>
+    </Layout>
   );
 }
