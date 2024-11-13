@@ -1,12 +1,14 @@
 import { Grid, Typography } from "@mui/material";
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { NavLink } from "react-router-dom";
+import { ReactNode } from "react";
 type LayoutProps = {
-  children: React.ReactNode;
+  children: ReactNode;
+  rightButton?: ReactNode;
   title: string;
 };
 
-export const  Layout = ({ children, title }: LayoutProps) => {
+export const  Layout = ({ children, title, rightButton }: LayoutProps) => {
   return(
     <Grid
       container
@@ -26,39 +28,24 @@ export const  Layout = ({ children, title }: LayoutProps) => {
         alignItems="center"
       >
         <Grid item>
-        <NavLink to="/">
-        <ArrowBackIcon />
-        </NavLink>
+          <NavLink to="/">
+            <ArrowBackIcon />
+          </NavLink>
         </Grid>
         <Grid item>
-        <Typography
-          variant="h2"
-          component="h1"
-        >
-          {title}
-        </Typography>
+          <Typography
+            variant="h2"
+            component="h1"
+          >
+            {title}
+          </Typography>
         </Grid>
-        {
-          title==="Create your account" &&(
-            <Grid>
-              <NavLink to="/auth/login">
-                <Typography variant="button">
-                  LOGIN
-                </Typography>
-              </NavLink>
-            </Grid>
-          )
-        }
-        {
-          title==="Log in to your account"&&(
-            <Grid>
-              <NavLink to="/auth/signin">
-                <Typography variant="button">
-                  REGISTER
-                </Typography>
-              </NavLink>
-            </Grid>
-          )
+        { rightButton ? (
+          rightButton
+        ):(
+        <Grid>
+        </Grid>
+        )
         }
       </Grid>
       <Grid item container
