@@ -45,7 +45,6 @@ export class MediaLinkInterceptor implements NestInterceptor {
 
     const data = await response.json();
     let thumbnailUrl = data.thumbnailPath;
-    // Check if thumbnailUrl is relative, and if so, make it absolute
     if (!thumbnailUrl.startsWith('http')) {
       thumbnailUrl = `${baseDomain}${thumbnailUrl}`;
     }
