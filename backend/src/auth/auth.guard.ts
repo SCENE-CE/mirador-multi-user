@@ -6,15 +6,22 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
+import { Reflector } from '@nestjs/core';
+import { ActionType } from '../enum/actions';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(
     private jwtService: JwtService,
+    private reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    const action = this.reflector.get<ActionType>(
+      'action',
+      context.getHandler(),
+    );
     const token = this.extractTokenFromHeader(request);
     if (!token) {
       throw new UnauthorizedException();
@@ -31,6 +38,7 @@ export class AuthGuard implements CanActivate {
 
       // Assign payload to the request object for use in route handlers
       request['user'] = payload;
+      request.metadata = { action };
     } catch {
       throw new UnauthorizedException();
     }

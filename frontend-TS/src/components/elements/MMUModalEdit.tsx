@@ -24,7 +24,7 @@ interface ModalItemProps<T, G,O> {
   itemLabel: string,
   updateItem?: (newItem: T) => void,
   deleteItem?: (itemId: number) => void,
-  duplicateItem: (itemId: number) => void,
+  duplicateItem?: (itemId: number) => void,
   handleDeleteAccessListItem: (itemId: number) => void,
   searchModalEditItem?:(partialString:string)=>Promise<any[]> | any[]
   getOptionLabel?: (option: G, searchInput: string) => string,
@@ -46,7 +46,7 @@ interface ModalItemProps<T, G,O> {
   getGroupByOption?:(option:any)=>string
 }
 
-export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapShotHash:string }, G>(
+export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapShotHash?:string }, G>(
   {
     itemLabel,
     setItemToAdd,
@@ -148,8 +148,10 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
   };
 
   const confirmDuplicate = (itemId:number)=>{
+    if(duplicateItem){
     duplicateItem(itemId)
     setOpenDuplicateModal(!openDuplicateModal)
+    }
   }
 
   return (
@@ -273,7 +275,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
           <Grid item sx={{marginTop:'10px'}}>
             <ItemList
               item={item}
-              snapShotHash={item.snapShotHash}
+              snapShotHash={item.snapShotHash? item.snapShotHash : "" }
               handleAddAccessListItem={handleAddAccessListItem}
               setItemToAdd={setItemToAdd}
               items={listOfItem}
@@ -318,7 +320,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
                 )}
               </Grid>
               <Grid item>
-                {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
+                {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && duplicateItem &&(
                   <Tooltip title="Duplicate">
                     <Button
                       color="primary"

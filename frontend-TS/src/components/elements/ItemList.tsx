@@ -34,7 +34,7 @@ interface IProjectUserGroup<G,T> {
   snapShotHash:string
 }
 
-export const ItemList = <G,T extends { id: number,snapShotHash:string}>(
+export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
   {
     items,
     children,
@@ -61,7 +61,7 @@ export const ItemList = <G,T extends { id: number,snapShotHash:string}>(
       <AccordionDetails style={{ maxHeight: "400px", overflowY: "auto" }}>
         <Grid container item spacing={2}>
           <Grid container item alignItems="center" spacing={2}>
-            <ShareLink  itemId={item.id} snapShotHash={item.snapShotHash}/>
+            <ShareLink  itemId={item.id} snapShotHash={item.snapShotHash? item.snapShotHash : "" }/>
           </Grid>
           <Grid container item alignItems="center" spacing={2}>
             <Grid item>

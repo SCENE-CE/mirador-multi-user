@@ -119,6 +119,8 @@ export class LinkMediaGroupController {
   @UseGuards(AuthGuard)
   @Delete('/media/:mediaId')
   async deleteMedia(@Param('mediaId') mediaId: number, @Req() request) {
+    console.log('request.metadata.action');
+    console.log(request.metadata.action);
     return await this.linkMediaGroupService.checkPolicies(
       request.metadata.action,
       request.user.sub,

@@ -33,11 +33,14 @@ export class LinkUserGroupController {
     type: LinkUserGroup,
     isArray: true,
   })
+
   @SetMetadata('action', ActionType.READ)
   @UseGuards(AuthGuard)
   @Get('/users/:groupId')
   async getAllUsersForGroup(@Param('groupId') groupId: number, @Req() request) {
     console.log('enter getAllUsersForGroup');
+    console.log('request.metadata')
+    console.log(request.metadata)
     return await this.linkUserGroupService.checkPolicies(
       request.metadata.action,
       request.user.sub,

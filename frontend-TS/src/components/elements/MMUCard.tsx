@@ -24,7 +24,7 @@ interface IMMUCardProps<T,G,O,X> {
   listOfItem?: ListItem[],
   itemOwner:O,
   deleteItem?: (itemId: number) => void,
-  duplicateItem: (itemId: number) => void,
+  duplicateItem?: (itemId: number) => void,
   getOptionLabel?: (option: any, searchInput: string) => string,
   AddAccessListItemFunction?: (itemId: number ) => Promise<void>,
   item : T,
@@ -42,7 +42,7 @@ interface IMMUCardProps<T,G,O,X> {
   getGroupByOption?:(option:any)=>string
 }
 
-const MMUCard = <T extends { id: number, created_at:Dayjs },G, O, X extends { id:number} > (
+const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string },G, O, X extends { id:number} > (
   {
     id,
     rights,
