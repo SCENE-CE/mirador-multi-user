@@ -30,12 +30,10 @@ export const LoginForm = ()=>{
       console.error('Login error:', error);
     }
   };
-  return(
+  return (
     <form>
       <Grid
         container
-        justifyContent="center"
-        alignItems="center"
         flexDirection="column"
         spacing={2}
       >
@@ -49,20 +47,28 @@ export const LoginForm = ()=>{
             error={errors.mail}
           />
         </Grid>
-        <Grid item>
-          <FormField
-            type={"password"}
-            placeholder={"password"}
-            name={"password"}
-            register={register}
-            required={true}
-            error={errors.password}
-          />
+        <Grid item container alignItems='center' spacing={2}>
+          <Grid item>
+            <FormField
+              type="password"
+              placeholder="password"
+              name="password"
+              register={register}
+              required={true}
+              error={errors.password}
+            />
+          </Grid>
+          <Grid item>
+            <Button
+              variant="text"
+              color="primary"
+              onClick={() => window.location.href = '/forgot-password'}
+            >
+              Forgot password ?
+            </Button>
+          </Grid>
         </Grid>
-        <Grid
-          item
-          container
-        >
+        <Grid item container>
           <Button
             type="submit"
             variant="contained"
@@ -74,5 +80,5 @@ export const LoginForm = ()=>{
         </Grid>
       </Grid>
     </form>
-)
+  )
 }

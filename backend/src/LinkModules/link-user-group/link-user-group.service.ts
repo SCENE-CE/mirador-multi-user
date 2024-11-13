@@ -91,7 +91,8 @@ export class LinkUserGroupService {
   async createUser(createUserDto: CreateUserDto) {
     try {
       const userToSave = createUserDto;
-      userToSave.password = await bcrypt.hash(createUserDto.password, 10);
+      const salt = await bcrypt.genSalt();
+      userToSave.password = await bcrypt.hash(createUserDto.password, salt);
       const savedUser = await this.userService.create(userToSave);
 
       const userPersonalGroup = await this.groupService.create({

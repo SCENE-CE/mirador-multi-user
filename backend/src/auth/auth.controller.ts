@@ -33,12 +33,14 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'send recovery password link' })
+  @HttpCode(200)
   @Post('forgot-password')
   async forgotPassword(@Body() { email }: { email: string }): Promise<void> {
     return this.authService.forgotPassword(email);
   }
 
   @ApiOperation({ summary: 'reset password' })
+  @HttpCode(200)
   @Post('reset-password')
   async resetPassword(
     @Body() { token, password }: { token: string; password: string },

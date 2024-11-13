@@ -21,7 +21,7 @@ export class User {
   name: string;
 
   @Index()
-  @Column({ nullable: true })
+  @Column({ type: 'text', nullable: true })
   resetToken: string;
 
   @Index()

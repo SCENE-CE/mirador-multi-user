@@ -45,17 +45,18 @@ export class AuthService {
 
   async forgotPassword(email: string): Promise<void> {
     const user = await this.usersService.findOneByMail(email);
+    const { resetToken, mail, name } = user;
     if (!user) {
       throw new NotFoundException(`No user found for email: ${email}`);
     }
 
-    const payload = { user };
+    const payload = { mail, name };
 
     const token = this.jwtService.sign(payload, {
       secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
       expiresIn: `900s`,
     });
-
+    console.log(token);
     await this.usersService.updateUser(user.id, { resetToken: token });
 
     await this.emailService.sendResetPasswordLink({
@@ -70,10 +71,18 @@ export class AuthService {
       const payload = await this.jwtService.verify(token, {
         secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
       });
-
-      if (typeof payload === 'object' && 'email' in payload) {
-        return payload.email;
+      console.log('after payload')
+      console.log(payload === 'object');
+      console.log('user' in payload);
+      if (
+        typeof payload === 'object' &&
+        'mail' in payload &&
+        'name' in payload
+      ) {
+        console.log('return statement')
+        return { mail: payload.mail, name: payload.name };
       }
+      console.log('error occurred')
       throw new BadRequestException();
     } catch (error) {
       if (error?.name === 'TokenExpiredError') {
@@ -84,17 +93,27 @@ export class AuthService {
   }
 
   async resetPassword(token: string, password: string): Promise<void> {
-    const email = await this.decodeConfirmationToken(token);
+    console.log('enter reset password');
+    const decodeData = await this.decodeConfirmationToken(token);
+    console.log('email');
+    console.log(decodeData.mail);
 
-    const user = await this.usersService.findOneByMail(email);
+    const user = await this.usersService.findOneByMail(decodeData.mail);
+    console.log('user');
+    console.log(user);
     if (!user) {
-      throw new NotFoundException(`No user found for email: ${email}`);
+      throw new NotFoundException(
+        `No user found for email: ${decodeData.mail}`,
+      );
     }
+    console.log('MDP CHANGE');
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(password,salt);
+
     await this.usersService.updateUser(user.id, {
-      password: user.password,
+      password: hashedPassword,
       resetToken: null,
     });
-    user.password = password;
   }
 
   async findProfile(id: number) {

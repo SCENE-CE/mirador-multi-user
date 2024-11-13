@@ -26,7 +26,7 @@ const FormField: React.FC<FormFieldProps> = (
   console.log('error:' ,error)
 
   return (
-  <Grid container alignItems="center" spacing={2} justifyContent="space-between" minWidth="300px">
+  <Grid container alignItems="center" spacing={2} justifyContent="space-between">
     <Grid item>
     <TextField
           type={type}

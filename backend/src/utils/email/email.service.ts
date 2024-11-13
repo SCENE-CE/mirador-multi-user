@@ -151,7 +151,6 @@ export class EmailServerService implements MailService {
   }
 
   async sendResetPasswordLink(email: ResetPasswordEmailDto): Promise<void> {
-
     const url = `${process.env.FRONTEND_URL}/reset-password/${email.token}`;
 
     const renderedTemplate = this._passwordResetTemplate(url, email.userName);
