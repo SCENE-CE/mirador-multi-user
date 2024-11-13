@@ -256,7 +256,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   return (
     <>
       <SidePanelMedia display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
-        <Grid container spacing={2} justifyContent="center" flexDirection="column">
+        <Grid container justifyContent="center" flexDirection="column" spacing={1}>
           <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             {
               !selectedProjectId &&(
