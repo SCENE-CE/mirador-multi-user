@@ -305,7 +305,21 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
     <>
       <SidePanelMedia display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
         <Grid item container flexDirection="column" spacing={1}>
-          <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
+          <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
+            {
+              !createManifestIsOpen && (
+                <Grid item>
+                  <SearchBar
+                    fetchFunction={HandleLookingForManifests}
+                    getOptionLabel={getOptionLabelForManifestSearchBar}
+                    label="Filter manifests"
+                    setSearchedData={handleSetSearchManifest}
+                    setFilter={setManifestFiltered}
+                    handleFiltered={handleFiltered}
+                  />
+                </Grid>
+              )
+            }
             <Grid item container spacing={2}>
               {!createManifestIsOpen &&(
                 <Grid item sx={{position:'fixed', right:'10px', bottom:'3px', zIndex:999}}>
@@ -319,22 +333,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                   onChange={handleCreateManifest}
                 />
               </Grid>
-              {
-                !createManifestIsOpen && (
-                  <Grid item container direction="row" sx={{justifyContent: "flex-end", alignItems: "center", }}>
-                    <Grid item>
-                      <SearchBar
-                        fetchFunction={HandleLookingForManifests}
-                        getOptionLabel={getOptionLabelForManifestSearchBar}
-                        label="Filter manifests"
-                        setSearchedData={handleSetSearchManifest}
-                        setFilter={setManifestFiltered}
-                        handleFiltered={handleFiltered}
-                      />
-                    </Grid>
-                  </Grid>
-                )
-              }
             </Grid>
           </Grid>
           {!manifests.length && (

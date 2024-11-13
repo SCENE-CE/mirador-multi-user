@@ -165,7 +165,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   return(
     <>
       <SidePanelMedia display={!!openModalGroupId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
-        <Grid container justifyContent='center' flexDirection='column' spacing={4}>
+        <Grid item container flexDirection="column" spacing={1}>
           <Grid item container direction="row-reverse" spacing={2} alignItems="center"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             <Grid item>
               <SearchBar handleFiltered={handleFiltered} label={"Filter groups"} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
