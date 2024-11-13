@@ -2,6 +2,7 @@ import {
   BadRequestException,
   ForbiddenException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -71,18 +72,13 @@ export class AuthService {
       const payload = await this.jwtService.verify(token, {
         secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
       });
-      console.log('after payload')
-      console.log(payload === 'object');
-      console.log('user' in payload);
       if (
         typeof payload === 'object' &&
         'mail' in payload &&
         'name' in payload
       ) {
-        console.log('return statement')
         return { mail: payload.mail, name: payload.name };
       }
-      console.log('error occurred')
       throw new BadRequestException();
     } catch (error) {
       if (error?.name === 'TokenExpiredError') {
@@ -93,27 +89,29 @@ export class AuthService {
   }
 
   async resetPassword(token: string, password: string): Promise<void> {
-    console.log('enter reset password');
-    const decodeData = await this.decodeConfirmationToken(token);
-    console.log('email');
-    console.log(decodeData.mail);
+    try {
+      const decodeData = await this.decodeConfirmationToken(token);
 
-    const user = await this.usersService.findOneByMail(decodeData.mail);
-    console.log('user');
-    console.log(user);
-    if (!user) {
-      throw new NotFoundException(
-        `No user found for email: ${decodeData.mail}`,
-      );
+      const user = await this.usersService.findOneByMail(decodeData.mail);
+      if (!user) {
+        throw new NotFoundException(
+          `No user found for email: ${decodeData.mail}`,
+        );
+      }
+
+      if (token === user.resetToken) {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(password, salt);
+        await this.usersService.updateUser(user.id, {
+          password: hashedPassword,
+          resetToken: null,
+        });
+      } else {
+        throw new UnauthorizedException('invalid token');
+      }
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
     }
-    console.log('MDP CHANGE');
-    const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(password,salt);
-
-    await this.usersService.updateUser(user.id, {
-      password: hashedPassword,
-      resetToken: null,
-    });
   }
 
   async findProfile(id: number) {
