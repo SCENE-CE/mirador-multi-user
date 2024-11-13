@@ -98,8 +98,6 @@ export class MediaLinkInterceptor implements NestInterceptor {
   ): Promise<Observable<any>> {
     const request = context.switchToHttp().getRequest();
     const url = request.body.url;
-    console.log('this.isPeerTubeVideo(url)');
-    console.log(this.isPeerTubeVideo(url));
     try {
       let thumbnailBuffer: Buffer | null = null;
 
@@ -112,7 +110,6 @@ export class MediaLinkInterceptor implements NestInterceptor {
           thumbnailBuffer = await this.getPeerTubeThumbnail(url, videoId);
         }
       } else {
-        // Fallback for direct image URLs
         const imageResponse = await fetch(url);
         if (!imageResponse.ok) throw new Error('Failed to fetch image');
         thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
