@@ -27,7 +27,6 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
     setMediaLink('');
   },[CreateMediaWithLink])
 
-  console.log(modalCreateMediaIsOpen);
 
   return (
     <>

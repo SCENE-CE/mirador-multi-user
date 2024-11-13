@@ -10,7 +10,7 @@ export type CreateMediaDto = {
 export type LinkMediaDto = {
   idCreator:number
   user_group:UserGroup;
-  imageUrl: string
+  url: string
 }
 
 export enum mediaOrigin {

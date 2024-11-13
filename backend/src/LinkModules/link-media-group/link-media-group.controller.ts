@@ -85,11 +85,11 @@ export class LinkMediaGroupController {
     console.log('link media');
     const mediaToCreate = {
       ...createMediaDto,
-      title: `${req.body.imageUrl}`,
+      title: `${req.body.url}`,
       description: 'your media description',
       user_group: createMediaDto.user_group,
       hash: `${(req as any).generatedHash}`,
-      url: `${req.body.imageUrl}`,
+      url: `${req.body.url}`,
       origin: mediaOrigin.LINK,
     };
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
