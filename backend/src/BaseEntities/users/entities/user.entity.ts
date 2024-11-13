@@ -5,7 +5,6 @@ import {
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
-import { Project } from '../../project/entities/project.entity';
 import { LinkUserGroup } from '../../../LinkModules/link-user-group/entities/link-user-group.entity';
 
 @Entity()
@@ -20,6 +19,10 @@ export class User {
   @Index({ unique: true })
   @Column({ length: 300 })
   name: string;
+
+  @Index()
+  @Column({ type: 'text', nullable: true })
+  resetToken: string;
 
   @Index()
   @Column({ length: 300 })

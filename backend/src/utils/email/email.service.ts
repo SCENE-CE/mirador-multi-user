@@ -8,6 +8,8 @@ import { ConfirmationEmailDto } from './Dto/ConfirmationEmailDto';
 import { confirmationEmailTemplate } from './templates/confirmationEMail';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
+import { resetPassword } from './templates/resetPassword';
+import { ResetPasswordEmailDto } from './Dto/resetPasswordEmailDto';
 @Injectable()
 export class EmailServerService implements MailService {
   private readonly logger = new CustomLogger();
@@ -43,9 +45,17 @@ export class EmailServerService implements MailService {
       userName: userName,
     });
   }
-  private _confirmMailTemplate(url: string, name:string): string {
+  private _confirmMailTemplate(url: string, name: string): string {
     // Use the template function to generate the HTML content
     return confirmationEmailTemplate({
+      url: url,
+      name: name,
+    });
+  }
+
+  private _passwordResetTemplate(url: string, name: string): string {
+    // Use the template function to generate the HTML content
+    return resetPassword({
       url: url,
       name: name,
     });
@@ -127,16 +137,6 @@ export class EmailServerService implements MailService {
 
   async _processSendEmail(to, subject, text, body): Promise<void> {
     try {
-      console.log('before sending mail');
-      console.log('to');
-      console.log(to);
-      console.log('subject');
-      console.log(subject);
-      console.log('text');
-      console.log(text);
-      console.log('body');
-      console.log(body);
-
       await this.mailerMain.sendMail({
         to: to,
         subject: subject,
@@ -148,5 +148,19 @@ export class EmailServerService implements MailService {
       console.log('Error sending email', error);
       throw new InternalServerErrorException('Failed to send email', error);
     }
+  }
+
+  async sendResetPasswordLink(email: ResetPasswordEmailDto): Promise<void> {
+    const url = `${process.env.FRONTEND_URL}/reset-password/${email.token}`;
+
+    const renderedTemplate = this._passwordResetTemplate(url, email.userName);
+    const plainText = `Hi, \\nTo reset your password, click here: ${url}`;
+
+    return this._processSendEmail(
+      email.to,
+      'Reset password',
+      plainText,
+      renderedTemplate,
+    );
   }
 }

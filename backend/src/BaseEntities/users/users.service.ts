@@ -38,7 +38,8 @@ export class UsersService {
         if (!isMatch && confirmPassword === newPassword) {
           throw new UnauthorizedException();
         }
-        const hashedUpdatedPassword = await bcrypt.hash(newPassword, 10);
+        const salt = await bcrypt.genSalt();
+        const hashedUpdatedPassword = await bcrypt.hash(newPassword, salt);
         dto = { ...dto, password: hashedUpdatedPassword };
       }
       return await this.userRepository.update(userId, dto);
