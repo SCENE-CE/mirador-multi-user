@@ -11,14 +11,9 @@ import {
 } from "react";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
-import { LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
+import { LinkUserGroup, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
 import { Media, MediaGroupRights, MediaTypes } from "../types/types.ts";
 import toast from "react-hot-toast";
-import MMUCard from "../../../components/elements/MMUCard.tsx";
-
-import { ModalButton } from "../../../components/elements/ModalButton.tsx";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { deleteMedia } from "../api/deleteMedia.ts";
 import { updateMedia } from "../api/updateMedia.ts";
 import { lookingForMedias } from "../api/lookingForMedias.ts";
@@ -36,7 +31,6 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
 import { createMediaLink } from "../api/createMediaWithLink.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { ObjectTypes } from "../../tag/type.ts";
 import { CustomTabPanel } from "../../../components/elements/CustomTabPanel.tsx";
 import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
 import { MediaCard } from "./MediaCard.tsx";
