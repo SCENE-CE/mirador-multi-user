@@ -1,15 +1,18 @@
 import {
   Column,
   CreateDateColumn,
-  Entity, JoinColumn, ManyToOne,
+  Entity,
+  JoinColumn,
+  ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
-} from "typeorm";
+  UpdateDateColumn,
+} from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkMediaGroup } from '../../../LinkModules/link-media-group/entities/link-media-group.entity';
 import { mediaOrigin } from '../../../enum/origins';
-import { Tag } from "../../tag/entities/tag.entity";
+import { Tag } from '../../tag/entities/tag.entity';
+import { mediaTypes } from '../../../enum/mediaTypes';
 
 @Entity()
 export class Media {
@@ -40,6 +43,9 @@ export class Media {
 
   @Column({ type: 'enum', enum: mediaOrigin })
   origin: mediaOrigin;
+
+  @Column({ type: 'enum', enum: mediaTypes })
+  mediaTypes: mediaTypes;
 
   @IsString()
   @Column()

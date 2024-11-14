@@ -1,15 +1,19 @@
-import { Grid, styled, Typography } from "@mui/material";
-import { ChangeEvent, Dispatch, ReactNode, SetStateAction, useCallback, useMemo, useState } from "react";
+import { Box, Grid, styled, Tab, Tabs, Typography } from "@mui/material";
+import {
+  ChangeEvent,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  SyntheticEvent,
+  useCallback,
+  useMemo,
+  useState
+} from "react";
 import { createMedia } from "../api/createMedia.ts";
 import { User } from "../../auth/types/types.ts";
-import { LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
-import { Media, MediaGroupRights} from "../types/types.ts";
+import { LinkUserGroup, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
+import { Media, MediaGroupRights, MediaTypes } from "../types/types.ts";
 import toast from "react-hot-toast";
-import MMUCard from "../../../components/elements/MMUCard.tsx";
-
-import { ModalButton } from "../../../components/elements/ModalButton.tsx";
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
-import ModeEditIcon from "@mui/icons-material/ModeEdit";
 import { deleteMedia } from "../api/deleteMedia.ts";
 import { updateMedia } from "../api/updateMedia.ts";
 import { lookingForMedias } from "../api/lookingForMedias.ts";
@@ -17,7 +21,7 @@ import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForUserGroups } from "../../user-group/api/lookingForUserGroups.ts";
 import { addMediaToGroup } from "../api/AddMediaToGroup.ts";
 import { ListItem } from "../../../components/types.ts";
-import {  ProjectGroup } from "../../projects/types/types.ts";
+import { ProjectGroup } from "../../projects/types/types.ts";
 import { removeAccessToMedia } from "../api/removeAccessToMedia.ts";
 import { getAllMediaGroups } from "../api/getAllMediaGroups.ts";
 import { updateAccessToMedia } from "../api/updateAccessToMedia.ts";
@@ -27,7 +31,9 @@ import UploadFileIcon from "@mui/icons-material/UploadFile";
 import { DrawerLinkMedia } from "./DrawerLinkMedia.tsx";
 import { createMediaLink } from "../api/createMediaWithLink.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
-import { ObjectTypes } from "../../tag/type.ts";
+import { CustomTabPanel } from "../../../components/elements/CustomTabPanel.tsx";
+import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
+import { MediaCard } from "./MediaCard.tsx";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -40,6 +46,7 @@ const VisuallyHiddenInput = styled('input')({
   whiteSpace: 'nowrap',
   width: 1,
 });
+
 
 interface IAllMediasProps{
   user:User
@@ -60,15 +67,30 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [mediaFiltered, setMediaFiltered] = useState<Media[]|undefined>([]);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
+  const [tabValue, setTabValue] = useState(0);
+
+  const handleChange = (_event: SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+    setCurrentPage(1);
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  const filteredMedias = useMemo(() => {
+    if (tabValue === 1) {
+      return medias.filter(media => media.mediaTypes === MediaTypes.VIDEO);
+    } else if (tabValue === 2) {
+      return medias.filter(media => media.mediaTypes === MediaTypes.IMAGE);
+    }
+    return medias;
+  }, [tabValue, medias]);
+
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return medias.slice(start, end);
-  }, [currentPage, medias]);
+    return filteredMedias.slice(start, end);
+  }, [currentPage, filteredMedias]);
 
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
@@ -84,7 +106,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   },[fetchMediaForUser, medias])
 
   const HandleCopyToClipBoard = async (path: string) => {
-    console.log('path',path);
     await navigator.clipboard.writeText(path);
     toast.success('path copied to clipboard');
   }
@@ -104,7 +125,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   )
 
   const HandleUpdateMedia = useCallback(async(mediaToUpdate:Media)=>{
-    console.log('mediaToUpdate',mediaToUpdate)
     await updateMedia(mediaToUpdate)
     const updatedListOfMedias = medias.filter(function(media) {
       return media.id != mediaToUpdate.id;
@@ -204,7 +224,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   ];
   const createMediaWithLink = async (link: string) => {
     try {
-      await createMediaLink({imageUrl:link, idCreator:user.id, user_group: userPersonalGroup})
+      await createMediaLink({url:link, idCreator:user.id, user_group: userPersonalGroup})
       fetchMediaForUser()
     } catch (error) {
       console.error('Error fetching the image:', error);
@@ -219,11 +239,22 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
       return 'Users'
     }
   }
-  console.log('medias',medias)
+
+  console.log('value',tabValue)
+  console.log('media',medias)
   return(
-    <>
+    <Box sx={{ padding: 2 }}>
       <Grid item container flexDirection="column" spacing={1}>
         <Grid item container alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
+          <Grid item>
+            <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+              <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
+                <Tab label="All" {...a11yProps(0)} />
+                <Tab label="Videos" {...a11yProps(1)} />
+                <Tab label="Images" {...a11yProps(2)} />
+              </Tabs>
+            </Box>
+          </Grid>
           <Grid item>
             <VisuallyHiddenInput
               id="file-upload"
@@ -245,78 +276,121 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
         )}
         {
           !searchedMedia && mediaFiltered && mediaFiltered.length < 1 && (
-            <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
-              {
-                currentPageData.map((media)=>(
-                  <Grid item key={media.id}>
-                    <MMUCard
-                      objectTypes={ObjectTypes.MEDIA}
-                      AddAccessListItemFunction={handleGrantAccess}
-                      DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={media.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`):()=>HandleCopyToClipBoard(media.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                      EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                      HandleOpenModal={()=>HandleOpenModal(media.id)}
-                      ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
-                      deleteItem={()=>HandleDeleteMedia(media.id)}
-                      description={media.description}
-                      getAccessToItem={getAllMediaGroups}
-                      getOptionLabel={getOptionLabel}
-                      id={media.id}
-                      item={media}
-                      itemLabel={media.title}
-                      itemOwner={user}
-                      listOfItem={listOfGroup}
-                      metadata={media.metadata}
-                      openModal={openModalMediaId === media.id}
-                      removeAccessListItemFunction={handleRemoveAccessToMedia}
-                      rights={media.rights}
-                      searchBarLabel={"Search"}
-                      searchModalEditItem={handleLookingForUserGroups}
-                      setItemList={setGroupList}
-                      setItemToAdd={setUserToAdd}
-                      thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
-                      updateItem={HandleUpdateMedia}
-                      handleSelectorChange={handleChangeRights}
-                      getGroupByOption={getGroupByOption}
-                    />
-                  </Grid>
-                ))
-              }
+            <Grid item container spacing={1} flexDirection="column" sx={{ marginBottom: "70px" }}>
+              <CustomTabPanel value={tabValue} index={0}>
+                <Grid container spacing={2} direction="column">
+                  {currentPageData.map(media => (
+                    <Grid item key={media.id}>
+                      <MediaCard
+                        media={media}
+                        getAllMediaGroups={getAllMediaGroups}
+                        getOptionLabel={getOptionLabel}
+                        getGroupByOption={getGroupByOption}
+                        user={user}
+                        HandleOpenModal={HandleOpenModal}
+                        HandleDeleteMedia={HandleDeleteMedia}
+                        handleGrantAccess={handleGrantAccess}
+                        HandleCopyToClipBoard={HandleCopyToClipBoard}
+                        HandleUpdateMedia={HandleUpdateMedia}
+                        caddyUrl={caddyUrl}
+                        handleChangeRights={handleChangeRights}
+                        handleLookingForUserGroups={handleLookingForUserGroups}
+                        handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                        openModalMediaId={openModalMediaId}
+                        listOfGroup={listOfGroup}
+                        setGroupList={setGroupList}
+                        setUserToAdd={setUserToAdd}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              </CustomTabPanel>
+              <CustomTabPanel value={tabValue} index={1}>
+                <Grid container spacing={2} direction="column">
+
+                  {currentPageData.map(media => (
+                    <Grid item key={media.id}>
+                      <MediaCard
+                        key={media.id}
+                        media={media}
+                        getAllMediaGroups={getAllMediaGroups}
+                        getOptionLabel={getOptionLabel}
+                        getGroupByOption={getGroupByOption}
+                        user={user}
+                        HandleOpenModal={HandleOpenModal}
+                        HandleDeleteMedia={HandleDeleteMedia}
+                        handleGrantAccess={handleGrantAccess}
+                        HandleCopyToClipBoard={HandleCopyToClipBoard}
+                        HandleUpdateMedia={HandleUpdateMedia}
+                        caddyUrl={caddyUrl}
+                        handleChangeRights={handleChangeRights}
+                        handleLookingForUserGroups={handleLookingForUserGroups}
+                        handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                        openModalMediaId={openModalMediaId}
+                        listOfGroup={listOfGroup}
+                        setGroupList={setGroupList}
+                        setUserToAdd={setUserToAdd}/>
+                    </Grid>
+                  ))}
+                </Grid>
+              </CustomTabPanel>
+              <CustomTabPanel value={tabValue} index={2}>
+                <Grid container spacing={2} direction="column">
+                  {currentPageData.map(media => (
+                    <Grid item key={media.id}>
+                      <MediaCard
+                        key={media.id}
+                        media={media}
+                        getAllMediaGroups={getAllMediaGroups}
+                        getOptionLabel={getOptionLabel}
+                        getGroupByOption={getGroupByOption}
+                        user={user}
+                        HandleOpenModal={HandleOpenModal}
+                        HandleDeleteMedia={HandleDeleteMedia}
+                        handleGrantAccess={handleGrantAccess}
+                        HandleCopyToClipBoard={HandleCopyToClipBoard}
+                        HandleUpdateMedia={HandleUpdateMedia}
+                        caddyUrl={caddyUrl}
+                        handleChangeRights={handleChangeRights}
+                        handleLookingForUserGroups={handleLookingForUserGroups}
+                        handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                        openModalMediaId={openModalMediaId}
+                        listOfGroup={listOfGroup}
+                        setGroupList={setGroupList}
+                        setUserToAdd={setUserToAdd}/>
+                    </Grid>
+                  ))}
+                </Grid>
+              </CustomTabPanel>
               <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
             </Grid>
           )
         }
         {
           searchedMedia && (
-            <Grid item container spacing={1} flexDirection="column" sx={{marginBottom:"70px"}}>
+            <Grid item container spacing={1} flexDirection="column" sx={{ marginBottom: "70px" }}>
               {
                 <Grid item key={searchedMedia.id}>
-                  <MMUCard
-                    objectTypes={ObjectTypes.MANIFEST}
-                    metadata={searchedMedia.metadata}
-                    id={searchedMedia.id}
-                    rights={ProjectRights.ADMIN}
-                    description={searchedMedia.description}
-                    HandleOpenModal={()=>HandleOpenModal(searchedMedia.id)}
-                    openModal={openModalMediaId === searchedMedia.id}
-                    itemLabel={searchedMedia.title}
-                    DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={searchedMedia.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedMedia.hash}/${searchedMedia.path}`):()=>HandleCopyToClipBoard(searchedMedia.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                    EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(searchedMedia.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                    itemOwner={user}
-                    deleteItem={()=>HandleDeleteMedia(searchedMedia.id)}
-                    item={searchedMedia}
-                    updateItem={HandleUpdateMedia}
-                    thumbnailUrl={`${caddyUrl}/${searchedMedia.hash}/thumbnail.webp`}
-                    AddAccessListItemFunction={handleGrantAccess}
+                  <MediaCard
+                    key={searchedMedia.id}
+                    media={searchedMedia}
+                    getAllMediaGroups={getAllMediaGroups}
                     getOptionLabel={getOptionLabel}
-                    listOfItem={listOfGroup}
-                    removeAccessListItemFunction={handleRemoveAccessToMedia}
-                    searchModalEditItem={handleLookingForUserGroups}
-                    setItemList={setGroupList}
-                    setItemToAdd={setUserToAdd}
-                    getAccessToItem={getAllMediaGroups}
-                    handleSelectorChange={handleChangeRights}
                     getGroupByOption={getGroupByOption}
-                  />
+                    user={user}
+                    HandleOpenModal={HandleOpenModal}
+                    HandleDeleteMedia={HandleDeleteMedia}
+                    handleGrantAccess={handleGrantAccess}
+                    HandleCopyToClipBoard={HandleCopyToClipBoard}
+                    HandleUpdateMedia={HandleUpdateMedia}
+                    caddyUrl={caddyUrl}
+                    handleChangeRights={handleChangeRights}
+                    handleLookingForUserGroups={handleLookingForUserGroups}
+                    handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                    openModalMediaId={openModalMediaId}
+                    listOfGroup={listOfGroup}
+                    setGroupList={setGroupList}
+                    setUserToAdd={setUserToAdd}/>
                 </Grid>
               }
             </Grid>
@@ -328,33 +402,26 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
               {
                 mediaFiltered.map((media)=>(
                   <Grid item key={media.id}>
-                    <MMUCard
-                      objectTypes={ObjectTypes.MANIFEST}
-                      metadata={media.metadata}
-                      id={media.id}
-                      rights={ProjectRights.ADMIN}
-                      description={media.description}
-                      HandleOpenModal={()=>HandleOpenModal(media.id)}
-                      openModal={openModalMediaId === media.id}
-                      itemLabel={media.title}
-                      DefaultButton={<ModalButton tooltipButton={"Copy media's link"} onClickFunction={media.path ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) : ()=>HandleCopyToClipBoard(media.url)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                      EditorButton={<ModalButton  tooltipButton={"Edit Media"} onClickFunction={()=>HandleOpenModal(media.id)} icon={<ModeEditIcon />} disabled={false}/>}
-                      itemOwner={user}
-                      deleteItem={()=>HandleDeleteMedia(media.id)}
-                      item={media}
-                      updateItem={HandleUpdateMedia}
-                      thumbnailUrl={`${caddyUrl}/${media.hash}/thumbnail.webp`}
-                      AddAccessListItemFunction={handleGrantAccess}
+                    <MediaCard
+                      key={media.id}
+                      media={media}
+                      getAllMediaGroups={getAllMediaGroups}
                       getOptionLabel={getOptionLabel}
-                      listOfItem={listOfGroup}
-                      removeAccessListItemFunction={handleRemoveAccessToMedia}
-                      searchModalEditItem={handleLookingForUserGroups}
-                      setItemList={setGroupList}
-                      setItemToAdd={setUserToAdd}
-                      getAccessToItem={getAllMediaGroups}
-                      handleSelectorChange={handleChangeRights}
                       getGroupByOption={getGroupByOption}
-                    />
+                      user={user}
+                      HandleOpenModal={HandleOpenModal}
+                      HandleDeleteMedia={HandleDeleteMedia}
+                      handleGrantAccess={handleGrantAccess}
+                      HandleCopyToClipBoard={HandleCopyToClipBoard}
+                      HandleUpdateMedia={HandleUpdateMedia}
+                      caddyUrl={caddyUrl}
+                      handleChangeRights={handleChangeRights}
+                      handleLookingForUserGroups={handleLookingForUserGroups}
+                      handleRemoveAccessToMedia={handleRemoveAccessToMedia}
+                      openModalMediaId={openModalMediaId}
+                      listOfGroup={listOfGroup}
+                      setGroupList={setGroupList}
+                      setUserToAdd={setUserToAdd}/>
                   </Grid>
                 ))
               }
@@ -380,6 +447,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
           <SpeedDialTooltipOpen actions={actions}/>
         </Grid>
       </Grid>
-    </>
+    </Box>
   )
 }

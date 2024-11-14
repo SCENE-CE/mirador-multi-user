@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Layout } from "./layout.tsx";
 
 
-export const NotConfirmedAccount = ({}) => {
+export const NotConfirmedAccount = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState(''); // Prepopulate if email is available
   const [isLoading, setIsLoading] = useState(false);

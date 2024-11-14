@@ -1,69 +1,163 @@
 import {
-  CallHandler,
-  ExecutionContext,
   Injectable,
   NestInterceptor,
+  ExecutionContext,
+  CallHandler,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import { join } from 'path';
+import * as fs from 'fs';
 import * as sharp from 'sharp';
-import { generateAlphanumericSHA1Hash } from '../hashGenerator';
-import * as fs from 'node:fs';
 import { createWriteStream } from 'fs';
+import fetch from 'node-fetch';
+import { generateAlphanumericSHA1Hash } from '../hashGenerator';
+import { mediaTypes } from "../../enum/mediaTypes";
 
 @Injectable()
 export class MediaLinkInterceptor implements NestInterceptor {
+  isYouTubeVideo(url: string): boolean {
+    const youtubeRegex =
+      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|embed\/|v\/|.+\?v=)?([^&\n?#]+)/;
+    return youtubeRegex.test(url);
+  }
+
+  async isPeerTubeVideo(url: string): Promise<boolean> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch the URL');
+
+      const htmlContent = await response.text();
+      return htmlContent.includes(
+        '<meta property="og:platform" content="PeerTube">',
+      );
+    } catch (error) {
+      console.error(`Error checking PeerTube meta tag: ${error.message}`);
+      return false;
+    }
+  }
+
+  async getYoutubeThumbnail(id: string): Promise<Buffer> {
+    const response = await fetch(
+      `https://img.youtube.com/vi/${id}/default.jpg`,
+    );
+    if (!response.ok) throw new Error('Failed to fetch YouTube thumbnail');
+    return Buffer.from(await response.arrayBuffer());
+  }
+
+  async getPeerTubeThumbnail(url: string, videoId: string): Promise<Buffer> {
+    const baseDomain = new URL(url).origin;
+    const apiURL = `${baseDomain}/api/v1/videos/${videoId}`;
+    const response = await fetch(apiURL);
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch PeerTube video details');
+    }
+
+    const data = await response.json();
+    let thumbnailUrl = data.thumbnailPath;
+    if (!thumbnailUrl.startsWith('http')) {
+      thumbnailUrl = `${baseDomain}${thumbnailUrl}`;
+    }
+
+    const thumbnailResponse = await fetch(thumbnailUrl);
+    if (!thumbnailResponse.ok) {
+      throw new Error('Failed to fetch PeerTube thumbnail');
+    }
+
+    const contentType = thumbnailResponse.headers.get('Content-Type');
+    if (!contentType || !contentType.startsWith('image/')) {
+      throw new Error('Fetched data is not a valid image');
+    }
+
+    const arrayBuffer = await thumbnailResponse.arrayBuffer();
+    return Buffer.from(arrayBuffer);
+  }
+
+  getYouTubeVideoID(url: string): string | null {
+    const youtubeRegex =
+      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=)|youtu\.be\/)([^&\n?#]+)/;
+    const match = url.match(youtubeRegex);
+    return match ? match[1] : null;
+  }
+
+  getPeerTubeVideoID(url: string): string | null {
+    const peerTubeRegex = /(?:videos\/watch|w)\/([a-zA-Z0-9-]+)/;
+    const match = url.match(peerTubeRegex);
+    return match ? match[1] : null;
+  }
+
+  async processImage(buffer: Buffer, uploadPath: string): Promise<void> {
+    const processedFilePath = join(uploadPath, `thumbnail.webp`);
+    const sharpBuffer = await sharp(buffer)
+      .resize(200, 200)
+      .webp({ effort: 3 })
+      .toBuffer();
+
+    return new Promise((resolve, reject) => {
+      const writeStream = createWriteStream(processedFilePath);
+      writeStream.write(sharpBuffer);
+      writeStream.end();
+      writeStream.on('finish', () => resolve(null));
+      writeStream.on('error', reject);
+    });
+  }
+
   async intercept(
     context: ExecutionContext,
     next: CallHandler,
   ): Promise<Observable<any>> {
+    const request = context.switchToHttp().getRequest();
+    const url = request.body.url;
     try {
-      console.log('media interceptor')
-      const request = context.switchToHttp().getRequest();
-      console.log(request.body)
-      const imageFetch = await fetch(request.body.imageUrl);
-      if (!imageFetch.ok) {
-        throw new Error('Failed to fetch image');
+      let thumbnailBuffer: Buffer | null = null;
+      let videoId: string | null = null;
+
+      switch (true) {
+        case this.isYouTubeVideo(url):
+          videoId = this.getYouTubeVideoID(url);
+          if (videoId) {
+            thumbnailBuffer = await this.getYoutubeThumbnail(videoId);
+          }
+          request.mediaTypes = mediaTypes.VIDEO;
+          break;
+
+        case await this.isPeerTubeVideo(url):
+          videoId = this.getPeerTubeVideoID(url);
+          if (videoId) {
+            thumbnailBuffer = await this.getPeerTubeThumbnail(url, videoId);
+          }
+          request.mediaTypes = mediaTypes.VIDEO;
+          break;
+
+        default:
+          const imageResponse = await fetch(url);
+          if (!imageResponse.ok) throw new Error('Failed to fetch media');
+          thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
+          request.mediaTypes = mediaTypes.IMAGE;
+          break;
       }
-      console.log('after fetch')
 
-      const arrayBuffer = await imageFetch.arrayBuffer();
-      const imageBuffer = Buffer.from(arrayBuffer);
+      if (thumbnailBuffer) {
+        const hash = generateAlphanumericSHA1Hash(
+          `${Date.now().toString()}${Math.random().toString(36)}`,
+        );
+        const uploadBasePath = './upload';
+        const uploadPath = join(uploadBasePath, hash);
 
+        if (!fs.existsSync(uploadBasePath)) {
+          fs.mkdirSync(uploadBasePath, { recursive: true });
+        }
+        fs.mkdirSync(uploadPath, { recursive: true });
 
-      const hash = generateAlphanumericSHA1Hash(
-        `${Date.now().toString()}${Math.random().toString(36)}`,
-      );
-      const uploadBasePath = './upload';
-      const uploadPath = join(uploadBasePath, hash);
-
-      if (!fs.existsSync(uploadBasePath)) {
-        fs.mkdirSync(uploadBasePath, { recursive: true });
+        await this.processImage(thumbnailBuffer, uploadPath);
+        request.generatedHash = hash;
+        request.processedFilePath = join(uploadPath, `thumbnail.webp`);
       }
 
-      fs.mkdirSync(uploadPath, { recursive: true });
-
-      const processedFilePath = join(uploadPath, `thumbnail.webp`);
-      request.generatedHash = hash;
-      const buffer = await sharp(imageBuffer)
-        .resize(200, 200)
-        .webp({ effort: 3 })
-        .toBuffer();
-
-      await new Promise((resolve, reject) => {
-        const writeStream = createWriteStream(processedFilePath);
-        writeStream.write(buffer);
-        writeStream.end();
-        writeStream.on('finish', () => {
-          request.processedFilePath = processedFilePath;
-          resolve(null);
-        });
-        writeStream.on('error', reject);
-      });
+      return next.handle();
     } catch (error) {
+      console.error(`Error processing image: ${error.message}`);
       throw new Error(`Error processing image: ${error.message}`);
     }
-
-    return next.handle();
   }
 }

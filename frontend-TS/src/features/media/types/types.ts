@@ -10,7 +10,7 @@ export type CreateMediaDto = {
 export type LinkMediaDto = {
   idCreator:number
   user_group:UserGroup;
-  imageUrl: string
+  url: string
 }
 
 export enum mediaOrigin {
@@ -31,6 +31,7 @@ export type Media={
   updated_at:Dayjs,
   url:string,
   metadata: Record<string, string>;
+  mediaTypes:MediaTypes;
 }
 
 export enum MediaGroupRights {
@@ -38,3 +39,10 @@ export enum MediaGroupRights {
   READER = 'reader',
   EDITOR = 'editor',
 }
+
+export enum MediaTypes {
+  VIDEO = 'video',
+  IMAGE = 'image',
+  AUDIO = 'audio',
+}
+

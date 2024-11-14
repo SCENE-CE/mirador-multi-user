@@ -181,7 +181,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
 
   const createMediaWithLink = async (link: string) => {
     try {
-      await createMediaLink({imageUrl:link, idCreator:user.id, user_group: userPersonalGroup})
+      await createMediaLink({url:link, idCreator:user.id, user_group: userPersonalGroup})
       fetchMediaForUser()
     } catch (error) {
       console.error('Error fetching the image:', error);
