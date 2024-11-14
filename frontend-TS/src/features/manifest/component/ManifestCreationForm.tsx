@@ -48,7 +48,7 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
     const updatedItems = items.filter((_, i) => i !== itemIndex);
     setItems(updatedItems);
   };
-
+  console.log(items)
   return (
     <Grid container direction="column" spacing={4}>
       <Grid item container>

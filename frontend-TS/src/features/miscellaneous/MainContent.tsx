@@ -16,7 +16,7 @@ export const MainContent = () => {
   }
 
   if (!user.data.id) {
-    return <NotConfirmedAccount user={user.data}/>;
+    return <NotConfirmedAccount/>;
   }
 
 

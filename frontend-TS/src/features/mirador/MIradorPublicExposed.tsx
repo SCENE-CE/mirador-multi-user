@@ -30,7 +30,7 @@ export const MiradorPublicExposed = () => {
           const config = {
             id: viewerRef.current.id,
             annotation: {
-              adapter: (canvasId) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+              adapter: (canvasId: any) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
               exportLocalStorageAnnotations: false, // display annotation JSON export button
             },
           };
