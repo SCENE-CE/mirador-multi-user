@@ -20,10 +20,19 @@ export class MediaLinkInterceptor implements NestInterceptor {
     return youtubeRegex.test(url);
   }
 
-  isPeerTubeVideo(url: string): boolean {
-    return /^(https?:\/\/)?([\w-]+\.)*peertube\.[\w.]+\/(videos\/watch|w)\/\w+/.test(
-      url,
-    );
+  async isPeerTubeVideo(url: string): Promise<boolean> {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error('Failed to fetch the URL');
+
+      const htmlContent = await response.text();
+      return htmlContent.includes(
+        '<meta property="og:platform" content="PeerTube">',
+      );
+    } catch (error) {
+      console.error(`Error checking PeerTube meta tag: ${error.message}`);
+      return false;
+    }
   }
 
   async getYoutubeThumbnail(id: string): Promise<Buffer> {
@@ -100,19 +109,28 @@ export class MediaLinkInterceptor implements NestInterceptor {
     const url = request.body.url;
     try {
       let thumbnailBuffer: Buffer | null = null;
+      let videoId: string | null = null;
 
-      if (this.isYouTubeVideo(url)) {
-        const videoId = this.getYouTubeVideoID(url);
-        if (videoId) thumbnailBuffer = await this.getYoutubeThumbnail(videoId);
-      } else if (this.isPeerTubeVideo(url)) {
-        const videoId = this.getPeerTubeVideoID(url);
-        if (videoId) {
-          thumbnailBuffer = await this.getPeerTubeThumbnail(url, videoId);
-        }
-      } else {
-        const imageResponse = await fetch(url);
-        if (!imageResponse.ok) throw new Error('Failed to fetch image');
-        thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
+      switch (true) {
+        case this.isYouTubeVideo(url):
+          videoId = this.getYouTubeVideoID(url);
+          if (videoId) {
+            thumbnailBuffer = await this.getYoutubeThumbnail(videoId);
+          }
+          break;
+
+        case await this.isPeerTubeVideo(url):
+          videoId = this.getPeerTubeVideoID(url);
+          if (videoId) {
+            thumbnailBuffer = await this.getPeerTubeThumbnail(url, videoId);
+          }
+          break;
+
+        default:
+          const imageResponse = await fetch(url);
+          if (!imageResponse.ok) throw new Error('Failed to fetch media');
+          thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
+          break;
       }
 
       if (thumbnailBuffer) {

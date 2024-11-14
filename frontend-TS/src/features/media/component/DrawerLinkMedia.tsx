@@ -44,7 +44,6 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
               zIndex:9999
             }}
           >
-
             <AppBar position="absolute" color="primary" enableColorOnDark >
               <Toolbar variant="dense">
                 <Button
