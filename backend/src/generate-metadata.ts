@@ -2,8 +2,8 @@
 // https://docs.nestjs.com/openapi/cli-plugin
 // https://docs.nestjs.com/recipes/swc#monorepo-and-cli-plugins
 
-import { PluginMetadataGenerator } from '@nestjs/cli/lib';
 import { ReadonlyVisitor } from '@nestjs/swagger/dist/plugin';
+import { PluginMetadataGenerator } from '@nestjs/cli/lib/compiler/plugins/plugin-metadata-generator';
 
 const generator = new PluginMetadataGenerator();
 
