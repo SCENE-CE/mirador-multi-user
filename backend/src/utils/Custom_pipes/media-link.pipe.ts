@@ -11,6 +11,7 @@ import * as sharp from 'sharp';
 import { createWriteStream } from 'fs';
 import fetch from 'node-fetch';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
+import { mediaTypes } from "../../enum/mediaTypes";
 
 @Injectable()
 export class MediaLinkInterceptor implements NestInterceptor {
@@ -117,6 +118,7 @@ export class MediaLinkInterceptor implements NestInterceptor {
           if (videoId) {
             thumbnailBuffer = await this.getYoutubeThumbnail(videoId);
           }
+          request.mediaTypes = mediaTypes.VIDEO;
           break;
 
         case await this.isPeerTubeVideo(url):
@@ -124,12 +126,14 @@ export class MediaLinkInterceptor implements NestInterceptor {
           if (videoId) {
             thumbnailBuffer = await this.getPeerTubeThumbnail(url, videoId);
           }
+          request.mediaTypes = mediaTypes.VIDEO;
           break;
 
         default:
           const imageResponse = await fetch(url);
           if (!imageResponse.ok) throw new Error('Failed to fetch media');
           thumbnailBuffer = Buffer.from(await imageResponse.arrayBuffer());
+          request.mediaTypes = mediaTypes.IMAGE;
           break;
       }
 

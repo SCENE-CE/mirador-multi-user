@@ -30,6 +30,7 @@ import { ActionType } from '../../enum/actions';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkMediaGroup } from './entities/link-media-group.entity';
 import { Media } from '../../BaseEntities/media/entities/media.entity';
+import { mediaTypes } from '../../enum/mediaTypes';
 @ApiBearerAuth()
 @Controller('link-media-group')
 export class LinkMediaGroupController {
@@ -72,6 +73,7 @@ export class LinkMediaGroupController {
       path: `${file.filename}`,
       hash: `${(req as any).generatedHash}`,
       origin: mediaOrigin.UPLOAD,
+      mediaTypes: mediaTypes.IMAGE,
     };
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }
@@ -91,6 +93,7 @@ export class LinkMediaGroupController {
       hash: `${(req as any).generatedHash}`,
       url: `${req.body.url}`,
       origin: mediaOrigin.LINK,
+      mediaTypes: req.mediaTypes,
     };
     return await this.linkMediaGroupService.createMedia(mediaToCreate);
   }

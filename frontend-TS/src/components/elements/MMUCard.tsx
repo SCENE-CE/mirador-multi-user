@@ -76,7 +76,6 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string }
   }:IMMUCardProps<T,G,O, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
-
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
     if (removeAccessListItemFunction) {
       await removeAccessListItemFunction(item.id, accessItemId);
