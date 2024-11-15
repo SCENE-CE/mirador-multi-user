@@ -222,8 +222,9 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   ];
   const createMediaWithLink = async (link: string) => {
     try {
-      await createMediaLink({url:link, idCreator:user.id, user_group: userPersonalGroup})
-      fetchMediaForUser()
+      const mediaLinked = await createMediaLink({url:link, idCreator:user.id, user_group: userPersonalGroup})
+      await fetchMediaForUser()
+      HandleOpenModal(mediaLinked.id)
     } catch (error) {
       console.error('Error fetching the image:', error);
     }

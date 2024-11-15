@@ -5,10 +5,12 @@ import placeholder from '../../assets/Placeholder.svg'
 import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
 import { ProjectRights } from "../../features/user-group/types/types.ts";
-import {  MediaGroupRights } from "../../features/media/types/types.ts";
+import { MediaGroupRights, MediaTypes } from "../../features/media/types/types.ts";
 import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
 import { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
+import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
+import ImageIcon from '@mui/icons-material/Image';
 
 interface IMMUCardProps<T,G,O,X> {
   id: number;
@@ -42,7 +44,7 @@ interface IMMUCardProps<T,G,O,X> {
   getGroupByOption?:(option:any)=>string
 }
 
-const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string },G, O, X extends { id:number} > (
+const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,mediaTypes?:MediaTypes},G, O, X extends { id:number} > (
   {
     id,
     rights,
@@ -109,45 +111,64 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string }
   }
   return (
     <Card>
-      <Grid item container flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
+      <Grid container item flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
         <Grid item container flexDirection="row" alignItems="center" justifyContent="flex-start" spacing={2}>
           <Grid item xs={12} sm={4}>
-            <img src={thumbnailUrl? thumbnailUrl : placeholder} alt="cardImage" style={{ height: 100, width: 150, objectFit:"contain", marginLeft:"10px"}} />
+            <img
+              src={thumbnailUrl ? thumbnailUrl : placeholder}
+              alt="cardImage"
+              style={{ height: 100, width: 150, objectFit: "contain", marginLeft: "10px" }}
+            />
           </Grid>
+
+          {(objectTypes === ObjectTypes.MEDIA && item.mediaTypes === MediaTypes.VIDEO )&& (<Grid item xs={12} sm={1}><OndemandVideoIcon /></Grid>)}
+          {(objectTypes === ObjectTypes.MEDIA && item.mediaTypes === MediaTypes.IMAGE )&&( <Grid item xs={12} sm={1}><ImageIcon /></Grid>)}
           <Grid item xs={12} sm={4}>
-            <Tooltip title={itemLabel} placement="bottom-start" sx={{ fontSize: '3rem', maxWidth: '200px' }}>
-              <Typography variant="subtitle1" sx={{textOverflow:'ellipsis', overflow:'hidden', whiteSpace:'no-wrap'}}>{itemLabel}</Typography>
+            <Tooltip title={itemLabel} placement="bottom-start">
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  maxWidth: '200px',
+                }}
+              >
+                {itemLabel}
+              </Typography>
             </Tooltip>
           </Grid>
           <Grid item xs={12} sm={3}>
-            <Tooltip  title={description}  sx={{ fontSize: '3rem' }}>
-              <Typography variant="subtitle1" sx={{textOverflow:'ellipsis', overflow:'hidden', whiteSpace:'no-wrap'}}>{description}</Typography>
+            <Tooltip title={description}>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                  maxWidth: '200px',
+                }}
+              >
+                {description}
+              </Typography>
             </Tooltip>
           </Grid>
         </Grid>
         <Grid item alignSelf="center">
-          <CardActions>
-            <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
-              <Grid item container>
-                <CardActions>
-                  <Grid item container flexDirection="row" wrap="nowrap" spacing={2}>
-                    {id  && (
-                      <>
-                        <Grid item>
-                          {rights == ProjectRights.READER ? ReaderButton : EditorButton}
-                        </Grid>
-                      </>
-                    )}
-                    <Grid item>
-                      {DefaultButton &&(
-                        <Tooltip title={"Open project"}>
-                          {DefaultButton}
-                        </Tooltip>
-                      )}
-                    </Grid>
-                  </Grid>
-                </CardActions>
-              </Grid>
+          <CardActions sx={{ padding: 1 }}>
+            <Grid container flexDirection="row" wrap="nowrap" spacing={2}>
+              {id && (
+                <Grid item>
+                  {rights === ProjectRights.READER ? ReaderButton : EditorButton}
+                </Grid>
+              )}
+              {DefaultButton && (
+                <Grid item>
+                  <Tooltip title="Open project">
+                    {DefaultButton}
+                  </Tooltip>
+                </Grid>
+              )}
             </Grid>
           </CardActions>
             <MMUModal
