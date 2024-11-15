@@ -1,7 +1,4 @@
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Divider,
   Grid,
   IconButton, Paper,
@@ -16,8 +13,8 @@ import { MMUToolTip } from "./MMUTootlTip.tsx";
 import { UserGroupTypes } from "../../features/user-group/types/types.ts";
 import PersonIcon from "@mui/icons-material/Person";
 import GroupsIcon from "@mui/icons-material/Groups";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMoreSharp";
 import { ShareLink } from "./shareLink.tsx";
+import { ObjectTypes } from "../../features/tag/type.ts";
 
 interface IProjectUserGroup<G,T> {
   items: ListItem[];
@@ -32,6 +29,7 @@ interface IProjectUserGroup<G,T> {
   getGroupByOption?:(option:any)=>string;
   item:T
   snapShotHash:string
+  objectTypes:ObjectTypes;
 }
 
 export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
@@ -46,86 +44,91 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
     handleSearchModalEditItem,
     setSearchInput,
     getGroupByOption,
-    item
+    item,
+    objectTypes
   }: IProjectUserGroup<G,T>): JSX.Element => {
-  console.log('items',items)
   return (
-    <Accordion component={Paper} elevation={1} sx={{ minHeight:'55px' }}>
-      <AccordionSummary
-        expandIcon={<ExpandMoreIcon />}
-        aria-controls="metadata-content"
-        id="metadata-header"
-      >
-        <Typography variant="h6">Share</Typography>
-      </AccordionSummary>
-      <AccordionDetails style={{ maxHeight: "400px", overflowY: "auto" }}>
-        <Grid container item spacing={2}>
-          <Grid container item alignItems="center" spacing={2}>
-            <ShareLink  itemId={item.id} snapShotHash={item.snapShotHash? item.snapShotHash : "" }/>
-          </Grid>
-          <Grid container item alignItems="center" spacing={2}>
-            <Grid item>
-              <Typography variant="h5">Permissions</Typography>
+    <Paper
+      elevation={1}
+      sx={{
+        minHeight: '55px',
+        height: '400px',
+        overflowY: 'auto',
+      }}>
+
+      <Grid container item spacing={2} sx={{marginTop:'10px',}}>
+        {
+          objectTypes === ObjectTypes.PROJECT &&(
+            <Grid container item alignItems="center" spacing={2}>
+              <Grid item>
+                <Typography variant="h5">Snapshot</Typography>
+              </Grid>
+              <ShareLink  itemId={item.id} snapShotHash={item.snapShotHash? item.snapShotHash : "" }/>
             </Grid>
-            <Grid item>
-              <MMUToolTip children={<div>
-                Admin: Can Access / Modify / Delete <br />
-                Editor: Can Access / Modify <br />
-                Reader: Can Access
-              </div>} />
-            </Grid>
+          )
+        }
+        <Grid container item alignItems="center" spacing={2}>
+          <Grid item>
+            <Typography variant="h5">Permissions</Typography>
           </Grid>
           <Grid item>
-            <SearchBar
-              label={searchBarLabel}
-              handleAdd={handleAddAccessListItem}
-              setSelectedData={setItemToAdd}
-              getOptionLabel={handleGetOptionLabel}
-              fetchFunction={handleSearchModalEditItem}
-              setSearchInput={setSearchInput}
-              actionButtonLabel={"ADD"}
-              groupByOption={getGroupByOption}
-            />
-          </Grid>
-          <Grid item container flexDirection="column" spacing={1}>
-            {items && items.map((item) => (
-              item ? (
-                <Grid key={item.id} item container spacing={1} flexDirection="row" alignItems="center" justifyContent="spaceBetween">
-                  <Grid item container xs={8}>
-                    <Grid item sx={{ flexGrow: 1 }}>
-                      <Typography>{item.title}</Typography>
-                    </Grid>
-                    <Grid item>
-                      {
-                        item.type === UserGroupTypes.PERSONAL ? (
-                          <PersonIcon/>
-                        ):(
-                          <GroupsIcon/>
-                        )
-                      }
-                    </Grid>
-                  </Grid>
-                  {children && (
-                    <Grid item>
-                      {children(item)}
-                    </Grid>
-                  )}
-                  <Grid item>
-                    <IconButton onClick={() => removeItem(item.id)} aria-label="delete" color="error">
-                      <DeleteIcon />
-                    </IconButton>
-                  </Grid>
-                  <Grid item xs={12} sx={{ mb: "5px" }}>
-                    <Divider />
-                  </Grid>
-                </Grid>
-              ) : (
-                <BigSpinner />
-              )
-            ))}
+            <MMUToolTip children={<div>
+              Admin: Can Access / Modify / Delete <br />
+              Editor: Can Access / Modify <br />
+              Reader: Can Access
+            </div>} />
           </Grid>
         </Grid>
-      </AccordionDetails>
-    </Accordion>
+        <Grid item>
+          <SearchBar
+            label={searchBarLabel}
+            handleAdd={handleAddAccessListItem}
+            setSelectedData={setItemToAdd}
+            getOptionLabel={handleGetOptionLabel}
+            fetchFunction={handleSearchModalEditItem}
+            setSearchInput={setSearchInput}
+            actionButtonLabel={"ADD"}
+            groupByOption={getGroupByOption}
+          />
+        </Grid>
+        <Grid item container flexDirection="column" spacing={1}>
+          {items && items.map((item) => (
+            item ? (
+              <Grid key={item.id} item container spacing={1} flexDirection="row" alignItems="center" justifyContent="spaceBetween">
+                <Grid item container xs={8}>
+                  <Grid item sx={{ flexGrow: 1 }}>
+                    <Typography>{item.title}</Typography>
+                  </Grid>
+                  <Grid item>
+                    {
+                      item.type === UserGroupTypes.PERSONAL ? (
+                        <PersonIcon/>
+                      ):(
+                        <GroupsIcon/>
+                      )
+                    }
+                  </Grid>
+                </Grid>
+                {children && (
+                  <Grid item>
+                    {children(item)}
+                  </Grid>
+                )}
+                <Grid item>
+                  <IconButton onClick={() => removeItem(item.id)} aria-label="delete" color="error">
+                    <DeleteIcon />
+                  </IconButton>
+                </Grid>
+                <Grid item xs={12} sx={{ mb: "5px" }}>
+                  <Divider />
+                </Grid>
+              </Grid>
+            ) : (
+              <BigSpinner />
+            )
+          ))}
+        </Grid>
+      </Grid>
+    </Paper>
   );
 }

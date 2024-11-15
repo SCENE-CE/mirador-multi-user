@@ -17,8 +17,12 @@ export const ShareLink = ({ itemId, snapShotHash }:IShareLinkProps) => {
   const [generatedAt, setGeneratedAt] = useState<null|string>(null);
 
   const handleCopyToClipboard = async () => {
+    if(generatedAt){
     await navigator.clipboard.writeText(projectUrl);
     toast.success('Snapshot URL copied to clipboard');
+    }else{
+      toast.error('You need to generate snapshot first');
+    }
   };
 
   const handleGenerateSnapshot = async () => {
@@ -31,7 +35,6 @@ export const ShareLink = ({ itemId, snapShotHash }:IShareLinkProps) => {
 
   const fetchManifestInfo = async (hash:string) => {
     try {
-      console.log('projectUrl',projectUrl)
       const response = await fetch(`${import.meta.env.VITE_CADDY_URL}/${hash}/workspace.json`);
       if (!response.ok) throw new Error('Failed to fetch manifest info');
       const miradorWorkspace = await response.json();
@@ -48,19 +51,10 @@ export const ShareLink = ({ itemId, snapShotHash }:IShareLinkProps) => {
   }, [projectUrl,
   ]);
 
-console.log('generatedAt',generatedAt)
   return (
     <Grid container item spacing={2}>
       <Grid item container xs={10} spacing={2} sx={{ width: '100%' }}>
         <Grid container item flexDirection="row" alignItems="center" spacing={2} sx={{ width: '100%' }}>
-          <Grid item xs={2}>
-            <ModalButton
-              disabled={false}
-              icon={<RotateRightIcon />}
-              onClickFunction={handleGenerateSnapshot}
-              tooltipButton="Generate project snapshot"
-            />
-          </Grid>
           {projectUrl && (
             <>
               <Grid item xs={8}>
@@ -72,12 +66,20 @@ console.log('generatedAt',generatedAt)
                   helperText={generatedAt ? `Snapshot taken at ${generatedAt}` : null}
                 />
               </Grid>
-              <Grid item xs={1}>
+              <Grid item>
                 <ModalButton
                   tooltipButton="Copy Link"
                   onClickFunction={handleCopyToClipboard}
                   disabled={false}
                   icon={<ContentCopyIcon />}
+                />
+              </Grid>
+              <Grid item>
+                <ModalButton
+                  disabled={false}
+                  icon={<RotateRightIcon />}
+                  onClickFunction={handleGenerateSnapshot}
+                  tooltipButton="Generate project snapshot"
                 />
               </Grid>
             </>

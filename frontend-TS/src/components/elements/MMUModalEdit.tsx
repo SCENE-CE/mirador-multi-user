@@ -1,5 +1,5 @@
-import { Button, Grid, SelectChangeEvent, TextField, Tooltip, Typography } from "@mui/material";
-import { ChangeEvent, Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography } from "@mui/material";
+import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { ItemList } from "./ItemList.tsx";
 import Selector from "../Selector.tsx";
@@ -11,11 +11,13 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import { MediaGroupRights } from "../../features/media/types/types.ts";
 import MetadataForm from "./metadataForm.tsx";
 import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
+import { a11yProps } from "./SideBar/allyProps.tsx";
+import { CustomTabPanel } from "./CustomTabPanel.tsx";
 
 
 interface ModalItemProps<T, G,O> {
@@ -44,6 +46,7 @@ interface ModalItemProps<T, G,O> {
   isGroups?:boolean
   objectTypes?:ObjectTypes
   getGroupByOption?:(option:any)=>string
+
 }
 
 export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapShotHash?:string }, G>(
@@ -72,6 +75,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
     isGroups,
     getGroupByOption,
     duplicateItem,
+    objectTypes
   }: ModalItemProps<T, G, O>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
@@ -81,6 +85,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openDuplicateModal, setOpenDuplicateModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<{ [key: string]: string }>(metadata || {});
+  const [tabValue, setTabValue] = useState(0);
 
   const handeUpdateMetadata = (updateData:any)=>{
     setMetadataFormData(updateData)
@@ -149,107 +154,128 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
 
   const confirmDuplicate = (itemId:number)=>{
     if(duplicateItem){
-    duplicateItem(itemId)
-    setOpenDuplicateModal(!openDuplicateModal)
+      duplicateItem(itemId)
+      setOpenDuplicateModal(!openDuplicateModal)
     }
   }
 
+  const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+  };
+
   return (
     <Grid container sx={{overflow:'scroll'}}>
+      <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">
+        <Tab label="General" {...a11yProps(0)} />
+        <Tab label="Metadata" {...a11yProps(1)} />
+        <Tab label="Share" {...a11yProps(2)} />
+      </Tabs>
       <Grid item container flexDirection="column">
-        <Grid
-          item
-          sx={{ minHeight: '200px' }}
-          container
-          flexDirection="column"
-          justifyContent="space-between"
-          alignItems="center"
-          spacing={2}
-        >
+        <CustomTabPanel value={tabValue} index={0}>
           <Grid
             item
-            sx={{ minHeight: '50px', width: '100%', marginTop:'10px' }}
+            sx={{ minHeight: '200px' }}
             container
-            flexDirection="row"
+            flexDirection="column"
             justifyContent="space-between"
             alignItems="center"
+            spacing={2}
           >
-            <TextField
-              type="text"
-              label="title"
-              onChange={handleChangeTitle}
-              variant="outlined"
-              defaultValue={itemLabel}
-              fullWidth
-            />
-          </Grid>
-          <Grid
-            item
-            sx={{ minHeight: '50px', width: '100%' }}
-            container
-            flexDirection="row"
-            justifyContent="space-between"
-            alignItems="center"
-          >
-            <TextField
-              type="text"
-              label="Description"
-              onChange={handleChangeDescription}
-              variant="outlined"
-              defaultValue={description}
-              multiline
-              fullWidth
-            />
-          </Grid>
-          <Grid
-            item
-            sx={{ minHeight: '50px', width: '100%' }}
-            container
-            justifyContent="flex-end"
-            alignItems="center"
-          >
-            <TextField
-              type="text"
-              label="Creator"
-              onChange={handleChangeCreator}
-              variant="outlined"
-              defaultValue={newItemMetadataCreator}
-              multiline
-              fullWidth
-            />
-          </Grid>
-          <Grid
-            item
-            sx={{ minHeight: '50px', width: '100%' }}
-            container
-            justifyContent="flex-start"
-            alignItems="center"
-          >
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker
-                label={"created at"}
-                onChange={(newValue)=>setNewItemDate(newValue)}
-                value={newItemDate }
+            <Grid
+              item
+              sx={{ minHeight: '50px', width: '100%', marginTop:'10px' }}
+              container
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <TextField
+                type="text"
+                label="title"
+                onChange={handleChangeTitle}
+                variant="outlined"
+                defaultValue={itemLabel}
+                fullWidth
               />
-            </LocalizationProvider>
+            </Grid>
+            <Grid
+              item
+              sx={{ minHeight: '50px', width: '100%' }}
+              container
+              flexDirection="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
+              <TextField
+                type="text"
+                label="Description"
+                onChange={handleChangeDescription}
+                variant="outlined"
+                defaultValue={description}
+                multiline
+                fullWidth
+              />
+            </Grid>
+            <Grid
+              item
+              sx={{ minHeight: '50px', width: '100%' }}
+              container
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              <TextField
+                type="text"
+                label="Creator"
+                onChange={handleChangeCreator}
+                variant="outlined"
+                defaultValue={newItemMetadataCreator}
+                multiline
+                fullWidth
+              />
+            </Grid>
+            <Grid
+              item
+              sx={{ minHeight: '50px', width: '100%' }}
+              container
+              justifyContent="flex-start"
+              alignItems="center"
+            >
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
+                <DatePicker
+                  label={"created at"}
+                  onChange={(newValue)=>setNewItemDate(newValue)}
+                  value={newItemDate }
+                />
+              </LocalizationProvider>
+            </Grid>
+            <Grid
+              item
+              sx={{ minHeight: '50px', width: '100%' }}
+              container
+              justifyContent="flex-end"
+              alignItems="center"
+            >
+              <TextField
+                type="text"
+                label="Thumbnail Url"
+                onChange={handleChangeThumbnailUrl}
+                variant="outlined"
+                defaultValue={thumbnailUrl ? thumbnailUrl : undefined }
+                multiline
+                fullWidth
+              />
+            </Grid>
+            {/*<Grid*/}
+            {/*item*/}
+            {/*container*/}
+            {/*justifyContent="flex-end"*/}
+            {/*alignItems="center"*/}
+            {/*>*/}
+            {/*  <TaggingForm objectTypes={objectTypes} object={item}/>*/}
+            {/*</Grid>*/}
           </Grid>
-          <Grid
-            item
-            sx={{ minHeight: '50px', width: '100%' }}
-            container
-            justifyContent="flex-end"
-            alignItems="center"
-          >
-            <TextField
-              type="text"
-              label="Thumbnail Url"
-              onChange={handleChangeThumbnailUrl}
-              variant="outlined"
-              defaultValue={thumbnailUrl ? thumbnailUrl : undefined }
-              multiline
-              fullWidth
-            />
-          </Grid>
+        </CustomTabPanel>
+        <CustomTabPanel value={tabValue} index={1}>
           <Grid
             item
             container
@@ -262,39 +288,34 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
               )
             }
           </Grid>
-          {/*<Grid*/}
-          {/*item*/}
-          {/*container*/}
-          {/*justifyContent="flex-end"*/}
-          {/*alignItems="center"*/}
-          {/*>*/}
-          {/*  <TaggingForm objectTypes={objectTypes} object={item}/>*/}
-          {/*</Grid>*/}
-        </Grid>
+        </CustomTabPanel>
         {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
-          <Grid item sx={{marginTop:'10px'}}>
-            <ItemList
-              item={item}
-              snapShotHash={item.snapShotHash? item.snapShotHash : "" }
-              handleAddAccessListItem={handleAddAccessListItem}
-              setItemToAdd={setItemToAdd}
-              items={listOfItem}
-              handleSearchModalEditItem={handleSearchModalEditItem}
-              removeItem={handleDeleteAccessListItem}
-              searchBarLabel={searchBarLabel}
-              setSearchInput={setSearchInput}
-              handleGetOptionLabel={handleGetOtpionLabel}
-              getGroupByOption={getGroupByOption}
-            >
-              {(accessListItem) => (
-                <Selector
-                  selectorItems={rightsSelectorItems}
-                  value={accessListItem.rights!}
-                  onChange={handleSelectorChange(accessListItem)}
-                />
-              )}
-            </ItemList>
-          </Grid>
+          <CustomTabPanel value={tabValue} index={2}>
+            <Grid item>
+              <ItemList
+                item={item}
+                objectTypes={objectTypes!}
+                snapShotHash={item.snapShotHash? item.snapShotHash : "" }
+                handleAddAccessListItem={handleAddAccessListItem}
+                setItemToAdd={setItemToAdd}
+                items={listOfItem}
+                handleSearchModalEditItem={handleSearchModalEditItem}
+                removeItem={handleDeleteAccessListItem}
+                searchBarLabel={searchBarLabel}
+                setSearchInput={setSearchInput}
+                handleGetOptionLabel={handleGetOtpionLabel}
+                getGroupByOption={getGroupByOption}
+              >
+                {(accessListItem) => (
+                  <Selector
+                    selectorItems={rightsSelectorItems}
+                    value={accessListItem.rights!}
+                    onChange={handleSelectorChange(accessListItem)}
+                  />
+                )}
+              </ItemList>
+            </Grid>
+          </CustomTabPanel>
         )}
         {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
           <Grid
