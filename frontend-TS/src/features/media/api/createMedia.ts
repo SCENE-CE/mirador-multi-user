@@ -1,5 +1,6 @@
 import storage from "../../../utils/storage.ts";
 import { CreateMediaDto } from "../types/types.ts";
+import toast from "react-hot-toast";
 
 export const createMedia = async (mediaDto: CreateMediaDto) => {
   const token = storage.getToken();
@@ -21,7 +22,8 @@ export const createMedia = async (mediaDto: CreateMediaDto) => {
     });
 
     if (!response.ok) {
-      throw new Error(`Error: ${response.statusText}`);
+      toast.error('Unsupported media type, if the media is a video use Peertube or Youtube instance.');
+
     }
 
     const data = await response.json();

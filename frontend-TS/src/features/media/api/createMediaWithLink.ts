@@ -23,6 +23,7 @@ export const createMediaLink = async (mediaLinkDto: LinkMediaDto) => {
     return data;
   } catch (error) {
     console.error('Error uploading media:', error);
+
     throw error;
   }
 };
