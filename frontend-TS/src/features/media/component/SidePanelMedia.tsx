@@ -1,7 +1,19 @@
-import { Drawer, IconButton, Box, styled, Button, ImageList, ImageListItem, Grid, Tooltip } from "@mui/material";
-import { ChangeEvent, ReactNode, useCallback, useMemo, useState } from "react";
+import {
+  Drawer,
+  IconButton,
+  Box,
+  styled,
+  Button,
+  ImageList,
+  ImageListItem,
+  Grid,
+  Tooltip,
+  Tabs,
+  Tab
+} from "@mui/material";
+import { ChangeEvent, ReactNode, SyntheticEvent, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
-import { Media } from "../types/types.ts";
+import { Media, MediaTypes } from "../types/types.ts";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForMedias } from "../api/lookingForMedias.ts";
 import { UserGroup } from "../../user-group/types/types.ts";
@@ -14,6 +26,7 @@ import { createMediaLink } from "../api/createMediaWithLink.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
+import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -84,6 +97,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
+  const [tabValue, setTabValue] = useState(0);
   // const [mediasTags, setMediasTags] = useState<Tag[]>([]);
   // const [tagFilter ,setTagFilter] = useState<Tag|null>(null);
   // const [showAllTags, setShowAllTags] = useState(false);
@@ -138,16 +152,30 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   //   return filteredMedias.slice(start, end);
   // }, [currentPage, itemsPerPage, medias, tagFilter]);
 
+  const filteredMedias = useMemo(() => {
+    if (tabValue === 1) {
+      return medias.filter(media => media.mediaTypes === MediaTypes.VIDEO);
+    } else if (tabValue === 2) {
+      return medias.filter(media => media.mediaTypes === MediaTypes.IMAGE);
+    }
+    return medias;
+  }, [tabValue, medias]);
+
   const currentPageData = useMemo(() => {
     const start = (currentPage - 1) * itemsPerPage;
     const end = start + itemsPerPage;
-    return medias.slice(start, end);
-  }, [currentPage, medias]);
+    return filteredMedias.slice(start, end);
+  }, [currentPage, filteredMedias]);
 
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
   const toggleDrawer = () => {
     setOpen((prevOpen) => !prevOpen);
+  };
+
+  const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
+    setTabValue(newValue);
+    setCurrentPage(1);
   };
 
   const handleCreateMedia  = useCallback(async (event: ChangeEvent<HTMLInputElement>) => {
@@ -267,10 +295,14 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
           {/*      </Grid>*/}
           {/*    )}*/}
           {/*</Grid>*/}
+          <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">
+            <Tab label="All" {...a11yProps(0)} />
+            <Tab label="Videos" {...a11yProps(1)} />
+            <Tab label="Images" {...a11yProps(2)} />
+          </Tabs>
           {
             searchedMedia &&(
               <ImageList sx={{ minWidth: 500,maxWidth:500, padding: 1, width:500 }} cols={3} rowHeight={164}>
-
                 <CustomImageItem key={searchedMedia.path}>
                   <Box
                     component="img"

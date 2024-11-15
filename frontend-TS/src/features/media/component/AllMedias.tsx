@@ -69,7 +69,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [tabValue, setTabValue] = useState(0);
 
-  const handleChange = (_event: SyntheticEvent, newValue: number) => {
+  const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
     setCurrentPage(1);
   };
@@ -214,8 +214,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
 
   const actions = [
     { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:()=> {
-        console.log('open')
-        console.log('modalLinkMediaIsOpen',modalLinkMediaIsOpen)
         setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
       }},
     { icon: <UploadFileIcon /> as ReactNode, name: 'Upload' , onClick: () => {
@@ -240,15 +238,13 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     }
   }
 
-  console.log('value',tabValue)
-  console.log('media',medias)
   return(
     <Box sx={{ padding: 2 }}>
       <Grid item container flexDirection="column" spacing={1}>
         <Grid item container alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
           <Grid item>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={tabValue} onChange={handleChange} aria-label="basic tabs example">
+              <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">
                 <Tab label="All" {...a11yProps(0)} />
                 <Tab label="Videos" {...a11yProps(1)} />
                 <Tab label="Images" {...a11yProps(2)} />
