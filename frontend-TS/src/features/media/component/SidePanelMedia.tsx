@@ -1,15 +1,15 @@
 import {
-  Drawer,
-  IconButton,
   Box,
-  styled,
   Button,
+  Drawer,
+  Grid,
+  IconButton,
   ImageList,
   ImageListItem,
-  Grid,
-  Tooltip,
+  styled,
+  Tab,
   Tabs,
-  Tab
+  Tooltip
 } from "@mui/material";
 import { ChangeEvent, ReactNode, SyntheticEvent, useCallback, useMemo, useState } from "react";
 import toast from "react-hot-toast";
@@ -27,6 +27,8 @@ import { PaginationControls } from "../../../components/elements/Pagination.tsx"
 import { CloseButton } from "../../../components/elements/SideBar/CloseButton.tsx";
 import { OpenButton } from "../../../components/elements/SideBar/OpenButton.tsx";
 import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
+import OndemandVideoIcon from "@mui/icons-material/OndemandVideo";
+import ImageIcon from "@mui/icons-material/Image";
 
 const CustomImageItem = styled(ImageListItem)({
   position: 'relative',
@@ -333,26 +335,42 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
           {searchedMedia === null &&(
             <ImageList sx={{ minWidth: 500, padding: 1, width:500 }} cols={3} rowHeight={164}>
               {currentPageData.map((media) => (
-                <CustomImageItem key={media.hash}>
+                <CustomImageItem key={media.hash} sx={{ position: 'relative', width: 150, height: 150 }}>
                   <Box
                     component="img"
                     src={`${caddyUrl}/${media.hash}/thumbnail.webp`}
                     alt={media.title}
                     loading="lazy"
                     sx={{
-                      width: 150,
-                      height: 150,
+                      width: '100%',
+                      height: '100%',
                       objectFit: 'cover', // Ensures cropping behavior
                       '@media(min-resolution: 2dppx)': {
-                        width: 150 * 2,
-                        height: 150 * 2,
+                        width: '100%',
+                        height: '100%',
                       },
                     }}
                   />
+                  {/* Conditionally render icon in the top-right corner */}
+                  <Box
+                    sx={{
+                      position: 'absolute',
+                      top: 8,
+                      right: 8,
+                      color: 'white',
+                      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                      padding: '4px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                    }}
+                  >
+                    {media.mediaTypes === MediaTypes.VIDEO ? <OndemandVideoIcon /> : <ImageIcon />}
+                  </Box>
                   <CustomButton
                     className="overlayButton"
                     disableRipple
-                    onClick={media.path ? () => handleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) :() => handleCopyToClipBoard(`${media.url}`) }
+                    onClick={media.path ? () => handleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) : () => handleCopyToClipBoard(`${media.url}`)}
                   >
                     Copy path to clipboard
                   </CustomButton>
