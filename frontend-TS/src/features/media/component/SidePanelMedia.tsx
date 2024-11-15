@@ -104,7 +104,6 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   // const [showAllTags, setShowAllTags] = useState(false);
   const itemsPerPage = 9;
 
-  console.log('medias',medias)
 
   // const handleShowAllTags = () => {
   //   setShowAllTags(!showAllTags);
@@ -171,7 +170,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   const totalPages = Math.ceil(medias.length / itemsPerPage);
 
   const toggleDrawer = () => {
-    setOpen((prevOpen) => !prevOpen);
+    setOpen();
   };
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
@@ -224,7 +223,6 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   //   return setTagFilter(tag)
   // }
 
-  console.log('display',display);
   return (
     <div>
       {display && (
