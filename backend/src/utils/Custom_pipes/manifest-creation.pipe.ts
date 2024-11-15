@@ -4,9 +4,22 @@ import {
   ExecutionContext,
   CallHandler,
   BadRequestException,
+  UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import { Observable } from 'rxjs';
 import * as sharp from 'sharp';
+import {
+  getPeerTubeThumbnail,
+  getPeerTubeVideoDetails,
+  getPeerTubeVideoID,
+  getYoutubeJson,
+  getYoutubeThumbnail,
+  getYouTubeVideoID,
+  isImage,
+  isPeerTubeVideo,
+  isYouTubeVideo,
+} from './utils';
+import { mediaTypes } from '../../enum/mediaTypes';
 
 @Injectable()
 export class MediaInterceptor implements NestInterceptor {
@@ -22,11 +35,9 @@ export class MediaInterceptor implements NestInterceptor {
       );
     }
 
-    console.log(manifestMedias);
     if (!title) {
       throw new BadRequestException('Manifest title is required.');
     }
-
     // Create the initial structure for the manifest
     const manifestToCreate = {
       '@context': 'https://iiif.io/api/presentation/3/context.json',
@@ -46,61 +57,143 @@ export class MediaInterceptor implements NestInterceptor {
 
     const fetchMediaForItem = async (media) => {
       try {
-        console.log(media);
         const url = media.value.replace(
           /^(http|https):\/\/localhost:\d+\//,
           '$1://caddy/',
         );
+        let videoId: string | null = null;
+        let youtubeJson = null;
+        let peertubeVideoJson = null;
+        switch (true) {
+          case isYouTubeVideo(url):
+            videoId = getYouTubeVideoID(url);
+            if (videoId) {
+              youtubeJson = await getYoutubeJson(url);
+              const timeStamp = Date.now();
+              const timeStamp2 = Date.now();
+              const timeStamp3 = Date.now();
+              const height = youtubeJson.height;
+              const width = youtubeJson.width;
+              const duration = youtubeJson.duration;
 
-        const response = await fetch(`${url}`, { method: 'GET' });
-
-        if (!response.ok) {
-          throw new Error(
-            `HTTP error! status: ${response.status}, message: ${response.statusText}`,
-          );
-        }
-        const arrayBuffer = await response.arrayBuffer();
-        const mediaBuffer = Buffer.from(arrayBuffer);
-        const contentType = response.headers.get('Content-Type');
-
-        if (contentType && contentType.startsWith('image')) {
-          const imageMetadata = await sharp(mediaBuffer).metadata();
-          const { width, height } = imageMetadata;
-          const timeStamp = Date.now();
-          const timeStamp2 = Date.now();
-          const timeStamp3 = Date.now();
-          manifestToCreate.items.push({
-            id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
-            type: 'Canvas',
-            height,
-            width,
-            label: { en: ['Image Item'] },
-            items: [
-              {
-                id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
-                type: 'AnnotationPage',
+              manifestToCreate.items.push({
+                id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                type: 'Canvas',
+                height,
+                width,
+                duration,
+                label: { en: ['Image Item'] },
                 items: [
                   {
-                    id: `https://example.org/${timeStamp}/annotation/${Date.now()}`,
-                    type: 'Annotation',
-                    motivation: 'painting',
-                    target: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
-                    body: {
-                      id: media.value,
-                      type: 'Image',
-                      format: `Image/${contentType}`,
-                      height,
-                      width,
-                    },
+                    id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
+                    type: 'AnnotationPage',
+                    items: [
+                      {
+                        id: `https://example.org/${timeStamp}/annotation/${Date.now()}`,
+                        type: 'Annotation',
+                        motivation: 'painting',
+                        target: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                        body: {
+                          id: media.value,
+                          type: 'Video',
+                          format: `Video/MPG`,
+                          height,
+                          width,
+                          duration,
+                        },
+                      },
+                    ],
                   },
                 ],
-              },
-            ],
-          });
-        } else {
-          throw new BadRequestException(
-            'Unsupported media type or media processing error',
-          );
+              });
+            }
+            break;
+          case await isPeerTubeVideo(url):
+            videoId = getPeerTubeVideoID(url);
+            if (videoId) {
+              peertubeVideoJson = await getPeerTubeVideoDetails(url, videoId);
+              const timeStamp = Date.now();
+              const timeStamp2 = Date.now();
+              const timeStamp3 = Date.now();
+              const height = peertubeVideoJson.files[0]?.height;
+              const width = peertubeVideoJson.files[0]?.width;
+              const duration = peertubeVideoJson.duration;
+
+              manifestToCreate.items.push({
+                id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                type: 'Canvas',
+                height,
+                width,
+                duration,
+                label: { en: ['Image Item'] },
+                items: [
+                  {
+                    id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
+                    type: 'AnnotationPage',
+                    items: [
+                      {
+                        id: `https://example.org/${timeStamp}/annotation/${Date.now()}`,
+                        type: 'Annotation',
+                        motivation: 'painting',
+                        target: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                        body: {
+                          id: media.value,
+                          type: 'Video',
+                          format: `Video/MPG`,
+                          height,
+                          width,
+                          duration,
+                        },
+                      },
+                    ],
+                  },
+                ],
+              });
+            }
+            break;
+          case await isImage(url):
+            const response = await fetch(`${url}`, { method: 'GET' });
+            const arrayBuffer = await response.arrayBuffer();
+            const mediaBuffer = Buffer.from(arrayBuffer);
+            const contentType = response.headers.get('Content-Type');
+            const imageMetadata = await sharp(mediaBuffer).metadata();
+            const { width, height } = imageMetadata;
+            const timeStamp = Date.now();
+            const timeStamp2 = Date.now();
+            const timeStamp3 = Date.now();
+            manifestToCreate.items.push({
+              id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+              type: 'Canvas',
+              height,
+              width,
+              label: { en: ['Image Item'] },
+              items: [
+                {
+                  id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
+                  type: 'AnnotationPage',
+                  items: [
+                    {
+                      id: `https://example.org/${timeStamp}/annotation/${Date.now()}`,
+                      type: 'Annotation',
+                      motivation: 'painting',
+                      target: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
+                      body: {
+                        id: media.value,
+                        type: 'Image',
+                        format: `Image/${contentType}`,
+                        height,
+                        width,
+                      },
+                    },
+                  ],
+                },
+              ],
+            });
+          default:
+            throw new UnsupportedMediaTypeException(
+              'media type is not supported',
+            );
+            break;
         }
       } catch (error) {
         console.error('error details:', error);

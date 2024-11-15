@@ -67,6 +67,7 @@ const handleCopyToClipBoard = async (path: string) => {
   }
 };
 
+
 interface PopUpMediaProps {
   medias: Media[];
   children: ReactNode;
@@ -87,6 +88,8 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   // const [tagFilter ,setTagFilter] = useState<Tag|null>(null);
   // const [showAllTags, setShowAllTags] = useState(false);
   const itemsPerPage = 9;
+
+  console.log('medias',medias)
 
   // const handleShowAllTags = () => {
   //   setShowAllTags(!showAllTags);

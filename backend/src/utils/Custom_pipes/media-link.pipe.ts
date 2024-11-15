@@ -11,81 +11,18 @@ import * as sharp from 'sharp';
 import { createWriteStream } from 'fs';
 import fetch from 'node-fetch';
 import { generateAlphanumericSHA1Hash } from '../hashGenerator';
-import { mediaTypes } from "../../enum/mediaTypes";
+import { mediaTypes } from '../../enum/mediaTypes';
+import {
+  getPeerTubeThumbnail,
+  getPeerTubeVideoID,
+  getYoutubeThumbnail,
+  getYouTubeVideoID,
+  isPeerTubeVideo,
+  isYouTubeVideo,
+} from './utils';
 
 @Injectable()
 export class MediaLinkInterceptor implements NestInterceptor {
-  isYouTubeVideo(url: string): boolean {
-    const youtubeRegex =
-      /^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/(watch\?v=|embed\/|v\/|.+\?v=)?([^&\n?#]+)/;
-    return youtubeRegex.test(url);
-  }
-
-  async isPeerTubeVideo(url: string): Promise<boolean> {
-    try {
-      const response = await fetch(url);
-      if (!response.ok) throw new Error('Failed to fetch the URL');
-
-      const htmlContent = await response.text();
-      return htmlContent.includes(
-        '<meta property="og:platform" content="PeerTube">',
-      );
-    } catch (error) {
-      console.error(`Error checking PeerTube meta tag: ${error.message}`);
-      return false;
-    }
-  }
-
-  async getYoutubeThumbnail(id: string): Promise<Buffer> {
-    const response = await fetch(
-      `https://img.youtube.com/vi/${id}/default.jpg`,
-    );
-    if (!response.ok) throw new Error('Failed to fetch YouTube thumbnail');
-    return Buffer.from(await response.arrayBuffer());
-  }
-
-  async getPeerTubeThumbnail(url: string, videoId: string): Promise<Buffer> {
-    const baseDomain = new URL(url).origin;
-    const apiURL = `${baseDomain}/api/v1/videos/${videoId}`;
-    const response = await fetch(apiURL);
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch PeerTube video details');
-    }
-
-    const data = await response.json();
-    let thumbnailUrl = data.thumbnailPath;
-    if (!thumbnailUrl.startsWith('http')) {
-      thumbnailUrl = `${baseDomain}${thumbnailUrl}`;
-    }
-
-    const thumbnailResponse = await fetch(thumbnailUrl);
-    if (!thumbnailResponse.ok) {
-      throw new Error('Failed to fetch PeerTube thumbnail');
-    }
-
-    const contentType = thumbnailResponse.headers.get('Content-Type');
-    if (!contentType || !contentType.startsWith('image/')) {
-      throw new Error('Fetched data is not a valid image');
-    }
-
-    const arrayBuffer = await thumbnailResponse.arrayBuffer();
-    return Buffer.from(arrayBuffer);
-  }
-
-  getYouTubeVideoID(url: string): string | null {
-    const youtubeRegex =
-      /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|.+\?v=)|youtu\.be\/)([^&\n?#]+)/;
-    const match = url.match(youtubeRegex);
-    return match ? match[1] : null;
-  }
-
-  getPeerTubeVideoID(url: string): string | null {
-    const peerTubeRegex = /(?:videos\/watch|w)\/([a-zA-Z0-9-]+)/;
-    const match = url.match(peerTubeRegex);
-    return match ? match[1] : null;
-  }
-
   async processImage(buffer: Buffer, uploadPath: string): Promise<void> {
     const processedFilePath = join(uploadPath, `thumbnail.webp`);
     const sharpBuffer = await sharp(buffer)
@@ -113,18 +50,18 @@ export class MediaLinkInterceptor implements NestInterceptor {
       let videoId: string | null = null;
 
       switch (true) {
-        case this.isYouTubeVideo(url):
-          videoId = this.getYouTubeVideoID(url);
+        case isYouTubeVideo(url):
+          videoId = getYouTubeVideoID(url);
           if (videoId) {
-            thumbnailBuffer = await this.getYoutubeThumbnail(videoId);
+            thumbnailBuffer = await getYoutubeThumbnail(videoId);
           }
           request.mediaTypes = mediaTypes.VIDEO;
           break;
 
-        case await this.isPeerTubeVideo(url):
-          videoId = this.getPeerTubeVideoID(url);
+        case await isPeerTubeVideo(url):
+          videoId = getPeerTubeVideoID(url);
           if (videoId) {
-            thumbnailBuffer = await this.getPeerTubeThumbnail(url, videoId);
+            thumbnailBuffer = await getPeerTubeThumbnail(url, videoId);
           }
           request.mediaTypes = mediaTypes.VIDEO;
           break;

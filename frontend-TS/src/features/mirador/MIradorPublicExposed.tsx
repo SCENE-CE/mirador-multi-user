@@ -25,7 +25,7 @@ export const MiradorPublicExposed = () => {
       try {
         const response = await fetch(updatedUrl, { method: 'GET' });
         const miradorWorkspace = await response.json();
-        console.log(miradorWorkspace)
+        console.log("miradorWorkspace",miradorWorkspace)
         if (viewerRef.current) {
           const config = {
             id: viewerRef.current.id,
