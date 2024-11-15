@@ -26,7 +26,6 @@ export class MediaInterceptor implements NestInterceptor {
     if (!title) {
       throw new BadRequestException('Manifest title is required.');
     }
-
     // Create the initial structure for the manifest
     const manifestToCreate = {
       '@context': 'https://iiif.io/api/presentation/3/context.json',

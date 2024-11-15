@@ -79,7 +79,6 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
   const [modalLinkManifestIsOpen, setModalLinkManifestIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
   const [thumbnailUrls, setThumbnailUrls] = useState<string[]>([]);
-
   const itemsPerPage = 9;
 
   const currentPageData = useMemo(() => {
@@ -176,8 +175,6 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
     fetchThumbnails();
   }, [fetchThumbnails]);
 
-  console.log("thumbnailUrls",thumbnailUrls)
-console.log('manifest',manifest)
   return (
     <div>
       {display && (

@@ -1,14 +1,24 @@
 import { ChangeEvent, useState } from "react";
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
+import Grid from "@mui/material/Grid";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
 import { FieldForm } from "../../../components/elements/FieldForm.tsx";
 import { Box, Typography } from "@mui/material";
 import { MMUToolTip } from "../../../components/elements/MMUTootlTip.tsx";
+import { MediaTypes } from "../../media/types/types.ts";
+import {
+  getPeerTubeThumbnailUrl,
+  getPeerTubeVideoID,
+  getYoutubeJson,
+  isPeerTubeVideo,
+  isYouTubeVideo
+} from "../../media/utils/utils.ts";
 
 interface MediaField {
   title: string;
   value: string;
+  type: MediaTypes | undefined;
+  thumbnailUrl?: string;
 }
 
 interface ItemGroup {
@@ -27,7 +37,7 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
 
   const handleNewItemGroup = () => {
     const newCanvasIndex = items.length + 1;
-    setItems([...items, { media: [{ title: `media-${newCanvasIndex}`, value: "" }] }]);
+    setItems([...items, { media: [{ title: `media-${newCanvasIndex}`, value: "", type: undefined }] }]);
   };
 
   const handleManifestTitleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -38,17 +48,48 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
     setManifestThumbnail(e.target.value);
   };
 
-  const handleMediaChange = (itemIndex: number, value: string) => {
+  const handleMediaChange = async (itemIndex: number, value: string) => {
     const updatedItems = [...items];
     updatedItems[itemIndex].media[0].value = value;
-    setItems(updatedItems);
+
+    let youtubeJson;
+    let videoId;
+    let thumbnailUrl: string | null = null;
+
+    try {
+      if (isYouTubeVideo(value)) {
+        youtubeJson = await getYoutubeJson(value);
+        thumbnailUrl = youtubeJson?.thumbnail_url || null;
+        updatedItems[itemIndex].media[0].thumbnailUrl = thumbnailUrl!;
+        updatedItems[itemIndex].media[0].type = MediaTypes.VIDEO;
+        console.log("YouTube thumbnail set:", thumbnailUrl);
+      } else if (await isPeerTubeVideo(value)) {
+        videoId = getPeerTubeVideoID(value);
+        if (videoId) {
+          thumbnailUrl = await getPeerTubeThumbnailUrl(value, videoId);
+          updatedItems[itemIndex].media[0].thumbnailUrl = thumbnailUrl;
+          updatedItems[itemIndex].media[0].type = MediaTypes.VIDEO;
+          console.log("PeerTube thumbnail set:", thumbnailUrl);
+        }
+      } else {
+        // Set as image if not YouTube or PeerTube video
+        updatedItems[itemIndex].media[0].thumbnailUrl = value;
+        updatedItems[itemIndex].media[0].type = MediaTypes.IMAGE;
+        console.log("Image thumbnail set:", value);
+      }
+    } catch (error) {
+      console.error("Failed to fetch media details:", error);
+    } finally {
+      setItems(updatedItems);
+      console.log("Updated items:", updatedItems);
+    }
   };
 
   const handleRemoveItem = (itemIndex: number) => {
     const updatedItems = items.filter((_, i) => i !== itemIndex);
     setItems(updatedItems);
   };
-  console.log(items)
+  console.log('items',items)
   return (
     <Grid container direction="column" spacing={4}>
       <Grid item container>
@@ -133,8 +174,7 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
                   <Grid item>
                     <Box
                       component="img"
-                      src={item.media[0].value}
-                      alt={item.media[0].value}
+                      src={item.media[0].thumbnailUrl}
                       loading="lazy"
                       sx={{
                         width: 50,
