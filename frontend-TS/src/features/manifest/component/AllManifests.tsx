@@ -72,6 +72,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
+  const [openSidePanel , setOpenSidePanel] = useState(false);
 
   const itemsPerPage = 5;
 
@@ -300,10 +301,12 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const handleChangeRights = async (group: ListItem, eventValue: string, manifestId: number) => {
     await updateAccessToManifest(manifestId, group.id, eventValue as ManifestGroupRights)
   };
-
+  const handleSetOpenSidePanel=()=>{
+    setOpenSidePanel(!openSidePanel)
+  }
   return (
     <>
-      <SidePanelMedia display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
+      <SidePanelMedia  open={openSidePanel && !!openModalManifestId} setOpen={handleSetOpenSidePanel} display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
         <Grid item container flexDirection="column" spacing={1}>
           <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             {
@@ -459,7 +462,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
           {
             createManifestIsOpen &&(
               <Grid item container spacing={2} flexDirection="column" sx={{marginBottom:"70px", width: '100%'}}>
-                <SidePanelMedia display={true} medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user}>
+                <SidePanelMedia display={true} medias={medias} userPersonalGroup={userPersonalGroup} fetchMediaForUser={fetchMediaForUser} user={user} open={openSidePanel} setOpen={handleSetOpenSidePanel}>
                   <ManifestCreationForm handleSubmit={handleSubmitManifestCreationForm}/>
                 </SidePanelMedia>
               </Grid>

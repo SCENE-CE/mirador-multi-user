@@ -55,6 +55,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const [userGroupsSearch, setUserGroupSearch] = useState<LinkUserGroup[]>([])
   const [projectFiltered, setProjectFiltered] = useState<Project[]|undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openSidePanel , setOpenSidePanel] = useState(false);
 
   const itemsPerPage = 5;
 
@@ -67,7 +68,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const totalPages = Math.ceil(userProjects.length / itemsPerPage);
 
 
-  console.log(userProjects)
   const fetchProjects = async () => {
     try {
       const projects = await getUserAllProjects(user.id);
@@ -131,7 +131,9 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   },[modalCreateProjectIsOpen,setModalCreateProjectIsOpen])
 
   const HandleOpenModal =useCallback ((projectId: number)=>{
-    setOpenModalProjectId(openModalProjectId === projectId ? null : projectId);
+    const newModalProjectId = openModalProjectId === projectId ? null : projectId;
+    console.log("Toggling modal for projectId:", projectId, "New state:", newModalProjectId);
+    setOpenModalProjectId(newModalProjectId);
   },[setOpenModalProjectId, openModalProjectId])
 
   const InitializeProject = useCallback(async (projectName: string) => {
@@ -253,9 +255,13 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setOpenModalProjectId(null)
   };
 
+  const handleSetOpenSidePanel=()=>{
+    setOpenSidePanel(!openSidePanel)
+  }
+
   return (
     <>
-      <SidePanelMedia display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
+      <SidePanelMedia open={openSidePanel && !!openModalProjectId} setOpen={handleSetOpenSidePanel} display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
         <Grid container justifyContent="center" flexDirection="column" spacing={1}>
           <Grid item container direction="row-reverse" spacing={2} alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             {

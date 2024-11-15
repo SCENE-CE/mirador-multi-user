@@ -44,6 +44,8 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   const [userPersonalGroupList, setUserPersonalGroupList] = useState<LinkUserGroup[]>([])
   const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [openSidePanel , setOpenSidePanel] = useState(false);
+
   const itemsPerPage = 5;
 
   const currentPageData = useMemo(() => {
@@ -161,10 +163,13 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
       }
     }
   }
-  console.log('groups',groups)
+
+  const handleSetOpenSidePanel=()=>{
+    setOpenSidePanel(!openSidePanel)
+  }
   return(
     <>
-      <SidePanelMedia display={!!openModalGroupId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
+      <SidePanelMedia  open={openSidePanel && !!openModalGroupId} setOpen={handleSetOpenSidePanel} display={!!openModalGroupId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
         <Grid item container flexDirection="column" spacing={1}>
           <Grid item container direction="row-reverse" spacing={2} alignItems="center"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             <Grid item>

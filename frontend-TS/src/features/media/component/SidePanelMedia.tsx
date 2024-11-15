@@ -88,12 +88,13 @@ interface PopUpMediaProps {
   user:User
   fetchMediaForUser:()=>void
   display:boolean
+  open:boolean;
+  setOpen:()=>void;
 }
 
 const caddyUrl = import.meta.env.VITE_CADDY_URL
 
-export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, user,fetchMediaForUser}: PopUpMediaProps) => {
-  const [open, setOpen] = useState(false);
+export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, user,fetchMediaForUser,open, setOpen}: PopUpMediaProps) => {
   const [searchedMedia, setSearchedMedia] = useState<Media|null>(null);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [currentPage, setCurrentPage] = useState(1);
@@ -223,6 +224,7 @@ export const SidePanelMedia = ({ display,medias, children,userPersonalGroup, use
   //   return setTagFilter(tag)
   // }
 
+  console.log('display',display);
   return (
     <div>
       {display && (
