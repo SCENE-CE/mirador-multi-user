@@ -22,10 +22,8 @@ export class EmailServerService implements MailService {
 
   async sendMail(email: CreateEmailServerDto): Promise<void> {
     try {
-      console.log('enter Send Mail');
       const renderedTemplate = this._bodyTemplate(email.userName);
       const plainText = `Hello ${email.userName}, your account was successfully created!`;
-      console.log('after Template');
       const toReturn = await this._processSendEmail(
         email.to,
         email.subject,

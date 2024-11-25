@@ -45,6 +45,7 @@ export class LinkGroupProjectController {
   getProjectRelation(@Param('projectId') projectId: number) {
     return this.linkGroupProjectService.getProjectRelations(projectId);
   }
+
   @ApiOperation({ summary: 'Update project relation and rights on it' })
   @ApiBody({ type: UpdateProjectGroupDto })
   @ApiOkResponse({
@@ -52,6 +53,7 @@ export class LinkGroupProjectController {
     type: LinkGroupProject,
     isArray: true,
   })
+
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/updateProject/')

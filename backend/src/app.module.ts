@@ -40,8 +40,9 @@ import { EmailConfirmationModule } from './email-confirmation/email-confirmation
     MailerModule.forRoot({
       transport: {
         host: String(process.env.SMTP_DOMAIN),
-        port: Number(process.env.SMTP_PORT),
-        secure: false,
+        port: 587,
+        ignoreTLS: Boolean(process.env.SMTP_IGNORE_TLS),
+        secure: Boolean(process.env.SMTP_SSL),
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASSWORD,

@@ -10,7 +10,7 @@ export function AppRoutes(){
 
   const commonRoutes = [{
     path: "/*",
-    element: <Landing /> // Pass navigate directly to the Landing components
+    element: <Landing />
   }];
 
   let routes;

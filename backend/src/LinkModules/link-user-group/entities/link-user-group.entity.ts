@@ -32,6 +32,6 @@ export class LinkUserGroup {
     onDelete: 'CASCADE',
     orphanedRowAction: 'delete',
   })
-  @JoinColumn({ name: 'user_group'})
+  @JoinColumn({ name: 'user_group' })
   user_group: UserGroup;
 }
