@@ -110,4 +110,15 @@ export class UsersService {
       );
     }
   }
+
+  async deleteUser(userId: number) {
+    try {
+      return await this.userRepository.delete(userId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `An error occurred while deleting user with id : ${userId}`,
+      );
+    }
+  }
 }

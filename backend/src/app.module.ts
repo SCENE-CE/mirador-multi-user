@@ -22,6 +22,7 @@ import { LinkManifestGroupModule } from './LinkModules/link-manifest-group/link-
 import { TagModule } from './BaseEntities/tag/tag.module';
 import { TaggingModule } from './LinkModules/tagging/tagging.module';
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
+import { UserManagementModule } from './user-management/user-management.module';
 
 @Module({
   imports: [
@@ -77,6 +78,7 @@ import { EmailConfirmationModule } from './email-confirmation/email-confirmation
     TagModule,
     TaggingModule,
     EmailConfirmationModule,
+    UserManagementModule,
   ],
   controllers: [AppController],
   providers: [

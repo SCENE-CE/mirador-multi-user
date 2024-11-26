@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { LinkUserGroup } from './entities/link-user-group.entity';
 import { LinkUserGroupService } from './link-user-group.service';
@@ -7,6 +7,7 @@ import { UserGroupModule } from '../../BaseEntities/user-group/user-group.module
 import { UsersModule } from '../../BaseEntities/users/users.module';
 import { EmailServerController } from '../../utils/email/email.controller';
 import { EmailServerService } from '../../utils/email/email.service';
+import { UserManagementService } from '../../user-management/user-management.service';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { EmailServerService } from '../../utils/email/email.service';
     UserGroupModule,
     UsersModule,
   ],
-  providers: [LinkUserGroupService, EmailServerService],
+  providers: [LinkUserGroupService, EmailServerService, UserManagementService],
   controllers: [LinkUserGroupController, EmailServerController],
   exports: [LinkUserGroupService],
 })

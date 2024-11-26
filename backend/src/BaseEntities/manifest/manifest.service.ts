@@ -8,7 +8,7 @@ import { UpdateManifestDto } from './dto/update-manifest.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Manifest } from './entities/manifest.entity';
 import { Repository } from 'typeorm';
-import { CustomLogger } from "../../utils/Logger/CustomLogger.service";
+import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 
 @Injectable()
 export class ManifestService {
@@ -73,6 +73,17 @@ export class ManifestService {
     }
   }
 
+  async findOwnedManifests(userId) {
+    try {
+      return await this.manifestRepository.find({
+        where: { idCreator: userId },
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
+    }
+  }
+
   async findManifestsByPartialStringAndUserGroup(
     partialString: string,
     userGroupId: number,
@@ -97,4 +108,5 @@ export class ManifestService {
         `An error occurred: ${error.message}`,
       );
     }
-  }}
+  }
+}

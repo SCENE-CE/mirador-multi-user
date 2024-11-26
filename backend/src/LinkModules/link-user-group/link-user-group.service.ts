@@ -21,6 +21,7 @@ import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ActionType } from '../../enum/actions';
 import { EmailServerService } from '../../utils/email/email.service';
+import { UserManagementService } from '../../user-management/user-management.service';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -28,9 +29,10 @@ export class LinkUserGroupService {
   constructor(
     @InjectRepository(LinkUserGroup)
     private readonly linkUserGroupRepository: Repository<LinkUserGroup>,
-    private groupService: UserGroupService,
-    private userService: UsersService,
-    private emailService: EmailServerService,
+    private readonly groupService: UserGroupService,
+    private readonly userService: UsersService,
+    private readonly emailService: EmailServerService,
+    private readonly UserManagementService: UserManagementService,
   ) {}
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
@@ -429,6 +431,17 @@ export class LinkUserGroupService {
       throw new InternalServerErrorException(
         `an error occurred while removing linkUserGroup with id ${linkUserGroupId}`,
         error,
+      );
+    }
+  }
+
+  async deleteUser(userId: number) {
+    try {
+      return await this.UserManagementService.deleteUserProcess(userId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `an error occurred while deleting user with id : ${userId}`,
       );
     }
   }

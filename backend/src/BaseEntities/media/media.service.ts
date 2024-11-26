@@ -109,4 +109,16 @@ export class MediaService {
       );
     }
   }
+
+  async findOwnedMedia(userId) {
+    try {
+      return await this.mediaRepository.find({
+        where: { idCreator: userId },
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
+    }
+  }
+
 }
