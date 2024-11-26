@@ -19,8 +19,3 @@ body, #root{
 
 }
 
-/* Override the default bootstrap styles to fix #53 */
-video {
-    max-height: 100% !important;
-    width: 100% !important;
-}
