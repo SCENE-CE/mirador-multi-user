@@ -47,6 +47,8 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
     item,
     objectTypes
   }: IProjectUserGroup<G,T>): JSX.Element => {
+ console.log('itrrrrrrrrrrrm list')
+  console.log('objectTypes',objectTypes)
   return (
     <Paper
       elevation={1}

@@ -4,7 +4,7 @@ import { Dispatch, ReactElement, SetStateAction, useCallback, useState } from "r
 import placeholder from '../../assets/Placeholder.svg'
 import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
-import { ProjectRights } from "../../features/user-group/types/types.ts";
+import { ItemsRights } from "../../features/user-group/types/types.ts";
 import { MediaGroupRights, MediaTypes } from "../../features/media/types/types.ts";
 import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
 import { Dayjs } from "dayjs";
@@ -14,7 +14,7 @@ import ImageIcon from '@mui/icons-material/Image';
 
 interface IMMUCardProps<T,G,O,X> {
   id: number;
-  rights: ProjectRights | MediaGroupRights | ManifestGroupRights;
+  rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
@@ -159,7 +159,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
             <Grid container flexDirection="row" wrap="nowrap" spacing={2}>
               {id && (
                 <Grid item>
-                  {rights === ProjectRights.READER ? ReaderButton : EditorButton}
+                  {rights === ItemsRights.READER ? ReaderButton : EditorButton}
                 </Grid>
               )}
               {DefaultButton && (

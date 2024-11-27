@@ -5,7 +5,7 @@ import { ItemList } from "./ItemList.tsx";
 import Selector from "../Selector.tsx";
 import { MMUModal } from "./modal.tsx";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
-import { ProjectRights } from "../../features/user-group/types/types.ts";
+import { ItemsRights } from "../../features/user-group/types/types.ts";
 import { ListItem, SelectorItem } from "../types.ts";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { MediaGroupRights } from "../../features/media/types/types.ts";
@@ -37,7 +37,7 @@ interface ModalItemProps<T, G,O> {
   handleAddAccessListItem: () => void,
   setSearchInput: Dispatch<SetStateAction<string>>,
   searchInput: string,
-  rights: ProjectRights | MediaGroupRights | ManifestGroupRights,
+  rights: ItemsRights | MediaGroupRights | ManifestGroupRights,
   searchBarLabel:string,
   description:string,
   HandleOpenModalEdit:()=>void,
@@ -135,7 +135,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
     fetchData();
   }, [fetchData, item, itemOwner]);
 
-  const rightsSelectorItems: SelectorItem[] = Object.values(ProjectRights).map((right) => ({
+  const rightsSelectorItems: SelectorItem[] = Object.values(ItemsRights).map((right) => ({
     id: right as unknown as "ADMIN" | "EDITOR" | "READER",
     name: right as unknown as "ADMIN" | "EDITOR" | "READER"
   }));
@@ -162,13 +162,17 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
-
+  console.log(tabValue )
   return (
     <Grid container sx={{overflow:'scroll'}}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">
         <Tab label="General" {...a11yProps(0)} />
-        <Tab label="Metadata" {...a11yProps(1)} />
         <Tab label="Share" {...a11yProps(2)} />
+        {
+          objectTypes !== ObjectTypes.GROUP &&(
+            <Tab label="Metadata" {...a11yProps(1)} />
+          )
+        }
       </Tabs>
       <Grid item container flexDirection="column">
         <CustomTabPanel value={tabValue} index={0}>
@@ -275,22 +279,8 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
             {/*</Grid>*/}
           </Grid>
         </CustomTabPanel>
-        <CustomTabPanel value={tabValue} index={1}>
-          <Grid
-            item
-            container
-            justifyContent="flex-end"
-            alignItems="center"
-          >
-            {
-              !isGroups && (
-                <MetadataForm item={item} setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
-              )
-            }
-          </Grid>
-        </CustomTabPanel>
-        {rights !== ProjectRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
-          <CustomTabPanel value={tabValue} index={2}>
+        {rights !== ItemsRights.READER && listOfItem && setItemToAdd && getOptionLabel !==undefined &&(
+          <CustomTabPanel value={tabValue} index={1}>
             <Grid item>
               <ItemList
                 item={item}
@@ -317,7 +307,21 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
             </Grid>
           </CustomTabPanel>
         )}
-        {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && (
+        {
+          !isGroups && (
+            <CustomTabPanel value={tabValue} index={2}>
+              <Grid
+                item
+                container
+                justifyContent="flex-end"
+                alignItems="center"
+              >
+                <MetadataForm item={item} setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
+              </Grid>
+            </CustomTabPanel>
+          )
+        }
+        {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && (
           <Grid
             item
             container
@@ -328,7 +332,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
           >
             <Grid item container xs={5} spacing={3}>
               <Grid item>
-                {rights === ProjectRights.ADMIN && (
+                {rights === ItemsRights.ADMIN && (
                   <Tooltip title={"Delete item"}>
                     <Button
                       color="error"
@@ -341,7 +345,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
                 )}
               </Grid>
               <Grid item>
-                {(rights === ProjectRights.ADMIN || rights === ProjectRights.EDITOR) && duplicateItem &&(
+                {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && duplicateItem &&(
                   <Tooltip title="Duplicate">
                     <Button
                       color="primary"

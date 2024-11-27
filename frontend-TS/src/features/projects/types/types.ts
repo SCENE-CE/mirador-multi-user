@@ -1,6 +1,6 @@
 import IState from "../../mirador/interface/IState.ts";
 import { User } from "../../auth/types/types.ts";
-import { ProjectRights, UserGroup } from "../../user-group/types/types.ts";
+import { ItemsRights, UserGroup } from "../../user-group/types/types.ts";
 import { Dayjs } from "dayjs";
 
 export type Project = {
@@ -8,7 +8,7 @@ export type Project = {
   title: string;
   userWorkspace:IState;
   owner:User;
-  rights?: ProjectRights;
+  rights?: ItemsRights;
   description:string
   thumbnailUrl?:string
   metadata: Record<string, string>;
@@ -17,12 +17,12 @@ export type Project = {
 
 export type ProjectGroup = {
   id:number;
-  rights:ProjectRights;
+  rights:ItemsRights;
   user_group:UserGroup;
 }
 export type ProjectUser = {
   id:number;
-  rights: ProjectRights
+  rights: ItemsRights
   project: Project,
 }
 
@@ -34,7 +34,7 @@ export type ProjectGroupUpdateDto = {
     userWorkspace:IState;
     ownerId?:number;
   }
-  rights?: ProjectRights;
+  rights?: ItemsRights;
   group?:UserGroup
 }
 export type CreateProjectDto = {

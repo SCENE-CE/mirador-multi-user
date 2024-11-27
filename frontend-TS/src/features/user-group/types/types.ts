@@ -6,7 +6,7 @@ export enum UserGroupTypes {
   MULTI_USER = 'multi-user',
 }
 
-export enum ProjectRights{
+export enum ItemsRights{
   ADMIN = 'admin',
   READER = 'reader',
   EDITOR = 'editor',
@@ -15,7 +15,7 @@ export enum ProjectRights{
 
 export type LinkUserGroup = {
   id:number,
-  rights:ProjectRights,
+  rights:ItemsRights,
   user: User,
   user_group:UserGroup
 }
@@ -26,7 +26,7 @@ export type UserGroup = {
   ownerId:number;
   description:string;
   type:UserGroupTypes;
-  rights?:ProjectRights;
+  rights?:ItemsRights;
   thumbnailUrl?:string;
   created_at:Dayjs;
 }
@@ -50,5 +50,5 @@ export type RemoveProjectToGroupDto ={
 export type changeAccessToGroupDto ={
   userId:number;
   groupId:number;
-  rights:ProjectRights;
+  rights:ItemsRights;
 }
