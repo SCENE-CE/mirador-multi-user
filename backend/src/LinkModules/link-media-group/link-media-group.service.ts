@@ -163,9 +163,46 @@ export class LinkMediaGroupService {
           mediaToRemove.hash,
           mediaToRemove.path,
         );
-        if (fs.existsSync(filePath)) {
+        const thumbnailPath = join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          '..',
+          'upload',
+          mediaToRemove.hash,
+          'thumbnail.webp',
+        );
+        if (fs.existsSync(filePath) && fs.existsSync(thumbnailPath)) {
           fs.unlinkSync(filePath);
-
+          fs.unlinkSync(thumbnailPath);
+          const dirPath = join(
+            __dirname,
+            '..',
+            '..',
+            '..',
+            '..',
+            'upload',
+            mediaToRemove.hash,
+          );
+          if (fs.existsSync(dirPath) && fs.readdirSync(dirPath).length === 0) {
+            fs.rmdirSync(dirPath);
+          }
+        }
+      }
+      if(mediaToRemove.origin === mediaOrigin.LINK) {
+        const thumbnailPath = join(
+          __dirname,
+          '..',
+          '..',
+          '..',
+          '..',
+          'upload',
+          mediaToRemove.hash,
+          'thumbnail.webp',
+        );
+        if (fs.existsSync(thumbnailPath)) {
+          fs.unlinkSync(thumbnailPath);
           const dirPath = join(
             __dirname,
             '..',
