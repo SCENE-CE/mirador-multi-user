@@ -37,30 +37,48 @@ export class UserManagementService {
 
   async deleteUserProcess(userId: number) {
     try {
+      console.log("userId");
+      console.log(userId);
       const projectsOwned = await this.projectService.findProjectOwned(userId);
+      console.log('projectsOwned');
+      console.log(projectsOwned);
+      //TODO: PROJECT IS NOT DELETE
       for (const project of projectsOwned) {
         const linkedGroups =
           await this.linkGroupProjectService.getProjectRelations(project.id);
+        console.log('linkedGroups');
+        console.log(linkedGroups);
         if (linkedGroups.length === 1) {
-          await this.linkGroupProjectService.deleteProject(project.id);
+          const projectDeleted =await this.linkGroupProjectService.deleteProject(project.id);
+          console.log("projectDeleted")
+          console.log(projectDeleted)
         }
       }
       const manifestOwned =
         await this.manifestService.findOwnedManifests(userId);
       for (const manifest of manifestOwned) {
-        await this.linkManifestGroup.removeManifest(manifest.id);
+        const manifestDeleted=await this.linkManifestGroup.removeManifest(manifest.id);
+        console.log("manifestDeleted")
+        console.log(manifestDeleted)
       }
 
       const mediaOwned = await this.mediaService.findOwnedMedia(userId);
       for (const media of mediaOwned) {
-        await this.linkMediaGroupService.removeMedia(media.id);
+        const mediaDeleted= await this.linkMediaGroupService.removeMedia(media.id);
+        console.log('media deleted')
+        console.log( mediaDeleted)
       }
       const userOwnedGroups =
         await this.groupService.findAllOwnedGroups(userId);
       for (const group of userOwnedGroups) {
-        await this.groupService.remove(group.id);
+        const groupDeleted = await this.groupService.remove(group.id);
+        console.log('group deleted')
+        console.log(groupDeleted)
       }
-      return await this.userService.deleteUser(userId);
+      const userDeleted = await this.userService.deleteUser(userId);
+      console.log( 'userDeleted')
+      console.log( userDeleted)
+      return userDeleted;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -70,7 +88,7 @@ export class UserManagementService {
   async isUserAllowed(userId: number) {
     const userPersonalGroup =
       await this.groupService.findUserPersonalGroup(userId);
-    if (userPersonalGroup.ownerId === userId) {
+    if (userPersonalGroup.ownerId == userId) {
       return User_UserGroupRights.ADMIN;
     } else {
       return;

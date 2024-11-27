@@ -236,7 +236,6 @@ export class LinkUserGroupController {
 
   @ApiOperation({ summary: 'Remove a user from a group' })
   @SetMetadata('action', ActionType.DELETE)
-  @UseGuards(AuthGuard)
   @Delete('/group/:groupId')
   @UseGuards(AuthGuard)
   async remove(@Param('groupId') id: number, @Req() request) {

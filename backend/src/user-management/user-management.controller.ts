@@ -1,7 +1,8 @@
-import { Controller, Delete, Param, Req, SetMetadata } from '@nestjs/common';
+import { Controller, Delete, Param, Req, SetMetadata, UseGuards } from "@nestjs/common";
 import { UserManagementService } from './user-management.service';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ActionType } from '../enum/actions';
+import { AuthGuard } from "../auth/auth.guard";
 
 @Controller('user-management') // Base route
 export class UserManagementController {
@@ -13,6 +14,7 @@ export class UserManagementController {
     isArray: false,
   })
   @SetMetadata('action', ActionType.DELETE)
+  @UseGuards(AuthGuard)
   @Delete('/delete/:userId')
   async removeAccess(@Param('userId') userId: number, @Req() request) {
     return await this.userManagementService.checkPolicies(
