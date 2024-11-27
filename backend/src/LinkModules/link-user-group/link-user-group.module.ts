@@ -7,7 +7,6 @@ import { UserGroupModule } from '../../BaseEntities/user-group/user-group.module
 import { UsersModule } from '../../BaseEntities/users/users.module';
 import { EmailServerController } from '../../utils/email/email.controller';
 import { EmailServerService } from '../../utils/email/email.service';
-import { UserManagementService } from '../../user-management/user-management.service';
 
 @Module({
   imports: [
@@ -15,7 +14,7 @@ import { UserManagementService } from '../../user-management/user-management.ser
     UserGroupModule,
     UsersModule,
   ],
-  providers: [LinkUserGroupService, EmailServerService, UserManagementService],
+  providers: [LinkUserGroupService, EmailServerService],
   controllers: [LinkUserGroupController, EmailServerController],
   exports: [LinkUserGroupService],
 })

@@ -21,7 +21,6 @@ import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ActionType } from '../../enum/actions';
 import { EmailServerService } from '../../utils/email/email.service';
-import { UserManagementService } from '../../user-management/user-management.service';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -32,7 +31,6 @@ export class LinkUserGroupService {
     private readonly groupService: UserGroupService,
     private readonly userService: UsersService,
     private readonly emailService: EmailServerService,
-    private readonly UserManagementService: UserManagementService,
   ) {}
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
@@ -435,18 +433,8 @@ export class LinkUserGroupService {
     }
   }
 
-  async deleteUser(userId: number) {
-    try {
-      return await this.UserManagementService.deleteUserProcess(userId);
-    } catch (error) {
-      this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException(
-        `an error occurred while deleting user with id : ${userId}`,
-      );
-    }
-  }
 
-  async getHighestRightForManifest(groupId: number, userId: number) {
+  async getHighestRightForGroup(groupId: number, userId: number) {
     const linkEntities = await this.linkUserGroupRepository.find({
       where: {
         user_group: { id: groupId },
@@ -473,7 +461,7 @@ export class LinkUserGroupService {
     callback: (linkEntity: LinkUserGroup) => any,
   ) {
     try {
-      const linkEntity = await this.getHighestRightForManifest(groupId, userId);
+      const linkEntity = await this.getHighestRightForGroup(groupId, userId);
       if (!linkEntity) {
         return new ForbiddenException(
           'User does not have access to this userGroup or the userGroup does not exist',

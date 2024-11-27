@@ -8,9 +8,13 @@ import { ManifestModule } from '../BaseEntities/manifest/manifest.module';
 import { MediaModule } from '../BaseEntities/media/media.module';
 import { LinkMediaGroupModule } from '../LinkModules/link-media-group/link-media-group.module';
 import { UserGroupModule } from '../BaseEntities/user-group/user-group.module';
+import { UserManagementController } from './user-management.controller';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { LinkUserGroup } from '../LinkModules/link-user-group/entities/link-user-group.entity';
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([LinkUserGroup]),
     UsersModule,
     ProjectModule,
     LinkGroupProjectModule,
@@ -22,5 +26,6 @@ import { UserGroupModule } from '../BaseEntities/user-group/user-group.module';
   ],
   providers: [UserManagementService],
   exports: [UserManagementService],
+  controllers: [UserManagementController],
 })
 export class UserManagementModule {}

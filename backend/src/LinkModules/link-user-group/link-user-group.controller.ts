@@ -234,25 +234,6 @@ export class LinkUserGroupController {
     );
   }
 
-  @ApiOperation({ summary: 'Delete a user' })
-  @SetMetadata('action', ActionType.DELETE)
-  @UseGuards(AuthGuard)
-  @Delete('/user/:userPersonalGroupId')
-  @UseGuards(AuthGuard)
-  async deleteUser(
-    @Param('userId') userPersonalGroupId: number,
-    @Req() request,
-  ) {
-    return await this.linkUserGroupService.checkPolicies(
-      request.metadata.action,
-      request.user.sub,
-      userPersonalGroupId,
-      async () => {
-        return this.linkUserGroupService.deleteUser(request.user.sub);
-      },
-    );
-  }
-
   @ApiOperation({ summary: 'Remove a user from a group' })
   @SetMetadata('action', ActionType.DELETE)
   @UseGuards(AuthGuard)
