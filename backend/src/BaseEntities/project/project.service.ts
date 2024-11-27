@@ -118,4 +118,18 @@ export class ProjectService {
       throw new InternalServerErrorException(error);
     }
   }
+
+  async findProjectOwned(userId: number) {
+    try {
+      return await this.projectRepository.find({
+        where: { ownerId: userId },
+        relations: ['linkGroupProjectsIds'],
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+
 }

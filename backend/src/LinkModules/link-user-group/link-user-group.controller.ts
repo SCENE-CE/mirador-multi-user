@@ -33,14 +33,13 @@ export class LinkUserGroupController {
     type: LinkUserGroup,
     isArray: true,
   })
-
   @SetMetadata('action', ActionType.READ)
   @UseGuards(AuthGuard)
   @Get('/users/:groupId')
   async getAllUsersForGroup(@Param('groupId') groupId: number, @Req() request) {
     console.log('enter getAllUsersForGroup');
-    console.log('request.metadata')
-    console.log(request.metadata)
+    console.log('request.metadata');
+    console.log(request.metadata);
     return await this.linkUserGroupService.checkPolicies(
       request.metadata.action,
       request.user.sub,
@@ -132,11 +131,10 @@ export class LinkUserGroupController {
     );
   }
 
-
   @ApiOperation({ summary: 'Resend mail for confirmation to the user' })
   @Get('resend-confirmation-link/:email')
   async resendConfirmationLink(@Param('email') email: string) {
-    console.log('resending mail controller')
+    console.log('resending mail controller');
     await this.linkUserGroupService.resendConfirmationLink(email);
   }
 
@@ -238,8 +236,7 @@ export class LinkUserGroupController {
 
   @ApiOperation({ summary: 'Remove a user from a group' })
   @SetMetadata('action', ActionType.DELETE)
-  @UseGuards(AuthGuard)
-  @Delete(':groupId')
+  @Delete('/group/:groupId')
   @UseGuards(AuthGuard)
   async remove(@Param('groupId') id: number, @Req() request) {
     return await this.linkUserGroupService.checkPolicies(

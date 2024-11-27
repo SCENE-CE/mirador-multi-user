@@ -28,9 +28,9 @@ export class LinkUserGroupService {
   constructor(
     @InjectRepository(LinkUserGroup)
     private readonly linkUserGroupRepository: Repository<LinkUserGroup>,
-    private groupService: UserGroupService,
-    private userService: UsersService,
-    private emailService: EmailServerService,
+    private readonly groupService: UserGroupService,
+    private readonly userService: UsersService,
+    private readonly emailService: EmailServerService,
   ) {}
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
@@ -433,7 +433,8 @@ export class LinkUserGroupService {
     }
   }
 
-  async getHighestRightForManifest(groupId: number, userId: number) {
+
+  async getHighestRightForGroup(groupId: number, userId: number) {
     const linkEntities = await this.linkUserGroupRepository.find({
       where: {
         user_group: { id: groupId },
@@ -460,7 +461,7 @@ export class LinkUserGroupService {
     callback: (linkEntity: LinkUserGroup) => any,
   ) {
     try {
-      const linkEntity = await this.getHighestRightForManifest(groupId, userId);
+      const linkEntity = await this.getHighestRightForGroup(groupId, userId);
       if (!linkEntity) {
         return new ForbiddenException(
           'User does not have access to this userGroup or the userGroup does not exist',

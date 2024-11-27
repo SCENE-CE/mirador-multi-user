@@ -107,7 +107,18 @@ export class UserGroupService {
       });
       console.log('toreturn');
       console.log(toreturn);
-      return toreturn
+      return toreturn;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async findAllOwnedGroups(userId: number) {
+    try {
+      return await this.userGroupRepository.find({
+        where: { ownerId: userId },
+      });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);

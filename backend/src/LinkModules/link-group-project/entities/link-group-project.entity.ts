@@ -25,12 +25,14 @@ export class LinkGroupProject {
 
   @ManyToOne(() => Project, (project) => project.linkGroupProjectsIds, {
     eager: false,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'project' })
   project: Project;
 
   @ManyToOne(() => UserGroup, (group) => group.linkGroupProjects, {
     eager: false,
+    onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'user_group' })
   user_group: UserGroup;
