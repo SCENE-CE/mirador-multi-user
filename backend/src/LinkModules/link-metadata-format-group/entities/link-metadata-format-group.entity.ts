@@ -11,17 +11,17 @@ export class LinkMetadataFormatGroup {
     () => MetadataFormat,
     (metadataFormat) => metadataFormat.linkMetadataFormatGroups,
     {
-      eager: false,
+      eager: true,
       onDelete: 'CASCADE',
     },
   )
-  @JoinColumn({ name: 'metadataFormat' })
+  @JoinColumn()
   metadataFormat: MetadataFormat;
 
   @ManyToOne(() => UserGroup, (group) => group.linkMetadataFormatGroup, {
-    eager: false,
+    eager: true,
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'user_group' })
+  @JoinColumn()
   user_group: UserGroup;
 }

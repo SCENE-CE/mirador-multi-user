@@ -28,7 +28,7 @@ export class MetadataFormatService {
   findAllMetadataFormatsForUser(userId: number) {
     try {
       return this.metadataFormatRepository.find({
-        where: { CreatorId: userId },
+        where: { creatorId: userId },
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);

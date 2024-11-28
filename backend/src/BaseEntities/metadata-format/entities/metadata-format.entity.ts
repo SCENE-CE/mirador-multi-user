@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
 import { LinkMetadataFormatGroup } from '../../../LinkModules/link-metadata-format-group/entities/link-metadata-format-group.entity';
+import { Metadata } from '../../metadata/entities/metadata.entity';
 
 @Entity()
 export class MetadataFormat {
@@ -10,7 +11,7 @@ export class MetadataFormat {
   title: string;
 
   @Column()
-  CreatorId: number;
+  creatorId: number;
 
   @Column({ type: 'json' })
   metadata: any;
@@ -23,4 +24,7 @@ export class MetadataFormat {
     },
   )
   linkMetadataFormatGroups: LinkMetadataFormatGroup[];
+
+  @OneToMany(() => Metadata, (metadata) => metadata.metadataFormat)
+  metadataImplementations: Metadata[];
 }

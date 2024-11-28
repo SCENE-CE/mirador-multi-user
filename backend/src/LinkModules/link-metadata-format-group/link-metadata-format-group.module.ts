@@ -20,5 +20,6 @@ import { MetadataFormatModule } from '../../BaseEntities/metadata-format/metadat
   ],
   controllers: [LinkMetadataFormatGroupController],
   providers: [LinkMetadataFormatGroupService],
+  exports: [LinkMetadataFormatGroupService],
 })
 export class LinkMetadataFormatGroupModule {}

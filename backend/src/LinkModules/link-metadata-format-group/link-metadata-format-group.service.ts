@@ -1,4 +1,8 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateLinkMetadataFormatGroupDto } from './dto/create-link-metadata-format-group.dto';
 import { MetadataFormatService } from '../../BaseEntities/metadata-format/metadata-format.service';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
@@ -22,10 +26,13 @@ export class LinkMetadataFormatGroupService {
 
   async create(metadataFormat: MetadataFormat, userPersonalGroup: UserGroup) {
     try {
-      return this.linkMetadataFormatGroupRepository.create({
+      const linkMetadataGroup = this.linkMetadataFormatGroupRepository.create({
         metadataFormat: metadataFormat,
         user_group: userPersonalGroup,
       });
+      return await this.linkMetadataFormatGroupRepository.save(
+        linkMetadataGroup,
+      );
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -45,11 +52,52 @@ export class LinkMetadataFormatGroupService {
       const metadataFormat = await this.metadataFormat.create(
         createLinkMetadataFormatGroupDto,
       );
-      await this.create(metadataFormat, userGroup);
+      return await this.create(metadataFormat, userGroup);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating the metadata format.',
+        error,
+      );
+    }
+  }
+
+  async findMetadataFormatWithTitle(
+    metadataFormatTitle: string,
+    userId: number,
+  ) {
+    try {
+      // Retrieve user's personal group
+      const userPersonalGroup =
+        await this.groupService.findUserPersonalGroup(userId);
+      if (!userPersonalGroup) {
+        throw new NotFoundException(
+          `User personal group not found for user ID ${userId}`,
+        );
+      }
+
+      // Find metadata formats for the user's group with the specified title
+      const result = await this.linkMetadataFormatGroupRepository.findOne({
+        where: {
+          user_group: userPersonalGroup,
+        },
+        relations: ['metadataFormat'],
+      });
+
+      if (!result) {
+        this.logger.warn(
+          `No metadata formats found with title "${metadataFormatTitle}" for user ID ${userId}`,
+        );
+        throw new NotFoundException(
+          `No metadata formats found with title "${metadataFormatTitle}"`,
+        );
+      }
+
+      return result.metadataFormat;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while finding the metadata format.',
         error,
       );
     }
