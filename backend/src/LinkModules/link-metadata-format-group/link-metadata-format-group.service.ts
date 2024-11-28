@@ -1,17 +1,13 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateLinkMetadataFormatGroupDto } from './dto/create-link-metadata-format-group.dto';
-import { MetadataFormatService } from '../../BaseEntities/metadata-format/metadata-format.service';
-import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
-import { InjectRepository } from '@nestjs/typeorm';
-import { LinkMetadataFormatGroup } from './entities/link-metadata-format-group.entity';
-import { Repository } from 'typeorm';
-import { MetadataFormat } from '../../BaseEntities/metadata-format/entities/metadata-format.entity';
-import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
-import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateLinkMetadataFormatGroupDto } from "./dto/create-link-metadata-format-group.dto";
+import { MetadataFormatService } from "../../BaseEntities/metadata-format/metadata-format.service";
+import { CustomLogger } from "../../utils/Logger/CustomLogger.service";
+import { InjectRepository } from "@nestjs/typeorm";
+import { LinkMetadataFormatGroup } from "./entities/link-metadata-format-group.entity";
+import { Repository } from "typeorm";
+import { MetadataFormat } from "../../BaseEntities/metadata-format/entities/metadata-format.entity";
+import { UserGroup } from "../../BaseEntities/user-group/entities/user-group.entity";
+import { UserGroupService } from "../../BaseEntities/user-group/user-group.service";
 
 @Injectable()
 export class LinkMetadataFormatGroupService {
@@ -94,6 +90,26 @@ export class LinkMetadataFormatGroupService {
       }
 
       return result.metadataFormat;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'An error occurred while finding the metadata format.',
+        error,
+      );
+    }
+  }
+
+  async getMetadataFormatForUser(userId: number) {
+    try {
+      const format = await this.linkMetadataFormatGroupRepository.find({
+        where: {
+          user_group: {
+            ownerId: userId,
+          },
+        },
+      });
+
+      return format.map((item) => item.metadataFormat);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(

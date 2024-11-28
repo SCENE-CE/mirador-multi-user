@@ -1,8 +1,9 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { LinkMetadataFormatGroup } from '../../../LinkModules/link-metadata-format-group/entities/link-metadata-format-group.entity';
 import { Metadata } from '../../metadata/entities/metadata.entity';
 
 @Entity()
+@Unique(['creatorId', 'title'])
 export class MetadataFormat {
   @PrimaryGeneratedColumn()
   id: number;

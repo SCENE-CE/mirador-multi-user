@@ -4,11 +4,13 @@ import {
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
+  Unique,
 } from 'typeorm';
 import { MetadataFormat } from '../../metadata-format/entities/metadata-format.entity';
 import { ObjectTypes } from '../../../enum/ObjectTypes';
 
 @Entity()
+@Unique(['objectType', 'objectId', 'metadataFormat'])
 export class Metadata {
   @PrimaryGeneratedColumn()
   id: number;
