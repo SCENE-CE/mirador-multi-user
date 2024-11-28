@@ -1,10 +1,9 @@
-import { ProjectGroup } from "../../projects/types/types.ts";
 import storage from "../../../utils/storage.ts";
 
-export const getAllMediaGroups = async (mediaId: number): Promise<ProjectGroup[]> => {
+export const getMetadataFormat = async (userId: number) => {
   const token = storage.getToken();
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/${mediaId}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-metadata-format-group/${userId}`, {
       method: "GET",
       headers: {
         "Authorization": `Bearer ${token}`
@@ -14,7 +13,9 @@ export const getAllMediaGroups = async (mediaId: number): Promise<ProjectGroup[]
       throw new Error(`Error fetching groups: ${response.statusText}`);
     }
 
-    return await response.json();
+    const toreTurn = await response.json();
+    console.log(toreTurn)
+    return toreTurn;
   } catch (error) {
     console.error("Error in getGroupsAccessToMedia:", error);
     return [];
