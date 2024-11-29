@@ -11,8 +11,6 @@ export class MetadataController {
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() createMetadataDto: CreateMetadataDto, @Req() request) {
-    console.log('request.user');
-    console.log(request.user);
     return this.metadataService.create(createMetadataDto, request.user.sub);
   }
 }

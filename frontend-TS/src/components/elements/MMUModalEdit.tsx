@@ -1,5 +1,5 @@
 import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typography } from "@mui/material";
-import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useEffect, useState } from "react";
+import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { ItemList } from "./ItemList.tsx";
 import Selector from "../Selector.tsx";
@@ -18,10 +18,12 @@ import { ObjectTypes } from "../../features/tag/type.ts";
 import { a11yProps } from "./SideBar/allyProps.tsx";
 import { CustomTabPanel } from "./CustomTabPanel.tsx";
 import { MetadataForm } from "../../features/Metadata/components/metadataForm.tsx";
+import { getMetadataFormat } from "../../features/Metadata/api/getMetadataFormat.ts";
+import { MetadataFormat } from "../../features/Metadata/types/types.ts";
+import { useUser } from "../../utils/auth.tsx";
 
 
-interface ModalItemProps<T, G,O> {
-  itemOwner: O,
+interface ModalItemProps<T, G> {
   item: T,
   itemLabel: string,
   updateItem?: (newItem: T) => void,
@@ -49,11 +51,10 @@ interface ModalItemProps<T, G,O> {
 
 }
 
-export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapShotHash?:string }, G>(
+export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHash?:string }, G>(
   {
     itemLabel,
     setItemToAdd,
-    itemOwner,
     item,
     updateItem,
     deleteItem,
@@ -76,7 +77,7 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
     getGroupByOption,
     duplicateItem,
     objectTypes
-  }: ModalItemProps<T, G, O>) => {
+  }: ModalItemProps<T, G>) => {
   const [newItemTitle, setNewItemTitle] = useState(itemLabel);
   const [newItemDescription, setNewItemDescription] = useState(description);
   const [newItemThumbnailUrl, setNewItemThumbnailUrl] = useState(thumbnailUrl);
@@ -86,23 +87,52 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
   const [openDuplicateModal, setOpenDuplicateModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<{ [key: string]: string }>(metadata || {});
   const [tabValue, setTabValue] = useState(0);
+  const [metadataFormats, setMetadataFormats] = useState<MetadataFormat[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | null>(metadataFormats[0]);
 
+  const user = useUser()
   const handeUpdateMetadata = (updateData:any)=>{
     setMetadataFormData(updateData)
   }
-  const handleUpdateItem =  () => {
-    const itemToUpdate = {...item,
-      thumbnailUrl:newItemThumbnailUrl,
-      title:newItemTitle,
-      description:newItemDescription,
-      metadata: { ...metadataFormData, date: newItemDate, title: newItemTitle, description: newItemDescription,creator:newItemMetadataCreator},
+
+  const handleSetSelectedMetadataFormat = (newFormat : MetadataFormat | null)=>{
+    setSelectedMetadataFormat(newFormat);
+  }
+  const handleUpdateItem =  async () => {
+    const itemToUpdate = {
+      ...item,
+      thumbnailUrl: newItemThumbnailUrl,
+      title: newItemTitle,
+      description: newItemDescription,
+      metadata: {
+        ...metadataFormData,
+        date: newItemDate,
+        title: newItemTitle,
+        description: newItemDescription,
+        creator: newItemMetadataCreator
+      },
     }
-    //TODO : remove this later
-    if(updateItem){
+    if (objectTypes !== ObjectTypes.GROUP) {
+      // await createMetadataForItem( objectTypes,item.id,  );
+    }
+    if (updateItem) {
       updateItem(itemToUpdate);
     }
   };
 
+  const fetchMetadataFormat = useCallback(async () => {
+    setLoading(true);
+    try {
+      const metadataFormat = await getMetadataFormat(user.data!.id);
+      console.log('metadataFormat',metadataFormat);
+      setMetadataFormats(metadataFormat);
+    } catch (error) {
+      console.error("Failed to fetch metadata formats", error);
+    } finally {
+      setLoading(false);
+    }
+  },[user.data]);
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemTitle(e.target.value);
@@ -133,7 +163,8 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
 
   useEffect(() => {
     fetchData();
-  }, [fetchData, item, itemOwner]);
+    fetchMetadataFormat();
+  }, []);
 
   const rightsSelectorItems: SelectorItem[] = Object.values(ItemsRights).map((right) => ({
     id: right as unknown as "ADMIN" | "EDITOR" | "READER",
@@ -316,7 +347,16 @@ export const MMUModalEdit = <O, T extends { id: number, created_at:Dayjs,snapSho
                 justifyContent="flex-end"
                 alignItems="center"
               >
-                <MetadataForm item={item} setMetadataFormData={handeUpdateMetadata} metadataFormData={metadataFormData}/>
+                <MetadataForm
+                  fetchMetadataFormat={fetchMetadataFormat}
+                  item={item}
+                  setMetadataFormData={handeUpdateMetadata}
+                  metadataFormData={metadataFormData}
+                  metadataFormats={metadataFormats}
+                  loading={loading}
+                  selectedMetadataFormat={selectedMetadataFormat}
+                  setSelectedMetadataFormat={handleSetSelectedMetadataFormat}
+                />
               </Grid>
             </CustomTabPanel>
           )

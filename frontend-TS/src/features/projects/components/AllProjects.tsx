@@ -259,6 +259,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setOpenSidePanel(!openSidePanel)
   }
 
+  console.log(currentPageData)
   return (
     <>
       <SidePanelMedia open={openSidePanel && !!openModalProjectId} setOpen={handleSetOpenSidePanel} display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
@@ -304,7 +305,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         handleSelectorChange={handleChangeRights}
                         item={projectUser}
                         itemLabel={projectUser.title}
-                        itemOwner={projectUser.owner}
                         listOfItem={listOfGroup}
                         searchModalEditItem={handleLookingForUserGroups}
                         getAccessToItem={getGroupsAccessToProject}
@@ -354,7 +354,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       handleSelectorChange={handleChangeRights}
                       item={searchedProject}
                       itemLabel={searchedProject.title}
-                      itemOwner={searchedProject}
                       listOfItem={listOfGroup}
                       searchModalEditItem={lookingForUsers}
                       getAccessToItem={getGroupsAccessToProject}
@@ -392,7 +391,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                           handleSelectorChange={handleChangeRights}
                           item={projectUser}
                           itemLabel={projectUser.title}
-                          itemOwner={projectUser.owner}
                           listOfItem={listOfGroup}
                           searchModalEditItem={handleLookingForUserGroups}
                           getAccessToItem={getGroupsAccessToProject}

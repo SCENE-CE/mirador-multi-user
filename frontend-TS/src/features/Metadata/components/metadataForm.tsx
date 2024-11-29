@@ -3,10 +3,9 @@ import {
   Grid, InputLabel, MenuItem,
   Paper, Select, SelectChangeEvent
 } from "@mui/material";
-import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useCallback, useRef, useState } from "react";
 import MetadataField from "./metadataField.tsx";
 import { useUser } from "../../../utils/auth.tsx";
-import { getMetadataFormat } from "../api/getMetadataFormat.ts";
 import { labelMetadata, MetadataFormat } from "../types/types.ts";
 import { uploadMetadataFormat } from "../api/uploadMetadataFormat.ts";
 
@@ -14,13 +13,16 @@ interface MetadataFormProps<T> {
   setMetadataFormData: (data: any) => void;
   metadataFormData:Record<string, string>
   item:T
+  metadataFormats:MetadataFormat[]
+  loading: boolean
+  fetchMetadataFormat:()=>void;
+  selectedMetadataFormat:MetadataFormat | null;
+  setSelectedMetadataFormat:(newFormat: MetadataFormat | null)=>void;
 }
-export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData, setMetadataFormData, item }: MetadataFormProps<T>) => {
+
+export const MetadataForm = <T extends NonNullable<unknown>,>({setSelectedMetadataFormat,selectedMetadataFormat,fetchMetadataFormat,loading,metadataFormats,metadataFormData, setMetadataFormData, item }: MetadataFormProps<T>) => {
   const user = useUser();
-  const [metadataFormats, setMetadataFormats] = useState<MetadataFormat[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
   const [generatingFields, setGeneratingFields] = useState<boolean>(false);
-  const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleInputChange = useCallback((term: string, value: string) => {
@@ -29,32 +31,6 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
       return { ...prevMetadata, [term]: value };
     });
   }, []);
-
-  const fetchMetadataFormat = useCallback(async () => {
-    setLoading(true);
-    try {
-      const metadataFormat = await getMetadataFormat(user.data!.id);
-      setMetadataFormats(metadataFormat);
-    } catch (error) {
-      console.error("Failed to fetch metadata formats", error);
-    } finally {
-      setLoading(false);
-    }
-  }, [user.data]);
-
-  useEffect(() => {
-    fetchMetadataFormat();
-  }, [fetchMetadataFormat]);
-
-  useEffect(() => {
-    if (metadataFormats.length > 0) {
-      setGeneratingFields(true);
-      setSelectedMetadataFormat(metadataFormats[0]);
-      setTimeout(() => {
-        setGeneratingFields(false);
-      }, 300); // Delay to ensure loading state is displayed
-    }
-  }, [metadataFormats]);
 
   const doesItemContainMetadataField = (fieldTerm: string): boolean => {
     return Object.keys(item).some(itemKey => itemKey.toLowerCase() === fieldTerm.toLowerCase());
@@ -78,7 +54,6 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
     }, 300);
   };
 
-
   const shouldDisplayField = (field:any): boolean => {
     if (field.term.toLowerCase() === 'date' && 'created_at' in item) return false;
     if (field.term.toLowerCase() === 'creator' && 'ownerId' in item) return false;
@@ -100,7 +75,7 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
               const label = metadata[labelIndex].label;
               const updatedMetadata = metadata.filter((_:any, index:number) => index !== labelIndex);
               await uploadMetadataFormat(label, updatedMetadata, user.data!.id);
-              await fetchMetadataFormat();
+              fetchMetadataFormat();
             } else {
               throw new Error("Label field not found in metadata");
             }

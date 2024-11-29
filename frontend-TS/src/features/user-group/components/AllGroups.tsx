@@ -205,7 +205,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   EditorButton={<ModalButton tooltipButton={"Edit Group"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
                   ReaderButton={<ModalButton disabled={true} tooltipButton={"OpenGroup"} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={GetAllGroupUsers}
-                  itemOwner={group}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
                   searchModalEditItem={lookingForUsers}
@@ -236,7 +235,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   EditorButton={<ModalButton tooltipButton={"Edit"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
                   ReaderButton={<ModalButton tooltipButton={"Open"} disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={getAllUserGroups}
-                  itemOwner={selectedUserGroup}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
                   searchModalEditItem={lookingForUsers}
@@ -267,7 +265,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   EditorButton={<ModalButton tooltipButton={"Edit Group"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
                   ReaderButton={<ModalButton disabled={true} tooltipButton={"OpenGroup"} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={GetAllGroupUsers}
-                  itemOwner={group}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
                   searchModalEditItem={lookingForUsers}
