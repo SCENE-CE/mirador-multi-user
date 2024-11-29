@@ -65,7 +65,9 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
     const selectedFormatTitle = event.target.value;
     if (selectedFormatTitle === "upload") {
       setSelectedMetadataFormat(null)
+      if(fileInputRef.current){
       fileInputRef.current.click();
+      }
       return;
     }
     const selectedFormat = metadataFormats.find(format => format.title === selectedFormatTitle);
