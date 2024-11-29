@@ -8,6 +8,7 @@ interface MetadataFieldProps {
     label: string;
     definition: string;
     comment?: string;
+    value?: string;
   };
   value: string;
   handleInputChange: (term: string, value: string) => void;

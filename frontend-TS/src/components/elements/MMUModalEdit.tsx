@@ -21,6 +21,8 @@ import { MetadataForm } from "../../features/Metadata/components/metadataForm.ts
 import { getMetadataFormat } from "../../features/Metadata/api/getMetadataFormat.ts";
 import { MetadataFormat } from "../../features/Metadata/types/types.ts";
 import { useUser } from "../../utils/auth.tsx";
+import { createMetadataForItem } from "../../features/Metadata/api/createMetadataForItem.ts";
+import { gettingMetadataForObject } from "../../features/Metadata/api/gettingMetadataForObject.ts";
 
 
 interface ModalItemProps<T, G> {
@@ -50,6 +52,17 @@ interface ModalItemProps<T, G> {
   getGroupByOption?:(option:any)=>string
 
 }
+
+type MetadataFields = {
+  [key: string]: string; // Abstracts all possible key-value pairs where keys are strings and values are strings
+};
+
+type MetadataItem = {
+  metadata: MetadataFields;
+  metadataFormatTitle: string;
+};
+
+type MetadataArray = MetadataItem[];
 
 export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHash?:string }, G>(
   {
@@ -85,19 +98,18 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
   const [newItemMetadataCreator, setNewItemMetadataCreator] = useState(metadata?.creator ? metadata.creator : null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openDuplicateModal, setOpenDuplicateModal] = useState(false);
-  const [metadataFormData, setMetadataFormData] = useState<{ [key: string]: string }>(metadata || {});
+  const [metadataFormData, setMetadataFormData] = useState<MetadataArray>();
   const [tabValue, setTabValue] = useState(0);
   const [metadataFormats, setMetadataFormats] = useState<MetadataFormat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-  const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | null>(metadataFormats[0]);
-
+  const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | undefined>();
   const user = useUser()
   const handeUpdateMetadata = (updateData:any)=>{
     setMetadataFormData(updateData)
   }
 
-  const handleSetSelectedMetadataFormat = (newFormat : MetadataFormat | null)=>{
-    setSelectedMetadataFormat(newFormat);
+  const handleSetSelectedMetadataFormat = (newFormat : MetadataFormat | undefined)=>{
+    setSelectedMetadataFormat(newFormat!);
   }
   const handleUpdateItem =  async () => {
     const itemToUpdate = {
@@ -105,16 +117,10 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
       thumbnailUrl: newItemThumbnailUrl,
       title: newItemTitle,
       description: newItemDescription,
-      metadata: {
-        ...metadataFormData,
-        date: newItemDate,
-        title: newItemTitle,
-        description: newItemDescription,
-        creator: newItemMetadataCreator
-      },
     }
     if (objectTypes !== ObjectTypes.GROUP) {
-      // await createMetadataForItem( objectTypes,item.id,  );
+      console.log('metadataFormData',metadataFormData)
+      await createMetadataForItem( objectTypes! ,item.id, selectedMetadataFormat!.title,metadataFormData  );
     }
     if (updateItem) {
       updateItem(itemToUpdate);
@@ -125,14 +131,27 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
     setLoading(true);
     try {
       const metadataFormat = await getMetadataFormat(user.data!.id);
-      console.log('metadataFormat',metadataFormat);
       setMetadataFormats(metadataFormat);
+      console.log('metadataFormat',metadataFormat)
+      setSelectedMetadataFormat(metadataFormat[0])
     } catch (error) {
       console.error("Failed to fetch metadata formats", error);
     } finally {
       setLoading(false);
     }
   },[user.data]);
+
+  const handleFetchMetadataForObject= async ()=>{
+    try{
+      if(selectedMetadataFormat !== null){
+      const objectMetadata = await gettingMetadataForObject(item.id,objectTypes!);
+      console.log('objectMetadata',objectMetadata);
+      setMetadataFormData(objectMetadata);
+      }
+    }catch(error){
+      console.error("Failed to fetch metadata formats", error);
+    }
+  }
 
   const handleChangeTitle = (e: ChangeEvent<HTMLInputElement>) => {
     setNewItemTitle(e.target.value);
@@ -348,14 +367,16 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
                 alignItems="center"
               >
                 <MetadataForm
+                  objectTypes={objectTypes!}
                   fetchMetadataFormat={fetchMetadataFormat}
                   item={item}
                   setMetadataFormData={handeUpdateMetadata}
-                  metadataFormData={metadataFormData}
+                  metadataFormData={metadataFormData!}
                   metadataFormats={metadataFormats}
                   loading={loading}
                   selectedMetadataFormat={selectedMetadataFormat}
                   setSelectedMetadataFormat={handleSetSelectedMetadataFormat}
+                  handleFetchMetadataForObject={handleFetchMetadataForObject}
                 />
               </Grid>
             </CustomTabPanel>
