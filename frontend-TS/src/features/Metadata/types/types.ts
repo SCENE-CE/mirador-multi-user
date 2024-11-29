@@ -4,3 +4,10 @@ export type MetadataFormat = {
   metadata: any[]
   title:string
 }
+
+export type labelMetadata = {
+  "term": string,
+  "label": string,
+  "definition"?:string,
+  "comment"?: string
+}

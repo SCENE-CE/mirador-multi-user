@@ -7,7 +7,8 @@ import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import MetadataField from "./metadataField.tsx";
 import { useUser } from "../../../utils/auth.tsx";
 import { getMetadataFormat } from "../api/getMetadataFormat.ts";
-import { MetadataFormat } from "../types/types.ts";
+import { labelMetadata, MetadataFormat } from "../types/types.ts";
+import { uploadMetadataFormat } from "../api/uploadMetadataFormat.ts";
 
 interface MetadataFormProps<T> {
   setMetadataFormData: (data: any) => void;
@@ -66,7 +67,7 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
     if (selectedFormatTitle === "upload") {
       setSelectedMetadataFormat(null)
       if(fileInputRef.current){
-      fileInputRef.current.click();
+        fileInputRef.current.click();
       }
       return;
     }
@@ -85,15 +86,24 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
   };
 
 
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0];
       const reader = new FileReader();
-      reader.onload = (e) => {
+      reader.onload = async (e) => {
         if (e.target?.result) {
           try {
             const metadata = JSON.parse(e.target.result as string);
-            setMetadataFormData(metadata);
+            const labelIndex = metadata.findIndex((item:labelMetadata) => item.term === "metadataFormatLabel");
+
+            if (labelIndex !== -1) {
+              const label = metadata[labelIndex].label;
+              const updatedMetadata = metadata.filter((_:any, index:number) => index !== labelIndex);
+              await uploadMetadataFormat(label, updatedMetadata, user.data!.id);
+              await fetchMetadataFormat();
+            } else {
+              throw new Error("Label field not found in metadata");
+            }
           } catch (error) {
             console.error("Failed to parse JSON metadata", error);
           }
@@ -109,7 +119,7 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
     <>
       {loading ? (
         <Grid container alignItems='center' justifyContent="center">
-        <CircularProgress/>
+          <CircularProgress/>
         </Grid>
       ) : (
         <Paper
@@ -150,7 +160,7 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
             <Divider sx={{ paddingBottom: 2 }} />
           </Box>
           <form style={{ width: "100%" }}>
-          {generatingFields && selectedMetadataFormat !== null? (
+            {generatingFields && selectedMetadataFormat !== null? (
               <Grid container alignItems="center" justifyContent="center">
                 <CircularProgress />
               </Grid>

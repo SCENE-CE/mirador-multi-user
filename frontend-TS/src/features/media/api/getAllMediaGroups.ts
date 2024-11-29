@@ -11,12 +11,12 @@ export const getAllMediaGroups = async (mediaId: number): Promise<ProjectGroup[]
       }
     });
     if (!response.ok) {
-      throw new Error(`Error fetching groups: ${response.statusText}`);
+      throw new Error(`Error in getALlMediaGroups: ${response.statusText}`);
     }
 
     return await response.json();
   } catch (error) {
-    console.error("Error in getGroupsAccessToMedia:", error);
+    console.error("Error in getALlMediaGroups:", error);
     return [];
   }
 }

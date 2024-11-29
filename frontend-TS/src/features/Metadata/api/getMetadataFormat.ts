@@ -10,14 +10,12 @@ export const getMetadataFormat = async (userId: number) => {
       }
     });
     if (!response.ok) {
-      throw new Error(`Error fetching groups: ${response.statusText}`);
+      throw new Error(`Error getting metadata: ${response.statusText}`);
     }
 
-    const toreTurn = await response.json();
-    console.log(toreTurn)
-    return toreTurn;
+    return await response.json();
   } catch (error) {
-    console.error("Error in getGroupsAccessToMedia:", error);
+    console.error("Error getting metadata:", error);
     return [];
   }
 }
