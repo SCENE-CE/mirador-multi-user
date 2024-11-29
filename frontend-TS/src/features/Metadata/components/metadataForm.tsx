@@ -3,7 +3,7 @@ import {
   Grid, InputLabel, MenuItem,
   Paper, Select, SelectChangeEvent
 } from "@mui/material";
-import { useCallback, useEffect, useState } from "react";
+import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import MetadataField from "./metadataField.tsx";
 import { useUser } from "../../../utils/auth.tsx";
 import { getMetadataFormat } from "../api/getMetadataFormat.ts";
@@ -20,6 +20,7 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
   const [loading, setLoading] = useState<boolean>(true);
   const [generatingFields, setGeneratingFields] = useState<boolean>(false);
   const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleInputChange = useCallback((term: string, value: string) => {
     setMetadataFormData((prevMetadata: { [x: string]: string }) => {
@@ -28,16 +29,21 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
     });
   }, []);
 
-  const fetchMetadataFormat = async () => {
+  const fetchMetadataFormat = useCallback(async () => {
     setLoading(true);
-    const metadataFormat = await getMetadataFormat(user.data!.id);
-    setMetadataFormats(metadataFormat);
-    setLoading(false);
-  };
+    try {
+      const metadataFormat = await getMetadataFormat(user.data!.id);
+      setMetadataFormats(metadataFormat);
+    } catch (error) {
+      console.error("Failed to fetch metadata formats", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [user.data]);
 
   useEffect(() => {
     fetchMetadataFormat();
-  }, []);
+  }, [fetchMetadataFormat]);
 
   useEffect(() => {
     if (metadataFormats.length > 0) {
@@ -53,9 +59,15 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
     return Object.keys(item).some(itemKey => itemKey.toLowerCase() === fieldTerm.toLowerCase());
   };
 
+
   const handleFormatChange = (event: SelectChangeEvent) => {
     setGeneratingFields(true);
     const selectedFormatTitle = event.target.value;
+    if (selectedFormatTitle === "upload") {
+      setSelectedMetadataFormat(null)
+      fileInputRef.current.click();
+      return;
+    }
     const selectedFormat = metadataFormats.find(format => format.title === selectedFormatTitle);
     setSelectedMetadataFormat(selectedFormat || null);
     setTimeout(() => {
@@ -63,8 +75,33 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
     }, 300);
   };
 
-  console.log('metadataFormats', metadataFormats);
-  console.log('selectedMetadataFormat', selectedMetadataFormat);
+
+  const shouldDisplayField = (field:any): boolean => {
+    if (field.term.toLowerCase() === 'date' && 'created_at' in item) return false;
+    if (field.term.toLowerCase() === 'creator' && 'ownerId' in item) return false;
+    return !doesItemContainMetadataField(field.term);
+  };
+
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        if (e.target?.result) {
+          try {
+            const metadata = JSON.parse(e.target.result as string);
+            setMetadataFormData(metadata);
+          } catch (error) {
+            console.error("Failed to parse JSON metadata", error);
+          }
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
+
+
 
   return (
     <>
@@ -83,37 +120,43 @@ export const MetadataForm = <T extends NonNullable<unknown>,>({ metadataFormData
           }}
         >
           <Box sx={{ minWidth: 120, paddingTop: 2, paddingBottom: 2 }}>
-            <FormControl sx={{ width: '90%' }}>
+            <FormControl sx={{ width: "90%" }}>
               <InputLabel id="metadata-format-label">Format</InputLabel>
               <Select
                 labelId="metadata-format-label"
-                value={selectedMetadataFormat ? selectedMetadataFormat.title : ''}
+                value={selectedMetadataFormat ? selectedMetadataFormat.title : ""}
                 label="Format"
                 onChange={handleFormatChange}
               >
                 {metadataFormats.map((metadataFormat) => (
-                  <MenuItem key={metadataFormat.id} value={metadataFormat.title}>
+                  <MenuItem divider={true} key={metadataFormat.id} value={metadataFormat.title}>
                     {metadataFormat.title}
                   </MenuItem>
                 ))}
+                <MenuItem value="upload">
+                  ...Upload metadata with JSON
+                </MenuItem>
               </Select>
+              <input
+                type="file"
+                ref={fileInputRef}
+                hidden
+                onChange={handleFileChange}
+                accept="application/json"
+              />
             </FormControl>
             <Divider sx={{ paddingBottom: 2 }} />
           </Box>
           <form style={{ width: "100%" }}>
-            {generatingFields ? (
-              <Grid container alignItems='center' justifyContent="center">
-              <CircularProgress/>
+          {generatingFields && selectedMetadataFormat !== null? (
+              <Grid container alignItems="center" justifyContent="center">
+                <CircularProgress />
               </Grid>
             ) : (
               <Grid container spacing={2}>
                 {selectedMetadataFormat &&
                   selectedMetadataFormat.metadata
-                    .filter((field) => {
-                      if (field.term.toLowerCase() === 'date' && 'created_at' in item) return false;
-                      if (field.term.toLowerCase() === 'creator' && 'ownerId' in item) return false;
-                      return !doesItemContainMetadataField(field.term);
-                    })
+                    .filter(shouldDisplayField)
                     .map((field) => (
                       <MetadataField
                         key={field.term}

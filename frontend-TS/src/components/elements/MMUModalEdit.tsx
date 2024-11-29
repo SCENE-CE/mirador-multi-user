@@ -9,7 +9,6 @@ import { ItemsRights } from "../../features/user-group/types/types.ts";
 import { ListItem, SelectorItem } from "../types.ts";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { MediaGroupRights } from "../../features/media/types/types.ts";
-import MetadataForm from "../../features/Metadata/components/metadataForm.tsx";
 import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -18,6 +17,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import { a11yProps } from "./SideBar/allyProps.tsx";
 import { CustomTabPanel } from "./CustomTabPanel.tsx";
+import { MetadataForm } from "../../features/Metadata/components/metadataForm.tsx";
 
 
 interface ModalItemProps<T, G,O> {
