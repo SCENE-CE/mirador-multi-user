@@ -23,6 +23,8 @@ export class MetadataService {
 
   async create(createMetadataDto: CreateMetadataDto, userId: number) {
     try {
+      console.log('---------------- TITLE OF METADATA ----------------')
+      console.log(createMetadataDto.metadataFormatTitle)
       const format =
         await this.linkMetadataFormatGroup.findMetadataFormatWithTitle(
           createMetadataDto.metadataFormatTitle,
@@ -40,7 +42,8 @@ export class MetadataService {
         metadataFormat: format,
         metadata: createMetadataDto.metadata,
       });
-
+      console.log('---------------(metadata)---------------');
+      console.log(metadata);
       return await this.metadataRepository.upsert(metadata, {
         conflictPaths: ['objectType', 'objectId', 'metadataFormat'],
       });

@@ -1,13 +1,17 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
-import { CreateLinkMetadataFormatGroupDto } from "./dto/create-link-metadata-format-group.dto";
-import { MetadataFormatService } from "../../BaseEntities/metadata-format/metadata-format.service";
-import { CustomLogger } from "../../utils/Logger/CustomLogger.service";
-import { InjectRepository } from "@nestjs/typeorm";
-import { LinkMetadataFormatGroup } from "./entities/link-metadata-format-group.entity";
-import { Repository } from "typeorm";
-import { MetadataFormat } from "../../BaseEntities/metadata-format/entities/metadata-format.entity";
-import { UserGroup } from "../../BaseEntities/user-group/entities/user-group.entity";
-import { UserGroupService } from "../../BaseEntities/user-group/user-group.service";
+import {
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
+import { CreateLinkMetadataFormatGroupDto } from './dto/create-link-metadata-format-group.dto';
+import { MetadataFormatService } from '../../BaseEntities/metadata-format/metadata-format.service';
+import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
+import { InjectRepository } from '@nestjs/typeorm';
+import { LinkMetadataFormatGroup } from './entities/link-metadata-format-group.entity';
+import { Repository } from 'typeorm';
+import { MetadataFormat } from '../../BaseEntities/metadata-format/entities/metadata-format.entity';
+import { UserGroup } from '../../BaseEntities/user-group/entities/user-group.entity';
+import { UserGroupService } from '../../BaseEntities/user-group/user-group.service';
 
 @Injectable()
 export class LinkMetadataFormatGroupService {
@@ -62,6 +66,8 @@ export class LinkMetadataFormatGroupService {
     metadataFormatTitle: string,
     userId: number,
   ) {
+    console.log('FIND METADATA FORMAT FROM TITLE ');
+    console.log(metadataFormatTitle);
     try {
       // Retrieve user's personal group
       const userPersonalGroup =
@@ -72,14 +78,19 @@ export class LinkMetadataFormatGroupService {
         );
       }
 
-      // Find metadata formats for the user's group with the specified title
-      const result = await this.linkMetadataFormatGroupRepository.findOne({
-        where: {
-          user_group: userPersonalGroup,
-        },
-        relations: ['metadataFormat'],
-      });
-
+      const result = await this.linkMetadataFormatGroupRepository
+        .createQueryBuilder('linkMetadataFormatGroup')
+        .leftJoinAndSelect(
+          'linkMetadataFormatGroup.metadataFormat',
+          'metadataFormat',
+        )
+        .where('linkMetadataFormatGroup.userGroupId = :userGroupId', {
+          userGroupId: userPersonalGroup.id,
+        })
+        .andWhere('metadataFormat.title = :metadataFormatTitle', {
+          metadataFormatTitle,
+        })
+        .getOne();
       if (!result) {
         this.logger.warn(
           `No metadata formats found with title "${metadataFormatTitle}" for user ID ${userId}`,
@@ -88,7 +99,8 @@ export class LinkMetadataFormatGroupService {
           `No metadata formats found with title "${metadataFormatTitle}"`,
         );
       }
-
+      console.log('--------result of finding metadata with title --------');
+      console.log(result);
       return result.metadataFormat;
     } catch (error) {
       this.logger.error(error.message, error.stack);

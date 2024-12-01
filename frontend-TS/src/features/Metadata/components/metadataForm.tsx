@@ -52,6 +52,7 @@ export const MetadataForm = <T extends { id:number },>({handleFetchMetadataForOb
     });
   }, []);
 
+  console.log('metadataFormData',metadataFormData)
   const doesItemContainMetadataField = (fieldTerm: string): boolean => {
     return Object.keys(item).some(itemKey => itemKey.toLowerCase() === fieldTerm.toLowerCase());
   };
@@ -206,7 +207,7 @@ export const MetadataForm = <T extends { id:number },>({handleFetchMetadataForOb
                             <MetadataField
                               key={field.term}
                               field={field}
-                              value={metadataFormData[field.term] || ""}
+                              value={metadataFormData[field.term] as unknown as string|| ""}
                               handleInputChange={handleInputChange}
                             />
                           ))}

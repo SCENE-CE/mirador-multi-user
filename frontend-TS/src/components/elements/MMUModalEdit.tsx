@@ -108,6 +108,10 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
     setMetadataFormData(updateData)
   }
 
+
+  console.log('metadataFormData',metadataFormData)
+
+
   const handleSetSelectedMetadataFormat = (newFormat : MetadataFormat | undefined)=>{
     setSelectedMetadataFormat(newFormat!);
   }
@@ -120,12 +124,15 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
     }
     if (objectTypes !== ObjectTypes.GROUP) {
       console.log('metadataFormData',metadataFormData)
+      console.log('SAVE -  selected Metadata Format', selectedMetadataFormat)
       await createMetadataForItem( objectTypes! ,item.id, selectedMetadataFormat!.title,metadataFormData  );
     }
     if (updateItem) {
       updateItem(itemToUpdate);
     }
   };
+
+
 
   const fetchMetadataFormat = useCallback(async () => {
     setLoading(true);
@@ -183,6 +190,7 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
   useEffect(() => {
     fetchData();
     fetchMetadataFormat();
+    handleFetchMetadataForObject()
   }, []);
 
   const rightsSelectorItems: SelectorItem[] = Object.values(ItemsRights).map((right) => ({
@@ -212,7 +220,6 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
-  console.log(tabValue )
   return (
     <Grid container sx={{overflow:'scroll'}}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">

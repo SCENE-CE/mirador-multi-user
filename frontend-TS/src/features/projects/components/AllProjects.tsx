@@ -132,7 +132,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const HandleOpenModal =useCallback ((projectId: number)=>{
     const newModalProjectId = openModalProjectId === projectId ? null : projectId;
-    console.log("Toggling modal for projectId:", projectId, "New state:", newModalProjectId);
     setOpenModalProjectId(newModalProjectId);
   },[setOpenModalProjectId, openModalProjectId])
 
@@ -259,7 +258,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     setOpenSidePanel(!openSidePanel)
   }
 
-  console.log(currentPageData)
   return (
     <>
       <SidePanelMedia open={openSidePanel && !!openModalProjectId} setOpen={handleSetOpenSidePanel} display={!!openModalProjectId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
