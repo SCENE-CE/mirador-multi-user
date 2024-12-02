@@ -1,7 +1,7 @@
 import { User } from "../../auth/types/types.ts";
 import { Grid, Typography } from "@mui/material";
 import { Dispatch, SetStateAction, useCallback, useEffect, useMemo, useState } from "react";
-import { CreateGroupDto, LinkUserGroup, ProjectRights, UserGroup } from "../types/types.ts";
+import { CreateGroupDto, LinkUserGroup, ItemsRights, UserGroup } from "../types/types.ts";
 import { getAllUserGroups } from "../api/getAllUserGroups.ts";
 import { FloatingActionButton } from "../../../components/elements/FloatingActionButton.tsx";
 import AddIcon from "@mui/icons-material/Add";
@@ -105,7 +105,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
   const handleChangeRights = async(group: ListItem,eventValue:string, groupId:number) =>{
     const userToUpdate = userPersonalGroupList.find((user)=>user.user.id=== group.id)
-    await  ChangeAccessToGroup(groupId, {userId: userToUpdate!.user.id, groupId: group.id, rights: eventValue as ProjectRights} );
+    await  ChangeAccessToGroup(groupId, {userId: userToUpdate!.user.id, groupId: group.id, rights: eventValue as ItemsRights} );
   }
 
   const HandleOpenModal =useCallback ((groupId: number)=>{
@@ -188,7 +188,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             {groups && groupFiltered && groupFiltered.length < 1 &&!selectedUserGroup && currentPageData.map((group) => (
               <Grid item key={group.id}>
                 <MMUCard
-                  objectTypes={ObjectTypes.PROJECT}
+                  objectTypes={ObjectTypes.GROUP}
                   isGroups={true}
                   thumbnailUrl={group.thumbnailUrl ? group.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}
@@ -205,7 +205,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   EditorButton={<ModalButton tooltipButton={"Edit Group"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
                   ReaderButton={<ModalButton disabled={true} tooltipButton={"OpenGroup"} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={GetAllGroupUsers}
-                  itemOwner={group}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
                   searchModalEditItem={lookingForUsers}
@@ -219,7 +218,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             {selectedUserGroup &&(
               <Grid item>
                 <MMUCard
-                  objectTypes={ObjectTypes.PROJECT}
+                  objectTypes={ObjectTypes.GROUP}
                   isGroups={true}
                   thumbnailUrl={selectedUserGroup.thumbnailUrl ? selectedUserGroup.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}
@@ -236,7 +235,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   EditorButton={<ModalButton tooltipButton={"Edit"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
                   ReaderButton={<ModalButton tooltipButton={"Open"} disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={getAllUserGroups}
-                  itemOwner={selectedUserGroup}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
                   searchModalEditItem={lookingForUsers}
@@ -250,7 +248,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             {groups && groupFiltered && groupFiltered.length > 0 &&!selectedUserGroup && groupFiltered.map((group) => (
               <Grid item key={group.id}>
                 <MMUCard
-                  objectTypes={ObjectTypes.PROJECT}
+                  objectTypes={ObjectTypes.GROUP}
                   isGroups={true}
                   thumbnailUrl={group.thumbnailUrl ? group.thumbnailUrl : null }
                   searchBarLabel={"Search Users"}
@@ -267,7 +265,6 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   EditorButton={<ModalButton tooltipButton={"Edit Group"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
                   ReaderButton={<ModalButton disabled={true} tooltipButton={"OpenGroup"} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={GetAllGroupUsers}
-                  itemOwner={group}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
                   searchModalEditItem={lookingForUsers}

@@ -4,7 +4,6 @@ import { ObjectTypes } from "../../tag/type.ts";
 import { ModalButton } from "../../../components/elements/ModalButton.tsx";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import ModeEditIcon from "@mui/icons-material/ModeEdit";
-import { User } from "../../auth/types/types.ts";
 import { ListItem } from "../../../components/types.ts";
 import { Dispatch, SetStateAction } from "react";
 import { ProjectGroup } from "../../projects/types/types.ts";
@@ -18,7 +17,6 @@ interface IMediaCardProps {
   HandleDeleteMedia:(itemId: number) => void,
   getAllMediaGroups:(itemId:number)=> Promise<any>,
   getOptionLabel: (option: any, searchInput: string) => string,
-  user:User,
   listOfGroup:ListItem[],
   openModalMediaId:number | null,
   handleRemoveAccessToMedia:(itemId:number, accessItemId:number )=>Promise<void>,
@@ -39,7 +37,6 @@ export const MediaCard = (
     HandleDeleteMedia,
     getAllMediaGroups,
     getOptionLabel,
-    user,
     listOfGroup,
     openModalMediaId,
     handleRemoveAccessToMedia,
@@ -86,7 +83,6 @@ export const MediaCard = (
       id={media.id}
       item={media}
       itemLabel={media.title}
-      itemOwner={user}
       listOfItem={listOfGroup}
       metadata={media.metadata}
       openModal={openModalMediaId === media.id}

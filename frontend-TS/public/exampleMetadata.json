@@ -1,4 +1,4 @@
-export const dublinCoreSample = [
+[
   {
     "term": "metadataFormatLabel",
     "label": "example Metadata",

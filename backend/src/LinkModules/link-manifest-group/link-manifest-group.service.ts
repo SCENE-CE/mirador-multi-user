@@ -63,7 +63,6 @@ export class LinkManifestGroupService {
   }
 
   async create(createLinkGroupManifestDto) {
-
     try {
       const linkGroupManifest: LinkManifestGroup =
         this.linkManifestGroupRepository.create({

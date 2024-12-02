@@ -3,7 +3,6 @@ import storage from "../../../utils/storage.ts";
 
 export const getAllMediaGroups = async (mediaId: number): Promise<ProjectGroup[]> => {
   const token = storage.getToken();
-  console.log('CONSOLE LOG GET GROUP ACCESS TO MEDIA')
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/${mediaId}`, {
       method: "GET",
@@ -12,14 +11,12 @@ export const getAllMediaGroups = async (mediaId: number): Promise<ProjectGroup[]
       }
     });
     if (!response.ok) {
-      throw new Error(`Error fetching groups: ${response.statusText}`);
+      throw new Error(`Error in getALlMediaGroups: ${response.statusText}`);
     }
 
-    const toreTurn = await response.json();
-    console.log(toreTurn)
-    return toreTurn;
+    return await response.json();
   } catch (error) {
-    console.error("Error in getGroupsAccessToMedia:", error);
+    console.error("Error in getALlMediaGroups:", error);
     return [];
   }
 }

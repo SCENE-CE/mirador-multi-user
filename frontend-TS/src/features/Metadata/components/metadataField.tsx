@@ -1,6 +1,6 @@
 import { memo } from "react";
 import { Grid, TextField } from "@mui/material";
-import { MMUToolTip } from "./MMUTootlTip.tsx";
+import { MMUToolTip } from "../../../components/elements/MMUTootlTip.tsx";
 
 interface MetadataFieldProps {
   field: {
@@ -8,6 +8,7 @@ interface MetadataFieldProps {
     label: string;
     definition: string;
     comment?: string;
+    value?: string;
   };
   value: string;
   handleInputChange: (term: string, value: string) => void;
@@ -15,6 +16,7 @@ interface MetadataFieldProps {
 
 const MetadataField = memo(
   ({ field, value, handleInputChange }:MetadataFieldProps) => {
+
     return (
       <Grid item xs={12}>
         <Grid container alignItems="center" spacing={2}>

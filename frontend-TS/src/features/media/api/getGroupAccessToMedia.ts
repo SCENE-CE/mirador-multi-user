@@ -12,7 +12,7 @@ console.log('CONSOLE LOG GET GROUP ACCESS TO MEDIA')
       }
     });
     if (!response.ok) {
-      throw new Error(`Error fetching groups: ${response.statusText}`);
+      throw new Error(`Error in getGroupsAccessToMedia: ${response.statusText}`);
     }
 
     const toreTurn = await response.json();

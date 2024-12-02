@@ -13,6 +13,7 @@ import { UserGroupTypes } from '../../../enum/user-group-types';
 import { LinkUserGroup } from '../../../LinkModules/link-user-group/entities/link-user-group.entity';
 import { LinkManifestGroup } from '../../../LinkModules/link-manifest-group/entities/link-manifest-group.entity';
 import { Tag } from '../../tag/entities/tag.entity';
+import { LinkMetadataFormatGroup } from '../../../LinkModules/link-metadata-format-group/entities/link-metadata-format-group.entity';
 
 @Entity()
 export class UserGroup {
@@ -55,6 +56,12 @@ export class UserGroup {
     (linkManifestGroup) => linkManifestGroup.user_group,
   )
   linkManifestGroup: LinkManifestGroup[];
+
+  @OneToMany(
+    () => LinkMetadataFormatGroup,
+    (linkMetadataFormatGroup) => linkMetadataFormatGroup.user_group,
+  )
+  linkMetadataFormatGroup: LinkMetadataFormatGroup[];
 
   @ManyToOne(() => Tag)
   @JoinColumn({ name: 'tagId' })

@@ -4,7 +4,7 @@ import { Dispatch, ReactElement, SetStateAction, useCallback, useState } from "r
 import placeholder from '../../assets/Placeholder.svg'
 import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
-import { ProjectRights } from "../../features/user-group/types/types.ts";
+import { ItemsRights } from "../../features/user-group/types/types.ts";
 import { MediaGroupRights, MediaTypes } from "../../features/media/types/types.ts";
 import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
 import { Dayjs } from "dayjs";
@@ -12,9 +12,9 @@ import { ObjectTypes } from "../../features/tag/type.ts";
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import ImageIcon from '@mui/icons-material/Image';
 
-interface IMMUCardProps<T,G,O,X> {
+interface IMMUCardProps<T,G,X> {
   id: number;
-  rights: ProjectRights | MediaGroupRights | ManifestGroupRights;
+  rights: ItemsRights | MediaGroupRights | ManifestGroupRights;
   description: string;
   HandleOpenModal: () => void;
   openModal: boolean;
@@ -24,7 +24,6 @@ interface IMMUCardProps<T,G,O,X> {
   itemLabel:string;
   handleSelectorChange?: (itemList: ListItem, eventValue : string, itemId:number, owner :any ) => Promise<void>,
   listOfItem?: ListItem[],
-  itemOwner:O,
   deleteItem?: (itemId: number) => void,
   duplicateItem?: (itemId: number) => void,
   getOptionLabel?: (option: any, searchInput: string) => string,
@@ -44,7 +43,7 @@ interface IMMUCardProps<T,G,O,X> {
   getGroupByOption?:(option:any)=>string
 }
 
-const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,mediaTypes?:MediaTypes},G, O, X extends { id:number} > (
+const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,mediaTypes?:MediaTypes},G, X extends { id:number} > (
   {
     id,
     rights,
@@ -57,7 +56,6 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
     itemLabel,
     handleSelectorChange,
     getAccessToItem,
-    itemOwner,
     listOfItem,
     deleteItem,
     getOptionLabel,
@@ -75,7 +73,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
     objectTypes,
     getGroupByOption,
     duplicateItem
-  }:IMMUCardProps<T,G,O, X>
+  }:IMMUCardProps<T,G, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
@@ -159,7 +157,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
             <Grid container flexDirection="row" wrap="nowrap" spacing={2}>
               {id && (
                 <Grid item>
-                  {rights === ProjectRights.READER ? ReaderButton : EditorButton}
+                  {rights === ItemsRights.READER ? ReaderButton : EditorButton}
                 </Grid>
               )}
               {DefaultButton && (
@@ -189,7 +187,6 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
                     handleSelectorChange={handleChangeSelectedItem}
                     fetchData={fetchData}
                     listOfItem={listOfItem}
-                    itemOwner={itemOwner}
                     deleteItem={deleteItem}
                     getOptionLabel={getOptionLabel}
                     getGroupByOption={getGroupByOption}

@@ -1,10 +1,10 @@
-import { ProjectRights, UserGroupTypes } from "../features/user-group/types/types.ts";
+import { ItemsRights, UserGroupTypes } from "../features/user-group/types/types.ts";
 import { User } from "../features/auth/types/types.ts";
 
 export type ListItem = {
   id:number
   title?:string
-  rights?: ProjectRights
+  rights?: ItemsRights
   type?:UserGroupTypes
 }
 
@@ -14,7 +14,7 @@ export type SelectorItem = {
 }
 
 export type ItemOwner={
-  rights: ProjectRights
+  rights: ItemsRights
 }
 export type ModalEditItem={
   id:number,

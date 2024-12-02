@@ -23,6 +23,9 @@ import { TagModule } from './BaseEntities/tag/tag.module';
 import { TaggingModule } from './LinkModules/tagging/tagging.module';
 import { EmailConfirmationModule } from './email-confirmation/email-confirmation.module';
 import { UserManagementModule } from './user-management/user-management.module';
+import { MetadataFormatModule } from './BaseEntities/metadata-format/metadata-format.module';
+import { LinkMetadataFormatGroupModule } from './LinkModules/link-metadata-format-group/link-metadata-format-group.module';
+import { MetadataModule } from './BaseEntities/metadata/metadata.module';
 
 @Module({
   imports: [
@@ -79,6 +82,9 @@ import { UserManagementModule } from './user-management/user-management.module';
     TaggingModule,
     EmailConfirmationModule,
     UserManagementModule,
+    MetadataFormatModule,
+    LinkMetadataFormatGroupModule,
+    MetadataModule,
   ],
   controllers: [AppController],
   providers: [

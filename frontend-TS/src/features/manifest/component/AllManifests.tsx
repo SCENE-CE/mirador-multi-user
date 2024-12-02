@@ -364,7 +364,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     id={manifest.id}
                     item={manifest}
                     itemLabel={manifest.title}
-                    itemOwner={user}
                     listOfItem={listOfGroup}
                     metadata={manifest.metadata}
                     openModal={openModalManifestId === manifest.id}
@@ -399,7 +398,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     id={manifest.id}
                     item={manifest}
                     itemLabel={manifest.title}
-                    itemOwner={user}
                     listOfItem={listOfGroup}
                     metadata={manifest.metadata}
                     openModal={openModalManifestId === manifest.id}
@@ -434,7 +432,6 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     id={searchedManifest.id}
                     item={searchedManifest}
                     itemLabel={searchedManifest.title}
-                    itemOwner={user}
                     listOfItem={listOfGroup}
                     metadata={searchedManifest.metadata}
                     openModal={openModalManifestId === searchedManifest.id}

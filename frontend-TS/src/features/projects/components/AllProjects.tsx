@@ -12,7 +12,7 @@ import { DrawerCreateProject } from "./DrawerCreateProject.tsx";
 import { SearchBar } from "../../../components/elements/SearchBar.tsx";
 import { lookingForProject } from "../api/lookingForProject.ts";
 import { getUserPersonalGroup } from "../api/getUserPersonalGroup.ts";
-import { LinkUserGroup, ProjectRights, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
+import { LinkUserGroup, ItemsRights, UserGroup, UserGroupTypes } from "../../user-group/types/types.ts";
 import MMUCard from "../../../components/elements/MMUCard.tsx";
 import { removeProjectToGroup } from "../../user-group/api/removeProjectToGroup.ts";
 import { addProjectToGroup } from "../../user-group/api/addProjectToGroup.ts";
@@ -132,7 +132,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const HandleOpenModal =useCallback ((projectId: number)=>{
     const newModalProjectId = openModalProjectId === projectId ? null : projectId;
-    console.log("Toggling modal for projectId:", projectId, "New state:", newModalProjectId);
     setOpenModalProjectId(newModalProjectId);
   },[setOpenModalProjectId, openModalProjectId])
 
@@ -187,7 +186,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     await updateAccessToProject(
       projectId,
       group.id,
-      eventValue as ProjectRights,
+      eventValue as ItemsRights,
     );
 
   };
@@ -304,7 +303,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         handleSelectorChange={handleChangeRights}
                         item={projectUser}
                         itemLabel={projectUser.title}
-                        itemOwner={projectUser.owner}
                         listOfItem={listOfGroup}
                         searchModalEditItem={handleLookingForUserGroups}
                         getAccessToItem={getGroupsAccessToProject}
@@ -354,7 +352,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       handleSelectorChange={handleChangeRights}
                       item={searchedProject}
                       itemLabel={searchedProject.title}
-                      itemOwner={searchedProject}
                       listOfItem={listOfGroup}
                       searchModalEditItem={lookingForUsers}
                       getAccessToItem={getGroupsAccessToProject}
@@ -392,7 +389,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                           handleSelectorChange={handleChangeRights}
                           item={projectUser}
                           itemLabel={projectUser.title}
-                          itemOwner={projectUser.owner}
                           listOfItem={listOfGroup}
                           searchModalEditItem={handleLookingForUserGroups}
                           getAccessToItem={getGroupsAccessToProject}
