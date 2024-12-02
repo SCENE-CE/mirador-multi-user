@@ -107,6 +107,14 @@ export const MetadataForm = <T extends { id:number },>({selectedMetadataData,set
     }
   };
 
+  const handleExampleMetadata = ()=>{
+    const fileUrl = "../../../public/exampleMetadata.json"
+    const link = document.createElement("a");
+    link.href = fileUrl;
+    link.download = "exampleMetadata.json";
+    link.click();
+  }
+
   useEffect(() => {},[selectedMetadataFormat])
   return (
     <>
@@ -135,6 +143,12 @@ export const MetadataForm = <T extends { id:number },>({selectedMetadataData,set
               >
                 <MenuItem value="upload">
                   ... Upload new metadata template
+                </MenuItem>
+                <MenuItem
+                  value="download-example"
+                  onClick={handleExampleMetadata}
+                >
+                  ... Download metadata templates example
                 </MenuItem>
                 {metadataFormats.map((metadataFormat) => (
                   <MenuItem divider={true} key={metadataFormat.id} value={metadataFormat.title}>
