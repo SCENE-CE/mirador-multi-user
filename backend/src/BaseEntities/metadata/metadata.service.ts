@@ -65,7 +65,7 @@ export class MetadataService {
       console.log(metadatas);
       return metadatas.map((item) => ({
         metadata: item.metadata,
-        metadataFormatTitle: item.metadataFormat.title,
+        title: item.metadataFormat.title,
       }));
     } catch (error) {
       this.logger.error(error.message, error.stack);

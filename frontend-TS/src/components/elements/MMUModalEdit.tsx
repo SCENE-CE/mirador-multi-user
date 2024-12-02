@@ -19,7 +19,6 @@ import { a11yProps } from "./SideBar/allyProps.tsx";
 import { CustomTabPanel } from "./CustomTabPanel.tsx";
 import { MetadataForm } from "../../features/Metadata/components/metadataForm.tsx";
 import { getMetadataFormat } from "../../features/Metadata/api/getMetadataFormat.ts";
-import { MetadataFormat } from "../../features/Metadata/types/types.ts";
 import { useUser } from "../../utils/auth.tsx";
 import { createMetadataForItem } from "../../features/Metadata/api/createMetadataForItem.ts";
 import { gettingMetadataForObject } from "../../features/Metadata/api/gettingMetadataForObject.ts";
@@ -53,16 +52,26 @@ interface ModalItemProps<T, G> {
 
 }
 
+type MetadataFormat = {
+  id: number;
+  title: string;
+  creatorId: number;
+  metadata: MetadataFormatField[];
+};
+
+type MetadataFormatField = {
+  term: string;
+  label: string;
+  uri: string;
+  definition: string;
+  comment?: string;
+};
 type MetadataFields = {
   [key: string]: string; // Abstracts all possible key-value pairs where keys are strings and values are strings
 };
 
-type MetadataItem = {
-  metadata: MetadataFields;
-  metadataFormatTitle: string;
-};
 
-type MetadataArray = MetadataItem[];
+type MetadataArray = MetadataFormat[];
 
 export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHash?:string }, G>(
   {
@@ -99,22 +108,59 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [openDuplicateModal, setOpenDuplicateModal] = useState(false);
   const [metadataFormData, setMetadataFormData] = useState<MetadataArray>();
+  const [selectedMetadataData, setSelectedMetadataData] = useState<MetadataFields>();
   const [tabValue, setTabValue] = useState(0);
   const [metadataFormats, setMetadataFormats] = useState<MetadataFormat[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | undefined>();
   const user = useUser()
+
+
   const handeUpdateMetadata = (updateData:any)=>{
-    setMetadataFormData(updateData)
+    console.log('updateData',updateData)
+    setSelectedMetadataData(updateData)
   }
-
-
-  console.log('metadataFormData',metadataFormData)
-
 
   const handleSetSelectedMetadataFormat = (newFormat : MetadataFormat | undefined)=>{
     setSelectedMetadataFormat(newFormat!);
+    console.log('newFormat!',newFormat!)
+    console.log('metadataFormData',metadataFormData)
+
+    const matchingMetadata = metadataFormData!.find(
+      (data) => data.title === newFormat!.title
+    );
+
+    if (matchingMetadata) {
+      const { metadata } = matchingMetadata;
+      console.log('metadata',metadata)
+      if(metadataFormData){
+        const newData = metadataFormData.find((formData)=> formData.metadata == metadata );
+      if(newData) {
+        console.log("newData", newData);
+
+        const transformedMetadata: MetadataFields = Object.keys(newData.metadata).reduce((acc, key) => {
+          acc[key.toLowerCase()] = newData.metadata[key];
+          return acc;
+        }, {} as MetadataFields);
+
+        setSelectedMetadataData(transformedMetadata);
+      }
+      }
+    }
+    console.log('no match')
+    console.log('metadataFormData',metadataFormData)
   }
+
+  function extractLabelsFromMetadata(selectedMetadataFormat: { metadata: MetadataFormatField[] }): Record<string, string> {
+    const labelsObject: Record<string, string> = {};
+    console.log('selectedMetadataFormat',selectedMetadataFormat);
+    selectedMetadataFormat.metadata.forEach((item) => {
+      labelsObject[item.term.toLowerCase()] = "";
+    });
+
+    return labelsObject;
+  }
+
   const handleUpdateItem =  async () => {
     const itemToUpdate = {
       ...item,
@@ -123,15 +169,12 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
       description: newItemDescription,
     }
     if (objectTypes !== ObjectTypes.GROUP) {
-      console.log('metadataFormData',metadataFormData)
-      console.log('SAVE -  selected Metadata Format', selectedMetadataFormat)
-      await createMetadataForItem( objectTypes! ,item.id, selectedMetadataFormat!.title,metadataFormData  );
+      await createMetadataForItem( objectTypes! ,item.id, selectedMetadataFormat!.title,selectedMetadataData  );
     }
     if (updateItem) {
       updateItem(itemToUpdate);
     }
   };
-
 
 
   const fetchMetadataFormat = useCallback(async () => {
@@ -151,9 +194,18 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
   const handleFetchMetadataForObject= async ()=>{
     try{
       if(selectedMetadataFormat !== null){
-      const objectMetadata = await gettingMetadataForObject(item.id,objectTypes!);
-      console.log('objectMetadata',objectMetadata);
-      setMetadataFormData(objectMetadata);
+        const objectMetadata = await gettingMetadataForObject(item.id,objectTypes!);
+        console.log('objectMetadata',objectMetadata);
+        setMetadataFormData(objectMetadata);
+        if(objectMetadata.length < 1){
+          const metadataFormat = await getMetadataFormat(user.data!.id);
+          console.log('metadataFormat',metadataFormat);
+          const labels = extractLabelsFromMetadata(metadataFormat[0])
+          console.log('labels',labels)
+          setSelectedMetadataData(labels);
+        }else{
+          setSelectedMetadataData(objectMetadata[0].metadata);
+        }
       }
     }catch(error){
       console.error("Failed to fetch metadata formats", error);
@@ -220,6 +272,8 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
   };
+
+  console.log("render")
   return (
     <Grid container sx={{overflow:'scroll'}}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">
@@ -374,16 +428,14 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
                 alignItems="center"
               >
                 <MetadataForm
-                  objectTypes={objectTypes!}
+                  selectedMetadataData={selectedMetadataData}
                   fetchMetadataFormat={fetchMetadataFormat}
                   item={item}
-                  setMetadataFormData={handeUpdateMetadata}
-                  metadataFormData={metadataFormData!}
+                  handleSetMetadataFormData={handeUpdateMetadata}
                   metadataFormats={metadataFormats}
                   loading={loading}
                   selectedMetadataFormat={selectedMetadataFormat}
                   setSelectedMetadataFormat={handleSetSelectedMetadataFormat}
-                  handleFetchMetadataForObject={handleFetchMetadataForObject}
                 />
               </Grid>
             </CustomTabPanel>

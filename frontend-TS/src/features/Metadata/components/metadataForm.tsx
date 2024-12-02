@@ -6,86 +6,58 @@ import {
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import MetadataField from "./metadataField.tsx";
 import { useUser } from "../../../utils/auth.tsx";
-import { labelMetadata, MetadataFormat } from "../types/types.ts";
+import { labelMetadata } from "../types/types.ts";
 import { uploadMetadataFormat } from "../api/uploadMetadataFormat.ts";
-import { createMetadataForItem } from "../api/createMetadataForItem.ts";
-import { ObjectTypes } from "../../tag/type.ts";
 
 interface MetadataFormProps<T> {
-  setMetadataFormData: (data: any) => void;
-  metadataFormData:MetadataArray
+  handleSetMetadataFormData: (data: any) => void;
   item:T
   metadataFormats:MetadataFormat[]
   loading: boolean
   fetchMetadataFormat:()=>void;
   selectedMetadataFormat:MetadataFormat | undefined;
   setSelectedMetadataFormat:(newFormat: MetadataFormat | undefined)=>void;
-  objectTypes: ObjectTypes;
-  handleFetchMetadataForObject:()=>void;
-}
-
-interface IMetadataField {
-  label: string;
-  [key: string]: any;
+  selectedMetadataData:MetadataFields | undefined;
 }
 
 type MetadataFields = {
   [key: string]: string;
 };
 
-type MetadataItem = {
-  metadata: MetadataFields;
-  metadataFormatTitle: string;
+
+type MetadataFormat = {
+  id: number;
+  title: string;
+  creatorId: number;
+  metadata: MetadataFormatField[];
 };
 
-type MetadataArray = MetadataItem[];
+type MetadataFormatField = {
+  term: string;
+  label: string;
+  uri: string;
+  definition: string;
+  comment?: string;
+};
 
-export const MetadataForm = <T extends { id:number },>({handleFetchMetadataForObject,objectTypes,setSelectedMetadataFormat,selectedMetadataFormat,fetchMetadataFormat,loading,metadataFormats,metadataFormData, setMetadataFormData, item }: MetadataFormProps<T>) => {
+export const MetadataForm = <T extends { id:number },>({selectedMetadataData,setSelectedMetadataFormat,selectedMetadataFormat,fetchMetadataFormat,loading,metadataFormats, handleSetMetadataFormData, item }: MetadataFormProps<T>) => {
   const user = useUser();
   const [generatingFields, setGeneratingFields] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const handleInputChange = useCallback((term: string, value: string | null | undefined) => {
-    setMetadataFormData((prevMetadata: { [x: string]: string }) => {
-      const newValue = value ?? '';
-      if (prevMetadata[term] === newValue) return prevMetadata;
-      return { ...prevMetadata, [term]: newValue };
-    });
-  }, []);
 
-  console.log('metadataFormData',metadataFormData)
+  const handleInputChange = useCallback((term: string, value: string | null | undefined) => {
+    console.log(value)
+    const newValue = value ?? '';
+    handleSetMetadataFormData({
+      ...selectedMetadataData,
+      [term]: newValue,
+    })
+    console.log(selectedMetadataData)
+  }, [selectedMetadataData]);
+
   const doesItemContainMetadataField = (fieldTerm: string): boolean => {
     return Object.keys(item).some(itemKey => itemKey.toLowerCase() === fieldTerm.toLowerCase());
   };
-
-  const initializeMetadata = async (selectedFormatTitle : string) => {
-    if (!selectedFormatTitle) return;
-    const selectedFormat = metadataFormats.find(format => format.title === selectedFormatTitle);
-    if(!selectedFormat) return;
-    console.log('metadataFormData',metadataFormData);
-    const check = metadataFormData.find((data)=> data.metadataFormatTitle === selectedFormatTitle)
-    if(check) {
-      console.log('checkNULL ')
-      return
-    }
-
-    console.log('metadataFormData',metadataFormData)
-    console.log('selectedMetadataFormat',selectedMetadataFormat)
-    console.log('selectedFormat')
-    console.log('INIIIIIIIIIIIIIIIIT')
-
-    const metadataFields: Record<string, string> = {};
-    selectedFormat.metadata.forEach((field : IMetadataField) => {
-      metadataFields[field.label] = "";
-    });
-    await createMetadataForItem( objectTypes ,item.id, selectedFormat!.title,{...metadataFields}  );
-    handleFetchMetadataForObject()
-    return {
-      metadata: metadataFields,
-      metadataFormatTitle: selectedFormat.title,
-    }
-  };
-
-
 
   const handleFormatChange = async (event: SelectChangeEvent) => {
     setGeneratingFields(true);
@@ -98,11 +70,8 @@ export const MetadataForm = <T extends { id:number },>({handleFetchMetadataForOb
       }
       return;
     }
-    console.log('passcheck')
     const selectedFormat = metadataFormats.find(format => format.title === selectedFormatTitle);
     console.log('selectedFormat',selectedFormat)
-    const init = initializeMetadata(selectedFormatTitle!)
-    console.log('init', init)
     setSelectedMetadataFormat(selectedFormat || undefined);
     console.log('pass')
     setTimeout(() => {
@@ -144,8 +113,6 @@ export const MetadataForm = <T extends { id:number },>({handleFetchMetadataForOb
   };
 
   useEffect(() => {},[selectedMetadataFormat])
-
-  console.log('selectedMetadataFormat',selectedMetadataFormat)
   return (
     <>
       {loading ? (
@@ -191,7 +158,7 @@ export const MetadataForm = <T extends { id:number },>({handleFetchMetadataForOb
             <Divider sx={{ paddingBottom: 2 }} />
           </Box>
           {
-            metadataFormData && selectedMetadataFormat ?(
+            selectedMetadataData && selectedMetadataFormat ?(
               <form style={{ width: "100%" }}>
                 <>
                   {generatingFields ? (
@@ -207,7 +174,7 @@ export const MetadataForm = <T extends { id:number },>({handleFetchMetadataForOb
                             <MetadataField
                               key={field.term}
                               field={field}
-                              value={metadataFormData[field.term] as unknown as string|| ""}
+                              value={selectedMetadataData[field.term] as unknown as string|| ""}
                               handleInputChange={handleInputChange}
                             />
                           ))}
