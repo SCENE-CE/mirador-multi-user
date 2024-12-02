@@ -108,7 +108,7 @@ export const MetadataForm = <T extends { id:number },>({selectedMetadataData,set
   };
 
   const handleExampleMetadata = ()=>{
-    const fileUrl = "../../../public/exampleMetadata.json"
+    const fileUrl = "/exampleMetadata.json"
     const link = document.createElement("a");
     link.href = fileUrl;
     link.download = "exampleMetadata.json";
