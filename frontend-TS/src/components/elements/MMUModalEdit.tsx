@@ -122,10 +122,12 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
 
   const handleSetSelectedMetadataFormat = (newFormat : MetadataFormat | undefined)=>{
     setSelectedMetadataFormat(newFormat!);
-
+    console.log('new format', newFormat)
     const matchingMetadata = metadataFormData!.find(
       (data) => data.title === newFormat!.title
     );
+
+    console.log('matchingMetadata', matchingMetadata);
 
     if (matchingMetadata) {
       const { metadata } = matchingMetadata;
@@ -143,6 +145,11 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
         setSelectedMetadataData(transformedMetadata);
       }
       }
+    }
+    if(!matchingMetadata) {
+      const labels = extractLabelsFromMetadata(newFormat!)
+      console.log('labels',labels)
+      setSelectedMetadataData(labels);
     }
   }
 

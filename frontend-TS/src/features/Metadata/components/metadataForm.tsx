@@ -133,14 +133,14 @@ export const MetadataForm = <T extends { id:number },>({selectedMetadataData,set
                 label="Format"
                 onChange={handleFormatChange}
               >
+                <MenuItem value="upload">
+                  ... Upload new metadata template
+                </MenuItem>
                 {metadataFormats.map((metadataFormat) => (
                   <MenuItem divider={true} key={metadataFormat.id} value={metadataFormat.title}>
                     {metadataFormat.title}
                   </MenuItem>
                 ))}
-                <MenuItem value="upload">
-                  ...Upload metadata with JSON
-                </MenuItem>
               </Select>
               <input
                 type="file"
