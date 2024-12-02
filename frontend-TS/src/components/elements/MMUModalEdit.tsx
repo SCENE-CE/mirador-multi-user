@@ -117,14 +117,11 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
 
 
   const handeUpdateMetadata = (updateData:any)=>{
-    console.log('updateData',updateData)
     setSelectedMetadataData(updateData)
   }
 
   const handleSetSelectedMetadataFormat = (newFormat : MetadataFormat | undefined)=>{
     setSelectedMetadataFormat(newFormat!);
-    console.log('newFormat!',newFormat!)
-    console.log('metadataFormData',metadataFormData)
 
     const matchingMetadata = metadataFormData!.find(
       (data) => data.title === newFormat!.title
@@ -136,24 +133,21 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
       if(metadataFormData){
         const newData = metadataFormData.find((formData)=> formData.metadata == metadata );
       if(newData) {
-        console.log("newData", newData);
 
-        const transformedMetadata: MetadataFields = Object.keys(newData.metadata).reduce((acc, key) => {
-          acc[key.toLowerCase()] = newData.metadata[key];
+        const metadata = newData.metadata as unknown as Record<string, string>;
+
+        const transformedMetadata: MetadataFields = Object.keys(metadata).reduce((acc, key) => {
+          acc[key] = metadata[key]; // Copy the value
           return acc;
         }, {} as MetadataFields);
-
         setSelectedMetadataData(transformedMetadata);
       }
       }
     }
-    console.log('no match')
-    console.log('metadataFormData',metadataFormData)
   }
 
   function extractLabelsFromMetadata(selectedMetadataFormat: { metadata: MetadataFormatField[] }): Record<string, string> {
     const labelsObject: Record<string, string> = {};
-    console.log('selectedMetadataFormat',selectedMetadataFormat);
     selectedMetadataFormat.metadata.forEach((item) => {
       labelsObject[item.term.toLowerCase()] = "";
     });

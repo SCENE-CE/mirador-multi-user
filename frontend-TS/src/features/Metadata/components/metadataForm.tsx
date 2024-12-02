@@ -46,13 +46,11 @@ export const MetadataForm = <T extends { id:number },>({selectedMetadataData,set
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleInputChange = useCallback((term: string, value: string | null | undefined) => {
-    console.log(value)
     const newValue = value ?? '';
     handleSetMetadataFormData({
       ...selectedMetadataData,
       [term]: newValue,
     })
-    console.log(selectedMetadataData)
   }, [selectedMetadataData]);
 
   const doesItemContainMetadataField = (fieldTerm: string): boolean => {
@@ -62,18 +60,14 @@ export const MetadataForm = <T extends { id:number },>({selectedMetadataData,set
   const handleFormatChange = async (event: SelectChangeEvent) => {
     setGeneratingFields(true);
     const selectedFormatTitle = event.target.value;
-    console.log('selectedFormatTitle',selectedFormatTitle)
     if (selectedFormatTitle === "upload") {
-      setSelectedMetadataFormat(undefined)
       if (fileInputRef.current) {
         fileInputRef.current.click();
       }
       return;
     }
     const selectedFormat = metadataFormats.find(format => format.title === selectedFormatTitle);
-    console.log('selectedFormat',selectedFormat)
     setSelectedMetadataFormat(selectedFormat || undefined);
-    console.log('pass')
     setTimeout(() => {
       setGeneratingFields(false);
     }, 300);
@@ -93,8 +87,9 @@ export const MetadataForm = <T extends { id:number },>({selectedMetadataData,set
         if (e.target?.result) {
           try {
             const metadata = JSON.parse(e.target.result as string);
+            console.log('metadata',metadata)
             const labelIndex = metadata.findIndex((item:labelMetadata) => item.term === "metadataFormatLabel");
-
+            console.log('labelIndex',labelIndex)
             if (labelIndex !== -1) {
               const label = metadata[labelIndex].label;
               const updatedMetadata = metadata.filter((_:any, index:number) => index !== labelIndex);
