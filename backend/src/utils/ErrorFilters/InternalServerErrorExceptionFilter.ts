@@ -17,16 +17,19 @@ export class InternalServerErrorFilter implements ExceptionFilter {
     const request = ctx.getRequest<Request>();
     const status = exception.getStatus ? exception.getStatus() : 500;
 
-    // Log exception details (optional)
     console.error('Internal server error:', exception.message);
-
+    try {
+      await this.emailService.sendInternalServerErrorNotification({
+        message: exception.message,
+        url: request.url,
+        method: request.method,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (error) {
+      console.error('Failed to send error notification email:', error.message);
+      throw new InternalServerErrorException(error.message);
+    }
     // Send email using your email service
-    await this.emailService.sendInternalServerErrorNotification({
-      message: exception.message,
-      url: request.url,
-      method: request.method,
-      timestamp: new Date().toISOString(),
-    });
 
     // Send the response
     response.status(status).json({

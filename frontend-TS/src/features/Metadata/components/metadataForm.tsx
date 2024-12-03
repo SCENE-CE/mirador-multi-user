@@ -5,19 +5,20 @@ import {
 } from "@mui/material";
 import { ChangeEvent, useCallback, useEffect, useRef, useState } from "react";
 import MetadataField from "./metadataField.tsx";
-import { useUser } from "../../../utils/auth.tsx";
-import { labelMetadata } from "../types/types.ts";
-import { uploadMetadataFormat } from "../api/uploadMetadataFormat.ts";
+// import { useUser } from "../../../utils/auth.tsx";
+// import { labelMetadata } from "../types/types.ts";
+// import { uploadMetadataFormat } from "../api/uploadMetadataFormat.ts";
+// import toast from "react-hot-toast";
 
 interface MetadataFormProps<T> {
   handleSetMetadataFormData: (data: any) => void;
   item:T
   metadataFormats:MetadataFormat[]
   loading: boolean
-  fetchMetadataFormat:()=>void;
   selectedMetadataFormat:MetadataFormat | undefined;
   setSelectedMetadataFormat:(newFormat: MetadataFormat | undefined)=>void;
   selectedMetadataData:MetadataFields | undefined;
+  handleFileChange:(event: ChangeEvent<HTMLInputElement>) => void;
 }
 
 type MetadataFields = {
@@ -40,8 +41,8 @@ type MetadataFormatField = {
   comment?: string;
 };
 
-export const MetadataForm = <T extends { id:number },>({selectedMetadataData,setSelectedMetadataFormat,selectedMetadataFormat,fetchMetadataFormat,loading,metadataFormats, handleSetMetadataFormData, item }: MetadataFormProps<T>) => {
-  const user = useUser();
+export const MetadataForm = <T extends { id:number },>({handleFileChange,selectedMetadataData,setSelectedMetadataFormat,selectedMetadataFormat,loading,metadataFormats, handleSetMetadataFormData, item }: MetadataFormProps<T>) => {
+  // const user = useUser();
   const [generatingFields, setGeneratingFields] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -79,33 +80,35 @@ export const MetadataForm = <T extends { id:number },>({selectedMetadataData,set
     return !doesItemContainMetadataField(field.term);
   };
 
-  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      const file = event.target.files[0];
-      const reader = new FileReader();
-      reader.onload = async (e) => {
-        if (e.target?.result) {
-          try {
-            const metadata = JSON.parse(e.target.result as string);
-            console.log('metadata',metadata)
-            const labelIndex = metadata.findIndex((item:labelMetadata) => item.term === "metadataFormatLabel");
-            console.log('labelIndex',labelIndex)
-            if (labelIndex !== -1) {
-              const label = metadata[labelIndex].label;
-              const updatedMetadata = metadata.filter((_:any, index:number) => index !== labelIndex);
-              await uploadMetadataFormat(label, updatedMetadata, user.data!.id);
-              fetchMetadataFormat();
-            } else {
-              throw new Error("Label field not found in metadata");
-            }
-          } catch (error) {
-            console.error("Failed to parse JSON metadata", error);
-          }
-        }
-      };
-      reader.readAsText(file);
-    }
-  };
+  // const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files && event.target.files.length > 0) {
+  //     const file = event.target.files[0];
+  //     const reader = new FileReader();
+  //     reader.onload = async (e) => {
+  //       if (e.target?.result) {
+  //         try {
+  //           const metadata = JSON.parse(e.target.result as string);
+  //           const labelIndex = metadata.findIndex((item:labelMetadata) => item.term === "metadataFormatLabel");
+  //           if (labelIndex !== -1) {
+  //             const label = metadata[labelIndex].label;
+  //             const updatedMetadata = metadata.filter((_:any, index:number) => index !== labelIndex);
+  //             const upload =await uploadMetadataFormat(label, updatedMetadata, user.data!.id);
+  //             console.log('upload',upload);
+  //             if (upload.statusCode === 409) {
+  //               toast.error('Metadata with this title already exists')
+  //             }
+  //             fetchMetadataFormat();
+  //           } else {
+  //             throw new Error("Label field not found in metadata");
+  //           }
+  //         } catch (error) {
+  //           console.error("Failed to parse JSON metadata", error);
+  //         }
+  //       }
+  //     };
+  //     reader.readAsText(file);
+  //   }
+  // };
 
   const handleExampleMetadata = ()=>{
     const fileUrl = "/exampleMetadata.json"

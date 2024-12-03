@@ -22,6 +22,9 @@ import { getMetadataFormat } from "../../features/Metadata/api/getMetadataFormat
 import { useUser } from "../../utils/auth.tsx";
 import { createMetadataForItem } from "../../features/Metadata/api/createMetadataForItem.ts";
 import { gettingMetadataForObject } from "../../features/Metadata/api/gettingMetadataForObject.ts";
+import { labelMetadata } from "../../features/Metadata/types/types.ts";
+import { uploadMetadataFormat } from "../../features/Metadata/api/uploadMetadataFormat.ts";
+import toast from "react-hot-toast";
 
 
 interface ModalItemProps<T, G> {
@@ -274,6 +277,35 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
     setTabValue(newValue);
   };
 
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        if (e.target?.result) {
+          try {
+            const metadata = JSON.parse(e.target.result as string);
+            const labelIndex = metadata.findIndex((item:labelMetadata) => item.term === "metadataFormatLabel");
+            if (labelIndex !== -1) {
+              const label = metadata[labelIndex].label;
+              const updatedMetadata = metadata.filter((_:any, index:number) => index !== labelIndex);
+              const upload =await uploadMetadataFormat(label, updatedMetadata, user.data!.id);
+              console.log('upload',upload);
+              if (upload.statusCode === 409) {
+                toast.error('Metadata with this title already exists')
+              }
+              await fetchMetadataFormat();
+            } else {
+              throw new Error("Label field not found in metadata");
+            }
+          } catch (error) {
+            console.error("Failed to parse JSON metadata", error);
+          }
+        }
+      };
+      reader.readAsText(file);
+    }
+  };
   console.log("render")
   return (
     <Grid container sx={{overflow:'scroll'}}>
@@ -430,13 +462,13 @@ export const MMUModalEdit = <T extends { id: number, created_at:Dayjs,snapShotHa
               >
                 <MetadataForm
                   selectedMetadataData={selectedMetadataData}
-                  fetchMetadataFormat={fetchMetadataFormat}
                   item={item}
                   handleSetMetadataFormData={handeUpdateMetadata}
                   metadataFormats={metadataFormats}
                   loading={loading}
                   selectedMetadataFormat={selectedMetadataFormat}
                   setSelectedMetadataFormat={handleSetSelectedMetadataFormat}
+                  handleFileChange={handleFileChange}
                 />
               </Grid>
             </CustomTabPanel>

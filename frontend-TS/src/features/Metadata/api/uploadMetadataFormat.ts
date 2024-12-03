@@ -11,9 +11,9 @@ export const uploadMetadataFormat = async (title: string, metadata:any,creatorId
       },
       body:JSON.stringify({ title: title,metadata:metadata,creatorId:creatorId }),
     });
-    if (!response.ok) {
-      throw new Error(`Error uploading metadata: ${response.statusText}`);
-    }
+    // if (!response.ok) {
+    //   throw new Error(`Error uploading metadata: ${response.statusText}`);
+    // }
 
     const toreturn = await response.json();
     console.log(toreturn);

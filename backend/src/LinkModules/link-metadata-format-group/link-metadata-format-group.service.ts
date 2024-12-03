@@ -1,8 +1,9 @@
 import {
+  ConflictException,
   Injectable,
   InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+  NotFoundException
+} from "@nestjs/common";
 import { CreateLinkMetadataFormatGroupDto } from './dto/create-link-metadata-format-group.dto';
 import { MetadataFormatService } from '../../BaseEntities/metadata-format/metadata-format.service';
 import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
@@ -54,6 +55,11 @@ export class LinkMetadataFormatGroupService {
       );
       return await this.create(metadataFormat, userGroup);
     } catch (error) {
+      if (error.status === 409) {
+        throw new ConflictException(
+          'Metadata format with the given title and creatorId already exists.',
+        );
+      }
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         'An error occurred while creating the metadata format.',
@@ -66,8 +72,6 @@ export class LinkMetadataFormatGroupService {
     metadataFormatTitle: string,
     userId: number,
   ) {
-    console.log('FIND METADATA FORMAT FROM TITLE ');
-    console.log(metadataFormatTitle);
     try {
       // Retrieve user's personal group
       const userPersonalGroup =
@@ -99,8 +103,6 @@ export class LinkMetadataFormatGroupService {
           `No metadata formats found with title "${metadataFormatTitle}"`,
         );
       }
-      console.log('--------result of finding metadata with title --------');
-      console.log(result);
       return result.metadataFormat;
     } catch (error) {
       this.logger.error(error.message, error.stack);
