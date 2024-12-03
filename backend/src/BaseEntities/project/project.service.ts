@@ -13,6 +13,7 @@ import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
 @Injectable()
 export class ProjectService {
   private readonly logger = new CustomLogger();
+
   //Importing function from LinkTable there cause circular dependencies error, this is described into the wiki there : https://github.com/SCENE-CE/mirador-multi-user/wiki/Backend
   constructor(
     @InjectRepository(Project)
@@ -131,5 +132,22 @@ export class ProjectService {
     }
   }
 
+  async lockProject(projectId: number, isLock: boolean, userId: number) {
+    try {
+      const updateData = isLock
+        ? { lockedAt: new Date(), lockedByUserId: userId }
+        : { lockedAt: null, lockedByUserId: null };
 
+      await this.projectRepository.update(projectId, updateData);
+      return { success: true, projectId, isLock };
+    } catch (error) {
+      this.logger.error(
+        `Failed to update lock status for project ${projectId}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'Could not update lock status. Please try again.',
+      );
+    }
+  }
 }

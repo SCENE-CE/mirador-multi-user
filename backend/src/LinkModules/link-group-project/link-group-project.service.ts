@@ -528,12 +528,17 @@ export class LinkGroupProjectService {
         id: projectId,
         snapShotHash: hash,
       });
-
-      console.log('----------------updateProject----------------');
-      console.log(updateProject);
       return {
         snapShotHash: `${hash}`,
       };
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
+    }
+  }
+  async lockProject(projectId: number, isLock: boolean, userId: number) {
+    try {
+      return await this.projectService.lockProject(projectId, isLock, userId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(`an error occurred`, error);
