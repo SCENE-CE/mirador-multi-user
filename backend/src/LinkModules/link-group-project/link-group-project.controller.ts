@@ -26,6 +26,7 @@ import {
   ApiOperation,
 } from '@nestjs/swagger';
 import { LinkGroupProject } from './entities/link-group-project.entity';
+import { LockProjectDto } from "./dto/lockProjectDto";
 
 @ApiBearerAuth()
 @Controller('link-group-project')
@@ -55,18 +56,17 @@ export class LinkGroupProjectController {
   @UseGuards(AuthGuard)
   @Post('/project/lock')
   async handleLockProject(
-    @Body() projectId: number,
+    @Body() lockProjectDto: LockProjectDto,
     @Req() request,
-    @Body() isLock: boolean,
   ) {
     return await this.linkGroupProjectService.checkPolicies(
       request.metadata.action,
       request.user.sub,
-      projectId,
+      lockProjectDto.projectId,
       async () => {
         return this.linkGroupProjectService.lockProject(
-          projectId,
-          isLock,
+          lockProjectDto.projectId,
+          lockProjectDto.lock,
           request.user.sub,
         );
       },

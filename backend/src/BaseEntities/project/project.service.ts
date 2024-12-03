@@ -55,11 +55,23 @@ export class ProjectService {
     }
   }
 
-  async update(id: number, dto: UpdateProjectDto) {
+  async update(projectId: number, dto: UpdateProjectDto) {
     try {
-      const done = await this.projectRepository.update(id, dto);
-      if (done.affected != 1) throw new NotFoundException(id);
-      return this.findOne(dto.id);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { lockedByUserId, lockedAt, ...filteredData } = dto;
+      const project = await this.projectRepository.findOne({
+        where: { id: projectId },
+      });
+      console.log('-----------------project---------------');
+      console.log(project);
+      const done = await this.projectRepository.update(projectId, filteredData);
+      console.log('---------------done-----------');
+      console.log(done);
+      if (done.affected != 1) throw new NotFoundException(projectId);
+      const toreturn = await this.findOne(filteredData.id);
+      console.log('updated project');
+      console.log(toreturn);
+      return toreturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -132,22 +144,26 @@ export class ProjectService {
     }
   }
 
-  async lockProject(projectId: number, isLock: boolean, userId: number) {
+  async lockProject(projectId: number, lock: boolean, userId: number) {
     try {
-      const updateData = isLock
+      console.log('lockProject');
+      console.log('projectId');
+      console.log(projectId);
+      console.log('lock');
+      console.log(lock);
+      console.log('userId');
+      console.log(userId);
+      const updateData = lock
         ? { lockedAt: new Date(), lockedByUserId: userId }
         : { lockedAt: null, lockedByUserId: null };
-
-      await this.projectRepository.update(projectId, updateData);
-      return { success: true, projectId, isLock };
+      console.log('updateData', updateData);
+      return await this.projectRepository.update(projectId, updateData);
     } catch (error) {
       this.logger.error(
         `Failed to update lock status for project ${projectId}`,
         error.stack,
       );
-      throw new InternalServerErrorException(
-        'Could not update lock status. Please try again.',
-      );
+      throw new InternalServerErrorException('Could not update lock status.');
     }
   }
 }

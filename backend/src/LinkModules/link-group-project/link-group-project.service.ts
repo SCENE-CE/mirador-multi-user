@@ -431,7 +431,6 @@ export class LinkGroupProjectService {
   async getHighestRightForProject(userId: number, projectId: number) {
     const userGroups =
       await this.linkUserGroupService.findALlGroupsForUser(userId);
-
     const linkEntities = await this.linkGroupProjectRepository.find({
       where: {
         user_group: { id: In(userGroups.map((group) => group.id)) },
@@ -442,8 +441,8 @@ export class LinkGroupProjectService {
     if (linkEntities.length === 0) {
       return;
     }
-    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
 
+    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
     return linkEntities.reduce((prev, current) => {
       const prevRight = rightsPriority[prev.rights] || 0;
       const currentRight = rightsPriority[current.rights] || 0;
@@ -458,6 +457,7 @@ export class LinkGroupProjectService {
     callback: (linkEntity: LinkGroupProject) => any,
   ) {
     try {
+      console.log('check policy')
       const linkEntity = await this.getHighestRightForProject(
         userId,
         projectId,
@@ -536,9 +536,10 @@ export class LinkGroupProjectService {
       throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
-  async lockProject(projectId: number, isLock: boolean, userId: number) {
+  async lockProject(projectId: number, lock: boolean, userId: number) {
     try {
-      return await this.projectService.lockProject(projectId, isLock, userId);
+      console.log('link service lock')
+      return await this.projectService.lockProject(projectId, lock, userId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(`an error occurred`, error);

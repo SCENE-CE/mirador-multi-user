@@ -78,9 +78,12 @@ export class UsersService {
   }
   async findOne(id: number): Promise<User> {
     try {
-      return await this.userRepository.findOne({
+      console.log('id',id)
+      const toreturn = await this.userRepository.findOne({
         where: { id },
       });
+      console.log(toreturn)
+      return toreturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new NotFoundException(`User not found :${id}`);

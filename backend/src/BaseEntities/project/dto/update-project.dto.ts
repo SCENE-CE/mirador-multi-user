@@ -1,6 +1,6 @@
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateProjectDto } from './create-project.dto';
-import { IsNumber, IsNumberString, IsOptional } from 'class-validator';
+import { IsNumber, IsOptional } from 'class-validator';
 
 export class UpdateProjectDto extends PartialType(CreateProjectDto) {
   @IsNumber()
@@ -8,4 +8,8 @@ export class UpdateProjectDto extends PartialType(CreateProjectDto) {
 
   @IsOptional()
   snapShotHash?: string;
+
+  lockedByUserId?: number;
+
+  lockedAt?: Date;
 }
