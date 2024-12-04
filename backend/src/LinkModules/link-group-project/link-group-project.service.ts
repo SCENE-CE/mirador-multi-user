@@ -457,7 +457,7 @@ export class LinkGroupProjectService {
     callback: (linkEntity: LinkGroupProject) => any,
   ) {
     try {
-      console.log('check policy')
+      console.log('check policy');
       const linkEntity = await this.getHighestRightForProject(
         userId,
         projectId,
@@ -536,13 +536,44 @@ export class LinkGroupProjectService {
       throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
+
   async lockProject(projectId: number, lock: boolean, userId: number) {
     try {
-      console.log('link service lock')
+      console.log('link service lock');
       return await this.projectService.lockProject(projectId, lock, userId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(`an error occurred`, error);
+    }
+  }
+
+  async isProjectLocked(projectId: number, userId: number): Promise<boolean> {
+    try {
+      const project = await this.projectService.findOne(projectId);
+      if (!project) {
+        throw new NotFoundException(`Project with ID ${projectId} not found`);
+      }
+
+      const now = Date.now();
+      const lockedAtTimestamp = new Date(project.lockedAt).getTime();
+      const twoMinutesAgo = now - 2 * 60 * 1000;
+
+      // Check if the project is locked within the last 2 minutes
+      if (twoMinutesAgo < lockedAtTimestamp) {
+        return userId === project.lockedByUserId;
+      }
+
+      // If lock has expired, the project is not locked
+      return true;
+    } catch (error) {
+      this.logger.error(
+        `Error checking project lock: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'An error occurred while checking project lock',
+        error,
+      );
     }
   }
 }

@@ -123,11 +123,14 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const initializeMirador = useCallback(async (miradorState: IState | undefined, projectUser: Project) => {
     console.log('projectUser',projectUser)
-    if (user.id !== projectUser.lockedByUserId && projectUser.lockedByUserId) {
-      console.log('project', projectUser)
-      const userName = await getUserNameWithId(projectUser.lockedByUserId)
-      console.log('userName',userName)
-      return toast.error(`Project is already open by...${userName}`)
+    const now = Date.now()
+    if (now - 2 * 60 * 1000 < new Date(projectUser.lockedAt).getTime()) {
+      if (user.id !== projectUser.lockedByUserId && projectUser.lockedByUserId) {
+        console.log('project', projectUser)
+        const userName = await getUserNameWithId(projectUser.lockedByUserId)
+        console.log('userName',userName)
+        return toast.error(`Project is already open by...${userName}`)
+      }
     }
     setSelectedProjectId(projectUser.id);
     handleSetMiradorState(miradorState);
