@@ -10,9 +10,7 @@ export const isProjectLocked = async (projectId:number) => {
         "Content-Type": "application/json"
       },
     });
-    const toreturn = await response.json();
-    console.log('toreturn',toreturn);
-    return toreturn;
+    return await response.json();
   } catch (error) {
     throw error;
   }
