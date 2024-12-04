@@ -1,14 +1,10 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Project } from './entities/project.entity';
-import { Brackets, DeleteResult, Repository } from 'typeorm';
-import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateProjectDto } from "./dto/create-project.dto";
+import { UpdateProjectDto } from "./dto/update-project.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Project } from "./entities/project.entity";
+import { Brackets, DeleteResult, Repository } from "typeorm";
+import { CustomLogger } from "../../utils/Logger/CustomLogger.service";
 
 @Injectable()
 export class ProjectService {
@@ -59,19 +55,12 @@ export class ProjectService {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       const { lockedByUserId, lockedAt, ...filteredData } = dto;
-      const project = await this.projectRepository.findOne({
+      await this.projectRepository.findOne({
         where: { id: projectId },
       });
-      console.log('-----------------project---------------');
-      console.log(project);
       const done = await this.projectRepository.update(projectId, filteredData);
-      console.log('---------------done-----------');
-      console.log(done);
       if (done.affected != 1) throw new NotFoundException(projectId);
-      const toreturn = await this.findOne(filteredData.id);
-      console.log('updated project');
-      console.log(toreturn);
-      return toreturn;
+      return await this.findOne(filteredData.id);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -146,17 +135,9 @@ export class ProjectService {
 
   async lockProject(projectId: number, lock: boolean, userId: number) {
     try {
-      console.log('lockProject');
-      console.log('projectId');
-      console.log(projectId);
-      console.log('lock');
-      console.log(lock);
-      console.log('userId');
-      console.log(userId);
       const updateData = lock
         ? { lockedAt: new Date(), lockedByUserId: userId }
         : { lockedAt: null, lockedByUserId: null };
-      console.log('updateData', updateData);
       return await this.projectRepository.update(projectId, updateData);
     } catch (error) {
       this.logger.error(

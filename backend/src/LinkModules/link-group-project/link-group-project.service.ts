@@ -81,13 +81,10 @@ export class LinkGroupProjectService {
 
   async findAllGroupProjectByUserGroupId(userId: number) {
     try {
-      const request = await this.linkGroupProjectRepository.find({
+      return await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
         relations: ['project'],
       });
-      console.log('------------------request------------------');
-      console.log(request);
-      return request;
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while finding Group for this project id : ${userId}`,
@@ -225,7 +222,6 @@ export class LinkGroupProjectService {
       const groupToUpdate = await this.groupService.findOne(
         updateAccessToProjectDto.groupId,
       );
-      console.log(updateAccessToProjectDto);
       const linkGroupToUpdate = await this.linkGroupProjectRepository.findOne({
         where: {
           project: { id: projectToUpdate.id },
@@ -253,8 +249,6 @@ export class LinkGroupProjectService {
 
   async addProjectToGroup(dto: AddProjectToGroupDto) {
     const { groupId, projectId } = dto;
-    console.log('Enter add projects to Group');
-    console.log(dto);
     try {
       const userGroup = await this.groupService.findOne(groupId);
       if (!userGroup) {
@@ -273,7 +267,6 @@ export class LinkGroupProjectService {
         user_group: userGroup,
         project: project,
       });
-      console.log(projectId);
       return await this.findAllGroupProjectByUserGroupId(projectId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -457,7 +450,6 @@ export class LinkGroupProjectService {
     callback: (linkEntity: LinkGroupProject) => any,
   ) {
     try {
-      console.log('check policy');
       const linkEntity = await this.getHighestRightForProject(
         userId,
         projectId,
@@ -524,7 +516,7 @@ export class LinkGroupProjectService {
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
       );
-      const updateProject = await this.projectService.update(projectId, {
+      await this.projectService.update(projectId, {
         id: projectId,
         snapShotHash: hash,
       });
@@ -539,7 +531,6 @@ export class LinkGroupProjectService {
 
   async lockProject(projectId: number, lock: boolean, userId: number) {
     try {
-      console.log('link service lock');
       return await this.projectService.lockProject(projectId, lock, userId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -547,24 +538,28 @@ export class LinkGroupProjectService {
     }
   }
 
-  async isProjectLocked(projectId: number, userId: number): Promise<boolean> {
+  async isProjectLocked(
+    projectId: number,
+    userId: number,
+  ): Promise<boolean | number> {
     try {
       const project = await this.projectService.findOne(projectId);
       if (!project) {
         throw new NotFoundException(`Project with ID ${projectId} not found`);
       }
-
-      const now = Date.now();
-      const lockedAtTimestamp = new Date(project.lockedAt).getTime();
-      const twoMinutesAgo = now - 2 * 60 * 1000;
-
-      // Check if the project is locked within the last 2 minutes
-      if (twoMinutesAgo < lockedAtTimestamp) {
-        return userId === project.lockedByUserId;
+      if (project.lockedByUserId === null && project.lockedAt === null) {
+        return false;
       }
-
-      // If lock has expired, the project is not locked
-      return true;
+      const now = Date.now();
+      const isLockRelevant =
+        now - 2 * 60 * 1000 < new Date(project.lockedAt).getTime();
+      if (isLockRelevant) {
+        if (userId == project.lockedByUserId) {
+        } else {
+          return project.lockedByUserId;
+        }
+      }
+      return false;
     } catch (error) {
       this.logger.error(
         `Error checking project lock: ${error.message}`,

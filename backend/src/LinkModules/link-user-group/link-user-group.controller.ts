@@ -253,6 +253,8 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Get('/user/name/:userId')
   async getUserNameWithId(@Param('userId') userId: number) {
+    console.log('----------------userId------------------')
+    console.log(userId)
     const toreturn = await this.linkUserGroupService.getUserNameWithId(userId);
     console.log('toreturn',toreturn)
     return toreturn

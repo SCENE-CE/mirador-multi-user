@@ -34,6 +34,8 @@ import { ObjectTypes } from "../../tag/type.ts";
 import toast from "react-hot-toast";
 import { duplicateProject } from "../api/duplicateProject.ts";
 import { getUserNameWithId } from "../../auth/api/getUserNameWithId.ts";
+import { isProjectLocked } from "../api/isProjectLocked.ts";
+import { handleLock } from "../api/handleLock.ts";
 
 interface AllProjectsProps {
   user: User;
@@ -122,15 +124,16 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
 
   const initializeMirador = useCallback(async (miradorState: IState | undefined, projectUser: Project) => {
-    console.log('projectUser',projectUser)
-    const now = Date.now()
-    if (now - 2 * 60 * 1000 < new Date(projectUser.lockedAt).getTime()) {
-      if (user.id !== projectUser.lockedByUserId && projectUser.lockedByUserId) {
-        console.log('project', projectUser)
-        const userName = await getUserNameWithId(projectUser.lockedByUserId)
-        console.log('userName',userName)
+    try{
+      const Locked = await isProjectLocked(projectUser.id)
+      if (Locked) {
+        const userName = await getUserNameWithId(Locked)
         return toast.error(`Project is already open by...${userName}`)
       }
+      await handleLock({projectId: projectUser.id, lock: true })
+    }catch(error){
+      console.error(error)
+      toast.error(error as string)
     }
     setSelectedProjectId(projectUser.id);
     handleSetMiradorState(miradorState);
