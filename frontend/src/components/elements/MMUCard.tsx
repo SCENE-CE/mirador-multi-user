@@ -5,8 +5,8 @@ import placeholder from '../../assets/Placeholder.svg'
 import { MMUModalEdit } from "./MMUModalEdit.tsx";
 import { ListItem } from "../types.ts";
 import { ItemsRights } from "../../features/user-group/types/types.ts";
-import { MediaGroupRights, MediaTypes } from "../../features/media/types/types.ts";
-import { ManifestGroupRights } from "../../features/manifest/types/types.ts";
+import { MediaGroupRights, mediaOrigin, MediaTypes } from "../../features/media/types/types.ts";
+import { ManifestGroupRights, manifestOrigin } from "../../features/manifest/types/types.ts";
 import { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
@@ -43,7 +43,7 @@ interface IMMUCardProps<T,G,X> {
   getGroupByOption?:(option:any)=>string
 }
 
-const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,mediaTypes?:MediaTypes},G, X extends { id:number} > (
+const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,mediaTypes?:MediaTypes,  origin?: manifestOrigin | mediaOrigin;},G, X extends { id:number} > (
   {
     id,
     rights,

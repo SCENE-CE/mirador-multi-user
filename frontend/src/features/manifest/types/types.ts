@@ -17,6 +17,15 @@ export type Manifest = {
   rights?:ManifestGroupRights
 }
 
+export type updateManifestJsonDto ={
+  manifestId: number,
+  json:any,
+  origin:manifestOrigin,
+  path: string,
+  hash:string
+}
+
+
 export type grantAccessToManifestDto = {
   userGroupId: number;
   manifestId: number;

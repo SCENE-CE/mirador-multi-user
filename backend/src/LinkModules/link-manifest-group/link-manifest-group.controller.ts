@@ -39,6 +39,7 @@ import {
 import { CreateLinkGroupManifestDto } from './dto/CreateLinkGroupManifestDto';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
 import { Manifest } from '../../BaseEntities/manifest/entities/manifest.entity';
+import { UpdateManifestJsonDto } from "./dto/UpdateManifestJsonDto";
 @ApiBearerAuth()
 @Controller('link-manifest-group')
 export class LinkManifestGroupController {
@@ -171,6 +172,15 @@ export class LinkManifestGroupController {
         `An error occurred: ${error.message}`,
       );
     }
+  }
+
+  @ApiOperation({ summary: 'updateManifest' })
+  @UseGuards(AuthGuard)
+  @Patch('/manifest/updateJson')
+  async UpdateManifest(@Body() updateManifestJsonDto: UpdateManifestJsonDto) {
+    return await this.linkManifestGroupService.updateManifestJson(
+      updateManifestJsonDto,
+    );
   }
 
   @ApiOperation({
