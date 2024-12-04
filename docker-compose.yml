@@ -61,6 +61,7 @@ services:
       FROM_MAIL: ${FROM_MAIL}
       NAME_MAIL: ${NAME_MAIL}
       LOG_LEVEL : ${LOG_LEVEL}
+      MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
     depends_on:
       - db
     restart: ${RESTART}

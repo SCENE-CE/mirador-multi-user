@@ -56,6 +56,7 @@ export class LinkMediaGroupController {
         },
       }),
       fileFilter: fileFilterMedia,
+      limits: { fileSize: parseInt(process.env.MAX_UPLOAD_SIZE, 10) || 5 * 1024 * 1024 },
     }),
     SharpPipeInterceptor,
   )
