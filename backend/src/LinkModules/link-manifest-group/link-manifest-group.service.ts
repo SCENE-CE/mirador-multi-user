@@ -5,6 +5,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotFoundException,
+  UnsupportedMediaTypeException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { LinkManifestGroup } from './entities/link-manifest-group.entity';
@@ -22,6 +23,9 @@ import * as fs from 'fs';
 import { UpdateManifestGroupRelation } from './dto/update-manifest-group-Relation';
 import { UpdateManifestDto } from '../../BaseEntities/manifest/dto/update-manifest.dto';
 import { ActionType } from '../../enum/actions';
+import { UpdateManifestJsonDto } from './dto/UpdateManifestJsonDto';
+import * as path from 'node:path';
+import { manifestOrigin } from '../../enum/origins';
 
 @Injectable()
 export class LinkManifestGroupService {
@@ -80,7 +84,7 @@ export class LinkManifestGroupService {
       );
     }
   }
-
+  //TODO : remove this if really useless
   async createGroupManifest(createGroupManifestDto: CreateGroupManifestDto) {
     try {
       const { idCreator, path, user_group, manifest } = createGroupManifestDto;
@@ -175,6 +179,53 @@ export class LinkManifestGroupService {
       );
     }
   }
+
+  private readJsonFile(filePath: string): any {
+    try {
+      const absolutePath = path.resolve(filePath);
+      const fileContent = fs.readFileSync(absolutePath, 'utf-8');
+      return JSON.parse(fileContent);
+    } catch (error) {
+      throw new Error(`Error reading file at ${filePath}: ${error.message}`);
+    }
+  }
+
+  private writeJsonFile(filePath: string, data: any): void {
+    try {
+      const absolutePath = path.resolve(filePath);
+      fs.writeFileSync(absolutePath, JSON.stringify(data, null, 2), 'utf-8');
+    } catch (error) {
+      throw new Error(`Error writing file at ${filePath}: ${error.message}`);
+    }
+  }
+
+  async updateManifestJson(updateManifestJsonDto: UpdateManifestJsonDto) {
+    try {
+      if (updateManifestJsonDto.origin === manifestOrigin.LINK) {
+        throw new UnsupportedMediaTypeException(
+          "Manifests linked into Arvest can't be updated",
+        );
+      }
+
+      console.log('--------------updateManifestJsonDto.json--------------');
+      console.log(updateManifestJsonDto.json);
+
+      // Build the path to the file
+      const path = `./upload/${updateManifestJsonDto.hash}/${updateManifestJsonDto.path}`;
+
+      // Overwrite the file with the new JSON data
+      this.writeJsonFile(path, updateManifestJsonDto.json);
+
+      return { message: 'JSON file replaced successfully' };
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `An error occurred while updating manifest with ID ${updateManifestJsonDto.id}`,
+        error.message,
+      );
+    }
+  }
+
 
   async removeManifest(manifestId: number) {
     try {
@@ -458,6 +509,4 @@ export class LinkManifestGroupService {
       throw new InternalServerErrorException(`an error occurred`, error);
     }
   }
-
-
 }

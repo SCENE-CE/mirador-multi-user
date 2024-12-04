@@ -24,6 +24,7 @@
     "cron": "^3.2.1",
     "dayjs": "^1.11.13",
     "iiif-manifest-editor": "^1.0.3",
+    "json-edit-react": "^1.17.1",
     "manifest-editor": "^1.0.2",
     "mirador": "npm:mirador-video@1.0.12",
     "mirador-annotation-editor": "1.0.36",
