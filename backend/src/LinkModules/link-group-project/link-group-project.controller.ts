@@ -10,17 +10,23 @@ import {
   Req,
   SetMetadata,
   UnauthorizedException,
-  UseGuards
-} from "@nestjs/common";
-import { LinkGroupProjectService } from "./link-group-project.service";
-import { AuthGuard } from "../../auth/auth.guard";
-import { AddProjectToGroupDto } from "./dto/addProjectToGroupDto";
-import { CreateProjectDto } from "../../BaseEntities/project/dto/create-project.dto";
-import { UpdateProjectGroupDto } from "./dto/updateProjectGroupDto";
-import { UpdateAccessToProjectDto } from "./dto/updateAccessToProjectDto";
-import { ActionType } from "../../enum/actions";
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation } from "@nestjs/swagger";
-import { LinkGroupProject } from "./entities/link-group-project.entity";
+  UseGuards,
+} from '@nestjs/common';
+import { LinkGroupProjectService } from './link-group-project.service';
+import { AuthGuard } from '../../auth/auth.guard';
+import { AddProjectToGroupDto } from './dto/addProjectToGroupDto';
+import { CreateProjectDto } from '../../BaseEntities/project/dto/create-project.dto';
+import { UpdateProjectGroupDto } from './dto/updateProjectGroupDto';
+import { UpdateAccessToProjectDto } from './dto/updateAccessToProjectDto';
+import { ActionType } from '../../enum/actions';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOkResponse,
+  ApiOperation,
+} from '@nestjs/swagger';
+import { LinkGroupProject } from './entities/link-group-project.entity';
+import { LockProjectDto } from './dto/lockProjectDto';
 
 @ApiBearerAuth()
 @Controller('link-group-project')
@@ -46,6 +52,27 @@ export class LinkGroupProjectController {
     return this.linkGroupProjectService.getProjectRelations(projectId);
   }
 
+  @SetMetadata('action', ActionType.UPDATE)
+  @UseGuards(AuthGuard)
+  @Post('/project/lock')
+  async handleLockProject(
+    @Body() lockProjectDto: LockProjectDto,
+    @Req() request,
+  ) {
+    return await this.linkGroupProjectService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      lockProjectDto.projectId,
+      async () => {
+        return this.linkGroupProjectService.lockProject(
+          lockProjectDto.projectId,
+          lockProjectDto.lock,
+          request.user.sub,
+        );
+      },
+    );
+  }
+
   @ApiOperation({ summary: 'Update project relation and rights on it' })
   @ApiBody({ type: UpdateProjectGroupDto })
   @ApiOkResponse({
@@ -53,7 +80,6 @@ export class LinkGroupProjectController {
     type: LinkGroupProject,
     isArray: true,
   })
-
   @SetMetadata('action', ActionType.UPDATE)
   @UseGuards(AuthGuard)
   @Patch('/updateProject/')
@@ -252,6 +278,16 @@ export class LinkGroupProjectController {
   async generateSnapshot(@Param('projectId') projectId: number) {
     return await this.linkGroupProjectService.generateProjectSnapshot(
       projectId,
+    );
+  }
+
+  @ApiOperation({ summary: 'Check if project is lock and user can access it' })
+  @UseGuards(AuthGuard)
+  @Get('/project/isLocked/:projectId')
+  async isLocked(@Param('projectId') projectId: number, @Req() request) {
+    return await this.linkGroupProjectService.isProjectLocked(
+      projectId,
+      request.user.sub,
     );
   }
 }

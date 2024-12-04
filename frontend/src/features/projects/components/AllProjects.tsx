@@ -33,6 +33,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import { ObjectTypes } from "../../tag/type.ts";
 import toast from "react-hot-toast";
 import { duplicateProject } from "../api/duplicateProject.ts";
+import { getUserNameWithId } from "../../auth/api/getUserNameWithId.ts";
+import { isProjectLocked } from "../api/isProjectLocked.ts";
+import { handleLock } from "../api/handleLock.ts";
 
 interface AllProjectsProps {
   user: User;
@@ -64,7 +67,6 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
     const end = start + itemsPerPage;
     return userProjects.slice(start, end);
   }, [currentPage, userProjects]);
-
   const totalPages = Math.ceil(userProjects.length / itemsPerPage);
 
 
@@ -121,7 +123,18 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   },[setUserProjects, userPersonalGroup, userProjects])
 
 
-  const initializeMirador = useCallback((miradorState: IState | undefined, projectUser: Project) => {
+  const initializeMirador = useCallback(async (miradorState: IState | undefined, projectUser: Project) => {
+    try{
+      const Locked = await isProjectLocked(projectUser.id)
+      if (Locked) {
+        const userName = await getUserNameWithId(Locked)
+        return toast.error(`Project is already open by...${userName}`)
+      }
+      await handleLock({projectId: projectUser.id, lock: true })
+    }catch(error){
+      console.error(error)
+      toast.error(error as string)
+    }
     setSelectedProjectId(projectUser.id);
     handleSetMiradorState(miradorState);
   },[handleSetMiradorState, setSelectedProjectId]);

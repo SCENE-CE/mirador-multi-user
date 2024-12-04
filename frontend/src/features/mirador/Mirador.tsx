@@ -23,9 +23,10 @@ interface MiradorViewerProps {
   setMiradorState:(state:IState)=>void
   setViewer: Dispatch<any>
   viewer:any
+  HandleSetIsRunning:()=>void
 }
 const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props, ref) => {
-  const { miradorState, saveMiradorState, project, setMiradorState, setViewer } = props;
+  const { miradorState, saveMiradorState, project, setMiradorState, setViewer,HandleSetIsRunning } = props;
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
   console.log('miradorState',miradorState)
@@ -42,6 +43,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
   useEffect(() => {
     if (viewerRef.current) {
+      HandleSetIsRunning()
       const config = {
         id: viewerRef.current.id,
         annotation: {

@@ -74,6 +74,23 @@ export class LinkUserGroupService {
     }
   }
 
+  async getUserNameWithId(userId: number) {
+    try {
+      console.log('userId');
+      console.log(userId);
+      const user = await this.userService.findOne(userId);
+      console.log('------------------user------------------')
+      console.log(user)
+      return user.name;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `error while looking for user with id : ${userId}`,
+        error,
+      );
+    }
+  }
+
   async removeGroupFromLinkEntity(groupId: number) {
     try {
       const linkUserGroups = await this.findAllUsersForGroup(groupId);
@@ -432,7 +449,6 @@ export class LinkUserGroupService {
       );
     }
   }
-
 
   async getHighestRightForGroup(groupId: number, userId: number) {
     const linkEntities = await this.linkUserGroupRepository.find({

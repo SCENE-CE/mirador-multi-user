@@ -13,6 +13,8 @@ export type Project = {
   thumbnailUrl?:string
   metadata: Record<string, string>;
   created_at:Dayjs;
+  lockedByUserId:number;
+  lockedAt:Date;
 }
 
 export type ProjectGroup = {
@@ -42,5 +44,10 @@ export type CreateProjectDto = {
   ownerId:number;
   userWorkspace:IState | undefined;
   metadata: Record<string, string>;
+}
+
+export type LockProjectDto = {
+  projectId: number;
+  lock: boolean;
 }
 

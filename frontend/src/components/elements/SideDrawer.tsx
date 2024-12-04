@@ -44,6 +44,7 @@ import PermMediaIcon from '@mui/icons-material/PermMedia';
 import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups.ts";
 import { UserSettings } from "../../features/user-setting/UserSettings.tsx";
 import { SidePanelManifest } from "../../features/manifest/component/SidePanelManifest.tsx";
+import { handleLock } from "../../features/projects/api/handleLock.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -124,12 +125,40 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [manifests, setManifests] = useState<Manifest[]>([])
   const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
   const [groups, setGroups] = useState<UserGroup[]>([]);
+  const [isRunning, setIsRunning] =useState(false);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const myRef = useRef<MiradorViewerHandle>(null);
+
+  useEffect(() => {
+    if (myRef.current !== null) {
+      if (!intervalRef.current) {
+        intervalRef.current = setInterval(() => {
+          saveProject();
+        }, 50000);
+      }
+    } else {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    }
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+  }, [myRef.current, isRunning]);
 
   const handleSetCreateManifestIsOpen = (boolean:boolean) =>{
     setCreateManifestIsOpen(boolean);
   }
 
-  const myRef = useRef<MiradorViewerHandle>(null);
+  const HandleSetIsRunning=()=>{
+    setIsRunning(!isRunning)
+  }
+
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -145,7 +174,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const handleChangeContent = (content: string) => {
     if (selectedProjectId){
-      saveProject()
+      saveProject(true)
     }
     setSelectedProjectId(undefined);
     setSelectedContent(content);
@@ -193,6 +222,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     }
     setMedias(medias);
   };
+
   const getManifestFromUrl = async (manifestUrl:string) => {
     try{
       const response = await fetch(manifestUrl);
@@ -258,8 +288,16 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     }
   }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
 
-  const saveProject = () => {
-    saveMiradorState();
+  const saveProject = async (redirect?:boolean) => {
+    console.log('redirect',redirect)
+    if(redirect !== true){
+      console.log('toto')
+      await handleLock({projectId:selectedProjectId!,lock:true});
+    }else{
+      console.log('tata')
+     await handleLock({projectId:selectedProjectId!,lock:false});
+    }
+    await saveMiradorState();
   }
 
   const handleSetDisconnectModalOpen=()=>{
@@ -286,12 +324,15 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       console.error("Failed to fetch projects:", error);
     }
   };
+
   //UseEffect is necessary cause in some case selectedProjectId is undefined and made save bug
   useEffect(()=>{
     fetchProjects();
     fetchMediaForUser();
     fetchManifestForUser()
   },[selectedProjectId])
+
+
 
   const projectSelected = useMemo(() => {
     if (userProjects && selectedProjectId){
@@ -379,6 +420,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
                 viewer={viewer}
                 setViewer={setViewer}
                 ref={myRef}
+                HandleSetIsRunning={HandleSetIsRunning}
               />
             </Box>
           </SidePanelManifest>

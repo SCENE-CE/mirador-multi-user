@@ -81,13 +81,10 @@ export class LinkGroupProjectService {
 
   async findAllGroupProjectByUserGroupId(userId: number) {
     try {
-      const request = await this.linkGroupProjectRepository.find({
+      return await this.linkGroupProjectRepository.find({
         where: { user_group: { id: userId } },
         relations: ['project'],
       });
-      console.log('------------------request------------------');
-      console.log(request);
-      return request;
     } catch (error) {
       throw new InternalServerErrorException(
         `An error occurred while finding Group for this project id : ${userId}`,
@@ -225,7 +222,6 @@ export class LinkGroupProjectService {
       const groupToUpdate = await this.groupService.findOne(
         updateAccessToProjectDto.groupId,
       );
-      console.log(updateAccessToProjectDto);
       const linkGroupToUpdate = await this.linkGroupProjectRepository.findOne({
         where: {
           project: { id: projectToUpdate.id },
@@ -253,8 +249,6 @@ export class LinkGroupProjectService {
 
   async addProjectToGroup(dto: AddProjectToGroupDto) {
     const { groupId, projectId } = dto;
-    console.log('Enter add projects to Group');
-    console.log(dto);
     try {
       const userGroup = await this.groupService.findOne(groupId);
       if (!userGroup) {
@@ -273,7 +267,6 @@ export class LinkGroupProjectService {
         user_group: userGroup,
         project: project,
       });
-      console.log(projectId);
       return await this.findAllGroupProjectByUserGroupId(projectId);
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -431,7 +424,6 @@ export class LinkGroupProjectService {
   async getHighestRightForProject(userId: number, projectId: number) {
     const userGroups =
       await this.linkUserGroupService.findALlGroupsForUser(userId);
-
     const linkEntities = await this.linkGroupProjectRepository.find({
       where: {
         user_group: { id: In(userGroups.map((group) => group.id)) },
@@ -442,8 +434,8 @@ export class LinkGroupProjectService {
     if (linkEntities.length === 0) {
       return;
     }
-    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
 
+    const rightsPriority = { Admin: 3, Editor: 2, Reader: 1 };
     return linkEntities.reduce((prev, current) => {
       const prevRight = rightsPriority[prev.rights] || 0;
       const currentRight = rightsPriority[current.rights] || 0;
@@ -524,19 +516,59 @@ export class LinkGroupProjectService {
         JSON.stringify(workspaceData, null, 2),
         'utf-8',
       );
-      const updateProject = await this.projectService.update(projectId, {
+      await this.projectService.update(projectId, {
         id: projectId,
         snapShotHash: hash,
       });
-
-      console.log('----------------updateProject----------------');
-      console.log(updateProject);
       return {
         snapShotHash: `${hash}`,
       };
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(`an error occurred`, error);
+    }
+  }
+
+  async lockProject(projectId: number, lock: boolean, userId: number) {
+    try {
+      return await this.projectService.lockProject(projectId, lock, userId);
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(`an error occurred`, error);
+    }
+  }
+
+  async isProjectLocked(
+    projectId: number,
+    userId: number,
+  ): Promise<boolean | number> {
+    try {
+      const project = await this.projectService.findOne(projectId);
+      if (!project) {
+        throw new NotFoundException(`Project with ID ${projectId} not found`);
+      }
+      if (project.lockedByUserId === null && project.lockedAt === null) {
+        return false;
+      }
+      const now = Date.now();
+      const isLockRelevant =
+        now - 2 * 60 * 1000 < new Date(project.lockedAt).getTime();
+      if (isLockRelevant) {
+        if (userId == project.lockedByUserId) {
+        } else {
+          return project.lockedByUserId;
+        }
+      }
+      return false;
+    } catch (error) {
+      this.logger.error(
+        `Error checking project lock: ${error.message}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException(
+        'An error occurred while checking project lock',
+        error,
+      );
     }
   }
 }

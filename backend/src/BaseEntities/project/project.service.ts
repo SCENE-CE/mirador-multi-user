@@ -1,18 +1,15 @@
-import {
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
-import { CreateProjectDto } from './dto/create-project.dto';
-import { UpdateProjectDto } from './dto/update-project.dto';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Project } from './entities/project.entity';
-import { Brackets, DeleteResult, Repository } from 'typeorm';
-import { CustomLogger } from '../../utils/Logger/CustomLogger.service';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
+import { CreateProjectDto } from "./dto/create-project.dto";
+import { UpdateProjectDto } from "./dto/update-project.dto";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Project } from "./entities/project.entity";
+import { Brackets, DeleteResult, Repository } from "typeorm";
+import { CustomLogger } from "../../utils/Logger/CustomLogger.service";
 
 @Injectable()
 export class ProjectService {
   private readonly logger = new CustomLogger();
+
   //Importing function from LinkTable there cause circular dependencies error, this is described into the wiki there : https://github.com/SCENE-CE/mirador-multi-user/wiki/Backend
   constructor(
     @InjectRepository(Project)
@@ -54,11 +51,16 @@ export class ProjectService {
     }
   }
 
-  async update(id: number, dto: UpdateProjectDto) {
+  async update(projectId: number, dto: UpdateProjectDto) {
     try {
-      const done = await this.projectRepository.update(id, dto);
-      if (done.affected != 1) throw new NotFoundException(id);
-      return this.findOne(dto.id);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { lockedByUserId, lockedAt, ...filteredData } = dto;
+      await this.projectRepository.findOne({
+        where: { id: projectId },
+      });
+      const done = await this.projectRepository.update(projectId, filteredData);
+      if (done.affected != 1) throw new NotFoundException(projectId);
+      return await this.findOne(filteredData.id);
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(error);
@@ -131,5 +133,18 @@ export class ProjectService {
     }
   }
 
-
+  async lockProject(projectId: number, lock: boolean, userId: number) {
+    try {
+      const updateData = lock
+        ? { lockedAt: new Date(), lockedByUserId: userId }
+        : { lockedAt: null, lockedByUserId: null };
+      return await this.projectRepository.update(projectId, updateData);
+    } catch (error) {
+      this.logger.error(
+        `Failed to update lock status for project ${projectId}`,
+        error.stack,
+      );
+      throw new InternalServerErrorException('Could not update lock status.');
+    }
+  }
 }

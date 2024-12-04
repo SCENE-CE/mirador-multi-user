@@ -16,7 +16,7 @@ services:
 
   frontend:
     build:
-      context: ./frontend-TS
+      context: frontend
       dockerfile: Dockerfile
       args:
         VITE_BACKEND_URL: ${BACKEND_URL}

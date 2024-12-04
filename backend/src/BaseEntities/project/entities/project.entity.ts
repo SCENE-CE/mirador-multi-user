@@ -6,6 +6,7 @@ import {
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
+  Timestamp,
 } from 'typeorm';
 import { IsNumberString, IsString } from 'class-validator';
 import { LinkGroupProject } from '../../../LinkModules/link-group-project/entities/link-group-project.entity';
@@ -38,6 +39,12 @@ export class Project {
 
   @Column({ nullable: true })
   snapShotHash: string;
+
+  @Column({ nullable: true })
+  lockedByUserId: number;
+
+  @Column({ type: 'timestamp', nullable: true })
+  lockedAt: Date;
 
   @CreateDateColumn({
     type: 'timestamp',
