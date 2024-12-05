@@ -8,6 +8,7 @@ export type User = {
   mail:string;
   name: string;
   userGroups:UserGroup[];
+  isAdmin:boolean;
 }
 
 export type UpdateUserDto={

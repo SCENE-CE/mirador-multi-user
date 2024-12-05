@@ -35,6 +35,8 @@ export const UserSettings = ({user}:IUserSettingsProps) => {
     setOpenDeleteModal(!openDeleteModal);
   }
 
+  console.log('user', user);
+
   return (
     <Grid container spacing={2}>
       <Grid container item flexDirection="row" alignItems="center" spacing={2} sx={{ width: '100%' }}>

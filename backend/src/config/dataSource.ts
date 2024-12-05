@@ -1,5 +1,4 @@
 import { DataSource } from 'typeorm';
-import { UserSubscriber } from '../utils/listeners/user.subscriber';
 
 export default new DataSource({
   type: 'mariadb',

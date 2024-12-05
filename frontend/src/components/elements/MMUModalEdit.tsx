@@ -17,13 +17,13 @@ import dayjs, { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import { a11yProps } from "./SideBar/allyProps.tsx";
 import { CustomTabPanel } from "./CustomTabPanel.tsx";
-import { MetadataForm } from "../../features/Metadata/components/metadataForm.tsx";
-import { getMetadataFormat } from "../../features/Metadata/api/getMetadataFormat.ts";
+import { MetadataForm } from "../../features/metadata/components/metadataForm.tsx";
+import { getMetadataFormat } from "../../features/metadata/api/getMetadataFormat.ts";
 import { useUser } from "../../utils/auth.tsx";
-import { createMetadataForItem } from "../../features/Metadata/api/createMetadataForItem.ts";
-import { gettingMetadataForObject } from "../../features/Metadata/api/gettingMetadataForObject.ts";
-import { labelMetadata } from "../../features/Metadata/types/types.ts";
-import { uploadMetadataFormat } from "../../features/Metadata/api/uploadMetadataFormat.ts";
+import { createMetadataForItem } from "../../features/metadata/api/createMetadataForItem.ts";
+import { gettingMetadataForObject } from "../../features/metadata/api/gettingMetadataForObject.ts";
+import { labelMetadata } from "../../features/metadata/types/types.ts";
+import { uploadMetadataFormat } from "../../features/metadata/api/uploadMetadataFormat.ts";
 import toast from "react-hot-toast";
 import { JsonEditor } from 'json-edit-react'
 import { fetchManifest } from "../../features/manifest/api/fetchManifest.ts";
@@ -298,7 +298,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
               const updatedMetadata = metadata.filter((_:any, index:number) => index !== labelIndex);
               const upload =await uploadMetadataFormat(label, updatedMetadata, user.data!.id);
               if (upload.statusCode === 409) {
-                toast.error('Metadata with this title already exists')
+                toast.error('metadata with this title already exists')
               }
               await fetchMetadataFormat();
             } else {

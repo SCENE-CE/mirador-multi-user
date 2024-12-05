@@ -45,6 +45,8 @@ import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups
 import { UserSettings } from "../../features/user-setting/UserSettings.tsx";
 import { SidePanelManifest } from "../../features/manifest/component/SidePanelManifest.tsx";
 import { handleLock } from "../../features/projects/api/handleLock.ts";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import { AdminPanel } from "../../features/admin/components/adminPanel.tsx";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -112,7 +114,8 @@ const CONTENT = {
   GROUPS:'GROUPS',
   MEDIA:'MEDIA',
   MANIFEST:'MANIFEST',
-  SETTING:'SETTING'
+  SETTING:'SETTING',
+  ADMIN:'ADMIN'
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
   const [open, setOpen] = useState(true);
@@ -396,6 +399,15 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           )
         }
         <List>
+          {
+            user.isAdmin &&(
+              <Tooltip title="Admin overview" placement="right">
+                <ListItem sx={{padding:0}}>
+                  <ItemButton open={open} selected={false} icon={<AdminPanelSettingsIcon />} text="Admin" action={()=>handleChangeContent(CONTENT.ADMIN)}/>
+                </ListItem>
+              </Tooltip>
+            )
+          }
           <Tooltip title="Settings" placement="right">
             <ListItem sx={{padding:0}}>
               <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>handleChangeContent(CONTENT.SETTING)}/>
@@ -425,6 +437,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             </Box>
           </SidePanelManifest>
         )
+        }
+        {
+          user && user.id && user.isAdmin && selectedContent === CONTENT.ADMIN && (
+            <AdminPanel/>
+          )
         }
         {user && user.id && selectedContent === CONTENT.PROJECTS && (
           <AllProjects
