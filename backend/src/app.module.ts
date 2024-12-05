@@ -26,6 +26,7 @@ import { UserManagementModule } from './user-management/user-management.module';
 import { MetadataFormatModule } from './BaseEntities/metadata-format/metadata-format.module';
 import { LinkMetadataFormatGroupModule } from './LinkModules/link-metadata-format-group/link-metadata-format-group.module';
 import { MetadataModule } from './BaseEntities/metadata/metadata.module';
+import { ImpersonationModule } from './impersonation/impersonation.module';
 
 @Module({
   imports: [
@@ -85,6 +86,7 @@ import { MetadataModule } from './BaseEntities/metadata/metadata.module';
     MetadataFormatModule,
     LinkMetadataFormatGroupModule,
     MetadataModule,
+    ImpersonationModule,
   ],
   controllers: [AppController],
   providers: [
