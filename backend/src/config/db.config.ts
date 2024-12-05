@@ -1,4 +1,5 @@
 import { registerAs } from '@nestjs/config';
+import { UserSubscriber } from "../utils/listeners/user.subscriber";
 
 export default registerAs('database', () => {
   return {
@@ -10,6 +11,7 @@ export default registerAs('database', () => {
     database: process.env.DB_DATABASE,
     autoLoadEntities: true,
     cache: false,
+    subscribers: [UserSubscriber],
     migrations: ['dist/db/migrations/*.{ts,js}'],
     cli: {
       migrationsDir: 'src/migrations',

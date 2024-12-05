@@ -32,6 +32,10 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'current_timestamp' })
   createdAt!: Date;
 
+  @Index()
+  @Column({ type: 'boolean', default: false })
+  _isAdmin: boolean;
+
   @Column({ default: false })
   isEmailConfirmed: boolean;
 
