@@ -3,13 +3,14 @@
   import { getAllUsers } from "../api/getAllUsers.ts";
   import { User } from "../../auth/types/types.ts";
   import { ReactNode, useEffect, useMemo, useState } from "react";
+  import { initiateImpersonation } from "../api/initiateImpersonation.ts";
 
   interface RowData {
     value: ReactNode;
     align?: 'right' | 'left' | 'center';
   }
   interface RowProps {
-    id: string;
+    id: number;
     data: RowData[];
   }
 
@@ -26,7 +27,7 @@
   }
 
 
-  export const AdminPanel= () => {
+  export const AdminPanel= (user:User) => {
     const [users, setUsers] = useState<User[]>([]);
     const fetchUsers= async ()=>{
     const users = await getAllUsers()
@@ -39,7 +40,7 @@
 
     const rows = useMemo(() => {
       return users.map((user) => ({
-        id: user.id.toString(),
+        id: user.id,
         data: [
           { value: user.id, align: 'left' as const },
           { value: user.mail, align: 'left' as const },
@@ -51,9 +52,10 @@
       }));
     }, [users]);
 
-    function handleActionClick(row: RowProps) {
-      console.log('users',users);
+    async function handleActionClick(row: RowProps) {
+      await initiateImpersonation(user.id, row.id)
     }
+
     return (
       <Grid>
         <CollapsibleTable

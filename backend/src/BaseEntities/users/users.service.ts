@@ -142,11 +142,26 @@ export class UsersService {
   }
 
   async findAllUsers(): Promise<User[]> {
-    try{
+    try {
       return await this.userRepository.find();
-    }catch(error){
+    } catch (error) {
       this.logger.error(error.message, error.stack);
-      throw new InternalServerErrorException('an error occurred while getting all users');
+      throw new InternalServerErrorException(
+        'an error occurred while getting all users',
+      );
+    }
+  }
+
+  async findAdminUser(adminId: number): Promise<User> {
+    try {
+      return await this.userRepository.findOne({
+        where: { id: adminId, _isAdmin: true },
+      });
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `no admin found with id : ${adminId}`,
+      );
     }
   }
 }

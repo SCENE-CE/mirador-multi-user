@@ -17,7 +17,7 @@ interface RowData {
 }
 
 interface RowProps {
-  id: string;
+  id: number;
   data: RowData[];
 }
 

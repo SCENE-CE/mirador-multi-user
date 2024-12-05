@@ -1,34 +1,35 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { ImpersonationService } from './impersonation.service';
-import { CreateImpersonationDto } from './dto/create-impersonation.dto';
-import { UpdateImpersonationDto } from './dto/update-impersonation.dto';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('impersonation')
 export class ImpersonationController {
   constructor(private readonly impersonationService: ImpersonationService) {}
 
-  @Post()
-  create(@Body() createImpersonationDto: CreateImpersonationDto) {
-    return this.impersonationService.create(createImpersonationDto);
+  @UseGuards(AuthGuard)
+  @Post('create')
+  async createImpersonation(
+    @Body('adminId') adminId: number,
+    @Body('userId') userId: number,
+    @Body('token') token: string,
+    @Body('exchangeBefore') exchangeBefore: Date,
+    @Req() request,
+  ) {
+    return this.impersonationService.createImpersonation(
+      request.user.sub,
+      userId,
+      token,
+      new Date(exchangeBefore),
+    );
   }
-
-  @Get()
-  findAll() {
-    return this.impersonationService.findAll();
+  @UseGuards(AuthGuard)
+  @Post('validate')
+  async validateToken(@Body('token') token: string) {
+    return this.impersonationService.validateToken(token);
   }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.impersonationService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateImpersonationDto: UpdateImpersonationDto) {
-    return this.impersonationService.update(+id, updateImpersonationDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.impersonationService.remove(+id);
+  @UseGuards(AuthGuard)
+  @Post('revoke/:id')
+  async revokeToken(@Param('id') id: string) {
+    return this.impersonationService.revokeToken(id);
   }
 }
