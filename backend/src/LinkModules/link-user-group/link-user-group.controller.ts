@@ -22,6 +22,7 @@ import { ActionType } from '../../enum/actions';
 import { ApiBearerAuth, ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { LinkGroupProject } from '../link-group-project/entities/link-group-project.entity';
 import { LinkUserGroup } from './entities/link-user-group.entity';
+
 @ApiBearerAuth()
 @Controller('link-user-group')
 export class LinkUserGroupController {
@@ -253,10 +254,23 @@ export class LinkUserGroupController {
   @UseGuards(AuthGuard)
   @Get('/user/name/:userId')
   async getUserNameWithId(@Param('userId') userId: number) {
-    console.log('----------------userId------------------')
-    console.log(userId)
-    const toreturn = await this.linkUserGroupService.getUserNameWithId(userId);
-    console.log('toreturn',toreturn)
-    return toreturn
+    return await this.linkUserGroupService.getUserNameWithId(userId);
+  }
+
+  @ApiOperation({ summary: 'Get all users' })
+  @SetMetadata('action', ActionType.ADMIN)
+  @Get('/users')
+  @UseGuards(AuthGuard)
+  async getAllUsers(@Req() request) {
+    const userPersonalGroup =
+      await this.linkUserGroupService.findUserPersonalGroup(request.user.sub);
+    return await this.linkUserGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      userPersonalGroup.id,
+      async () => {
+        return await this.linkUserGroupService.getAllUsers();
+      },
+    );
   }
 }

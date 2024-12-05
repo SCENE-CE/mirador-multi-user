@@ -140,4 +140,13 @@ export class UsersService {
       );
     }
   }
+
+  async findAllUsers(): Promise<User[]> {
+    try{
+      return await this.userRepository.find();
+    }catch(error){
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException('an error occurred while getting all users');
+    }
+  }
 }

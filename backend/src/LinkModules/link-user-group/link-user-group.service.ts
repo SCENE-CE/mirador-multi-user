@@ -79,8 +79,8 @@ export class LinkUserGroupService {
       console.log('userId');
       console.log(userId);
       const user = await this.userService.findOne(userId);
-      console.log('------------------user------------------')
-      console.log(user)
+      console.log('------------------user------------------');
+      console.log(user);
       return user.name;
     } catch (error) {
       this.logger.error(error.message, error.stack);
@@ -470,6 +470,17 @@ export class LinkUserGroupService {
     });
   }
 
+  async getAllUsers() {
+    try {
+      return await this.userService.findAllUsers()
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        'an error occurred while retrieving all users',
+      );
+    }
+  }
+
   async checkPolicies(
     action: string,
     userId: number,
@@ -509,7 +520,11 @@ export class LinkUserGroupService {
             return callback(linkEntity);
           }
           break;
-
+        case ActionType.ADMIN:
+          if (linkEntity.user._isAdmin) {
+            return callback(linkEntity);
+          }
+          break;
         default:
           throw new InternalServerErrorException('Invalid action');
       }
