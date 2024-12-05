@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { UserSubscriber } from "../utils/listeners/user.subscriber";
+import { UserSubscriber } from "../utils/subscribers/user.subscriber";
 
 export default registerAs('database', () => {
   return {

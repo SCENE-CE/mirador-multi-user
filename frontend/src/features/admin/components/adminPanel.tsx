@@ -27,7 +27,7 @@
   }
 
 
-  export const AdminPanel= (user:User) => {
+  export const AdminPanel= () => {
     const [users, setUsers] = useState<User[]>([]);
     const fetchUsers= async ()=>{
     const users = await getAllUsers()
@@ -53,7 +53,7 @@
     }, [users]);
 
     async function handleActionClick(row: RowProps) {
-      await initiateImpersonation(user.id, row.id)
+      await initiateImpersonation(row.id)
     }
 
     return (

@@ -121,6 +121,7 @@ export default function CollapsibleTable(
           </TableHead>
           <TableBody>
             {sortedRows.map((row) => (
+
               <Row
                 key={row.id}
                 row={row}

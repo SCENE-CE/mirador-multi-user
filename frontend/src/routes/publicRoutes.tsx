@@ -3,6 +3,7 @@ import { MiradorPublicExposed } from "../features/mirador/MIradorPublicExposed.t
 import { MailConfirmation } from "../features/auth/components/MailConfirmation.tsx";
 import { ResetPassword } from "../features/auth/components/resetPassword.tsx";
 import ForgotPassword from "../features/auth/components/forgotPassword.tsx";
+import { Impersonate } from "../features/admin/components/Impersonate.tsx";
 
 export const publicRoutes= [
   {
@@ -24,5 +25,9 @@ export const publicRoutes= [
   {
     path:"/forgot-password/*",
     element:<ForgotPassword/>
+  },
+  {
+    path:"/impersonate/*",
+    element:<Impersonate/>
   }
 ]

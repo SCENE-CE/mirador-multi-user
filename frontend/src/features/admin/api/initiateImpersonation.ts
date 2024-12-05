@@ -1,23 +1,25 @@
 import storage from "../../../utils/storage.ts";
 
-export const initiateImpersonation = async ( adminId:number  , userId: number ) => {
+export const initiateImpersonation = async (userId: number) => {
   const token = storage.getToken();
 
-  try{
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/impersonation/create`, {
+  try {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/impersonation/${userId}/impersonate`, {
       method: 'POST',
       headers: {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({adminId, userId}),
     });
 
-    const responseToken = await response.json();
+    if (!response.ok) {
+      throw new Error(`Failed to initiate impersonation: ${response.statusText}`);
+    }
 
-    // Redirect to impersonation route with token in query params
-    window.location.href = `/impersonate?token=${responseToken}`;
-  }catch(error){
+    const impersonation = await response.json();
+
+    window.location.href = impersonation.redirectUrl;
+  } catch (error) {
     console.error('Failed to initiate impersonation', error);
   }
 }
