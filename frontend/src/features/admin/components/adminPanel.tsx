@@ -2,19 +2,26 @@
   import CollapsibleTable from "../../../components/elements/CollapsibleTable.tsx";
   import { getAllUsers } from "../api/getAllUsers.ts";
   import { User } from "../../auth/types/types.ts";
-  import { useEffect, useMemo, useState } from "react";
+  import { ReactNode, useEffect, useMemo, useState } from "react";
 
+  interface RowData {
+    value: ReactNode;
+    align?: 'right' | 'left' | 'center';
+  }
+  interface RowProps {
+    id: string;
+    data: RowData[];
+  }
 
   const columns = [
-    { label: 'ID', align: 'left' as const },
-    { label: 'Email', align: 'left' as const },
-    { label: 'Name', align: 'left' as const },
-    { label: 'Admin', align: 'center' as const },
-    { label: 'Email Confirmed', align: 'center' as const },
-    { label: 'Created At', align: 'left' as const },
-]
-
-  function renderExpandableContent(row: any) {
+    { label: 'ID', align: 'left' as const, sortKey: 'id' },
+    { label: 'Email', align: 'left' as const, sortKey: 'mail' },
+    { label: 'Name', align: 'left' as const, sortKey: 'name' },
+    { label: 'Admin', align: 'center' as const, sortKey: '_isAdmin' },
+    { label: 'Email Confirmed', align: 'center' as const, sortKey: 'isEmailConfirmed' },
+    { label: 'Created At', align: 'left' as const, sortKey: 'createdAt' },
+  ];
+  function renderExpandableContent(row: RowProps) {
     return <div>Extra details for {row.data[0].value}</div>;
   }
 
@@ -43,7 +50,8 @@
         ],
       }));
     }, [users]);
-    function handleActionClick(row: any) {
+
+    function handleActionClick(row: RowProps) {
       console.log('users',users);
     }
     return (
