@@ -13,10 +13,7 @@ export const impersonateUser = async (impersonateToken:string,userId:number ) =>
       body: JSON.stringify({token: impersonateToken, userId: userId}),
     });
 
-    const toreturn =  await response.json();
-    console.log('toreturn');
-    console.log(toreturn);
-    return toreturn;
+    return await response.json();
   }catch(error){
     console.error('Failed to validate impersonation', error);
   }

@@ -97,32 +97,15 @@ export class ImpersonationService {
     }
   }
 
-  async revokeToken(impersonationId: string): Promise<void> {
-    const impersonation = await this.impersonationRepository.findOne({
-      where: { id: impersonationId },
-    });
-    if (!impersonation) {
-      throw new Error('Impersonation record not found');
-    }
-
-    impersonation.used = true;
-    await this.impersonationRepository.save(impersonation);
-  }
-
-  async markAsUsed(impersonationId: string): Promise<void> {
-    const impersonation = await this.impersonationRepository.findOne({
-      where: { id: impersonationId },
-    });
-
-    if (!impersonation) {
-      throw new Error('Impersonation record not found');
-    }
-
-    impersonation.used = true;
-    await this.impersonationRepository.save(impersonation);
-  }
-
-  getSessionDuration(): number {
-    return 20 * 60 * 1000;
-  }
+  // async revokeToken(impersonationId: string): Promise<void> {
+  //   const impersonation = await this.impersonationRepository.findOne({
+  //     where: { id: impersonationId },
+  //   });
+  //   if (!impersonation) {
+  //     throw new Error('Impersonation record not found');
+  //   }
+  //
+  //   impersonation.used = true;
+  //   await this.impersonationRepository.save(impersonation);
+  // }
 }

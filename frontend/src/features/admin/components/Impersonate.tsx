@@ -28,10 +28,11 @@ export const Impersonate = () => {
           console.log("response",response);
           // Assuming the response contains the JWT token for the impersonated user
           const { access_token } = response;
-
+          const adminToken = storage.getToken()
+          console.log('adminToken',adminToken)
+          storage.setAdminToken(adminToken);
           // Store JWT in session storage or local storage
           storage.setToken(access_token)
-
           // Redirect to the user's dashboard or home page
           navigate("/app/my-projects");
         } catch (error) {

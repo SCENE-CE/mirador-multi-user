@@ -29,11 +29,6 @@ export class ImpersonationController {
     return res.json({ redirectUrl });
   }
 
-  @Post('/validate')
-  async validateUser(@Body() token: { impersonateToken: string }) {
-    return this.impersonationService.validateToken(token.impersonateToken);
-  }
-
   @UseGuards(AuthGuard)
   @Post('/impersonate')
   async impersonate(@Body() impersonateDto: ImpersonateDto) {

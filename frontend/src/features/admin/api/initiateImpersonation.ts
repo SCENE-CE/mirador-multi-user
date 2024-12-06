@@ -20,6 +20,8 @@ export const initiateImpersonation = async (userId: number) => {
     storage.SetImpersonateUserId(userId);
 
     window.open(impersonation.redirectUrl, '_blank');
+
+    window.close();
   } catch (error) {
     console.error('Failed to initiate impersonation', error);
   }
