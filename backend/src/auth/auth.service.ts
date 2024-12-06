@@ -120,6 +120,7 @@ export class AuthService {
       id: user.id,
       mail: user.mail,
       name: user.name,
+      _isAdmin: user._isAdmin,
     };
   }
 }

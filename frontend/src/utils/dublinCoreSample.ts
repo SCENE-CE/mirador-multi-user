@@ -1,7 +1,7 @@
 export const dublinCoreSample = [
   {
     "term": "metadataFormatLabel",
-    "label": "example Metadata",
+    "label": "example metadata",
     "definition": "A name given to the resource."
   },
   {

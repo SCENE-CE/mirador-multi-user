@@ -23,7 +23,7 @@ export class MetadataFormatService {
     } catch (error) {
       if (error.code === 'ER_DUP_ENTRY') {
         throw new ConflictException(
-          'Metadata format with the given title and creatorId already exists.',
+          'metadata format with the given title and creatorId already exists.',
         );
       } else {
         this.logger.error(error.message, error.stack);

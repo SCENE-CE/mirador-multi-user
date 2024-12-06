@@ -45,6 +45,11 @@ import { getAllUserGroups } from "../../features/user-group/api/getAllUserGroups
 import { UserSettings } from "../../features/user-setting/UserSettings.tsx";
 import { SidePanelManifest } from "../../features/manifest/component/SidePanelManifest.tsx";
 import { handleLock } from "../../features/projects/api/handleLock.ts";
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import ExitToAppIcon from '@mui/icons-material/ExitToApp';
+import { AdminPanel } from "../../features/admin/components/adminPanel.tsx";
+import storage from "../../utils/storage.ts";
+import { useNavigate } from "react-router-dom";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -112,9 +117,11 @@ const CONTENT = {
   GROUPS:'GROUPS',
   MEDIA:'MEDIA',
   MANIFEST:'MANIFEST',
-  SETTING:'SETTING'
+  SETTING:'SETTING',
+  ADMIN:'ADMIN'
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(true);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<Project[]>([]);
@@ -126,9 +133,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [isRunning, setIsRunning] =useState(false);
+  const [isImpersonate, setIsImpersonate] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const myRef = useRef<MiradorViewerHandle>(null);
-
   useEffect(() => {
     if (myRef.current !== null) {
       if (!intervalRef.current) {
@@ -179,6 +186,13 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     setSelectedProjectId(undefined);
     setSelectedContent(content);
     handleSetCreateManifestIsOpen(false)
+  }
+
+  const handleLeaveImpersonate = () => {
+  const adminToken = storage.getAdminToken()
+    storage.setToken(adminToken!)
+    storage.clearAdminToken()
+    navigate('/')
   }
 
   const HandleSetUserProjects = (userProjects: Project[]) => {
@@ -330,6 +344,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     fetchProjects();
     fetchMediaForUser();
     fetchManifestForUser()
+    const isImpersonate = storage.getAdminToken()
+    console.log('isImpersonate',isImpersonate !== null)
+    setIsImpersonate(isImpersonate !== null)
   },[selectedProjectId])
 
 
@@ -342,6 +359,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     return null;
   }, [userProjects, selectedProjectId]);
 
+  console.log('user',user)
   return(
     <>
       <Drawer variant="permanent" open={open}
@@ -396,6 +414,24 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           )
         }
         <List>
+          {
+            user._isAdmin &&(
+              <Tooltip title="Admin overview" placement="right">
+                <ListItem sx={{padding:0}}>
+                  <ItemButton open={open} selected={false} icon={<AdminPanelSettingsIcon />} text="Admin" action={()=>handleChangeContent(CONTENT.ADMIN)}/>
+                </ListItem>
+              </Tooltip>
+            )
+          }
+          {
+            isImpersonate && (
+              <Tooltip title="Quit impersonating" placement="right">
+                <ListItem sx={{padding:0}}>
+                  <ItemButton open={open} selected={false} icon={<ExitToAppIcon />} text="Leave impersonate" action={()=>handleLeaveImpersonate()}/>
+                </ListItem>
+              </Tooltip>
+            )
+          }
           <Tooltip title="Settings" placement="right">
             <ListItem sx={{padding:0}}>
               <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>handleChangeContent(CONTENT.SETTING)}/>
@@ -425,6 +461,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             </Box>
           </SidePanelManifest>
         )
+        }
+        {
+          user && user.id && user._isAdmin && selectedContent === CONTENT.ADMIN && (
+            <AdminPanel/>
+          )
         }
         {user && user.id && selectedContent === CONTENT.PROJECTS && (
           <AllProjects

@@ -57,7 +57,7 @@ export class LinkMetadataFormatGroupService {
     } catch (error) {
       if (error.status === 409) {
         throw new ConflictException(
-          'Metadata format with the given title and creatorId already exists.',
+          'metadata format with the given title and creatorId already exists.',
         );
       }
       this.logger.error(error.message, error.stack);

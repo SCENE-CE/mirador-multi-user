@@ -24,5 +24,5 @@ export const publicRoutes= [
   {
     path:"/forgot-password/*",
     element:<ForgotPassword/>
-  }
+  },
 ]

@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { LinkUserGroup } from '../../../LinkModules/link-user-group/entities/link-user-group.entity';
+import { Impersonation } from '../../../impersonation/entities/impersonation.entity';
 
 @Entity()
 export class User {
@@ -32,6 +33,10 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'current_timestamp' })
   createdAt!: Date;
 
+  @Index()
+  @Column({ type: 'boolean', default: false })
+  _isAdmin: boolean;
+
   @Column({ default: false })
   isEmailConfirmed: boolean;
 
@@ -40,4 +45,7 @@ export class User {
     onDelete: 'CASCADE',
   })
   linkUserGroups: LinkUserGroup[];
+
+  @OneToMany(() => Impersonation, (impersonation) => impersonation.user)
+  impersonations: Impersonation[];
 }
