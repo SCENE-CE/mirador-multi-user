@@ -13,7 +13,16 @@ export const impersonateUser = async (impersonateToken:string,userId:number ) =>
       body: JSON.stringify({token: impersonateToken, userId: userId}),
     });
 
-    return await response.json();
+    const adminToken = storage.getToken()
+    storage.setAdminToken(adminToken);
+
+    const responseJson =  await response.json();
+
+    const { access_token } = responseJson;
+    if(!token){
+      console.error('token is undefined', token);
+    }
+    storage.setToken(access_token)
   }catch(error){
     console.error('Failed to validate impersonation', error);
   }
