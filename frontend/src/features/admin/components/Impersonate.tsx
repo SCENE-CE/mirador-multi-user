@@ -35,9 +35,13 @@ export const Impersonate = () => {
           if(!token){
             console.error('token is undefined', token);
           }
-          storage.setToken(access_token)
+            storage.setToken(access_token)
+          setTimeout(function(){
+            console.log("Executed after 1 second");
+
           // Redirect to the user's dashboard or home page
           navigate("/app/my-projects");
+          }, 1000);
         } catch (error) {
           console.error("Failed to impersonate user:", error);
           // Optional: Redirect to an error page or show an error message
