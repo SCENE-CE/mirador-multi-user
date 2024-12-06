@@ -32,6 +32,9 @@ export const Impersonate = () => {
           console.log('adminToken',adminToken)
           storage.setAdminToken(adminToken);
           // Store JWT in session storage or local storage
+          if(!token){
+            console.error('token is undefined', token);
+          }
           storage.setToken(access_token)
           // Redirect to the user's dashboard or home page
           navigate("/app/my-projects");
