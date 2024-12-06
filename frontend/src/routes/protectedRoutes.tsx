@@ -1,6 +1,7 @@
 import { Navigate } from "react-router-dom";
 import { MainContent } from "../features/miscellaneous/MainContent.tsx";
 import { MiradorPublicExposed } from "../features/mirador/MIradorPublicExposed.tsx";
+import { Impersonate } from "../features/admin/components/Impersonate.tsx";
 
 export const protectedRoutes= [
   {
@@ -11,5 +12,9 @@ export const protectedRoutes= [
   {
     path:"/mirador/*",
     element:<MiradorPublicExposed/>
+  },
+  {
+    path:"/impersonate/*",
+    element:<Impersonate/>
   }
 ]

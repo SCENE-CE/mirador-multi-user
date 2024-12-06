@@ -5,9 +5,11 @@ import {
   UseGuards,
   Req,
   Res,
+  Body,
 } from '@nestjs/common';
 import { ImpersonationService } from './impersonation.service';
 import { AuthGuard } from '../auth/auth.guard';
+import { ImpersonateDto } from './dto/impersonateDto';
 
 @Controller('impersonation')
 export class ImpersonationController {
@@ -22,8 +24,19 @@ export class ImpersonationController {
       userId,
     );
 
-    const redirectUrl = `${process.env.FRONTEND_URL}/impersonate?token=${impersonation.token}`;
+    const redirectUrl = `${process.env.FRONTEND_URL}/impersonate/?token=${impersonation.token}`;
 
     return res.json({ redirectUrl });
+  }
+
+  @Post('/validate')
+  async validateUser(@Body() token: { impersonateToken: string }) {
+    return this.impersonationService.validateToken(token.impersonateToken);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('/impersonate')
+  async impersonate(@Body() impersonateDto: ImpersonateDto) {
+    return this.impersonationService.impersonateUserData(impersonateDto);
   }
 }

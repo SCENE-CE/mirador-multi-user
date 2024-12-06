@@ -17,8 +17,9 @@ export const initiateImpersonation = async (userId: number) => {
     }
 
     const impersonation = await response.json();
+    storage.SetImpersonateUserId(userId);
 
-    window.location.href = impersonation.redirectUrl;
+    window.open(impersonation.redirectUrl, '_blank');
   } catch (error) {
     console.error('Failed to initiate impersonation', error);
   }

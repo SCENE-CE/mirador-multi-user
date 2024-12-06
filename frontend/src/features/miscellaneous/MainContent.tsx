@@ -10,10 +10,11 @@ export const MainContent = () => {
   const logout = useLogout({});
   const [selectedProjectId, setSelectedProjectId] = useState<number | undefined>(undefined);
   const [viewer, setViewer] = useState<any>(undefined);
-  console.log('user',user)
   if (!user || !user.data) {
     return <Loading />;
   }
+
+  console.log(user.data);
 
   if (!user.data.id) {
     return <NotConfirmedAccount/>;
