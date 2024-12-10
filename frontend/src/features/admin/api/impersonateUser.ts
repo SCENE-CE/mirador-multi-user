@@ -16,7 +16,7 @@ export const impersonateUser = async (impersonateToken:string,userId:number ) =>
     const adminToken = storage.getToken()
     console.log("adminToken",adminToken)
     storage.setAdminToken(adminToken);
-
+    storage.clearToken()
     const responseJson =  await response.json();
   console.log("responseJson",responseJson);
     const { access_token } = responseJson;
