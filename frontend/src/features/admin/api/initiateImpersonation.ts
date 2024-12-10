@@ -21,7 +21,7 @@ export const initiateImpersonation = async (userId: number) => {
 
     window.open(impersonation.redirectUrl, '_blank');
 
-    window.close();
+    // window.close();
   } catch (error) {
     console.error('Failed to initiate impersonation', error);
   }
