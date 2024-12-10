@@ -14,14 +14,18 @@ export const Impersonate = () => {
       console.log('token',token);
       // Avoid multiple requests if the effect runs multiple times
       if (madeRequest.current) {
+        console.log('return ')
         return;
       }
 
       if (token) {
+        console.log('token', token);
         madeRequest.current = true;
 
         try {
+          console.log('try')
           const userData = storage.GetImpersonateUserData()
+          console.log("get impersonate user Data",userData);
           await impersonateUser(token,userData.id);
           navigate("/app/my-projects");
         } catch (error) {

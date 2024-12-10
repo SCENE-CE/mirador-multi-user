@@ -8,9 +8,11 @@ const storage = {
   },
   setToken: (token: string) => {
     if(token == undefined){
+      console.error('token is undefined');
       return
     }
     window.localStorage.setItem(`${storagePrefix}token`, JSON.stringify(token));
+    console.log("after window localStorage:", token);
   },
   clearToken:() => {
     window.localStorage.removeItem(`${storagePrefix}token`);
