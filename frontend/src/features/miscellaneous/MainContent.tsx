@@ -24,6 +24,7 @@ export const MainContent = () => {
   const handleDiscconnect = () => {
     logout.mutate({});
   };
+
   return (
     <Grid container direction="row"
     >

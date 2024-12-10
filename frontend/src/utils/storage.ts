@@ -24,6 +24,9 @@ const storage = {
     window.localStorage.setItem(`${storagePrefix}impersonate-user`, `${id}`);
   },
   setAdminToken:(token:string)=>{
+    if(token == null){
+      return;
+    }
     window.localStorage.setItem(`${storagePrefix}admintoken`, token);
   },
   getAdminToken:()=>{

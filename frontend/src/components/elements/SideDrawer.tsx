@@ -190,8 +190,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const handleLeaveImpersonate = () => {
   const adminToken = storage.getAdminToken()
+    console.log('adminToken',adminToken)
     storage.setToken(adminToken!)
+    console.log('settoken')
     storage.clearAdminToken()
+    console.log('clear token')
     navigate('/')
   }
 
