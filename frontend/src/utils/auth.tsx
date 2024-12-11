@@ -3,18 +3,25 @@ import { getUser } from "../features/auth/api/getUser.ts";
 import {
   login,
   LoginCredentialsDTO,
-  UserResponse,
   register,
   RegisterCredentialsDTO,
-  User
+  User,
+  UserResponse
 } from "../features/auth/export.ts";
 import { configureAuth } from "react-query-auth";
 import { CircularProgress, Grid } from "@mui/material";
 
 async function handleTokenResponse(data:UserResponse){
   const {access_token, user } = data;
+  console.log('user', user);
   storage.setToken(access_token);
   return user;
+}
+
+async function handleImpersonateToken(token:string){
+  storage.setToken(token);
+  //get user
+  return await loadUser();
 }
 
 async function loadUser(): Promise<User|null>{
@@ -27,9 +34,11 @@ async function loadUser(): Promise<User|null>{
 }
 //TODO: Modifier l'appelle au backend et construire une route en back pour retourner le bon objet souhaité par react query auth
 async function loginFn(data: LoginCredentialsDTO){
+  if(data.token){
+    return await handleImpersonateToken(data.token);
+  }
   const response = await login(data);
-  const token = await handleTokenResponse(response)
-  return token;
+  return await handleTokenResponse(response);
 }
 
 async function registerFn(data: RegisterCredentialsDTO){
@@ -43,6 +52,7 @@ async function logoutFn()
   storage.clearToken();
   window.location.assign(window.location.origin as unknown as string);
 }
+
 
 const authConfig= {
   userFn : loadUser,

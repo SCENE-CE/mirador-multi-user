@@ -4,6 +4,7 @@ import toast from 'react-hot-toast';
 export type LoginCredentialsDTO = {
   mail: string;
   password: string;
+  token?: string;
 };
 
 export const login = async (data: LoginCredentialsDTO): Promise<UserResponse> => {
