@@ -15,6 +15,7 @@ export const getUser = async (): Promise<User> => {
       throw new Error("Failed to fetch user");
     }
     const user = await response.json();
+    console.log('user from GET USER :',user);
     return user;
   } catch (error) {
     storage.clearToken();
