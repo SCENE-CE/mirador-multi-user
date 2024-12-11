@@ -12,7 +12,7 @@ services:
 
   frontend:
     ports:
-      - "${FRONTEND_PORT}:4000"
+      - "${PORT}:4000"
 
   caddy:
     ports:

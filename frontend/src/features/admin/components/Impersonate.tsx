@@ -2,9 +2,11 @@ import { useEffect } from "react";
 import { impersonateUser } from "../api/impersonateUser.ts";
 import { useNavigate } from 'react-router-dom';
 import storage from "../../../utils/storage.ts";
+import { handleTokenResponse } from "../../../utils/auth.tsx";
 
 export const Impersonate = () => {
   const navigate = useNavigate();
+
   // const madeRequest = useRef(false);
 
   useEffect(() => {
@@ -25,9 +27,11 @@ export const Impersonate = () => {
           console.log('try')
           const userData = storage.GetImpersonateUserData()
           console.log("get impersonate user Data",userData);
-          await impersonateUser(token,userData.id);
+          const userToImpersonateData = await impersonateUser(token,userData.id);
+          await handleTokenResponse(userToImpersonateData);
 
-          navigate("/app/my-projects");
+          navigate('/app/my-projects')
+
         } catch (error) {
           console.error("Failed to impersonate user:", error);
           // Optional: Redirect to an error page or show an error message

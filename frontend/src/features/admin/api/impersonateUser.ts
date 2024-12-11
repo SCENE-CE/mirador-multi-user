@@ -1,6 +1,7 @@
 import storage from "../../../utils/storage.ts";
+import { UserResponse } from "../../auth/types/types.ts";
 
-export const impersonateUser = async (impersonateToken:string,userId:number ) => {
+export const impersonateUser = async (impersonateToken:string,userId:number ): Promise<UserResponse> => {
   const token = storage.getToken();
   console.log('token',token);
   try{
@@ -16,7 +17,7 @@ export const impersonateUser = async (impersonateToken:string,userId:number ) =>
     const adminToken = storage.getToken()
     console.log("adminToken",adminToken)
 
-      storage.setAdminToken(adminToken);
+    storage.setAdminToken(adminToken);
 
     storage.clearToken()
 
@@ -29,10 +30,20 @@ export const impersonateUser = async (impersonateToken:string,userId:number ) =>
       console.error('token is undefined', token);
     }
 
-    console.log("access_token",access_token);
+    const profileResponse = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/profile`, {
+      method: "GET",
+      headers: {
+        "Authorization": `Bearer ${access_token}`
+      }
+    });
+    const profile = await profileResponse.json();
 
-    storage.setToken(access_token)
+    return {
+      user: profile,
+      access_token: access_token
+    };
   }catch(error){
     console.error('Failed to validate impersonation', error);
+    throw error;
   }
 }
