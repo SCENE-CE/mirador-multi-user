@@ -16,11 +16,7 @@ export const Impersonate = () => {
       const params = new URLSearchParams(window.location.search);
       const token = params.get('token');
       console.log('token',token);
-      // // Avoid multiple requests if the effect runs multiple times
-      // if (madeRequest.current) {
-      //   console.log('return ')
-      //   return;
-      // }
+
 
       if (token) {
         console.log('token', token);
@@ -31,16 +27,15 @@ export const Impersonate = () => {
           console.log("get impersonate user Data",userData);
           const user_token = await impersonateUser(token,userData.id);
           if(user_token){
-            logout.mutate({});
-            await loginUser({ mail:"",password:"", token:user_token}, {
-              onSuccess: () => navigate('/app/my-projects')
+            logout.mutate({
+              onSuccess: async ()=> await loginUser({ mail:"",password:"", token:user_token}, {
+                onSuccess: () => navigate('/app/my-projects')
+              })
             });
           }
           navigate("/app/my-projects");
         } catch (error) {
           console.error("Failed to impersonate user:", error);
-          // Optional: Redirect to an error page or show an error message
-          // navigate("/error");
         }
       }
     };
