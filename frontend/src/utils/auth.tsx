@@ -13,6 +13,7 @@ import { CircularProgress, Grid } from "@mui/material";
 
 export async function handleTokenResponse(data:UserResponse){
   const {access_token, user } = data;
+  console.log('data',data)
   storage.setToken(access_token);
   return user;
 }

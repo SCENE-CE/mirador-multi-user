@@ -28,7 +28,7 @@ export const login = async (data: LoginCredentialsDTO): Promise<UserResponse> =>
       }
     });
     const profile = await profileResponse.json();
-
+    console.log('profile',profile);
     return {
       user: profile,
       access_token: access_token
