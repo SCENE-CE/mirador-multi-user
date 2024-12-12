@@ -47,8 +47,9 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
       const config = {
         id: viewerRef.current.id,
         annotation: {
+          // TODO USe MMU Adpater
+          //adapter: (canvasId : string) => new MMUAdapter( project.id, `localStorage://?canvasId=${canvasId}`),
           adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-          // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
           exportLocalStorageAnnotations: false, // display annotation JSON export button
         }
       };
