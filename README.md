@@ -23,7 +23,7 @@ You can test the application at the following address : TODO
 - `nvm use`
 - `cd backend`
 - `npm install`
-- `cd ../frontend-TS`
+- `cd ../frontend`
 - `npm install`
 - `cd ..`
 - `docker-compose up --build`
