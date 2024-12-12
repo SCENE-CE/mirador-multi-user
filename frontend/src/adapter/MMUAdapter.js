@@ -1,7 +1,7 @@
 export default class LocalStorageAdapter {
   /** */
   constructor(projectId,annotationPageId) {
-    console.log("MMU Sotrage adapter")
+    console.log("MMU Storage adapter")
     this.projectId = projectId;
     this.annotationPageId = annotationPageId;
   }
