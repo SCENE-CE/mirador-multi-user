@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { IsNumber } from 'class-validator';
+import { IsNumber, IsString } from "class-validator";
 
 @Entity()
 export class AnnotationPage {
@@ -11,8 +11,8 @@ export class AnnotationPage {
   projectId: number;
 
   @Column()
-  @IsNumber()
-  annotationPageId: number;
+  @IsString()
+  annotationPageId: string;
 
   @Column({ type: 'json' })
   content: any;

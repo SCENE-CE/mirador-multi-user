@@ -1,7 +1,7 @@
-import { gettingAnnotationPage } from "../api/gettingAnnotationPage.js";
-import { upsertAnnotationPage } from "../api/upsertAnnotationPage.js";
+import { upsertAnnotationPage } from "../api/upsertAnnotationPage.ts";
+import { gettingAnnotationPage } from "../api/gettingAnnotationPage.ts";
 
-export default class LocalStorageAdapter {
+export default class MMUAdapter {
   /** */
   constructor(projectId,annotationPageId) {
     console.log("MMU Storage adapter")
@@ -11,6 +11,7 @@ export default class LocalStorageAdapter {
 
   /** */
   async create(annotation) {
+    console.log("CREATE")
     const emptyAnnoPage = {
       id: this.annotationPageId,
       items: [],
@@ -52,6 +53,7 @@ export default class LocalStorageAdapter {
 
   /** */
   async all() {
+    console.log("get all")
     return await gettingAnnotationPage(this.annotationPageId, this.projectId);
   }
 }

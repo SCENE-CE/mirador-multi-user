@@ -12,6 +12,7 @@ export class AnnotationPageController {
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() createAnnotationPageDto: CreateAnnotationPageDto) {
+    console.log("post")
     return this.annotationPageService.create(createAnnotationPageDto);
   }
   @ApiOperation({ summary: 'finding all annotation page' })
@@ -25,9 +26,16 @@ export class AnnotationPageController {
   @UseGuards(AuthGuard)
   @Get(':annotationPageId/:projectId')
   findOne(
-    @Param('annotationPageId') annotationPageId: number,
+    @Param('annotationPageId') annotationPageId: string,
     @Param('projectId') projectId: number,
   ) {
-    return this.annotationPageService.findOne(annotationPageId, projectId);
+    console.log("findOne")
+    console.log("annotationPageId");
+    console.log(annotationPageId);
+    console.log("projectId");
+    console.log(projectId);
+    const decodedURI= decodeURIComponent(annotationPageId)
+    console.log(decodedURI)
+    return this.annotationPageService.findOne(decodedURI, projectId);
   }
 }

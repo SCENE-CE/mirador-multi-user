@@ -19,7 +19,10 @@ export class AnnotationPageService {
       const annotationPage = this.annotationPageRepository.create(
         createAnnotationPageDto,
       );
-      return await this.annotationPageRepository.save(annotationPage);
+      const toreturn = await this.annotationPageRepository.save(annotationPage);
+      console.log('-----------toreturn-----------');
+      console.log(toreturn);
+      return toreturn;
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -39,10 +42,10 @@ export class AnnotationPageService {
     }
   }
 
-  async findOne(annotationPageId: number, projectId: number) {
+  async findOne(annotationPageId: string, projectId: number) {
     try {
       return await this.annotationPageRepository.findOne({
-        where: { id: annotationPageId, projectId: projectId },
+        where: { annotationPageId: annotationPageId, projectId: projectId },
       });
     } catch (error) {
       this.logger.error(error.message, error.stack);

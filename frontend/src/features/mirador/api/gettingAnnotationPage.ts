@@ -1,9 +1,12 @@
 import storage from "../../../utils/storage.ts";
 
-export const gettingAnnotationPage = async (annotationPageId: number, projectId:number)=>{
+export const gettingAnnotationPage = async (annotationPageId:string, projectId:number)=>{
   try{
     const token = storage.getToken();
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/annotation-page/${annotationPageId}/${projectId}`, {
+    const encodedURI = encodeURIComponent(annotationPageId)
+    console.log('encodedURI',encodedURI);
+
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/annotation-page/${encodedURI}/${projectId}`, {
       method: 'GET',
       headers: {
         "Authorization": `Bearer ${token}`,

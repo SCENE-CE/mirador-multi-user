@@ -6,10 +6,10 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IMiradorState from "./interface/IState.ts";
-import LocalStorageAdapter from "./adapter/LocalStorageAdapter";
 import './style/mirador.css'
 import { Project } from "../projects/types/types.ts";
 import IState from "./interface/IState.ts";
+import MMUAdapter from "./adapter/MMUAdapter";
 
 interface MiradorViewerHandle {
   setViewer:()=>IState;
@@ -47,9 +47,8 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
       const config = {
         id: viewerRef.current.id,
         annotation: {
-          // TODO USe MMU Adpater
-          //adapter: (canvasId : string) => new MMUAdapter( project.id, `${canvasId}/annotationPage`),
-          adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          adapter: (canvasId : string) => new MMUAdapter( project.id, `${canvasId}/annotationPage`),
+          // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
           exportLocalStorageAnnotations: false, // display annotation JSON export button
         }
       };
