@@ -13,15 +13,8 @@ import { CircularProgress, Grid } from "@mui/material";
 
 async function handleTokenResponse(data:UserResponse){
   const {access_token, user } = data;
-  console.log('user', user);
   storage.setToken(access_token);
   return user;
-}
-
-async function handleImpersonateToken(token:string){
-  storage.setToken(token);
-  //get user
-  return await loadUser();
 }
 
 async function loadUser(): Promise<User|null>{
@@ -32,11 +25,10 @@ async function loadUser(): Promise<User|null>{
   console.log('USER DATA IS EMPTY')
   return null
 }
-//TODO: Modifier l'appelle au backend et construire une route en back pour retourner le bon objet souhaité par react query auth
+
 async function loginFn(data: LoginCredentialsDTO){
-  if(data.token){
-    return await handleImpersonateToken(data.token);
-  }
+  console.log('LOGIN')
+  console.log('login data :',data);
   const response = await login(data);
   return await handleTokenResponse(response);
 }
@@ -49,8 +41,8 @@ async function registerFn(data: RegisterCredentialsDTO){
 
 async function logoutFn()
 {
+  console.log("LOGOUT");
   storage.clearToken();
-  window.location.assign(window.location.origin as unknown as string);
 }
 
 

@@ -22,7 +22,14 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() signInDto: loginDto) {
-    return this.authService.signIn(signInDto.mail, signInDto.password);
+    console.log('ENTER LOGIN')
+    console.log('signInDto');
+    console.log(signInDto);
+    return this.authService.signIn(
+      signInDto.mail,
+      signInDto.password,
+      signInDto.isImpersonate,
+    );
   }
 
   @ApiOperation({ summary: 'get your profile' })

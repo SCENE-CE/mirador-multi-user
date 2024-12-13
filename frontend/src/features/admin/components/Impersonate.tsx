@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { impersonateUser } from "../api/impersonateUser.ts";
 import { useNavigate } from 'react-router-dom';
 import storage from "../../../utils/storage.ts";
 import { useLogin, useLogout } from "../../../utils/auth.tsx";
@@ -9,31 +8,34 @@ export const Impersonate = () => {
   const logout = useLogout({});
   const { mutateAsync:loginUser } = useLogin();
 
-  // const madeRequest = useRef(false);
-
   useEffect(() => {
     const impersonate = async () => {
       const params = new URLSearchParams(window.location.search);
       const token = params.get('token');
-      console.log('token',token);
-
-
       if (token) {
-        console.log('token', token);
-
+        console.log('impersonate session token', token);
         try {
           console.log('try')
           const userData = storage.GetImpersonateUserData()
           console.log("get impersonate user Data",userData);
-          const user_token = await impersonateUser(token,userData.id);
-          if(user_token){
-            logout.mutate({
-              onSuccess: async ()=> await loginUser({ mail:"",password:"", token:user_token}, {
-                onSuccess: () => navigate('/app/my-projects')
-              })
+          if(userData){
+            console.log('isUserDAta = true');
+            await logout.mutateAsync({
             });
+
+            await loginUser(
+              { mail: "", password: "", isImpersonate: token },
+              {
+                onSuccess: () => {
+                  console.log("Login successful, navigating...");
+                  navigate("/app/my-projects");
+                },
+                onError: (error) => {
+                  console.error("Failed to impersonate user:", error);
+                },
+              }
+            );
           }
-          navigate("/app/my-projects");
         } catch (error) {
           console.error("Failed to impersonate user:", error);
         }

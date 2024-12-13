@@ -1,5 +1,3 @@
-import { ImpersonateUserData } from "../features/admin/types/type.ts";
-
 const storagePrefix = 'Mirador-multi-user-'
 const storage = {
 
@@ -17,11 +15,12 @@ const storage = {
   clearToken:() => {
     window.localStorage.removeItem(`${storagePrefix}token`);
   },
-  GetImpersonateUserData: (): ImpersonateUserData =>{
-    return JSON.parse(localStorage.getItem(`${storagePrefix}impersonate-user`) as string);
+  GetImpersonateUserData: (): string | null =>{
+    console.log('get impersonate user data')
+    return localStorage.getItem(`${storagePrefix}impersonate-user`);
   },
-  SetImpersonateUserId:(id:number)=>{
-    window.localStorage.setItem(`${storagePrefix}impersonate-user`, `${id}`);
+  SetImpersonateUserId:(mail:string)=>{
+    window.localStorage.setItem(`${storagePrefix}impersonate-user`, `${mail}`);
   },
   setAdminToken:(token:string)=>{
     if(token == null){

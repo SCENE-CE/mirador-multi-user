@@ -4,17 +4,19 @@ import toast from 'react-hot-toast';
 export type LoginCredentialsDTO = {
   mail: string;
   password: string;
-  token?: string;
+  isImpersonate?: string;
 };
 
 export const login = async (data: LoginCredentialsDTO): Promise<UserResponse> => {
   try {
+    console.log("FETCH data",data);
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify(data),
+      cache: "no-store",
     });
     if (!response.ok) {
       toast.error('Failed to log user');

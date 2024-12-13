@@ -8,4 +8,6 @@ export class loginDto {
   @IsString()
   @IsNotEmpty()
   password: string;
+
+  isImpersonate?:string
 }

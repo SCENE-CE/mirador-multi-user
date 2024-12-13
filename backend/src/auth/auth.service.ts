@@ -19,10 +19,12 @@ export class AuthService {
     private emailService: EmailServerService,
   ) {}
 
-  async signIn(mail: string, pass: string): Promise<{ access_token: string }> {
+  async signIn(mail: string, pass: string, isImpersonate: string): Promise<{ access_token: string }> {
+    console.log(isImpersonate);
+    if(isImpersonate){
+      console.log('isImpersonate', isImpersonate);
+    }
     const user = await this.usersService.findOneByMail(mail);
-    console.log('mail', mail);
-    console.log('pass', pass);
 
     if (!user) {
       throw new ForbiddenException();

@@ -21,10 +21,13 @@ export const MainContent = () => {
   }
 
 
-  const handleDiscconnect = () => {
-    logout.mutate({});
+  const handleDisconnect = () => {
+    logout.mutate(undefined, {
+      onSuccess: () => {
+        window.location.assign(window.location.origin);
+      },
+    });
   };
-
   return (
     <Grid container direction="row"
     >
@@ -32,7 +35,7 @@ export const MainContent = () => {
         user={user.data}
         viewer={viewer}
         setViewer={setViewer}
-        handleDisconnect={handleDiscconnect}
+        handleDisconnect={handleDisconnect}
         selectedProjectId={selectedProjectId}
         setSelectedProjectId={setSelectedProjectId}
       />
