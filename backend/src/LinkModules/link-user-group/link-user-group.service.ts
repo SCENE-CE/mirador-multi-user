@@ -48,7 +48,7 @@ export class LinkUserGroupService {
           ? linkUserGroupDto.rights
           : User_UserGroupRights.READER,
       });
-      return await this.linkUserGroupRepository.upsert(linkGroup, {
+      return await this.linkUserGroupRepository.eupsert(linkGroup, {
         conflictPaths: ['user_group', 'user'],
       });
     } catch (error) {

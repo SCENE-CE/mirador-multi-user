@@ -6,7 +6,7 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IMiradorState from "./interface/IState.ts";
-import LocalStorageAdapter from "adapter/LocalStorageAdapter";
+import LocalStorageAdapter from "./adapter/LocalStorageAdapter";
 import './style/mirador.css'
 import { Project } from "../projects/types/types.ts";
 import IState from "./interface/IState.ts";

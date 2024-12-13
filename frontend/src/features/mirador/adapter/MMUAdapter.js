@@ -1,3 +1,6 @@
+import { gettingAnnotationPage } from "../api/gettingAnnotationPage.js";
+import { upsertAnnotationPage } from "../api/upsertAnnotationPage.js";
+
 export default class LocalStorageAdapter {
   /** */
   constructor(projectId,annotationPageId) {
@@ -15,15 +18,7 @@ export default class LocalStorageAdapter {
     };
     const annotationPage = await this.all() || emptyAnnoPage;
     annotationPage.items.push(annotation);
-
-
-    // TODO upsert annotationPage :
-    //  this.projectId, this.annotationPageId, JSON.stringify(annotationPage)
-
-
-
-    // When sucessfully saved return annotation page
-    return annotationPage;
+    return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content:JSON.stringify(annotationPage)})
   }
 
   /** */
@@ -32,12 +27,7 @@ export default class LocalStorageAdapter {
     if (annotationPage) {
       const currentIndex = annotationPage.items.findIndex((item) => item.id === annotation.id);
       annotationPage.items.splice(currentIndex, 1, annotation);
-
-      // TODO upsert annotationPage :
-      //  this.projectId, this.annotationPageId, JSON.stringify(annotationPage)
-
-      // When sucessfully saved return annotation page
-      return annotationPage;
+      return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content:JSON.stringify(annotationPage)})
     }
     return null;
   }
@@ -48,11 +38,7 @@ export default class LocalStorageAdapter {
     if (annotationPage) {
       annotationPage.items = annotationPage.items.filter((item) => item.id !== annoId);
     }
-    // TODO upsert following info :
-    //  this.projectId, this.annotationPageId, JSON.stringify(annotationPage)
-
-    // When sucessfully saved return annotation page
-    return annotationPage;
+    return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content:JSON.stringify(annotationPage)})
   }
 
   /** */
@@ -66,10 +52,6 @@ export default class LocalStorageAdapter {
 
   /** */
   async all() {
-
-    // TODO Get annotationPage from following criteria :
-    //  this.projectId, this.annotationPageId
-
-    return annotationPage;
+    return await gettingAnnotationPage(this.annotationPageId, this.projectId);
   }
 }
