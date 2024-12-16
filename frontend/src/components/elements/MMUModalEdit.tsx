@@ -314,14 +314,11 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
   };
 
 
-  console.log('item',item)
   const handleUpdateAdvancedEditMetadata = async (data:any)=>{
-    console.log("new data",data.newData)
     const newManifest = {manifestId : item.id, json:data.newData, origin: item.origin! as manifestOrigin, path: item.path!, hash: item.hash!}
     await updateManifestJson(newManifest)
   }
 
-  console.log("manifestJson",manifestJson)
   return (
     <Grid container sx={{overflow:'scroll', maxHeight:600}}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">
