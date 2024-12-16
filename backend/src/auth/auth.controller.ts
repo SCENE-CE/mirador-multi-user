@@ -6,25 +6,27 @@ import {
   HttpStatus,
   Post,
   Request,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { loginDto } from './dto/login.dto';
 import { AuthGuard } from './auth.guard';
 import { ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
+import { ImpersonationService } from '../impersonation/impersonation.service';
 
 @ApiBearerAuth()
 @Controller('auth')
 export class AuthController {
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private readonly impersonationService: ImpersonationService,
+  ) {}
 
   @ApiOperation({ summary: 'Login with your credentials' })
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: loginDto) {
-    console.log('ENTER LOGIN')
-    console.log('signInDto');
-    console.log(signInDto);
+  async signIn(@Body() signInDto: loginDto) {
     return this.authService.signIn(
       signInDto.mail,
       signInDto.password,

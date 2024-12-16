@@ -10,10 +10,15 @@ export type LoginCredentialsDTO = {
 export const login = async (data: LoginCredentialsDTO): Promise<UserResponse> => {
   try {
     console.log("FETCH data",data);
+    console.log("cache-control: no-store")
+    console.log("        \"pragma\": \"no-cache\"\n")
+
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/login`, {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "cache-control": "no-store",
+        "pragma": "no-cache",
       },
       body: JSON.stringify(data),
       cache: "no-store",

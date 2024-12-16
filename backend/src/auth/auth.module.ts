@@ -5,6 +5,7 @@ import { UsersModule } from '../BaseEntities/users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule } from '@nestjs/config';
 import { EmailServerService } from '../utils/email/email.service';
+import { ImpersonationModule } from "../impersonation/impersonation.module";
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { EmailServerService } from '../utils/email/email.service';
       signOptions: { expiresIn: '24h' },
     }),
     UsersModule,
+    ImpersonationModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, EmailServerService],

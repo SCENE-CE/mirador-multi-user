@@ -11,30 +11,21 @@ export const Impersonate = () => {
   useEffect(() => {
     const impersonate = async () => {
       const params = new URLSearchParams(window.location.search);
-      const token = params.get('token');
+      const token = params.get("token");
       if (token) {
-        console.log('impersonate session token', token);
+        console.log("Impersonate session token", token);
         try {
-          console.log('try')
-          const userData = storage.GetImpersonateUserData()
-          console.log("get impersonate user Data",userData);
-          if(userData){
-            console.log('isUserDAta = true');
-            await logout.mutateAsync({
-            });
+          console.log("Try");
+          const userData = storage.GetImpersonateUserData();
+          console.log("Get impersonate user data", userData);
+          if (userData) {
+            console.log("isUserData = true");
+            await logout.mutateAsync({});
 
-            await loginUser(
-              { mail: "", password: "", isImpersonate: token },
-              {
-                onSuccess: () => {
-                  console.log("Login successful, navigating...");
-                  navigate("/app/my-projects");
-                },
-                onError: (error) => {
-                  console.error("Failed to impersonate user:", error);
-                },
-              }
-            );
+            // Call `mutateAsync` and handle navigation after it resolves
+            await loginUser({ mail: "", password: "", isImpersonate: token });
+            console.log("Login successful, navigating...");
+            navigate("/app/my-projects");
           }
         } catch (error) {
           console.error("Failed to impersonate user:", error);
@@ -43,7 +34,7 @@ export const Impersonate = () => {
     };
 
     impersonate();
-  }, [navigate]);
+  }, []);
 
   return (
     <>

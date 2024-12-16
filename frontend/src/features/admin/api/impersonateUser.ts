@@ -14,7 +14,6 @@ export const impersonateUser = async (impersonateToken:string,userId:number ) =>
     });
 
 
-
     const responseJson =  await response.json();
 
 

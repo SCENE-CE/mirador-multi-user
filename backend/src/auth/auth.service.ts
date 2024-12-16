@@ -10,6 +10,7 @@ import { UsersService } from '../BaseEntities/users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { EmailServerService } from '../utils/email/email.service';
+import { ImpersonationService } from '../impersonation/impersonation.service';
 
 @Injectable()
 export class AuthService {
@@ -17,15 +18,48 @@ export class AuthService {
     private usersService: UsersService,
     private jwtService: JwtService,
     private emailService: EmailServerService,
+    private readonly impersonationService: ImpersonationService,
   ) {}
 
-  async signIn(mail: string, pass: string, isImpersonate: string): Promise<{ access_token: string }> {
+  async signIn(
+    mail: string,
+    pass: string,
+    isImpersonate: string,
+  ): Promise<{ access_token: string }> {
+    console.log(
+      '-------------------------isImpersonate-------------------------',
+    );
     console.log(isImpersonate);
-    if(isImpersonate){
-      console.log('isImpersonate', isImpersonate);
-    }
-    const user = await this.usersService.findOneByMail(mail);
+    if (isImpersonate != undefined) {
+      console.log('isImpersonate true');
+      const impersonation =
+        await this.impersonationService.validateToken(isImpersonate);
+      if (!impersonation) {
+        throw new UnauthorizedException('token is invalid');
+      }
+      console.log(
+        '-------------------------impersonation-------------------------',
+      );
+      console.log(impersonation);
+      const user = await this.usersService.findOneByMail(
+        impersonation.user.mail,
+      );
+      if (!user) {
+        throw new ForbiddenException();
+      }
+      const payload = {
+        sub: user.id,
+        user: user.name,
+        isEmailConfirmed: user.isEmailConfirmed,
+      };
 
+      return {
+        access_token: await this.jwtService.signAsync(payload),
+      };
+    }
+    console.log('isImpersonate false');
+    const user = await this.usersService.findOneByMail(mail);
+    console.log(user);
     if (!user) {
       throw new ForbiddenException();
     }

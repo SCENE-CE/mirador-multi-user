@@ -64,6 +64,7 @@ export class ImpersonationService {
     console.log(token);
     const impersonation = await this.impersonationRepository.findOne({
       where: { token, used: false },
+      relations: ['user'],
     });
     if (!impersonation || new Date() > impersonation.exchangeBefore) {
       throw new Error('Invalid or expired token');

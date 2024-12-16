@@ -9,5 +9,6 @@ import { Impersonation } from './entities/impersonation.entity';
   imports: [TypeOrmModule.forFeature([Impersonation]), UsersModule],
   controllers: [ImpersonationController],
   providers: [ImpersonationService],
+  exports: [ImpersonationService],
 })
 export class ImpersonationModule {}
