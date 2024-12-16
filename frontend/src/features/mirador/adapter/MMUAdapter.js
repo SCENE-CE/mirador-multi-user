@@ -11,19 +11,23 @@ export default class MMUAdapter {
 
   /** */
   async create(annotation) {
-    console.log("CREATE")
+    console.log('MMU adapter CREATE')
     const emptyAnnoPage = {
       id: this.annotationPageId,
       items: [],
       type: 'AnnotationPage',
     };
-    const annotationPage = await this.all() || emptyAnnoPage;
+    let annotationPage = await this.all()
+    if(annotationPage.length < 1) {
+      annotationPage = emptyAnnoPage;
+    }
     annotationPage.items.push(annotation);
     return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content:JSON.stringify(annotationPage)})
   }
 
   /** */
   async update(annotation) {
+    console.log('MMU adapter UPDATE')
     const annotationPage = await this.all();
     if (annotationPage) {
       const currentIndex = annotationPage.items.findIndex((item) => item.id === annotation.id);
@@ -35,6 +39,7 @@ export default class MMUAdapter {
 
   /** */
   async delete(annoId) {
+    console.log('MMU adapter DELETE')
     const annotationPage = await this.all();
     if (annotationPage) {
       annotationPage.items = annotationPage.items.filter((item) => item.id !== annoId);
@@ -44,6 +49,7 @@ export default class MMUAdapter {
 
   /** */
   async get(annoId) {
+    console.log('MMU adapter GET')
     const annotationPage = await this.all();
     if (annotationPage) {
       return annotationPage.items.find((item) => item.id === annoId);
@@ -53,7 +59,7 @@ export default class MMUAdapter {
 
   /** */
   async all() {
-    console.log("get all")
+    console.log('MMU adapter GET ALL')
     return await gettingAnnotationPage(this.annotationPageId, this.projectId);
   }
 }

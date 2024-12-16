@@ -16,6 +16,10 @@ export class AnnotationPageService {
 
   async create(createAnnotationPageDto: CreateAnnotationPageDto) {
     try {
+      console.log(
+        '-------------------createAnnotationPageDto-------------------',
+      );
+      console.log(createAnnotationPageDto);
       const annotationPage = this.annotationPageRepository.create(
         createAnnotationPageDto,
       );
@@ -31,9 +35,11 @@ export class AnnotationPageService {
     }
   }
 
-  async findAll() {
+  async findAll(annotPageId: string, projectId: number) {
     try {
-      return await this.annotationPageRepository.find();
+      return await this.annotationPageRepository.find({
+        where: { annotationPageId: annotPageId, projectId: projectId },
+      });
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(

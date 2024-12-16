@@ -10,7 +10,7 @@ export const upsertAnnotationPage = async (annotationPageDto: AnnotationPageDto)
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({annotationPageDto}),
+      body: JSON.stringify(annotationPageDto),
     });
     return await response.json();
   }catch(error){

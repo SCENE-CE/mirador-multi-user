@@ -12,7 +12,9 @@ export const gettingAnnotationPage = async (annotationPageId:string, projectId:n
         "Authorization": `Bearer ${token}`,
       },
     });
-    return await response.json();
+    const responseGetAll= await response.json();
+    console.log('responseGetAll',responseGetAll);
+    return responseGetAll;
   }catch(error){
     console.error(error);
   }
