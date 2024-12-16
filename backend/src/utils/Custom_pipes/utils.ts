@@ -63,7 +63,6 @@ export async function getPeerTubeVideoDetails(
 ): Promise<any> {
   const baseDomain = new URL(url).origin;
   const apiURL = `${baseDomain}/api/v1/videos/${videoId}`;
-
   const response = await fetch(apiURL);
 
   if (!response.ok) {
@@ -113,12 +112,16 @@ export async function getYoutubeJson(
     const videoResponse = await fetch(
       `https://www.youtube.com/oembed?url=https://${normalizedUrl}&format=json`,
     );
+    console.log("videoResponse");
+    console.log(videoResponse);
     const toreturn = await videoResponse.json();
     return toreturn;
   } catch (error: any) {
     console.error(`Error getYoutubeJson: ${error.message}`);
   }
 }
+
+
 
 export async function isImage(url: string): Promise<boolean | ArrayBuffer> {
   try {
@@ -137,5 +140,42 @@ export async function isImage(url: string): Promise<boolean | ArrayBuffer> {
     }
   } catch (error) {
     console.error(`Error gettingImage: ${error.message}`);
+  }
+}
+
+function iso8601DurationToSeconds(isoDuration: string): number {
+  // Regular expression to match ISO 8601 duration format
+  const regex = /PT(?:(\d+)H)?(?:(\d+)M)?(?:(\d+)S)?/;
+  const matches = isoDuration.match(regex);
+
+  if (!matches) {
+    throw new Error('Invalid ISO 8601 duration format');
+  }
+
+  // Extract hours, minutes, and seconds
+  const hours = matches[1] ? parseInt(matches[1], 10) : 0;
+  const minutes = matches[2] ? parseInt(matches[2], 10) : 0;
+  const seconds = matches[3] ? parseInt(matches[3], 10) : 0;
+
+  // Convert to total seconds
+  return hours * 3600 + minutes * 60 + seconds;
+}
+
+
+export async function getVideoDuration(videoUrl: string): Promise<number> {
+  try {
+    // Fetch the YouTube video page
+    const response = await fetch(videoUrl);
+    const html = await response.text();
+
+    // Extract the ISO 8601 duration from the HTML
+    const match = html.match(/itemprop="duration" content="([^"]+)"/);
+    if (match && match[1]) {
+      return iso8601DurationToSeconds(match[1]);
+    } else {
+      throw new Error('Duration not found in the HTML.');
+    }
+  } catch (error) {
+    throw new Error(`Failed to fetch video duration: ${error.message}`);
   }
 }

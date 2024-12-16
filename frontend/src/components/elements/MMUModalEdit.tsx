@@ -2,7 +2,6 @@ import { Button, Grid, SelectChangeEvent, Tab, Tabs, TextField, Tooltip, Typogra
 import { ChangeEvent, Dispatch, SetStateAction, SyntheticEvent, useCallback, useEffect, useState } from "react";
 import SaveIcon from "@mui/icons-material/Save";
 import { ItemList } from "./ItemList.tsx";
-import Selector from "../Selector.tsx";
 import { MMUModal } from "./modal.tsx";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 import { ItemsRights } from "../../features/user-group/types/types.ts";
@@ -28,6 +27,7 @@ import toast from "react-hot-toast";
 import { JsonEditor } from 'json-edit-react'
 import { fetchManifest } from "../../features/manifest/api/fetchManifest.ts";
 import { updateManifestJson } from "../../features/manifest/api/updateManifestJson.ts";
+import { Selector } from "../Selector.tsx";
 
 interface ModalItemProps<T, G> {
   item: T,
@@ -396,6 +396,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
                 defaultValue={newItemMetadataCreator}
                 multiline
                 fullWidth
+                disabled
               />
             </Grid>
             <Grid
@@ -407,6 +408,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             >
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
+                  disabled
                   label={"created at"}
                   onChange={(newValue)=>setNewItemDate(newValue)}
                   value={newItemDate }

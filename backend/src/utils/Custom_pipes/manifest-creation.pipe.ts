@@ -11,14 +11,14 @@ import * as sharp from 'sharp';
 import {
   getPeerTubeThumbnail,
   getPeerTubeVideoDetails,
-  getPeerTubeVideoID,
+  getPeerTubeVideoID, getVideoDuration,
   getYoutubeJson,
   getYoutubeThumbnail,
   getYouTubeVideoID,
   isImage,
   isPeerTubeVideo,
-  isYouTubeVideo,
-} from './utils';
+  isYouTubeVideo
+} from "./utils";
 import { mediaTypes } from '../../enum/mediaTypes';
 
 @Injectable()
@@ -69,13 +69,15 @@ export class MediaInterceptor implements NestInterceptor {
             videoId = getYouTubeVideoID(url);
             if (videoId) {
               youtubeJson = await getYoutubeJson(url);
+              const videoDuration = await getVideoDuration(url);
               const timeStamp = Date.now();
               const timeStamp2 = Date.now();
               const timeStamp3 = Date.now();
               const height = youtubeJson.height;
               const width = youtubeJson.width;
-              const duration = youtubeJson.duration;
-
+              const duration = videoDuration;
+              console.log('youtubeJson');
+              console.log(youtubeJson);
               manifestToCreate.items.push({
                 id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
                 type: 'Canvas',
@@ -115,10 +117,23 @@ export class MediaInterceptor implements NestInterceptor {
               const timeStamp = Date.now();
               const timeStamp2 = Date.now();
               const timeStamp3 = Date.now();
-              const height = peertubeVideoJson.files[0]?.height;
-              const width = peertubeVideoJson.files[0]?.width;
-              const duration = peertubeVideoJson.duration;
+              const defaultHeight = 480;
+              const defaultWidth = 854;
 
+              const height =
+                peertubeVideoJson.streamingPlaylists?.[0]?.files?.[0]?.height ||
+                defaultHeight;
+              const width =
+                peertubeVideoJson.streamingPlaylists?.[0]?.files?.[0]?.width ||
+                defaultWidth;
+
+              const duration = peertubeVideoJson.duration;
+              console.log('height');
+              console.log(height);
+              console.log('width');
+              console.log(width);
+              console.log('peertubeVideoJson');
+              console.log(peertubeVideoJson);
               manifestToCreate.items.push({
                 id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
                 type: 'Canvas',
