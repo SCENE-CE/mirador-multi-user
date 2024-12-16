@@ -105,14 +105,13 @@ export type YoutubeVideoJson = {
 export async function getYoutubeJson(
   videoUrl: string,
 ): Promise<YoutubeVideoJson | undefined> {
-
   try {
     const normalizedUrl = videoUrl.replace(/^https?:\/\//, '');
 
     const videoResponse = await fetch(
       `https://www.youtube.com/oembed?url=https://${normalizedUrl}&format=json`,
     );
-    console.log("videoResponse");
+    console.log('videoResponse');
     console.log(videoResponse);
     const toreturn = await videoResponse.json();
     return toreturn;
@@ -120,8 +119,6 @@ export async function getYoutubeJson(
     console.error(`Error getYoutubeJson: ${error.message}`);
   }
 }
-
-
 
 export async function isImage(url: string): Promise<boolean | ArrayBuffer> {
   try {
@@ -160,7 +157,6 @@ function iso8601DurationToSeconds(isoDuration: string): number {
   // Convert to total seconds
   return hours * 3600 + minutes * 60 + seconds;
 }
-
 
 export async function getVideoDuration(videoUrl: string): Promise<number> {
   try {

@@ -9,17 +9,14 @@ import {
 import { Observable } from 'rxjs';
 import * as sharp from 'sharp';
 import {
-  getPeerTubeThumbnail,
   getPeerTubeVideoDetails,
   getPeerTubeVideoID, getVideoDuration,
   getYoutubeJson,
-  getYoutubeThumbnail,
   getYouTubeVideoID,
   isImage,
   isPeerTubeVideo,
   isYouTubeVideo
 } from "./utils";
-import { mediaTypes } from '../../enum/mediaTypes';
 
 @Injectable()
 export class MediaInterceptor implements NestInterceptor {
