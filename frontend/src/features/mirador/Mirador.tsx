@@ -49,7 +49,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
           adapter: (canvasId : string) => new MMUAdapter( project.id, `${canvasId}/annotationPage`),
           // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
           exportLocalStorageAnnotations: false,
-          endpointUrl:'www.toto.com'// display annotation JSON export button
         }
       };
 
@@ -67,11 +66,12 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
       // Load state only if it is not empty
       if (loadingMiradorViewer && project.id && miradorState) {
-        console.log('miradorState',miradorState)
-        console.log('miradorViewer',miradorViewer)
         const configWithAdapter = {
           ...miradorState.config,
-          endpointUrl:`${import.meta.env.VITE_BACKEND_URL}/annotation-page/ENCODED_URI/${project.id}`,
+          annotation:{
+            ...miradorState.config.annotation,
+            adapter: (canvasId : string) => new MMUAdapter( project.id, `${canvasId}/annotationPage`),
+          }
         }
         const miradorStateWithAdapter = {
           ...miradorState,
@@ -82,7 +82,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
         console.log('miradorStateWithAdapter',miradorStateWithAdapter)
         loadingMiradorViewer.store.dispatch(
           Mirador.actions.importMiradorState(miradorStateWithAdapter),
-          // Mirador.actions.importConfig(configWithAdapter)
         );
       }
 
