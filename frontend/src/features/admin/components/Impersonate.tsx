@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { impersonateUser } from "../api/impersonateUser.ts";
 import { useNavigate } from 'react-router-dom';
 import storage from "../../../utils/storage.ts";
 import { useLogin, useLogout } from "../../../utils/auth.tsx";

@@ -105,8 +105,8 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
     if (handleSelectorChange) {
       await handleSelectorChange(itemSelected, event.target.value, item.id, item);
     }
-    await fetchData();
   }
+
   return (
     <Card>
       <Grid container item flexDirection="row" wrap="nowrap" justifyContent="space-between" sx={{ minHeight: '120px' }}>
