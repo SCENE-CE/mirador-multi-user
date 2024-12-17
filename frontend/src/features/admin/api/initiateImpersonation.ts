@@ -17,7 +17,7 @@ export const initiateImpersonation = async (userId: number) => {
     }
 
     const impersonation = await response.json();
-    storage.SetImpersonateUserId(userId);
+    storage.SetImpersonateUserId(impersonation.user.mail);
 
     window.open(impersonation.redirectUrl, '_blank');
 

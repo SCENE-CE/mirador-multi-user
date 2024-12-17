@@ -1,47 +1,40 @@
 import { useEffect } from "react";
-import { impersonateUser } from "../api/impersonateUser.ts";
 import { useNavigate } from 'react-router-dom';
 import storage from "../../../utils/storage.ts";
-import { handleTokenResponse } from "../../../utils/auth.tsx";
+import { useLogin, useLogout } from "../../../utils/auth.tsx";
 
 export const Impersonate = () => {
   const navigate = useNavigate();
-
-  // const madeRequest = useRef(false);
+  const logout = useLogout({});
+  const { mutateAsync:loginUser } = useLogin();
 
   useEffect(() => {
     const impersonate = async () => {
       const params = new URLSearchParams(window.location.search);
-      const token = params.get('token');
-      console.log('token',token);
-      // // Avoid multiple requests if the effect runs multiple times
-      // if (madeRequest.current) {
-      //   console.log('return ')
-      //   return;
-      // }
-
+      const token = params.get("token");
       if (token) {
-        console.log('token', token);
-
+        console.log("Impersonate session token", token);
         try {
-          console.log('try')
-          const userData = storage.GetImpersonateUserData()
-          console.log("get impersonate user Data",userData);
-          const userToImpersonateData = await impersonateUser(token,userData.id);
-          await handleTokenResponse(userToImpersonateData);
+          console.log("Try");
+          const userData = storage.GetImpersonateUserData();
+          console.log("Get impersonate user data", userData);
+          if (userData) {
+            console.log("isUserData = true");
+            await logout.mutateAsync({});
 
-          navigate('/app/my-projects')
-
+            // Call `mutateAsync` and handle navigation after it resolves
+            await loginUser({ mail: "", password: "", isImpersonate: token });
+            console.log("Login successful, navigating...");
+            navigate("/app/my-projects");
+          }
         } catch (error) {
           console.error("Failed to impersonate user:", error);
-          // Optional: Redirect to an error page or show an error message
-          // navigate("/error");
         }
       }
     };
 
     impersonate();
-  }, [navigate]);
+  }, []);
 
   return (
     <>
