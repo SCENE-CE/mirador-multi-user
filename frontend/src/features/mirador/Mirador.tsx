@@ -29,7 +29,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
   const { miradorState, saveMiradorState, project, setMiradorState, setViewer,HandleSetIsRunning } = props;
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
-  console.log('miradorState',miradorState)
   useImperativeHandle(ref, () => ({
     saveProject: () => {
       console.log(miradorViewer.store.getState())
@@ -49,7 +48,8 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
         annotation: {
           adapter: (canvasId : string) => new MMUAdapter( project.id, `${canvasId}/annotationPage`),
           // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-          exportLocalStorageAnnotations: false, // display annotation JSON export button
+          exportLocalStorageAnnotations: false,
+          endpointUrl:'www.toto.com'// display annotation JSON export button
         }
       };
 
@@ -67,8 +67,22 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
       // Load state only if it is not empty
       if (loadingMiradorViewer && project.id && miradorState) {
+        console.log('miradorState',miradorState)
+        console.log('miradorViewer',miradorViewer)
+        const configWithAdapter = {
+          ...miradorState.config,
+          endpointUrl:`${import.meta.env.VITE_BACKEND_URL}/annotation-page/ENCODED_URI/${project.id}`,
+        }
+        const miradorStateWithAdapter = {
+          ...miradorState,
+          config: {
+            ...configWithAdapter
+          },
+        };
+        console.log('miradorStateWithAdapter',miradorStateWithAdapter)
         loadingMiradorViewer.store.dispatch(
-          Mirador.actions.importMiradorState(miradorState)
+          Mirador.actions.importMiradorState(miradorStateWithAdapter),
+          // Mirador.actions.importConfig(configWithAdapter)
         );
       }
 
@@ -80,7 +94,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
 
   return(
-      <div ref={viewerRef} id="mirador" style={{height:'100vh'}}></div>
+    <div ref={viewerRef} id="mirador" style={{height:'100vh'}}></div>
   )
 });
 
