@@ -81,7 +81,7 @@ export class MediaInterceptor implements NestInterceptor {
                 height,
                 width,
                 duration,
-                label: { en: ['Image Item'] },
+                label: { en: ['Video Item'] },
                 items: [
                   {
                     id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
@@ -137,7 +137,7 @@ export class MediaInterceptor implements NestInterceptor {
                 height,
                 width,
                 duration,
-                label: { en: ['Image Item'] },
+                label: { en: ['Video Item'] },
                 items: [
                   {
                     id: `https://example.org/${timeStamp}/canvas/${timeStamp2}/annotation-page/${timeStamp3}`,
