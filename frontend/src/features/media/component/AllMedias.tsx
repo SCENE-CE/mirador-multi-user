@@ -34,6 +34,7 @@ import { PaginationControls } from "../../../components/elements/Pagination.tsx"
 import { CustomTabPanel } from "../../../components/elements/CustomTabPanel.tsx";
 import { a11yProps } from "../../../components/elements/SideBar/allyProps.tsx";
 import { MediaCard } from "./MediaCard.tsx";
+import { useTranslation } from "react-i18next";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -68,6 +69,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const [mediaFiltered, setMediaFiltered] = useState<Media[]|undefined>([]);
   const [modalLinkMediaIsOpen, setModalLinkMediaIsOpen] = useState(false)
   const [tabValue, setTabValue] = useState(0);
+  const { t } = useTranslation();
 
   const handleChangeTab = (_event: SyntheticEvent, newValue: number) => {
     setTabValue(newValue);
@@ -107,7 +109,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
 
   const HandleCopyToClipBoard = async (path: string) => {
     await navigator.clipboard.writeText(path);
-    toast.success('path copied to clipboard');
+    toast.success(t('successCopy'));
   }
 
   const HandleOpenModal =useCallback ((mediaId: number)=>{
@@ -154,7 +156,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
 
   const handleGrantAccess = async (mediaId:number) =>{
     if(userToAdd == null){
-      toast.error("select an item in the list")
+      toast.error(t('toastSelectItem'))
     }
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
     await addMediaToGroup(mediaId, linkUserGroupToAdd!.user_group.id)
@@ -246,10 +248,10 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
         <Grid item container alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
           <Grid item>
             <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
-              <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">
-                <Tab label="All" {...a11yProps(0)} />
-                <Tab label="Videos" {...a11yProps(1)} />
-                <Tab label="Images" {...a11yProps(2)} />
+              <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
+                <Tab label={t('All')} {...a11yProps(0)} />
+                <Tab label={t("Videos")} {...a11yProps(1)} />
+                <Tab label={t("Images")} {...a11yProps(2)} />
               </Tabs>
             </Box>
           </Grid>
@@ -261,7 +263,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
             />
           </Grid>
           <Grid item>
-            <SearchBar handleFiltered={handleFiltered} setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={"Filter medias"} setSearchedData={handleSetSearchMedia}/>
+            <SearchBar handleFiltered={handleFiltered} setFilter={setMediaFiltered} fetchFunction={HandleLookingForMedia} getOptionLabel={getOptionLabelForMediaSearchBar} label={t('filterMedia')} setSearchedData={handleSetSearchMedia}/>
           </Grid>
         </Grid>
         {!medias.length && (
@@ -269,7 +271,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
             container
             justifyContent={"center"}
           >
-            <Typography variant="h6" component="h2">No medias yet, click "NEW MEDIAS" to add one.</Typography>
+            <Typography variant="h6" component="h2">{t('noMediaYet')}</Typography>
           </Grid>
         )}
         {
@@ -425,7 +427,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
         {
           !mediaFiltered && (
             <Grid item container justifyContent="center" alignItems="center">
-              <Typography variant="h6" component="h2">There is no media matching your filter.</Typography>
+              <Typography variant="h6" component="h2">{t('noMatchingMediaFilter')}</Typography>
             </Grid>
           )
         }

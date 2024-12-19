@@ -5,6 +5,7 @@ import RotateRightIcon from '@mui/icons-material/RotateRight';
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import { getGroupsAccessToProject } from "../../features/projects/api/generateProjectSnapShot.ts";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 interface IShareLinkProps {
   itemId:number,
@@ -15,13 +16,14 @@ export const ShareLink = ({ itemId, snapShotHash }:IShareLinkProps) => {
   const baseUrl = window.location.origin + window.location.pathname.split('/app')[0];
   const [projectUrl, setProjectUrl] = useState(`${baseUrl}/mirador/${snapShotHash}/workspace.json`);
   const [generatedAt, setGeneratedAt] = useState<null|string>(null);
+  const { t } = useTranslation();
 
   const handleCopyToClipboard = async () => {
     if(generatedAt){
     await navigator.clipboard.writeText(projectUrl);
-    toast.success('Snapshot URL copied to clipboard');
+    toast.success(t('toastSuccessSnapshot'));
     }else{
-      toast.error('You need to generate snapshot first');
+      toast.error(t('toastErrorSnapshot'));
     }
   };
 
@@ -59,7 +61,7 @@ export const ShareLink = ({ itemId, snapShotHash }:IShareLinkProps) => {
             <>
               <Grid item xs={8}>
                 <TextField
-                  label="Project snapshot URL"
+                  label={t('projectSnapshotUrl')}
                   value={projectUrl}
                   disabled
                   fullWidth
@@ -68,7 +70,7 @@ export const ShareLink = ({ itemId, snapShotHash }:IShareLinkProps) => {
               </Grid>
               <Grid item>
                 <ModalButton
-                  tooltipButton="Copy Link"
+                  tooltipButton={t('tooltipCopyLink')}
                   onClickFunction={handleCopyToClipboard}
                   disabled={false}
                   icon={<ContentCopyIcon />}
@@ -79,7 +81,7 @@ export const ShareLink = ({ itemId, snapShotHash }:IShareLinkProps) => {
                   disabled={false}
                   icon={<RotateRightIcon />}
                   onClickFunction={handleGenerateSnapshot}
-                  tooltipButton="Generate project snapshot"
+                  tooltipButton={t('tooltipSnapshotButton')}
                 />
               </Grid>
             </>

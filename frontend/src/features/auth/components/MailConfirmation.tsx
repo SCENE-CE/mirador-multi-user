@@ -3,10 +3,12 @@ import { confirmationMail } from "../api/confirmationMail.ts";
 import { useLocation, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import { Layout } from "./layout.tsx";
+import { useTranslation } from "react-i18next";
 
 export const MailConfirmation = () => {
   const location = useLocation();
   const navigate = useNavigate(); // Use hooks at the top level
+  const { t } = useTranslation();
 
   const handleConfirmMail = async () => {
     // Extract token from the URL
@@ -31,13 +33,13 @@ export const MailConfirmation = () => {
   };
 
   return (
-    <Layout title="Confirmation Mail">
+    <Layout title={t('mail-confirmation-title')}>
         <Grid item>
           <Button
             variant="contained"
             color="primary"
             onClick={handleConfirmMail}>
-            Confirm Email
+            {t('confirm-mail')}
           </Button>
         </Grid>
     </Layout>

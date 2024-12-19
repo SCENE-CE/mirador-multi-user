@@ -25,6 +25,7 @@ import { getUserGroupMedias } from "../../media/api/getUserGroupMedias.ts";
 import { PaginationControls } from "../../../components/elements/Pagination.tsx";
 import { ObjectTypes } from "../../tag/type.ts";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 
 interface allGroupsProps {
@@ -45,6 +46,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
   const [groupFiltered, setGroupFiltered] = useState<UserGroup[] | undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel , setOpenSidePanel] = useState(false);
+  const { t } = useTranslation();
 
   const itemsPerPage = 5;
 
@@ -129,7 +131,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
 
   const grantingAccessToGroup = async ( user_group_id: number) => {
     if(userToAdd == null){
-      toast.error("select an item in the list")
+      toast.error(t('selectItemToast'))
     }
     const user_group = groups.find((groups)=> groups.id === user_group_id)
     await grantAccessToGroup(userToAdd!.user, user_group! )
@@ -173,7 +175,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
         <Grid item container flexDirection="column" spacing={1}>
           <Grid item container direction="row-reverse" spacing={2} alignItems="center"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             <Grid item>
-              <SearchBar handleFiltered={handleFiltered} label={"Filter groups"} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
+              <SearchBar handleFiltered={handleFiltered} label={t('filterGroups')} fetchFunction={handleLookingForGroup} getOptionLabel={getOptionLabel} setSelectedData={setSelectedUserGroup}/>
             </Grid>
           </Grid>
           <Grid item container spacing={2} flexDirection="column" sx={{ marginBottom: "40px" }}>
@@ -182,7 +184,7 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                 container
                 justifyContent={"center"}
               >
-                <Typography variant="h6" component="h2">No groups yet, start to work when clicking on the new group button.</Typography>
+                <Typography variant="h6" component="h2">{t('noGroupYet')}</Typography>
               </Grid>
             )}
             {groups && groupFiltered && groupFiltered.length < 1 &&!selectedUserGroup && currentPageData.map((group) => (
@@ -202,8 +204,8 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   HandleOpenModal={()=>HandleOpenModal(group.id)}
                   id={group.id}
                   AddAccessListItemFunction={grantingAccessToGroup}
-                  EditorButton={<ModalButton tooltipButton={"Edit Group"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
-                  ReaderButton={<ModalButton disabled={true} tooltipButton={"OpenGroup"} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
+                  EditorButton={<ModalButton tooltipButton={t('editGroupTooltip')} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
+                  ReaderButton={<ModalButton disabled={true} tooltipButton={t('openGroupTooltip')} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={GetAllGroupUsers}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
@@ -232,8 +234,8 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   HandleOpenModal={()=>HandleOpenModal(selectedUserGroup.id)}
                   id={selectedUserGroup.id}
                   AddAccessListItemFunction={grantingAccessToGroup}
-                  EditorButton={<ModalButton tooltipButton={"Edit"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
-                  ReaderButton={<ModalButton tooltipButton={"Open"} disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
+                  EditorButton={<ModalButton tooltipButton={t('editGroupTooltip')} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(selectedUserGroup.id)}/>}
+                  ReaderButton={<ModalButton tooltipButton={t('openGroupTooltip')} disabled={true} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={getAllUserGroups}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
@@ -262,8 +264,8 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
                   HandleOpenModal={()=>HandleOpenModal(group.id)}
                   id={group.id}
                   AddAccessListItemFunction={grantingAccessToGroup}
-                  EditorButton={<ModalButton tooltipButton={"Edit Group"} disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
-                  ReaderButton={<ModalButton disabled={true} tooltipButton={"OpenGroup"} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
+                  EditorButton={<ModalButton tooltipButton={t('editGroupTooltip')}disabled={false} icon={<ModeEditIcon/>} onClickFunction={()=>HandleOpenModal(group.id)}/>}
+                  ReaderButton={<ModalButton disabled={true} tooltipButton={t('openGroupTooltip')} icon={<ModeEditIcon/>} onClickFunction={()=>console.log("you're not allowed to do this")}/>}
                   getAccessToItem={GetAllGroupUsers}
                   listOfItem={listOfUserPersonalGroup}
                   removeAccessListItemFunction={handleRemoveUser}
@@ -278,13 +280,13 @@ export const AllGroups= ({user, medias, setMedias,userPersonalGroup,fetchGroups,
             {
               !groupFiltered && (
                 <Grid item container justifyContent="center" alignItems="center">
-                  <Typography variant="h6" component="h2">There is no group matching your filter.</Typography>
+                  <Typography variant="h6" component="h2">{t('noMatchingGroupFilter')}</Typography>
                 </Grid>
               )
             }
             <PaginationControls currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage}/>
           </Grid>
-          <FloatingActionButton onClick={toggleModalGroupCreation} content={"New Group"} Icon={<AddIcon />} />
+          <FloatingActionButton onClick={toggleModalGroupCreation} content={t('newGroup')} Icon={<AddIcon />} />
           <DrawerCreateGroup handleCreatGroup={handleCreateGroup} modalCreateGroup={modalGroupCreationIsOpen} toggleModalGroupCreation={toggleModalGroupCreation}/>
         </Grid>
       </SidePanelMedia>

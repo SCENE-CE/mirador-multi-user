@@ -2,16 +2,19 @@ import { RegisterForm } from "../components/RegisterForm.tsx";
 import { Layout } from "../components/layout.tsx";
 import { Grid, Typography } from "@mui/material";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const Register = ()=>{
-    return(
+  const { t } = useTranslation();
+
+  return(
       <Layout
-        title="Create your account"
+        title={t('account-creation-title')}
         rightButton={
             <Grid>
               <NavLink to="/auth/login">
                 <Typography variant="button">
-                  LOGIN
+                  {t('login')}
                 </Typography>
               </NavLink>
             </Grid>

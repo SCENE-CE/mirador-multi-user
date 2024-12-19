@@ -1,6 +1,7 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IDrawerCreateProjectProps{
   modalCreateProjectIsOpen: boolean
@@ -10,6 +11,7 @@ interface IDrawerCreateProjectProps{
 
 export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCreation,InitializeProject}:IDrawerCreateProjectProps)=>{
   const [projectName, setProjectName] = useState('');
+  const { t } = useTranslation();
 
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
     setProjectName(event.target.value);
@@ -43,19 +45,19 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
                 >
                   <ExpandMoreIcon />
                 </Button>
-                <Typography>CREATE PROJECT</Typography>
+                <Typography>{t('createProjectTitle')}</Typography>
               </Toolbar>
             </AppBar>
             <form onSubmit={handleSubmit}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>Project's title:</label>
+                  <label>{t('labelProjectTitle')}</label>
                 </Grid>
                 <Grid item sx={{ width: '70%' }}>
                   <TextField
                     onChange={handleNameChange}
                     sx={{ width: '100%' }}
-                    placeholder="My wonderful project!"
+                    placeholder={t('placeholderProject')}
                     value={projectName}
                   />
                 </Grid>
@@ -65,7 +67,7 @@ export const DrawerCreateProject=({modalCreateProjectIsOpen,toggleModalProjectCr
                     variant="contained"
                     type="submit"
                   >
-                    ADD
+                    {t('add')}
                   </Button>
                 </Grid>
               </Grid>

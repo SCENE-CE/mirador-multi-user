@@ -6,10 +6,12 @@ import { LoginFormData, LoginSchema } from "../types/types.ts";
 import { useLogin } from "../../../utils/auth.tsx";
 import { LoginCredentialsDTO } from "../api/login.ts";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 
 export const LoginForm = ()=>{
   const navigate = useNavigate(); // Use hooks at the top level
+  const { t } = useTranslation();
 
   const { mutateAsync:loginUser } = useLogin();
 
@@ -40,7 +42,7 @@ export const LoginForm = ()=>{
         <Grid item>
           <FormField
             type="mail"
-            placeholder="mail"
+            placeholder={t('mail')}
             name="mail"
             required={true}
             register={register}
@@ -51,7 +53,7 @@ export const LoginForm = ()=>{
           <Grid item>
             <FormField
               type="password"
-              placeholder="password"
+              placeholder={t('password')}
               name="password"
               register={register}
               required={true}
@@ -64,7 +66,7 @@ export const LoginForm = ()=>{
               color="primary"
               onClick={() => window.location.href = '/forgot-password'}
             >
-              Forgot password ?
+              {t('forgot-password')}
             </Button>
           </Grid>
         </Grid>
@@ -75,7 +77,7 @@ export const LoginForm = ()=>{
             color="primary"
             onClick={handleSubmit(onSubmit)}
           >
-            Submit
+            {t('submit')}
           </Button>
         </Grid>
       </Grid>

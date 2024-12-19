@@ -3,6 +3,7 @@ import { Box, TextField, Button, Typography, Alert, Container, Grid } from "@mui
 import { Layout } from "./layout.tsx";
 import { resetPassword } from "../api/resetPassword.ts";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export const ResetPassword = () => {
   const [password, setPassword] = useState('');
@@ -10,6 +11,7 @@ export const ResetPassword = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [token, setToken] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     const url = window.location.href;
@@ -17,7 +19,7 @@ export const ResetPassword = () => {
     if (match) {
       setToken(match[1]);
     } else {
-      setError("Invalid or missing reset token");
+      setError(t('errorToken'));
     }
   }, []);
 
@@ -26,27 +28,27 @@ export const ResetPassword = () => {
     setSuccess('');
 
     if (password !== confirmPassword) {
-      setError("Passwords don't match");
+      setError(t('passwordMismatch'))
       return;
     }
     if (!token) {
-      setError("Invalid or missing reset token");
+      setError(t('invalidToken'));
     }
     if (token) {
       const response = await resetPassword(token, password);
       if (response) {
-        setSuccess('Your password has been successfully reset');
+        setSuccess(t('passwordResetSuccess'));
       } else {
-        setError('An error occurred while resetting the password');
+        setSuccess(t('passwordResetError'));
       }
     }
   }
     return (
-      <Layout title="Reset password" rightButton={
+      <Layout title={t('reset-password-title')}rightButton={
         <Grid>
         <NavLink to="/auth/login">
           <Typography variant="button">
-            LOGIN
+            {t('login')}
           </Typography>
         </NavLink>
       </Grid>
@@ -54,10 +56,10 @@ export const ResetPassword = () => {
         <Container maxWidth="sm">
           <Box sx={{ p: 4, borderRadius: 2, boxShadow: 3 }}>
             <Typography variant="h5" align="center" gutterBottom>
-              Reset Password
+              {t('reset-password')}
             </Typography>
             <TextField
-              label="New Password"
+              label={t('new-password')}
               type="password"
               fullWidth
               margin="normal"
@@ -67,7 +69,7 @@ export const ResetPassword = () => {
             />
             <TextField
               label="Confirm New Password"
-              type="password"
+              type={t('password')}
               fullWidth
               margin="normal"
               value={confirmPassword}
@@ -83,7 +85,7 @@ export const ResetPassword = () => {
               sx={{ mt: 3 }}
               onClick={handlePasswordReset}
             >
-              Reset Password
+              {t('reset-password')}
             </Button>
           </Box>
         </Container>

@@ -8,6 +8,7 @@ import { ListItem } from "../../../components/types.ts";
 import { Dispatch, SetStateAction } from "react";
 import { ProjectGroup } from "../../projects/types/types.ts";
 import { LinkUserGroup } from "../../user-group/types/types.ts";
+import { useTranslation } from "react-i18next";
 
 interface IMediaCardProps {
   media:Media;
@@ -47,13 +48,16 @@ export const MediaCard = (
     HandleUpdateMedia,
     handleChangeRights,
     getGroupByOption,
-  }: IMediaCardProps) => (
+  }: IMediaCardProps) => {
+  const { t } = useTranslation();
+
+  return (
     <MMUCard
       objectTypes={ObjectTypes.MEDIA}
       AddAccessListItemFunction={handleGrantAccess}
       DefaultButton={
         <ModalButton
-          tooltipButton={"Copy media's link"}
+          tooltipButton={t("tooltipMediaLink")}
           onClickFunction={media.path ? () => HandleCopyToClipBoard(`${caddyUrl}/${media.hash}/${media.path}`) : () => HandleCopyToClipBoard(media.url)}
           disabled={false}
           icon={<ContentCopyIcon />}
@@ -61,7 +65,7 @@ export const MediaCard = (
       }
       EditorButton={
         <ModalButton
-          tooltipButton={"Edit Media"}
+          tooltipButton={t("editMedia")}
           onClickFunction={() => HandleOpenModal(media.id)}
           icon={<ModeEditIcon />}
           disabled={false}
@@ -70,7 +74,7 @@ export const MediaCard = (
       HandleOpenModal={() => HandleOpenModal(media.id)}
       ReaderButton={
         <ModalButton
-          tooltipButton={"Open Project"}
+          tooltipButton={t('openProjectTooltip')}
           onClickFunction={() => console.log("You're not allowed to do this")}
           icon={<ModeEditIcon />}
           disabled={true}
@@ -88,7 +92,7 @@ export const MediaCard = (
       openModal={openModalMediaId === media.id}
       removeAccessListItemFunction={handleRemoveAccessToMedia}
       rights={media.rights}
-      searchBarLabel={"Search"}
+      searchBarLabel={t('search')}
       searchModalEditItem={handleLookingForUserGroups}
       setItemList={setGroupList}
       setItemToAdd={setUserToAdd}
@@ -97,4 +101,5 @@ export const MediaCard = (
       handleSelectorChange={handleChangeRights}
       getGroupByOption={getGroupByOption}
     />
-);
+  );
+};

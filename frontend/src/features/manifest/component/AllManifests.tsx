@@ -32,6 +32,7 @@ import { getAllManifestGroups } from "../api/getAllManifestGroups.ts";
 import { ListItem } from "../../../components/types.ts";
 import { updateAccessToManifest } from "../api/updateAccessToManifest.ts";
 import { ObjectTypes } from "../../tag/type.ts";
+import { useTranslation } from "react-i18next";
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -73,6 +74,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   const [userToAdd, setUserToAdd ] = useState<LinkUserGroup | null>(null)
   const [groupList, setGroupList] = useState<ProjectGroup[]>([]);
   const [openSidePanel , setOpenSidePanel] = useState(false);
+  const { t } = useTranslation();
 
   const itemsPerPage = 5;
 
@@ -315,7 +317,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                   <SearchBar
                     fetchFunction={HandleLookingForManifests}
                     getOptionLabel={getOptionLabelForManifestSearchBar}
-                    label="Filter manifests"
+                    label={t('filterManifest')}
                     setSearchedData={handleSetSearchManifest}
                     setFilter={setManifestFiltered}
                     handleFiltered={handleFiltered}
@@ -353,8 +355,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                   <MMUCard
                     objectTypes={ObjectTypes.MANIFEST}
                     AddAccessListItemFunction={handleGrantAccess}
-                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                    EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    DefaultButton={<ModalButton tooltipButton={t('tooltipButtonCopy')} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    EditorButton={<ModalButton  tooltipButton={t('tooltipButtonEdit')} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     HandleOpenModal={()=>HandleOpenModal(manifest.id)}
                     deleteItem={handleDeleteManifest}
                     description={manifest.description}
@@ -368,7 +370,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     metadata={manifest.metadata}
                     openModal={openModalManifestId === manifest.id}
                     rights={manifest.rights!}
-                    searchBarLabel={"Search"}
+                    searchBarLabel={t('searchLabel')}
                     searchModalEditItem={handleLookingForUserGroups}
                     setItemToAdd={setUserToAdd}
                     setItemList={setGroupList}
@@ -387,8 +389,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                   <MMUCard
                     objectTypes={ObjectTypes.MANIFEST}
                     AddAccessListItemFunction={handleGrantAccess}
-                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                    EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    DefaultButton={<ModalButton tooltipButton={t('tooltipButtonCopy')}  onClickFunction={manifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${manifest.hash}/${manifest.path}`) : ()=>HandleCopyToClipBoard(manifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    EditorButton={<ModalButton  tooltipButton={t('tooltipButtonEdit')} onClickFunction={()=>HandleOpenModal(manifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     HandleOpenModal={()=>HandleOpenModal(manifest.id)}
                     deleteItem={handleDeleteManifest}
                     description={manifest.description}
@@ -402,7 +404,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     metadata={manifest.metadata}
                     openModal={openModalManifestId === manifest.id}
                     rights={manifest.rights!}
-                    searchBarLabel={"Search"}
+                    searchBarLabel={t('searchLabel')}
                     searchModalEditItem={handleLookingForUserGroups}
                     setItemToAdd={setUserToAdd}
                     setItemList={setGroupList}
@@ -421,8 +423,8 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                   <MMUCard
                     objectTypes={ObjectTypes.MANIFEST}
                     AddAccessListItemFunction={handleGrantAccess}
-                    DefaultButton={<ModalButton tooltipButton={"Copy manifest's link"} onClickFunction={searchedManifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) : ()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
-                    EditorButton={<ModalButton  tooltipButton={"Edit manifest"} onClickFunction={()=>HandleOpenModal(searchedManifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
+                    DefaultButton={<ModalButton tooltipButton={t('tooltipButtonCopy')} onClickFunction={searchedManifest.hash ? ()=>HandleCopyToClipBoard(`${caddyUrl}/${searchedManifest.hash}/${searchedManifest.path}`) : ()=>HandleCopyToClipBoard(searchedManifest.path)} disabled={false} icon={<ContentCopyIcon/>}/>}
+                    EditorButton={<ModalButton  tooltipButton={t('tooltipButtonEdit')}  onClickFunction={()=>HandleOpenModal(searchedManifest.id)} icon={<ModeEditIcon />} disabled={false}/>}
                     HandleOpenModal={()=>HandleOpenModal(searchedManifest.id)}
                     deleteItem={handleDeleteManifest}
                     description={searchedManifest.description}
@@ -436,7 +438,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
                     metadata={searchedManifest.metadata}
                     openModal={openModalManifestId === searchedManifest.id}
                     rights={searchedManifest.rights!}
-                    searchBarLabel={"Search"}
+                    searchBarLabel={t('searchLabel')}
                     searchModalEditItem={handleLookingForUserGroups}
                     setItemToAdd={setUserToAdd}
                     setItemList={setGroupList}

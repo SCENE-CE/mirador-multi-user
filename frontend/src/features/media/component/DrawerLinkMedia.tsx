@@ -1,6 +1,7 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, FormEvent, useCallback, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IDrawerCreateMediaProps{
   modalCreateMediaIsOpen: boolean
@@ -10,6 +11,7 @@ interface IDrawerCreateMediaProps{
 
 export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,CreateMediaWithLink}:IDrawerCreateMediaProps)=>{
   const [mediaLink, setMediaLink] = useState('');
+  const { t } = useTranslation();
 
   const handleNameChange  = useCallback((event:ChangeEvent<HTMLInputElement>)=>{
     setMediaLink(event.target.value);
@@ -52,13 +54,13 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
                 >
                   <ExpandMoreIcon />
                 </Button>
-                <Typography>LINK MEDIA</Typography>
+                <Typography>{t('linkMedia')}</Typography>
               </Toolbar>
             </AppBar>
             <form onSubmit={handleLinkingMedia}>
               <Grid container alignItems="center" spacing={2}>
                 <Grid item>
-                  <label>Media's link :</label>
+                  <label>{t('mediaLink')}</label>
                 </Grid>
                 <Grid item sx={{ width: "70%" }}>
                   <TextField onChange={handleNameChange} sx={{ width: "100%" }}></TextField>
@@ -69,7 +71,7 @@ export const DrawerLinkMedia=({modalCreateMediaIsOpen,toggleModalMediaCreation,C
                     variant="contained"
                     onClick={handleLinkingMedia}
                   >
-                    ADD
+                    {t('add')}
                   </Button>
                 </Grid>
               </Grid>

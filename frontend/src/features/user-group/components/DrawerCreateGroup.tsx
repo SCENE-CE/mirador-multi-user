@@ -1,6 +1,7 @@
 import { AppBar, Button, Drawer, Grid, Paper, TextField, Toolbar, Typography } from "@mui/material";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMoreSharp';
 import { ChangeEvent, useCallback, useState, KeyboardEvent } from "react";
+import { useTranslation } from "react-i18next";
 
 interface IDrawerCreateGroupProps{
   modalCreateGroup: boolean
@@ -10,6 +11,7 @@ interface IDrawerCreateGroupProps{
 
 export const DrawerCreateGroup = ({modalCreateGroup, toggleModalGroupCreation, handleCreatGroup}: IDrawerCreateGroupProps) => {
   const [userGroupName, setUserGroupName] = useState<string>('');
+  const { t } = useTranslation();
 
   const handleNameChange = useCallback((event: ChangeEvent<HTMLInputElement>) => {
     setUserGroupName(event.target.value);
@@ -53,18 +55,18 @@ export const DrawerCreateGroup = ({modalCreateGroup, toggleModalGroupCreation, h
               <Button color="inherit" onClick={toggleModalGroupCreation}>
                 <ExpandMoreIcon />
               </Button>
-              <Typography>CREATE Group</Typography>
+              <Typography>{t('createGroup')}</Typography>
             </Toolbar>
           </AppBar>
           <Grid>
             <Grid item container alignItems="center" spacing={2}>
               <Grid item>
-                <Typography>Group's title :</Typography>
+                <Typography>{t('groupTitleLabel')}</Typography>
               </Grid>
               <Grid item sx={{ width: '70%' }}>
                 <TextField
                   onChange={handleNameChange}
-                  onKeyDown={handleKeyDown} // Add the onKeyDown event
+                  onKeyDown={handleKeyDown}
                   sx={{ width: '100%' }}
                 />
               </Grid>
@@ -75,7 +77,7 @@ export const DrawerCreateGroup = ({modalCreateGroup, toggleModalGroupCreation, h
                   onClick={handleUserCreation}
                   disabled={userGroupName.length < 1}
                 >
-                  CREATE GROUP
+                  {t('createGroupMAJ')}
                 </Button>
               </Grid>
             </Grid>

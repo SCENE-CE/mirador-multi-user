@@ -36,6 +36,7 @@ import { duplicateProject } from "../api/duplicateProject.ts";
 import { getUserNameWithId } from "../../auth/api/getUserNameWithId.ts";
 import { isProjectLocked } from "../api/isProjectLocked.ts";
 import { handleLock } from "../api/handleLock.ts";
+import { useTranslation } from "react-i18next";
 
 interface AllProjectsProps {
   user: User;
@@ -59,6 +60,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
   const [projectFiltered, setProjectFiltered] = useState<Project[]|undefined>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [openSidePanel , setOpenSidePanel] = useState(false);
+  const { t } = useTranslation();
 
   const itemsPerPage = 5;
 
@@ -128,7 +130,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
       const Locked = await isProjectLocked(projectUser.id)
       if (Locked) {
         const userName = await getUserNameWithId(Locked)
-        return toast.error(`Project is already open by...${userName}`)
+        return toast.error(t('errorProjectAlreadyOpen' + userName))
       }
       await handleLock({projectId: projectUser.id, lock: true })
     }catch(error){
@@ -180,7 +182,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const handleAddUser = async ( projectId: number) => {
     if(userToAdd == null){
-      toast.error("select an item in the list")
+      toast.error(t('errorAddUser'))
     }
     const linkUserGroupToAdd = userGroupsSearch.find((linkUserGroup)=> linkUserGroup.user_group.id === userToAdd!.id)
     await addProjectToGroup({ projectId:projectId, groupId:linkUserGroupToAdd!.user_group.id });
@@ -250,10 +252,10 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
 
   const getGroupByOption=(option:UserGroup):string =>{
     if(option.type === UserGroupTypes.MULTI_USER ){
-      return 'Groups'
+      return t('groups')
     }
     else{
-      return 'Users'
+      return t('users')
     }
   }
 
@@ -279,7 +281,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
             {
               !selectedProjectId &&(
                 <Grid item>
-                  <SearchBar handleFiltered={handleFiltered} label={"Filter Projects"} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
+                  <SearchBar handleFiltered={handleFiltered} label={t('filterProjects')} fetchFunction={handleLookingForProject} getOptionLabel={getOptionLabelForProjectSearchBar} setSearchedData={handleSetSearchProject}/>
                 </Grid>
               )
             }
@@ -290,7 +292,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                 container
                 justifyContent={"center"}
               >
-                <Typography variant="h6" component="h2">No projects yet,click "NEW PROJECT" to add one.</Typography>
+                <Typography variant="h6" component="h2">{t('messageNoProject')}</Typography>
               </Grid>
             )}
             {!selectedProjectId && projectFiltered && projectFiltered.length < 1 && !searchedProject && userProjects && (
@@ -301,13 +303,13 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                         duplicateItem={handleDuplicateProject}
                         objectTypes={ObjectTypes.PROJECT}
                         thumbnailUrl={projectUser.thumbnailUrl ? projectUser.thumbnailUrl : null }
-                        searchBarLabel={"Search"}
+                        searchBarLabel={t('searchUser')}
                         description={projectUser.description}
                         HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                         openModal={openModalProjectId === projectUser.id}
-                        DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
-                        EditorButton={<ModalButton  tooltipButton={"Configuration"} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<SettingsIcon />} disabled={false}/>}
-                        ReaderButton={<ModalButton tooltipButton={"Configuration"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<SettingsIcon />} disabled={true}/>}
+                        DefaultButton={<ModalButton tooltipButton={t('openProject')} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                        EditorButton={<ModalButton  tooltipButton={t('configuration')} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<SettingsIcon />} disabled={false}/>}
+                        ReaderButton={<ModalButton tooltipButton={t('configuration')} onClickFunction={()=>console.log(t("notAllowedMessage"))} icon={<SettingsIcon />} disabled={true}/>}
                         id={projectUser.id}
                         rights={projectUser.rights!}
                         deleteItem={deleteUserProject}
@@ -331,7 +333,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                 )
                 }
                 <Grid item>
-                  <FloatingActionButton onClick={toggleModalProjectCreation} content={"New Project"} Icon={<AddIcon />} />
+                  <FloatingActionButton onClick={toggleModalProjectCreation} content={t('newProject')} Icon={<AddIcon />} />
                   <div>
                     <DrawerCreateProject
                       InitializeProject={InitializeProject}
@@ -350,13 +352,13 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                       duplicateItem={handleDuplicateProject}
                       objectTypes={ObjectTypes.PROJECT}
                       metadata={searchedProject.metadata}
-                      searchBarLabel={"Search Users"}
+                      searchBarLabel={t('searchUser')}
                       description={searchedProject.description}
                       HandleOpenModal={()=>HandleOpenModal(searchedProject.id)}
                       openModal={openModalProjectId === searchedProject.id}
-                      DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(searchedProject.userWorkspace,searchedProject)} disabled={false} icon={<OpenInNewIcon/>}/>}
-                      EditorButton={<ModalButton tooltipButton={"Configuration"} onClickFunction={()=>HandleOpenModal(searchedProject.id)} icon={<SettingsIcon />} disabled={false}/>}
-                      ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
+                      DefaultButton={<ModalButton tooltipButton={t('openProject')} onClickFunction={()=>initializeMirador(searchedProject.userWorkspace,searchedProject)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                      EditorButton={<ModalButton tooltipButton={t('configuration')} onClickFunction={()=>HandleOpenModal(searchedProject.id)} icon={<SettingsIcon />} disabled={false}/>}
+                      ReaderButton={<ModalButton tooltipButton={t('openProject')} onClickFunction={()=>console.log(t('notAllowedMessage'))} icon={<ModeEditIcon />} disabled={true}/>}
                       id={searchedProject.id}
                       rights={searchedProject.rights!}
                       deleteItem={deleteUserProject}
@@ -387,13 +389,13 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                           duplicateItem={handleDuplicateProject}
                           objectTypes={ObjectTypes.PROJECT}
                           metadata={projectUser.metadata}
-                          searchBarLabel={"Search"}
+                          searchBarLabel={t('searchUser')}
                           description={projectUser.description}
                           HandleOpenModal={()=>HandleOpenModal(projectUser.id)}
                           openModal={openModalProjectId === projectUser.id}
-                          DefaultButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
-                          EditorButton={<ModalButton  tooltipButton={"Configuration"} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<SettingsIcon />} disabled={false}/>}
-                          ReaderButton={<ModalButton tooltipButton={"Open Project"} onClickFunction={()=>console.log("You're not allowed to do this")} icon={<ModeEditIcon />} disabled={true}/>}
+                          DefaultButton={<ModalButton tooltipButton={t('openProject')} onClickFunction={()=>initializeMirador(projectUser.userWorkspace, projectUser)} disabled={false} icon={<OpenInNewIcon/>}/>}
+                          EditorButton={<ModalButton  tooltipButton={t('configuration')} onClickFunction={()=>HandleOpenModal(projectUser.id)} icon={<SettingsIcon />} disabled={false}/>}
+                          ReaderButton={<ModalButton tooltipButton={t('openProject')} onClickFunction={()=>console.log(t('notAllowedMessage'))} icon={<ModeEditIcon />} disabled={true}/>}
                           id={projectUser.id}
                           rights={projectUser.rights!}
                           deleteItem={deleteUserProject}
@@ -415,7 +417,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
                     )
                   )}
                   <Grid item>
-                    <FloatingActionButton onClick={toggleModalProjectCreation} content={"New Project"} Icon={<AddIcon />} />
+                    <FloatingActionButton onClick={toggleModalProjectCreation} content={t('newProject')} Icon={<AddIcon />} />
                     <div>
                       <DrawerCreateProject
                         InitializeProject={InitializeProject}
@@ -429,7 +431,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
             {
               !projectFiltered && (
                 <Grid item container justifyContent="center" alignItems="center">
-                  <Typography variant="h6" component="h2">There is no project matching your filter.</Typography>
+                  <Typography variant="h6" component="h2">{t("noProjectMatchFilter")}</Typography>
                 </Grid>
               )
             }
