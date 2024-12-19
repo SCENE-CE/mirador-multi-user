@@ -60,6 +60,11 @@ export default class MMUAdapter {
   /** */
   async all() {
     console.log('MMU adapter GET ALL')
-    return await gettingAnnotationPage(this.annotationPageId, this.projectId);
+    let annotationPage =  await gettingAnnotationPage(this.annotationPageId, this.projectId);
+    if(annotationPage.length > 0){
+      return JSON.parse(annotationPage[0].content);
+    } else {
+      return [] ;
+    }
   }
 }
