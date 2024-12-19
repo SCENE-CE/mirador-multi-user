@@ -1,20 +1,23 @@
 import { Button, Grid, Typography } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 interface IConfirmDisconnect{
   handleDisconnect:()=>void;
 }
 export const ConfirmDisconnect = ({handleDisconnect}:IConfirmDisconnect) => {
+  const { t } = useTranslation();
+
   return(
     <Grid>
       <Grid item>
         <Typography>
-          Are you sure you want to disconnect from ARVEST?
+          {t('messageDisconnect')}
         </Typography>
         <Button
           color="error"
           variant="contained"
           onClick={handleDisconnect}>
-          Disconnect
+          {t('disconnect')}
         </Button>
       </Grid>
     </Grid>

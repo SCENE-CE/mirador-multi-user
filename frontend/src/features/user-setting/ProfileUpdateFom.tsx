@@ -10,6 +10,7 @@ import {
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { updateUser } from "../auth/api/updateUser.tsx";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 
 interface UserProfile {
   name: string;
@@ -21,6 +22,7 @@ interface ProfileUpdateFormProps {
 }
 
 export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) => {
+  const { t } = useTranslation();
   const [formValues, setFormValues] = useState({
     name: '',
     mail: '',
@@ -47,6 +49,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setFormValues((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -55,17 +58,17 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
     const newErrors = { name: '', mail: '', oldPassword: '', newPassword: '', confirmPassword: '' };
 
     if (formValues.mail.trim() && !/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(formValues.mail)) {
-      newErrors.mail = 'mail is not valid';
+      newErrors.mail = t('mailIsNotValid');
       valid = false;
     }
 
     if (formValues.newPassword && formValues.newPassword.length < 6) {
-      newErrors.newPassword = 'Password must be at least 6 characters';
+      newErrors.newPassword = t('characterLimitForPassword');
       valid = false;
     }
 
     if (formValues.newPassword !== formValues.confirmPassword) {
-      newErrors.confirmPassword = 'Passwords do not match';
+      newErrors.confirmPassword = t('passwordMismatch');
       valid = false;
     }
 
@@ -76,15 +79,13 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
-      console.log('formValues',formValues)
       const updatedUser =await updateUser({
         ...formValues
       })
-      console.log('updatedUssssssssssser',updatedUser)
       if(updatedUser){
-        toast.success('user successfully updated')
+        toast.success(t('userSuccessfullyUpdated'))
       }else{
-        toast.error('An error occurred while updating user\'s information.')
+        toast.error(t('toastErrorUpdateUser'))
       }
     }
   };
@@ -106,11 +107,11 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       }}
     >
       <Typography variant="h5" sx={{ mb: 3 }}>
-        Update Profile
+        {t('UpdateProfile')}
       </Typography>
 
       <TextField
-        label="Name"
+        label={t('name')}
         name="name"
         value={formValues.name}
         onChange={handleChange}
@@ -121,7 +122,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       />
 
       <TextField
-        label="mail"
+        label={t('mail')}
         name="mail"
         type="mail"
         value={formValues.mail}
@@ -133,7 +134,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       />
 
       <TextField
-        label="Old Password"
+        label={t('oldPassword')}
         name="oldPassword"
         type={showPassword.oldPassword ? 'text' : 'password'}
         value={formValues.oldPassword}
@@ -154,7 +155,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       />
 
       <TextField
-        label="New Password"
+        label={t('newPassword')}
         name="newPassword"
         type={showPassword.newPassword ? 'text' : 'password'}
         value={formValues.newPassword}
@@ -175,7 +176,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
       />
 
       <TextField
-        label="Confirm New Password"
+        label={t('confirmPassword')}
         name="confirmPassword"
         type={showPassword.confirmPassword ? 'text' : 'password'}
         value={formValues.confirmPassword}
@@ -202,7 +203,7 @@ export const ProfileUpdateForm: React.FC<ProfileUpdateFormProps> = ({ user }) =>
         fullWidth
         sx={{ mt: 2 }}
       >
-        Save Changes
+        {t('saveChanges')}
       </Button>
     </Box>
   );

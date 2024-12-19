@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import { Row } from "./Row.tsx";
 import { ReactNode, useMemo, useState } from "react";
+import { useTranslation } from "react-i18next";
 interface RowData {
   value: ReactNode;
   align?: 'right' | 'left' | 'center';
@@ -44,6 +45,7 @@ export default function CollapsibleTable(
   const [sortKey, setSortKey] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
   const [filter, setFilter] = useState('');
+  const { t } = useTranslation();
 
   const handleSort = (key: string | undefined) => {
     if (!key) return;
@@ -89,7 +91,7 @@ export default function CollapsibleTable(
         <Grid item xs={12}>
           <TextField
             fullWidth
-            label="Filter"
+            label={t('filter')}
             variant="outlined"
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
@@ -116,12 +118,11 @@ export default function CollapsibleTable(
                   )}
                 </TableCell>
               ))}
-              <TableCell align="center">Actions</TableCell>
+              <TableCell align="center">{t('actions')}</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {sortedRows.map((row) => (
-
               <Row
                 key={row.id}
                 row={row}

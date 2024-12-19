@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
 import { theme } from "../../assets/theme/mainTheme.ts";
 import { useTranslation } from "react-i18next";
-import LanguageSelector from "../translation/LanguageSelector.tsx";
 
 export const Landing = () => {
   const navigate = useNavigate();
@@ -29,7 +28,6 @@ export const Landing = () => {
       marginTop:0
     }}
     >
-      <LanguageSelector/>
       <Grid item>
       <Typography variant="h2" component="h1">{t('welcome')}</Typography>
       </Grid>
@@ -41,10 +39,10 @@ export const Landing = () => {
         alignItems="center"
       >
         <Grid item>
-          <Button  variant="contained" onClick={HandleSignIn}>Create account</Button>
+          <Button  variant="contained" onClick={HandleSignIn}>{t('create-account')}</Button>
         </Grid>
         <Grid item>
-          <Button  variant="contained" onClick={HandleLogin}>Login</Button>
+          <Button  variant="contained" onClick={HandleLogin}>{t('login')}</Button>
         </Grid>
       </Grid>
     </Grid>

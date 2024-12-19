@@ -7,9 +7,11 @@ import { useRegister } from "../../../utils/auth.tsx";
 import { RegisterCredentialsDTO } from "../api/register.ts";
 import { useNavigate } from "react-router-dom";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export const RegisterForm = () => {
   const navigate = useNavigate(); // Use hooks at the top level
+  const { t } = useTranslation();
 
   //this is a hook from React-Query that allow us to use createUser(data) bellow
   const { mutateAsync: createUser } = useRegister();
@@ -49,7 +51,7 @@ export const RegisterForm = () => {
         <Grid item>
           <FormField
             type="mail"
-            placeholder="mail"
+            placeholder={t('mail')}
             name="mail"
             required={true}
             register={register}
@@ -59,7 +61,7 @@ export const RegisterForm = () => {
         <Grid item>
           <FormField
             type="text"
-            placeholder="name"
+            placeholder={t('name')}
             name="name"
             required={true}
             register={register}
@@ -69,7 +71,7 @@ export const RegisterForm = () => {
         <Grid item>
           <FormField
             type="password"
-            placeholder="password"
+            placeholder={t('password')}
             name="password"
             register={register}
             required={true}
@@ -79,7 +81,7 @@ export const RegisterForm = () => {
         <Grid item>
           <FormField
             type="password"
-            placeholder="confirm password"
+            placeholder={t('confirm-password')}
             name="confirmPassword"
             register={register}
             required={true}
@@ -93,7 +95,7 @@ export const RegisterForm = () => {
             color="primary"
             onClick={handleSubmit(onSubmit)}
           >
-            Submit
+            {t('submit')}
           </Button>
         </Grid>
       </Grid>

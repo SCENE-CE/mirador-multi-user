@@ -15,6 +15,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import GroupsIcon from "@mui/icons-material/Groups";
 import { ShareLink } from "./shareLink.tsx";
 import { ObjectTypes } from "../../features/tag/type.ts";
+import { useTranslation } from "react-i18next";
 
 interface IProjectUserGroup<G,T> {
   items: ListItem[];
@@ -47,6 +48,8 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
     item,
     objectTypes
   }: IProjectUserGroup<G,T>): JSX.Element => {
+  const { t } = useTranslation();
+
   return (
     <Paper
       elevation={1}
@@ -61,7 +64,7 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
           objectTypes === ObjectTypes.PROJECT &&(
             <Grid container item alignItems="center" spacing={2}>
               <Grid item>
-                <Typography variant="h5">Snapshot</Typography>
+                <Typography variant="h5">{t('snapshot')}</Typography>
               </Grid>
               <ShareLink  itemId={item.id} snapShotHash={item.snapShotHash? item.snapShotHash : "" }/>
             </Grid>
@@ -69,13 +72,13 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
         }
         <Grid container item alignItems="center" spacing={2}>
           <Grid item>
-            <Typography variant="h5">Permissions</Typography>
+            <Typography variant="h5">{t('Permissions')}</Typography>
           </Grid>
           <Grid item>
             <MMUToolTip children={<div>
-              Admin: Can Access / Modify / Delete <br />
-              Editor: Can Access / Modify <br />
-              Reader: Can Access
+              {t('MMUTooltipAdmin')}<br />
+              {t('MMUTooltipEditor')}<br />
+              {t('MMUTooltipReader')}
             </div>} />
           </Grid>
         </Grid>
@@ -87,7 +90,7 @@ export const ItemList = <G,T extends { id: number,snapShotHash?:string}>(
             getOptionLabel={handleGetOptionLabel}
             fetchFunction={handleSearchModalEditItem}
             setSearchInput={setSearchInput}
-            actionButtonLabel={"ADD"}
+            actionButtonLabel={t('add')}
             groupByOption={getGroupByOption}
           />
         </Grid>

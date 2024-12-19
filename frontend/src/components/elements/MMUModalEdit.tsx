@@ -28,6 +28,7 @@ import { JsonEditor } from 'json-edit-react'
 import { fetchManifest } from "../../features/manifest/api/fetchManifest.ts";
 import { updateManifestJson } from "../../features/manifest/api/updateManifestJson.ts";
 import { Selector } from "../Selector.tsx";
+import { useTranslation } from "react-i18next";
 
 interface ModalItemProps<T, G> {
   item: T,
@@ -120,6 +121,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
   const [selectedMetadataFormat, setSelectedMetadataFormat] = useState<MetadataFormat | undefined>();
   const [manifestJson, setManifestJson] = useState<Record<string, string> | undefined>();
   const user = useUser()
+  const { t } = useTranslation();
 
 
   const handeUpdateMetadata = (updateData:any)=>{
@@ -240,7 +242,6 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
   const handleFetchManifest=async ()=> {
     try{
       const manifest = await fetchManifest(item.hash!, item.path!)
-      console.log('manifest',manifest)
       setManifestJson(manifest)
     }catch(error){
       console.error(error)
@@ -298,7 +299,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
               const updatedMetadata = metadata.filter((_:any, index:number) => index !== labelIndex);
               const upload =await uploadMetadataFormat(label, updatedMetadata, user.data!.id);
               if (upload.statusCode === 409) {
-                toast.error('metadata with this title already exists')
+                toast.error(t('errorMetadataAlreadyExist'))
               }
               await fetchMetadataFormat();
             } else {
@@ -321,17 +322,17 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
 
   return (
     <Grid container sx={{overflow:'scroll', maxHeight:600}}>
-      <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs example">
-        <Tab label="General" {...a11yProps(0)} />
-        <Tab label="Share" {...a11yProps(2)} />
+      <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
+        <Tab label={t('general')}{...a11yProps(0)} />
+        <Tab label={t('share')} {...a11yProps(2)} />
         {
           objectTypes !== ObjectTypes.GROUP &&(
-            <Tab label="Metadata" {...a11yProps(1)} />
+            <Tab label={t('metadata')} {...a11yProps(1)} />
           )
         }
         {
           (objectTypes === ObjectTypes.MANIFEST && item.origin !== manifestOrigin.LINK ) &&(
-            <Tab label="Advanced Edit" {...a11yProps(3)} />
+            <Tab label={t('advancedEdit')} {...a11yProps(3)} />
           )
         }
       </Tabs>
@@ -356,7 +357,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             >
               <TextField
                 type="text"
-                label="title"
+                label={t('title')}
                 onChange={handleChangeTitle}
                 variant="outlined"
                 defaultValue={itemLabel}
@@ -373,7 +374,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             >
               <TextField
                 type="text"
-                label="Description"
+                label={t('description')}
                 onChange={handleChangeDescription}
                 variant="outlined"
                 defaultValue={description}
@@ -390,7 +391,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             >
               <TextField
                 type="text"
-                label="Creator"
+                label={t('creator')}
                 onChange={handleChangeCreator}
                 variant="outlined"
                 defaultValue={newItemMetadataCreator}
@@ -409,7 +410,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   disabled
-                  label={"created at"}
+                  label={t("createdAt")}
                   onChange={(newValue)=>setNewItemDate(newValue)}
                   value={newItemDate }
                 />
@@ -424,7 +425,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             >
               <TextField
                 type="text"
-                label="Thumbnail Url"
+                label={t("thumbnailUrl")}
                 onChange={handleChangeThumbnailUrl}
                 variant="outlined"
                 defaultValue={thumbnailUrl ? thumbnailUrl : undefined }
@@ -511,26 +512,26 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             <Grid item container xs={5} spacing={3}>
               <Grid item>
                 {rights === ItemsRights.ADMIN && (
-                  <Tooltip title={"Delete item"}>
+                  <Tooltip title={t('deleteItem')}>
                     <Button
                       color="error"
                       onClick={handleConfirmDeleteItemModal}
                       variant="contained"
                     >
-                      DELETE
+                      {t('delete')}
                     </Button>
                   </Tooltip>
                 )}
               </Grid>
               <Grid item>
                 {(rights === ItemsRights.ADMIN || rights === ItemsRights.EDITOR) && duplicateItem &&(
-                  <Tooltip title="Duplicate">
+                  <Tooltip title={t('duplicate')}>
                     <Button
                       color="primary"
                       onClick={handleDuplicateModal}
                       variant="contained"
                     >
-                      DUPLICATE
+                      {t('duplicateMAJ')}
                     </Button>
                   </Tooltip>
                 )}
@@ -548,14 +549,14 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
               <Grid item>
                 <Button variant="contained" type="button" onClick={HandleOpenModalEdit}>
                   <CancelIcon />
-                  Cancel
+                  {t('cancel')}
                 </Button>
               </Grid>
 
               <Grid item>
                 <Button variant="contained" type="submit" onClick={handleSubmit}>
                   <SaveIcon />
-                  Save
+                  {t('saveMAJ')}
                 </Button>
               </Grid>
             </Grid>
@@ -568,9 +569,9 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
             </MMUModal>
             <MMUModal width={400} openModal={openDuplicateModal} setOpenModal={handleConfirmDuplicateItem}>
               <Grid>
-                <Typography> Are you sure you want to duplicate <b>{itemLabel}</b> ?</Typography>
-                <Button onClick={()=>confirmDuplicate(item.id)}>Yes</Button>
-                <Button onClick={()=>setOpenDuplicateModal(!openDuplicateModal)}>No</Button>
+                <Typography> {t('areYouSureDuplicate')} <b>{itemLabel}</b> ?</Typography>
+                <Button onClick={()=>confirmDuplicate(item.id)}>{t('yes')}</Button>
+                <Button onClick={()=>setOpenDuplicateModal(!openDuplicateModal)}>{t('no')}</Button>
               </Grid>
             </MMUModal>
           </Grid>

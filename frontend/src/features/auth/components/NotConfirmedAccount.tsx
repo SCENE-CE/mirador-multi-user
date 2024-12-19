@@ -3,6 +3,7 @@ import { ResendConfirmationMail } from "../api/resendConfirmationMail.ts";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { Layout } from "./layout.tsx";
+import { useTranslation } from "react-i18next";
 
 
 export const NotConfirmedAccount = () => {
@@ -11,15 +12,16 @@ export const NotConfirmedAccount = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const { t } = useTranslation();
 
   const handleResendConfirmation = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      await ResendConfirmationMail(email); // Pass the email as argument
+      await ResendConfirmationMail(email);
       setSuccess(true);
-      setTimeout(() => navigate('/'), 2000); // Navigate home after a delay
+      setTimeout(() => navigate('/'), 2000);
     } catch (err) {
       setError('Failed to resend confirmation email. Please try again.');
     } finally {
@@ -28,7 +30,7 @@ export const NotConfirmedAccount = () => {
   };
 
   return (
-    <Layout title="You must confirm your email">
+    <Layout title={t('notConfirmedAccountTitle')}>
       <Grid container direction="column" justifyContent="center" alignItems="center" spacing={2}>
         <Grid item>
           <Typography variant="h6">
@@ -36,7 +38,7 @@ export const NotConfirmedAccount = () => {
         </Grid>
         <Grid item>
           <TextField
-            label="Email Address"
+            label={t('emailAddress')}
             variant="outlined"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -50,7 +52,7 @@ export const NotConfirmedAccount = () => {
             onClick={handleResendConfirmation}
             disabled={isLoading || success || !email}
           >
-            {isLoading ? <CircularProgress size={24} /> : 'Resend Confirmation Link'}
+            {isLoading ? <CircularProgress size={24} /> : t('resendConfirmationLink')}
           </Button>
         </Grid>
         {error && (
@@ -61,7 +63,7 @@ export const NotConfirmedAccount = () => {
         {success && (
           <Grid item>
             <Typography color="primary">
-              Confirmation link has been resent. You will be redirected shortly.
+              {t('messageConfirmationLink')}
             </Typography>
           </Grid>
         )}

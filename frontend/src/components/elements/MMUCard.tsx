@@ -11,6 +11,7 @@ import { Dayjs } from "dayjs";
 import { ObjectTypes } from "../../features/tag/type.ts";
 import OndemandVideoIcon from '@mui/icons-material/OndemandVideo';
 import ImageIcon from '@mui/icons-material/Image';
+import { useTranslation } from "react-i18next";
 
 interface IMMUCardProps<T,G,X> {
   id: number;
@@ -76,6 +77,8 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
   }:IMMUCardProps<T,G, X>
 ) => {
   const [searchInput, setSearchInput] = useState<string>('');
+  const { t } = useTranslation();
+
   const handleRemoveAccessListItem = async ( accessItemId : number) =>{
     if (removeAccessListItemFunction) {
       await removeAccessListItemFunction(item.id, accessItemId);
@@ -162,7 +165,7 @@ const MMUCard = <T extends { id: number, created_at:Dayjs,snapShotHash?:string ,
               )}
               {DefaultButton && (
                 <Grid item>
-                  <Tooltip title="Open project">
+                  <Tooltip title={t('openProject')}>
                     {DefaultButton}
                   </Tooltip>
                 </Grid>

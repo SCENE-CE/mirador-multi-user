@@ -2,11 +2,13 @@ import { useEffect } from "react";
 import { useNavigate } from 'react-router-dom';
 import storage from "../../../utils/storage.ts";
 import { useLogin, useLogout } from "../../../utils/auth.tsx";
+import { useTranslation } from "react-i18next";
 
 export const Impersonate = () => {
   const navigate = useNavigate();
   const logout = useLogout({});
   const { mutateAsync:loginUser } = useLogin();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const impersonate = async () => {
@@ -38,7 +40,7 @@ export const Impersonate = () => {
 
   return (
     <>
-      <div>Loading impersonation...</div>
+      <div>{t('loadingImpersonate')}</div>
     </>
   );
 };

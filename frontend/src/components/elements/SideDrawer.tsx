@@ -46,10 +46,8 @@ import { UserSettings } from "../../features/user-setting/UserSettings.tsx";
 import { SidePanelManifest } from "../../features/manifest/component/SidePanelManifest.tsx";
 import { handleLock } from "../../features/projects/api/handleLock.ts";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import ExitToAppIcon from '@mui/icons-material/ExitToApp';
 import { AdminPanel } from "../../features/admin/components/adminPanel.tsx";
-import storage from "../../utils/storage.ts";
-import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -121,7 +119,6 @@ const CONTENT = {
   ADMIN:'ADMIN'
 }
 export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelectedProjectId, setViewer, viewer}:ISideDrawerProps) => {
-  const navigate = useNavigate();
   const [open, setOpen] = useState(true);
   const [selectedContent, setSelectedContent] = useState(CONTENT.PROJECTS)
   const [userProjects, setUserProjects] = useState<Project[]>([]);
@@ -133,9 +130,10 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const [createManifestIsOpen, setCreateManifestIsOpen ] = useState(false);
   const [groups, setGroups] = useState<UserGroup[]>([]);
   const [isRunning, setIsRunning] =useState(false);
-  const [isImpersonate, setIsImpersonate] = useState<boolean>(false);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const myRef = useRef<MiradorViewerHandle>(null);
+  const { t } = useTranslation();
+
   useEffect(() => {
     if (myRef.current !== null) {
       if (!intervalRef.current) {
@@ -188,12 +186,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     handleSetCreateManifestIsOpen(false)
   }
 
-  const handleLeaveImpersonate = () => {
-  const adminToken = storage.getAdminToken()
-    storage.setToken(adminToken!)
-    storage.clearAdminToken()
-    navigate('/')
-  }
 
   const HandleSetUserProjects = (userProjects: Project[]) => {
     const uniqueProjects = Array.from(new Set(userProjects.map((project: Project) => project.id)))
@@ -269,7 +261,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = myRef.current?.setViewer();
-    console.log('miradorViewer',miradorViewer)
     if (selectedProjectId) {
       let projectToUpdate:Project = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
@@ -285,7 +276,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       }
     } else {
       const project: CreateProjectDto = {
-        title: 'new project',
+        title: t('defaultProjectTitle'),
         ownerId: user.id,
         userWorkspace: miradorViewer!,
         metadata:{},
@@ -333,17 +324,14 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         });
       setUserProjects(uniqueProjects);
     } catch (error) {
-      console.error("Failed to fetch projects:", error);
+      console.error(t('errorFetchProject'), error);
     }
   };
 
-  //UseEffect is necessary cause in some case selectedProjectId is undefined and made save bug
   useEffect(()=>{
     fetchProjects();
     fetchMediaForUser();
     fetchManifestForUser()
-    const isImpersonate = storage.getAdminToken()
-    setIsImpersonate(isImpersonate !== null)
   },[selectedProjectId])
 
 
@@ -367,24 +355,24 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         </DrawerHeader>
         <Divider />
         <List sx={{minHeight:'70vh', flexGrow: 1}}>
-          <Tooltip title="My projects" placement="right">
+          <Tooltip title={t('projectTitle')} placement="right">
             <ListItem sx={{padding:0}}>
-              <ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text="Projects" action={()=>handleChangeContent(CONTENT.PROJECTS)}/>
+              <ItemButton selected={CONTENT.PROJECTS=== selectedContent} open={open} icon={<WorkIcon />} text={t('project')} action={()=>handleChangeContent(CONTENT.PROJECTS)}/>
             </ListItem>
           </Tooltip>
-          <Tooltip title="Manifests" placement="right">
+          <Tooltip title={t('manifestTitle')} placement="right">
             <ListItem sx={{padding:0}}>
-              <ItemButton open={open} selected={CONTENT.MANIFEST === selectedContent} icon={<ArticleIcon />} text="Manifests" action={()=>handleChangeContent(CONTENT.MANIFEST)}/>
+              <ItemButton open={open} selected={CONTENT.MANIFEST === selectedContent} icon={<ArticleIcon />} text={t('manifest')} action={()=>handleChangeContent(CONTENT.MANIFEST)}/>
             </ListItem>
           </Tooltip>
-          <Tooltip title="Media" placement="right">
+          <Tooltip title={t('mediaTitle')} placement="right">
             <ListItem sx={{padding:0}}>
-              <ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<PermMediaIcon />} text="Medias" action={()=>handleChangeContent(CONTENT.MEDIA)}/>
+              <ItemButton open={open} selected={CONTENT.MEDIA === selectedContent} icon={<PermMediaIcon />} text={t('media')} action={()=>handleChangeContent(CONTENT.MEDIA)}/>
             </ListItem>
           </Tooltip>
-          <Tooltip title="Groups" placement="right">
+          <Tooltip title={t('groupTitle')} placement="right">
             <ListItem sx={{padding:0}}>
-              <ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text="Groups" action={()=>handleChangeContent(CONTENT.GROUPS)}/>
+              <ItemButton open={open} selected={CONTENT.GROUPS === selectedContent} icon={<GroupsIcon />} text={t('group')} action={()=>handleChangeContent(CONTENT.GROUPS)}/>
             </ListItem>
           </Tooltip>
         </List>
@@ -399,9 +387,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
                   </ListItem>
                 </Tooltip>
                 <Divider/>
-                <Tooltip title="Save" placement="left">
+                <Tooltip title={t('save')} placement="left">
                   <ListItem sx={{padding:0}}>
-                    <ItemButton open={open} selected={false} icon={<SaveIcon />} text="Save Project" action={saveProject}/>
+                    <ItemButton open={open} selected={false} icon={<SaveIcon />} text={t('saveProject')} action={saveProject}/>
                   </ListItem>
                 </Tooltip>
               </List>
@@ -412,30 +400,21 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
         <List>
           {
             user._isAdmin &&(
-              <Tooltip title="Admin overview" placement="right">
+              <Tooltip title={t('titleAdmin')} placement="right">
                 <ListItem sx={{padding:0}}>
-                  <ItemButton open={open} selected={false} icon={<AdminPanelSettingsIcon />} text="Admin" action={()=>handleChangeContent(CONTENT.ADMIN)}/>
+                  <ItemButton open={open} selected={false} icon={<AdminPanelSettingsIcon />} text={t('admin')} action={()=>handleChangeContent(CONTENT.ADMIN)}/>
                 </ListItem>
               </Tooltip>
             )
           }
-          {
-            isImpersonate && (
-              <Tooltip title="Quit impersonating" placement="right">
-                <ListItem sx={{padding:0}}>
-                  <ItemButton open={open} selected={false} icon={<ExitToAppIcon />} text="Leave impersonate" action={()=>handleLeaveImpersonate()}/>
-                </ListItem>
-              </Tooltip>
-            )
-          }
-          <Tooltip title="Settings" placement="right">
+          <Tooltip title={t('titleSettings')} placement="right">
             <ListItem sx={{padding:0}}>
-              <ItemButton open={open} selected={false} icon={<SettingsIcon />} text="Settings" action={()=>handleChangeContent(CONTENT.SETTING)}/>
+              <ItemButton open={open} selected={false} icon={<SettingsIcon />} text={t('settings')} action={()=>handleChangeContent(CONTENT.SETTING)}/>
             </ListItem>
           </Tooltip>
-          <Tooltip title="Discconect" placement="right">
+          <Tooltip title={t('titleDisconnect')} placement="right">
             <ListItem sx={{padding:0}}>
-              <ItemButton open={open} selected={false} icon={<LogoutIcon />} text="Disconnect" action={handleSetDisconnectModalOpen}/>
+              <ItemButton open={open} selected={false} icon={<LogoutIcon />} text={t('disconnect')} action={handleSetDisconnectModalOpen}/>
             </ListItem>
           </Tooltip>
         </List>
