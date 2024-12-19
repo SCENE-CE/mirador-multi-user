@@ -25,7 +25,7 @@ export class ManifestService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
-        `an error occured while creating manifest, ${error.message}`,
+        `an error occurred while creating manifest, ${error.message}`,
       );
     }
   }

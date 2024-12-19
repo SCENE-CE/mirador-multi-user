@@ -6,10 +6,10 @@ import '@fontsource/roboto/400.css';
 import '@fontsource/roboto/500.css';
 import '@fontsource/roboto/700.css';
 import IMiradorState from "./interface/IState.ts";
-import LocalStorageAdapter from "mirador-annotation-editor/src/annotationAdapter/LocalStorageAdapter.js";
 import './style/mirador.css'
 import { Project } from "../projects/types/types.ts";
 import IState from "./interface/IState.ts";
+import MMUAdapter from "./adapter/MMUAdapter";
 
 interface MiradorViewerHandle {
   setViewer:()=>IState;
@@ -29,7 +29,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
   const { miradorState, saveMiradorState, project, setMiradorState, setViewer,HandleSetIsRunning } = props;
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
-  console.log('miradorState',miradorState)
   useImperativeHandle(ref, () => ({
     saveProject: () => {
       console.log(miradorViewer.store.getState())
@@ -47,9 +46,9 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
       const config = {
         id: viewerRef.current.id,
         annotation: {
-          adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
-          // adapter: (canvasId) => new AnnototAdapter(canvasId, endpointUrl),
-          exportLocalStorageAnnotations: false, // display annotation JSON export button
+          adapter: (canvasId : string) => new MMUAdapter( project.id, `${canvasId}/annotationPage`),
+          // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
+          exportLocalStorageAnnotations: false,
         }
       };
 
@@ -67,8 +66,22 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
       // Load state only if it is not empty
       if (loadingMiradorViewer && project.id && miradorState) {
+        const configWithAdapter = {
+          ...miradorState.config,
+          annotation:{
+            ...miradorState.config.annotation,
+            adapter: (canvasId : string) => new MMUAdapter( project.id, `${canvasId}/annotationPage`),
+          }
+        }
+        const miradorStateWithAdapter = {
+          ...miradorState,
+          config: {
+            ...configWithAdapter
+          },
+        };
+        console.log('miradorStateWithAdapter',miradorStateWithAdapter)
         loadingMiradorViewer.store.dispatch(
-          Mirador.actions.importMiradorState(miradorState)
+          Mirador.actions.importMiradorState(miradorStateWithAdapter),
         );
       }
 
@@ -80,7 +93,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
 
   return(
-      <div ref={viewerRef} id="mirador" style={{height:'100vh'}}></div>
+    <div ref={viewerRef} id="mirador" style={{height:'100vh'}}></div>
   )
 });
 

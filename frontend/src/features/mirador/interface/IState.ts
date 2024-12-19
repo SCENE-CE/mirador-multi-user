@@ -6,7 +6,9 @@ export default interface IState {
   };
   catalog:any[],
   companionWindows:{},
-  config:{},
+  config:{
+    annotation:{},
+  },
   elasticLayout:{},
   layers:{},
   manifests:{},

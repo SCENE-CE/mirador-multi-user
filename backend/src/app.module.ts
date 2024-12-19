@@ -27,6 +27,7 @@ import { MetadataFormatModule } from './BaseEntities/metadata-format/metadata-fo
 import { LinkMetadataFormatGroupModule } from './LinkModules/link-metadata-format-group/link-metadata-format-group.module';
 import { MetadataModule } from './BaseEntities/metadata/metadata.module';
 import { ImpersonationModule } from './impersonation/impersonation.module';
+import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-page.module';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { ImpersonationModule } from './impersonation/impersonation.module';
     LinkMetadataFormatGroupModule,
     MetadataModule,
     ImpersonationModule,
+    AnnotationPageModule,
   ],
   controllers: [AppController],
   providers: [

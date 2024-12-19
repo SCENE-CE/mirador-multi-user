@@ -190,11 +190,8 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const handleLeaveImpersonate = () => {
   const adminToken = storage.getAdminToken()
-    console.log('adminToken',adminToken)
     storage.setToken(adminToken!)
-    console.log('settoken')
     storage.clearAdminToken()
-    console.log('clear token')
     navigate('/')
   }
 
@@ -272,6 +269,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   const saveMiradorState = useCallback(async () => {
     const miradorViewer = myRef.current?.setViewer();
+    console.log('miradorViewer',miradorViewer)
     if (selectedProjectId) {
       let projectToUpdate:Project = userProjects.find(projectUser => projectUser.id == selectedProjectId)!;
       //TODO FIX THIS BECAUSE PROJECT TO UPDATE SHOULD NOT BE UNDEFINED
@@ -306,12 +304,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   }, [handleSaveProject, setSelectedProjectId, user, userProjects]);
 
   const saveProject = async (redirect?:boolean) => {
-    console.log('redirect',redirect)
     if(redirect !== true){
-      console.log('toto')
       await handleLock({projectId:selectedProjectId!,lock:true});
     }else{
-      console.log('tata')
      await handleLock({projectId:selectedProjectId!,lock:false});
     }
     await saveMiradorState();
@@ -348,7 +343,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     fetchMediaForUser();
     fetchManifestForUser()
     const isImpersonate = storage.getAdminToken()
-    console.log('isImpersonate',isImpersonate !== null)
     setIsImpersonate(isImpersonate !== null)
   },[selectedProjectId])
 
@@ -362,7 +356,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     return null;
   }, [userProjects, selectedProjectId]);
 
-  console.log('user',user)
   return(
     <>
       <Drawer variant="permanent" open={open}
