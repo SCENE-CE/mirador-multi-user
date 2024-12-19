@@ -131,6 +131,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
     });
     updatedListOfMedias.push(mediaToUpdate);
     setMedias(updatedListOfMedias);
+    fetchMediaForUser()
   },[medias, setMedias])
 
   const HandleLookingForMedia = async (partialString : string) =>{
