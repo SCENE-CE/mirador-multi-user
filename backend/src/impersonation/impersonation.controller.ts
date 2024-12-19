@@ -26,7 +26,7 @@ export class ImpersonationController {
 
     const redirectUrl = `${process.env.FRONTEND_URL}/impersonate/?token=${impersonation.token}`;
 
-    return res.json({ redirectUrl });
+    return res.json({ redirectUrl: redirectUrl, user: impersonation.user });
   }
 
   @UseGuards(AuthGuard)

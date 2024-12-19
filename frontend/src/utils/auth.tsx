@@ -13,7 +13,6 @@ import { CircularProgress, Grid } from "@mui/material";
 
 export async function handleTokenResponse(data:UserResponse){
   const {access_token, user } = data;
-  console.log('data',data)
   storage.setToken(access_token);
   return user;
 }
@@ -26,10 +25,10 @@ async function loadUser(): Promise<User|null>{
   console.log('USER DATA IS EMPTY')
   return null
 }
+
 async function loginFn(data: LoginCredentialsDTO){
   const response = await login(data);
-  const token = await handleTokenResponse(response)
-  return token;
+  return await handleTokenResponse(response);
 }
 
 async function registerFn(data: RegisterCredentialsDTO){
@@ -41,7 +40,6 @@ async function registerFn(data: RegisterCredentialsDTO){
 async function logoutFn()
 {
   storage.clearToken();
-  window.location.assign(window.location.origin as unknown as string);
 }
 
 const authConfig= {
