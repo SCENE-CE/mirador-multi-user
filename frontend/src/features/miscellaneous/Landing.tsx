@@ -1,11 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { Button, Grid, Typography } from "@mui/material";
 import { theme } from "../../assets/theme/mainTheme.ts";
+import { useTranslation } from "react-i18next";
+import LanguageSelector from "../translation/LanguageSelector.tsx";
 
 export const Landing = () => {
   const navigate = useNavigate();
-
-
+  const { t } = useTranslation();
   const HandleSignIn= ()=>{
     navigate('/auth/signin');
   }
@@ -28,8 +29,9 @@ export const Landing = () => {
       marginTop:0
     }}
     >
+      <LanguageSelector/>
       <Grid item>
-      <Typography variant="h2" component="h1">Welcome to ARVEST</Typography>
+      <Typography variant="h2" component="h1">{t('welcome')}</Typography>
       </Grid>
       <Grid
         item
