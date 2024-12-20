@@ -243,7 +243,7 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   }
 
   return(
-    <Box sx={{ padding: 2 }}>
+    <Box sx={{ padding: 3 }}>
       <Grid item container flexDirection="column" spacing={1}>
         <Grid item container alignItems="center" justifyContent="space-between"  sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
           <Grid item>

@@ -19,6 +19,7 @@ export const MainContent = () => {
   if (!user.data.id) {
     return <NotConfirmedAccount/>;
   }
+  console.log(user)
 
 
   const handleDisconnect = () => {
@@ -29,7 +30,7 @@ export const MainContent = () => {
     });
   };
   return (
-    <Grid container direction="row"
+    <Grid container direction="row" sx={{ padding: 0 }}
     >
       <SideDrawer
         user={user.data}

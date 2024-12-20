@@ -273,4 +273,28 @@ export class LinkUserGroupController {
       },
     );
   }
+
+  @ApiOperation({ summary: 'update user preferred language' })
+  @SetMetadata('action', ActionType.UPDATE)
+  @Patch('/updateLanguage/:userId')
+  @UseGuards(AuthGuard)
+  async updateUserLanguage(
+    @Param('userId') userId: number,
+    @Req() request,
+    @Body() preferredLanguageDto: { preferredLanguage: string },
+  ) {
+    const userPersonalGroup =
+      await this.linkUserGroupService.findUserPersonalGroup(request.user.sub);
+    return await this.linkUserGroupService.checkPolicies(
+      request.metadata.action,
+      request.user.sub,
+      userPersonalGroup.id,
+      async () => {
+        return await this.linkUserGroupService.updateUserLanguage(
+          userId,
+          preferredLanguageDto.preferredLanguage,
+        );
+      },
+    );
+  }
 }

@@ -1,7 +1,7 @@
 import {
   Box,
   CSSObject,
-  Divider,
+  Divider, Grid,
   IconButton,
   List,
   ListItem,
@@ -48,6 +48,7 @@ import { handleLock } from "../../features/projects/api/handleLock.ts";
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import { AdminPanel } from "../../features/admin/components/adminPanel.tsx";
 import { useTranslation } from "react-i18next";
+import { loadLanguage } from "../../features/translation/i18n.ts";
 
 const drawerWidth = 240;
 const openedMixin = (theme: Theme): CSSObject => ({
@@ -134,6 +135,11 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const myRef = useRef<MiradorViewerHandle>(null);
   const { t } = useTranslation();
 
+  const loadPreferredLanguage = async()=>{
+    console.log('user',user)
+    console.log("loadPreferredLanguage", user.preferredLanguage);
+    await loadLanguage(user.preferredLanguage);
+  }
   useEffect(() => {
     if (myRef.current !== null) {
       if (!intervalRef.current) {
@@ -156,6 +162,9 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
     };
   }, [myRef.current, isRunning]);
 
+  useEffect(() => {
+    loadPreferredLanguage()
+  }, [user]);
   const handleSetCreateManifestIsOpen = (boolean:boolean) =>{
     setCreateManifestIsOpen(boolean);
   }
@@ -346,7 +355,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
 
   return(
     <>
-      <Drawer variant="permanent" open={open}
+      <Drawer variant="permanent" open={open} sx={{maxHeight:'100vh'}}
       >
         <DrawerHeader>
           <IconButton onClick={open ?  handleDrawerClose : handleDrawerOpen }>
@@ -419,10 +428,10 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           </Tooltip>
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, padding:0, margin:0, maxHeight:'100vh'}}>
         {selectedProjectId && projectSelected &&(
           <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup!} user={user} fetchManifestForUser={fetchManifestForUser} display={true}>
-            <Box sx={{ flexGrow: 1, p: 3 }}>
+            <Grid sx={{paddingRight:5}}>
               <MiradorViewer
                 miradorState={miradorState!}
                 setMiradorState={handleSetMiradorState}
@@ -433,7 +442,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
                 ref={myRef}
                 HandleSetIsRunning={HandleSetIsRunning}
               />
-            </Box>
+            </Grid>
           </SidePanelManifest>
         )
         }

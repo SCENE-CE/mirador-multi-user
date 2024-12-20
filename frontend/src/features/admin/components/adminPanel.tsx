@@ -57,7 +57,7 @@
     }
 
     return (
-      <Grid>
+      <Grid sx={{padding:2}}>
         <CollapsibleTable
           columns={columns}
           rows={rows}

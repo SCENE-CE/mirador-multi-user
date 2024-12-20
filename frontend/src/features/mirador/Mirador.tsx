@@ -93,7 +93,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
 
 
   return(
-    <div ref={viewerRef} id="mirador" style={{height:'100vh'}}></div>
+    <div ref={viewerRef} id="mirador" style={{height:'100%', padding:0, margin:0, overflow:'hidden'}}></div>
   )
 });
 

@@ -11,6 +11,7 @@ export type User = {
   _isAdmin:boolean;
   isEmailConfirmed:boolean;
   createdAt:Date;
+  preferredLanguage:string;
 }
 
 export type UpdateUserDto={

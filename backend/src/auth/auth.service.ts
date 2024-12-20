@@ -26,21 +26,12 @@ export class AuthService {
     pass: string,
     isImpersonate: string,
   ): Promise<{ access_token: string }> {
-    console.log(
-      '-------------------------isImpersonate-------------------------',
-    );
-    console.log(isImpersonate);
     if (isImpersonate != undefined) {
-      console.log('isImpersonate true');
       const impersonation =
         await this.impersonationService.validateToken(isImpersonate);
       if (!impersonation) {
         throw new UnauthorizedException('token is invalid');
       }
-      console.log(
-        '-------------------------impersonation-------------------------',
-      );
-      console.log(impersonation);
       const user = await this.usersService.findOneByMail(
         impersonation.user.mail,
       );
@@ -57,7 +48,6 @@ export class AuthService {
         access_token: await this.jwtService.signAsync(payload),
       };
     }
-    console.log('isImpersonate false');
     const user = await this.usersService.findOneByMail(mail);
     console.log(user);
     if (!user) {
@@ -93,7 +83,6 @@ export class AuthService {
       secret: process.env.JWT_EMAIL_VERIFICATION_TOKEN_SECRET,
       expiresIn: `900s`,
     });
-    console.log(token);
     await this.usersService.updateUser(user.id, { resetToken: token });
 
     await this.emailService.sendResetPasswordLink({
@@ -157,6 +146,7 @@ export class AuthService {
       mail: user.mail,
       name: user.name,
       _isAdmin: user._isAdmin,
+      preferredLanguage: user.preferredLanguage,
     };
   }
 }

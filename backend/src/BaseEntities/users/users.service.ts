@@ -164,4 +164,27 @@ export class UsersService {
       );
     }
   }
+
+  async updatePreferredLanguage(userId: number, preferredLanguage: string) {
+    try {
+      console.log('----------------preferredLanguage----------------')
+      console.log(preferredLanguage)
+      const updateResult = await this.userRepository.update(userId, {
+        preferredLanguage,
+      });
+
+      if (updateResult.affected === 0) {
+        this.logger.warn(`No user found with ID: ${userId}`);
+        throw new NotFoundException(`User with ID ${userId} not found`);
+      }
+
+      return updateResult;
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException(
+        `error while updating language: ${preferredLanguage}`,
+        error.message,
+      );
+    }
+  }
 }

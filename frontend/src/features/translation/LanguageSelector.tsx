@@ -5,8 +5,11 @@ import { useEffect, useState } from "react";
 import { loadLanguage } from "./loadLanguage.ts";
 import { SelectChangeEvent } from "@mui/material";
 import { availableLanguages } from "./i18n.ts";
-
-const LanguageSelector = () => {
+import { updatePreferredLanguage } from "./api/updatePreferredLanguage.ts";
+interface LanguageSelectorProps {
+  userId:number
+}
+const LanguageSelector = ({userId}:LanguageSelectorProps) => {
   const { i18n } = useTranslation();
   const [language, setLanguage] = useState(i18n.language);
 
@@ -18,6 +21,8 @@ const LanguageSelector = () => {
     const selectedLanguage = event.target.value;
     setLanguage(selectedLanguage);
     await loadLanguage(selectedLanguage);
+    console.log(selectedLanguage);
+    await updatePreferredLanguage(userId, selectedLanguage);
   };
 
   return (

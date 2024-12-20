@@ -39,8 +39,8 @@ export const UserSettings = ({user}:IUserSettingsProps) => {
 
 
   return (
-    <Grid container spacing={2}>
-      <Grid container item flexDirection="row" alignItems="center" spacing={2} sx={{ width: '100%' }}>
+    <Grid container spacing={2} sx={{ padding:2}}>
+      <Grid container item flexDirection="row" alignItems="center" spacing={2} sx={{ width: '100%'}}>
         <Grid item xs={10}>
           <TextField
             label={t('labelApiToken')}
@@ -59,7 +59,7 @@ export const UserSettings = ({user}:IUserSettingsProps) => {
           <Typography variant="h5">{t('changeLanguage')}</Typography>
         </Grid>
         <Grid item>
-          <LanguageSelector/>
+          <LanguageSelector userId={user.id}/>
         </Grid>
       </Grid>
 

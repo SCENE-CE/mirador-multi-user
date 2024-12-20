@@ -48,4 +48,8 @@ export class User {
 
   @OneToMany(() => Impersonation, (impersonation) => impersonation.user)
   impersonations: Impersonation[];
+
+  @Index()
+  @Column({ default: 'en' })
+  preferredLanguage: string;
 }

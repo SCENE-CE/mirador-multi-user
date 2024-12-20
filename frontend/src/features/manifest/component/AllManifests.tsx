@@ -309,7 +309,7 @@ export const AllManifests= ({userPersonalGroup, user,fetchManifestForUser,manife
   return (
     <>
       <SidePanelMedia  open={openSidePanel && !!openModalManifestId} setOpen={handleSetOpenSidePanel} display={!!openModalManifestId} fetchMediaForUser={fetchMediaForUser} medias={medias} user={user} userPersonalGroup={userPersonalGroup!}>
-        <Grid item container flexDirection="column" spacing={1}>
+        <Grid item container flexDirection="column" spacing={1} sx={{padding:2}}>
           <Grid item container direction="row-reverse" alignItems="center" sx={{position:'sticky', top:0, zIndex:1000, backgroundColor:'#dcdcdc', paddingBottom:"10px"}}>
             {
               !createManifestIsOpen && (

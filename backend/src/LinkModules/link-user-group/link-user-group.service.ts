@@ -472,7 +472,7 @@ export class LinkUserGroupService {
 
   async getAllUsers() {
     try {
-      return await this.userService.findAllUsers()
+      return await this.userService.findAllUsers();
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
@@ -532,6 +532,18 @@ export class LinkUserGroupService {
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(`an error occurred`, error);
+    }
+  }
+
+  async updateUserLanguage(userId: number, preferredLanguage: string) {
+    try {
+      return await this.userService.updatePreferredLanguage(
+        userId,
+        preferredLanguage,
+      );
+    } catch (error) {
+      this.logger.error(error.message, error.stack);
+      throw new InternalServerErrorException();
     }
   }
 }
