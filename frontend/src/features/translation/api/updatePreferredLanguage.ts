@@ -3,7 +3,6 @@ import storage from "../../../utils/storage.ts";
 export const updatePreferredLanguage = async (userId:number, preferredLanguage:string)=> {
   try{
     const token = storage.getToken();
-    console.log('preferredLanguage',preferredLanguage)
     try {
       const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/updateLanguage/${userId}`, {
         method: "PATCH",

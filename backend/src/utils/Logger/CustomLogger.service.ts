@@ -6,18 +6,20 @@ export class CustomLogger implements LoggerService {
   private logFile = path.join(__dirname, '..', 'logs', 'app.log');
 
   constructor() {
-    if (!fs.existsSync(path.dirname(this.logFile))) {
-      fs.mkdirSync(path.dirname(this.logFile), { recursive: true });
+    const logDir = path.dirname(this.logFile);
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true });
     }
   }
   log(message: string) {
-    if(parseInt(process.env.LOG_LEVEL, 10) > 2) {
+    if (parseInt(process.env.LOG_LEVEL, 10) > 2) {
       this.writeToFile('LOG', message);
     }
     console.log(message);
   }
 
   error(message: string, trace: string) {
+    console.log(parseInt(process.env.LOG_LEVEL, 10));
     if (parseInt(process.env.LOG_LEVEL, 10) >= 0) {
       this.writeToFile('ERROR', `${message} - ${trace}`);
     }
@@ -25,21 +27,21 @@ export class CustomLogger implements LoggerService {
   }
 
   warn(message: string) {
-    if(parseInt(process.env.LOG_LEVEL, 10) > 0) {
+    if (parseInt(process.env.LOG_LEVEL, 10) > 0) {
       this.writeToFile('WARN', message);
     }
     console.warn(message);
   }
 
   debug(message: string) {
-    if(parseInt(process.env.LOG_LEVEL, 10) > 1) {
+    if (parseInt(process.env.LOG_LEVEL, 10) > 1) {
       this.writeToFile('DEBUG', message);
     }
     console.debug(message);
   }
 
   verbose(message: string) {
-    if(parseInt(process.env.LOG_LEVEL, 10) > 3) {
+    if (parseInt(process.env.LOG_LEVEL, 10) > 3) {
       this.writeToFile('VERBOSE', message);
     }
     console.log(message);

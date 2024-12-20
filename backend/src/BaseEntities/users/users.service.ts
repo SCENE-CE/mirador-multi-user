@@ -167,8 +167,6 @@ export class UsersService {
 
   async updatePreferredLanguage(userId: number, preferredLanguage: string) {
     try {
-      console.log('----------------preferredLanguage----------------')
-      console.log(preferredLanguage)
       const updateResult = await this.userRepository.update(userId, {
         preferredLanguage,
       });
