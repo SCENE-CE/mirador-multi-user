@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import InputMonoNarrow from '../fonts/InputMonoNarrow-ExtraLight.ttf';
-import backgroundImage from '../110719_RdL_0288.jpg';
+import backgroundImage from '../110719_RdL_0288.webp';
 declare module '@mui/material/styles' {
   interface Palette {
     backgroundImage?: string;
