@@ -25,9 +25,10 @@ export class AnnotationPageService {
       );
 
       // TODO It will be better to used upsert method
-      this.annotationPageRepository.delete(
-        this.findAll(annotationPage.annotationPageId, annotationPage.projectId),
-      );
+      await this.annotationPageRepository.delete({
+        annotationPageId: annotationPage.annotationPageId,
+        projectId: annotationPage.projectId,
+      });
       // Save annotationPage
       await this.annotationPageRepository.save(annotationPage);
 

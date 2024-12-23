@@ -21,6 +21,7 @@ import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ActionType } from '../../enum/actions';
 import { EmailServerService } from '../../utils/email/email.service';
+import * as process from "process";
 
 @Injectable()
 export class LinkUserGroupService {
@@ -124,11 +125,8 @@ export class LinkUserGroupService {
         userId: savedUser.id,
         user_groupId: userPersonalGroup.id,
       });
-      await this.emailService.sendConfirmationEmail({
-        to: savedUser.mail,
-        subject: 'Arvest account creation',
-        userName: savedUser.name,
-      });
+
+      this.sendConfirmationLink(savedUser.mail);
 
       return savedUser;
     } catch (error) {
@@ -145,15 +143,15 @@ export class LinkUserGroupService {
     }
   }
 
-  public async resendConfirmationLink(email: string) {
+  public async sendConfirmationLink(email: string) {
     const user = await this.userService.findOneByMail(email);
     if (user.isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
     }
     await this.emailService.sendConfirmationEmail({
       to: user.mail,
-      subject: 'Arvest account creation',
-      userName: user.name,
+      subject: "Account creation",
+      userName: user.name
     });
   }
 
