@@ -14,8 +14,8 @@ export const upsertAnnotationPage = async (annotationPageDto: AnnotationPageDto)
     });
     const annotationPageSaved =  await response.json();
     // TODO Why is it a simple object and not array here ?
-    if(annotationPageSaved.content){
-      return annotationPageSaved.content;
+    if(annotationPageSaved[0].content){
+      return annotationPageSaved[0].content;
     } else {
       return null ;
     }
