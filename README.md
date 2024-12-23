@@ -61,7 +61,7 @@ In an other terminal, run following commands to generate the database
 
 ## Clean docker images
 
-Useful when changing some env variable.
+Useful when changing some env variables.
 
 - `docker rmi -f mirador-multi-user-frontend`
 - `docker rmi -f mirador-multi-user-backend`
