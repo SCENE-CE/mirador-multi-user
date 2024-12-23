@@ -23,6 +23,12 @@ export class AnnotationPageService {
       const annotationPage = this.annotationPageRepository.create(
         createAnnotationPageDto,
       );
+
+      // TODO It will be better to used upsert method
+      const annotationPageToDelete = this.findAll(annotationPage.annotationPageId, annotationPage.projectId);
+      this.annotationPageRepository.delete(annotationPageToDelete);
+
+
       const toreturn = await this.annotationPageRepository.save(annotationPage);
       console.log('-----------toreturn-----------');
       console.log(toreturn);

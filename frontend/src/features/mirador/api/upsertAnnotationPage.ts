@@ -12,7 +12,12 @@ export const upsertAnnotationPage = async (annotationPageDto: AnnotationPageDto)
       },
       body: JSON.stringify(annotationPageDto),
     });
-    return await response.json();
+    const annotationPageSaved =  await response.json();
+    if(annotationPageSaved.length > 0){
+      return JSON.parse(annotationPageSaved[0].content);
+    } else {
+      return [] ;
+    }
   }catch(error){
     console.error(error);
   }
