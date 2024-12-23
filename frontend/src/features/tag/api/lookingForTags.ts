@@ -10,9 +10,8 @@ export const lookingForTags = async (partialString: string) => {
       },
     })
     const toreturn = await response.json();
-    console.log(toreturn)
     return toreturn
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }

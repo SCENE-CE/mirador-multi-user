@@ -25,7 +25,6 @@ export const MiradorPublicExposed = () => {
       try {
         const response = await fetch(updatedUrl, { method: 'GET' });
         const miradorWorkspace = await response.json();
-        console.log("miradorWorkspace",miradorWorkspace)
         if (viewerRef.current) {
           const config = {
             id: viewerRef.current.id,
@@ -37,7 +36,6 @@ export const MiradorPublicExposed = () => {
 
           let loadingMiradorViewer;
           // First displaying of the viewer
-          console.log('viewer',viewer)
           if (!viewer) {
             loadingMiradorViewer = Mirador.viewer(config, []);
           }

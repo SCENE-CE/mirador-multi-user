@@ -20,6 +20,5 @@ export const uploadManifest= async (createManifestDto:UploadAndLinkManifestDto) 
   }
 
   const data = await response.json();
-  console.log(data);
   return data;
 }

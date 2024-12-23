@@ -13,7 +13,6 @@ export const handleLock = async (lockProjectDto: LockProjectDto) => {
       body: JSON.stringify({ ...lockProjectDto })
     });
     const toreturn = await response.json();
-    console.log('toreturn',toreturn);
     return toreturn;
   } catch (error) {
     throw error;

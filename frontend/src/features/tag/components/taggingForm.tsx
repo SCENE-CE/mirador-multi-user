@@ -24,7 +24,6 @@ export const TaggingForm = ({object,objectTypes}:ITaggingFormProps)=>{
 
   const HandleGetTags = async () => {
     const taggingsForObject =  await getTagsForObject(object.id)
-    console.log(taggingsForObject)
     setTags(taggingsForObject);
   }
 

@@ -3,7 +3,6 @@ import { grantAccessToManifestDto } from "../types/types.ts";
 
 export const grantAccessToManifest = async (grantAccessToManifestDto:grantAccessToManifestDto)=>{
   const token = storage.getToken();
-console.log('grantAccessToManifestDto:',grantAccessToManifestDto)
   try{
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-manifest-group/manifest/add`,
       {
@@ -20,7 +19,6 @@ console.log('grantAccessToManifestDto:',grantAccessToManifestDto)
     }
 
     const data = await response.json();
-    console.log('data',data);
     return data;
 
   }catch(error){

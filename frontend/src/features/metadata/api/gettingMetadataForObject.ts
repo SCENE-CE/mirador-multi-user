@@ -15,7 +15,6 @@ export const gettingMetadataForObject = async (objectId: number, objectType:Obje
     }
 
     const metadata = await response.json();
-    console.log('metadata from fetch',metadata);
     return metadata;
   } catch (error) {
     console.error("Error getting metadata:", error);

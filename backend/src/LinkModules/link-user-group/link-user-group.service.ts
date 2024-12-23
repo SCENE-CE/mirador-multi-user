@@ -21,7 +21,7 @@ import { CreateUserDto } from '../../BaseEntities/users/dto/create-user.dto';
 import * as bcrypt from 'bcrypt';
 import { ActionType } from '../../enum/actions';
 import { EmailServerService } from '../../utils/email/email.service';
-import * as process from "process";
+import * as process from 'process';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -126,7 +126,7 @@ export class LinkUserGroupService {
         user_groupId: userPersonalGroup.id,
       });
 
-      this.sendConfirmationLink(savedUser.mail);
+      await this.sendConfirmationLink(savedUser.mail);
 
       return savedUser;
     } catch (error) {
@@ -150,8 +150,8 @@ export class LinkUserGroupService {
     }
     await this.emailService.sendConfirmationEmail({
       to: user.mail,
-      subject: "Account creation",
-      userName: user.name
+      subject: 'Account creation',
+      userName: user.name,
     });
   }
 

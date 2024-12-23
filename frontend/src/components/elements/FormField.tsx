@@ -23,7 +23,6 @@ const FormField: React.FC<FormFieldProps> = (
     valueAsNumber,
   }
 ) =>{
-  console.log('error:' ,error)
 
   return (
   <Grid container alignItems="center" spacing={2} justifyContent="space-between">

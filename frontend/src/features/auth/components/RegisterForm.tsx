@@ -32,7 +32,7 @@ export const RegisterForm = () => {
         onSuccess: () => navigate("/")
       });
     } catch (error : any) {
-      console.log("error", error);
+      console.error("error", error);
       setOpen(true);
       setMessage(error.toString());
     }

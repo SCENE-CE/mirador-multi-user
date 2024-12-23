@@ -14,7 +14,6 @@ export const updateAccessToProject = async (projectId:number, userGroupId:number
 
     })
     const toReturn = await response.json();
-    console.log('toReturn',toReturn)
     return toReturn;
   }catch(error){
     throw error;

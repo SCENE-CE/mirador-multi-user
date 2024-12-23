@@ -15,6 +15,6 @@ export const createTag = async (name: string) => {
     })
     return await response.json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }

@@ -4,7 +4,6 @@ export const gettingAnnotationPage = async (annotationPageId:string, projectId:n
   try{
     const token = storage.getToken();
     const encodedURI = encodeURIComponent(annotationPageId)
-    console.log('encodedURI',encodedURI);
 
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/annotation-page/${encodedURI}/${projectId}`, {
       method: 'GET',
@@ -13,7 +12,6 @@ export const gettingAnnotationPage = async (annotationPageId:string, projectId:n
       },
     });
     const responseGetAll= await response.json();
-    console.log('responseGetAll',responseGetAll);
     return responseGetAll;
   }catch(error){
     console.error(error);

@@ -5,7 +5,6 @@ type ConfirmMailResponse = {
 
 export const confirmationMail = async (token: string): Promise<ConfirmMailResponse> => {
   try {
-    console.log('token',token)
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/email-confirmation/confirm`, {
       method: 'POST',
       headers: {
@@ -13,7 +12,6 @@ export const confirmationMail = async (token: string): Promise<ConfirmMailRespon
       },
       body: JSON.stringify({ token })
     });
-console.log(response.status)
     if (response.status === 201) {
       return {
         message: 'email confirmed',

@@ -2,7 +2,6 @@ import storage from "../../../utils/storage.ts";
 
 export const tagging = async (tagTitle:string,objectId:number) => {
   try {
-    console.log(tagTitle)
     const token = storage.getToken();
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/tagging/assign`, {
       method: 'POST',
@@ -17,6 +16,6 @@ export const tagging = async (tagTitle:string,objectId:number) => {
     })
     return await response.json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }

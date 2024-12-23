@@ -9,7 +9,6 @@ export const lookingForUsers= async (partialUserName:string)=>{
         authorization: `Bearer ${token}`,
       }})
     const toReturn = await response.json();
-    console.log('TO RETURN ', toReturn)
     return toReturn;
   }catch(error){
     throw error;

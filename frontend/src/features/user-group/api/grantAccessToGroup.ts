@@ -4,8 +4,6 @@ import { User } from "../../auth/types/types.ts";
 
 export const grantAccessToGroup = async (user : User, user_group : UserGroup) => {
   const token = storage.getToken();
-  console.log('user',user)
-  console.log('user_group',user_group)
   try {
     const payload = {
       userId: user.id,
@@ -22,6 +20,6 @@ export const grantAccessToGroup = async (user : User, user_group : UserGroup) =>
       })
     return await response.json()
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }

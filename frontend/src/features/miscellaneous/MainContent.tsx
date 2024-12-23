@@ -14,13 +14,9 @@ export const MainContent = () => {
     return <Loading />;
   }
 
-  console.log(user.data);
-
   if (!user.data.id) {
     return <NotConfirmedAccount/>;
   }
-  console.log(user)
-
 
   const handleDisconnect = () => {
     logout.mutate(undefined, {
