@@ -28,11 +28,12 @@ export class AnnotationPageService {
       const annotationPageToDelete = this.findAll(annotationPage.annotationPageId, annotationPage.projectId);
       this.annotationPageRepository.delete(annotationPageToDelete);
 
+      // Save annotationPage
+      await this.annotationPageRepository.save(annotationPage);
 
-      const toreturn = await this.annotationPageRepository.save(annotationPage);
-      console.log('-----------toreturn-----------');
-      console.log(toreturn);
-      return toreturn;
+      // Return all annotationPage. In current workflow, only one will be matching
+      return this.findAll(annotationPage.annotationPageId, annotationPage.projectId);
+
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(

@@ -13,7 +13,7 @@ export class AnnotationPageController {
   @Post()
   create(@Body() createAnnotationPageDto: CreateAnnotationPageDto) {
     console.log('post');
-    return this.annotationPageService.create(createAnnotationPageDto);
+    this.annotationPageService.create(createAnnotationPageDto);
   }
   @ApiOperation({ summary: 'finding all annotation page' })
   @UseGuards(AuthGuard)
