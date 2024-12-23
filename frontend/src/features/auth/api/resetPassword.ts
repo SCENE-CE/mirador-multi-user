@@ -1,6 +1,5 @@
 export const resetPassword = async (token:string, password:string)=>{
   try{
-    console.log("reset password");
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/auth/reset-password`, {
       method: 'POST',
       headers: {

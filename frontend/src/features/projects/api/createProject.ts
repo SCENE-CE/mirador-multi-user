@@ -3,7 +3,6 @@ import { CreateProjectDto, Project, ProjectUser } from "../types/types.ts";
 
 export const createProject = async (project: CreateProjectDto): Promise<Project> => {
   const token = storage.getToken();
-  console.log('CREATE PROJECT', project)
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-group-project/project`, {
       method: "POST",

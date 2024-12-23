@@ -15,7 +15,6 @@ export const getAllManifestGroups = async (manifestId: number): Promise<ProjectG
     }
 
     const toreTurn = await response.json();
-    console.log(toreTurn)
     return toreTurn;
   } catch (error) {
     console.error("Error in getGroupsAccessToManifest:", error);

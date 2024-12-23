@@ -2,7 +2,6 @@ import storage from "../../../utils/storage.ts";
 
 export const impersonateUser = async (impersonateToken:string,userId:number ) => {
   const token = storage.getToken();
-  console.log('token',token);
   try{
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/impersonation/impersonate`, {
       method: 'POST',
@@ -22,7 +21,6 @@ export const impersonateUser = async (impersonateToken:string,userId:number ) =>
       console.error('token is undefined', token);
     }
 
-    console.log("access_token",access_token);
 
     return access_token
   }catch(error){

@@ -11,7 +11,6 @@ export const getGroupsAccessToProject = async (projectId: number) => {
       }
     });
     const toreturn =  await response.json();
-    console.log(toreturn)
     return toreturn
   } catch (error) {
     console.error("Error in snapshot generation:", error);

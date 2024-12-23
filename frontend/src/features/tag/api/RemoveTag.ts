@@ -18,6 +18,6 @@ export const removeTag = async (tagTitle: string, objectType:ObjectTypes,objectI
     })
     return await response.json();
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 }

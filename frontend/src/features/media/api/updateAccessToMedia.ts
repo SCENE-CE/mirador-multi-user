@@ -17,7 +17,6 @@ export const updateAccessToMedia = async (mediaId: number, userGroupId: number, 
       })
     });
     const toReturn =  await response.json();
-    console.log('toReturn Update Acces To Media', toReturn)
     return toReturn
   } catch (error) {
     throw error;

@@ -22,7 +22,6 @@ async function loadUser(): Promise<User|null>{
     const data = await getUser();
     return data;
   }
-  console.log('USER DATA IS EMPTY')
   return null
 }
 

@@ -1,7 +1,6 @@
 export default class LocalStorageAdapter {
   /** */
   constructor(annotationPageId) {
-    console.log("Dumb local storage adapter from MMU")
     this.annotationPageId = annotationPageId;
   }
 

@@ -10,6 +10,6 @@ export const getAccessToGroup =async (userId: number, groupId: number)=>{
       }})
     return await response.json();
   }catch(error){
-    console.log(error);
+    console.error(error);
   }
 }

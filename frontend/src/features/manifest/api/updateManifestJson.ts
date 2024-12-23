@@ -13,7 +13,6 @@ export const updateManifestJson = async (manifest: updateManifestJsonDto) => {
       body: JSON.stringify(manifest)
     });
     const toReturn =  await response.json();
-    console.log('update manifest return : ', toReturn)
     return toReturn
   } catch (error) {
     throw error;

@@ -13,7 +13,6 @@ export const updateMedia = async (media: Media) => {
       body: JSON.stringify(media)
     });
     const toReturn =  await response.json();
-    console.log('update media return : ', toReturn)
     return toReturn
   } catch (error) {
     throw error;

@@ -10,7 +10,6 @@ export const lookingForManifests = async (partialString:string, userGroupId:numb
         authorization: `Bearer ${token}`,
       }})
     const toReturn = await response.json();
-    console.log(toReturn);
     return toReturn;
   }catch(error){
     throw error;

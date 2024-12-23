@@ -3,8 +3,6 @@ import storage from "../../../utils/storage.ts";
 
 export const updateUser = async (updateUserDto:UpdateUserDto) => {
   const token = storage.getToken();
-  console.log('token',token)
-  console.log('updateUserDto',updateUserDto);
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/users/update`, {
       method: "PATCH",
@@ -20,6 +18,6 @@ export const updateUser = async (updateUserDto:UpdateUserDto) => {
     const user = await response.json();
     return user;
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };

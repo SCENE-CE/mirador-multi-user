@@ -9,6 +9,8 @@ import i18n from "./features/translation/i18n.ts";
 
 function App() {
 
+  document.title=import.meta.env.VITE_INSTANCE_SHORT_NAME;
+
   return (
     <I18nextProvider i18n={i18n}>
     <div  style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>

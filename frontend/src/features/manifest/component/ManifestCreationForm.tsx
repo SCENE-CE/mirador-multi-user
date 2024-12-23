@@ -62,26 +62,22 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
         thumbnailUrl = youtubeJson?.thumbnail_url || null;
         updatedItems[itemIndex].media[0].thumbnailUrl = thumbnailUrl!;
         updatedItems[itemIndex].media[0].type = MediaTypes.VIDEO;
-        console.log("YouTube thumbnail set:", thumbnailUrl);
       } else if (await isPeerTubeVideo(value)) {
         videoId = getPeerTubeVideoID(value);
         if (videoId) {
           thumbnailUrl = await getPeerTubeThumbnailUrl(value, videoId);
           updatedItems[itemIndex].media[0].thumbnailUrl = thumbnailUrl;
           updatedItems[itemIndex].media[0].type = MediaTypes.VIDEO;
-          console.log("PeerTube thumbnail set:", thumbnailUrl);
         }
       } else {
         // Set as image if not YouTube or PeerTube video
         updatedItems[itemIndex].media[0].thumbnailUrl = value;
         updatedItems[itemIndex].media[0].type = MediaTypes.IMAGE;
-        console.log("Image thumbnail set:", value);
       }
     } catch (error) {
       console.error("Failed to fetch media details:", error);
     } finally {
       setItems(updatedItems);
-      console.log("Updated items:", updatedItems);
     }
   };
 
@@ -89,7 +85,6 @@ export const ManifestCreationForm = ({ handleSubmit }: IManifestCreationFormProp
     const updatedItems = items.filter((_, i) => i !== itemIndex);
     setItems(updatedItems);
   };
-  console.log('items',items)
   return (
     <Grid container direction="column" spacing={4}>
       <Grid item container>

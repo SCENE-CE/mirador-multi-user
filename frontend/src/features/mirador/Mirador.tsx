@@ -79,7 +79,6 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
             ...configWithAdapter
           },
         };
-        console.log('miradorStateWithAdapter',miradorStateWithAdapter)
         loadingMiradorViewer.store.dispatch(
           Mirador.actions.importMiradorState(miradorStateWithAdapter),
         );

@@ -10,9 +10,7 @@ export const createMedia = async (mediaDto: CreateMediaDto) => {
   formData.append('idCreator', mediaDto.idCreator.toString());
   formData.append('user_group', JSON.stringify(mediaDto.user_group));
 
-  console.log('formData', formData);
   try {
-    console.log('CREATE MEDIA ID CREATOR', mediaDto.idCreator);
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/upload`, {
       method: 'POST',
       headers: {
@@ -30,7 +28,6 @@ export const createMedia = async (mediaDto: CreateMediaDto) => {
     }
 
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error('Error uploading media:', error);

@@ -117,8 +117,6 @@ export const SidePanelManifest = ({ display,manifest, children,userPersonalGroup
     })
     if(response){
       const manifest = await response.json()
-      console.log('Fetched manifest',manifest)
-      console.log(manifest.label.en[0])
       await linkManifest({
         url: path,
         rights: ManifestGroupRights.ADMIN,

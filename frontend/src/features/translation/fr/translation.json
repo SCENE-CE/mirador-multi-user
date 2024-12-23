@@ -1,5 +1,5 @@
 {
-  "welcome": "Bienvenue chez Arvest",
+  "welcome": "Bienvenue sur {{instanceName}}",
   "create-account": "Créer un compte",
   "login": "Connexion",
   "loginTitle": "Connectez-vous à votre compte",
@@ -138,7 +138,7 @@
   "MMUTooltipAdmin": "Admin : Peut accéder / modifier / supprimer",
   "MMUTooltipEditor": "Éditeur : Peut accéder / modifier",
   "MMUTooltipReader": "Lecteur : Peut accéder",
-  "messageDisconnect": "Êtes-vous sûr de vouloir vous déconnecter d'ARVEST ?",
+  "messageDisconnect": "Êtes-vous sûr de vouloir vous déconnecter ?",
   "changeLanguage": "Changer de langage"
 
 }

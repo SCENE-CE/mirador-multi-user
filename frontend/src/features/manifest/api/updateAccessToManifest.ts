@@ -17,7 +17,6 @@ export const updateAccessToManifest = async (manifestId: number, userGroupId: nu
       })
     });
     const toReturn =  await response.json();
-    console.log('toReturn Update Access To Manifest', toReturn)
     return toReturn
   } catch (error) {
     throw error;

@@ -29,7 +29,6 @@ export const ShareLink = ({ itemId, snapShotHash }:IShareLinkProps) => {
 
   const handleGenerateSnapshot = async () => {
     const snapShotUrl = await getGroupsAccessToProject(itemId);
-    console.log(snapShotUrl);
     fetchManifestInfo(snapShotUrl.snapShotHash)
     setProjectUrl(`${baseUrl}/mirador/${snapShotUrl.snapShotHash}/workspace.json`);
   };

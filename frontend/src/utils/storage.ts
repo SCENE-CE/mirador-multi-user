@@ -10,13 +10,11 @@ const storage = {
       return
     }
     window.localStorage.setItem(`${storagePrefix}token`, JSON.stringify(token));
-    console.log("after window localStorage:", token);
   },
   clearToken:() => {
     window.localStorage.removeItem(`${storagePrefix}token`);
   },
   GetImpersonateUserData: (): string | null =>{
-    console.log('get impersonate user data')
     return localStorage.getItem(`${storagePrefix}impersonate-user`);
   },
   SetImpersonateUserId:(mail:string)=>{

@@ -136,7 +136,7 @@ export class LinkUserGroupController {
   @Get('resend-confirmation-link/:email')
   async resendConfirmationLink(@Param('email') email: string) {
     console.log('resending mail controller');
-    await this.linkUserGroupService.resendConfirmationLink(email);
+    await this.linkUserGroupService.sendConfirmationLink(email);
   }
 
   @ApiOperation({

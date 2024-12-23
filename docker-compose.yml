@@ -21,9 +21,13 @@ services:
       args:
         VITE_BACKEND_URL: ${BACKEND_URL}
         VITE_CADDY_URL: ${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}
+        VITE_INSTANCE_SHORT_NAME: ${INSTANCE_SHORT_NAME}
+        VITE_INSTANCE_NAME: ${INSTANCE_NAME}
     environment:
       VITE_BACKEND_URL: ${BACKEND_URL}
       VITE_CADDY_URL: ${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}
+      INSTANCE_SHORT_NAME: ${INSTANCE_SHORT_NAME}
+      INSTANCE_NAME: ${INSTANCE_NAME}
     depends_on:
       - backend
     restart: always
@@ -62,6 +66,8 @@ services:
       NAME_MAIL: ${NAME_MAIL}
       LOG_LEVEL : ${LOG_LEVEL}
       MAX_UPLOAD_SIZE: ${MAX_UPLOAD_SIZE}
+      INSTANCE_SHORT_NAME: ${INSTANCE_SHORT_NAME}
+      INSTANCE_NAME: ${INSTANCE_NAME}
     depends_on:
       - db
     restart: ${RESTART}

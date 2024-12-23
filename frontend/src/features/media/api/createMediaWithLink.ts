@@ -2,7 +2,6 @@ import storage from "../../../utils/storage.ts";
 import { LinkMediaDto } from "../types/types.ts";
 
 export const createMediaLink = async (mediaLinkDto: LinkMediaDto) => {
-  console.log(mediaLinkDto);
   const token = storage.getToken();
   try {
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-media-group/media/link`, {
@@ -19,7 +18,6 @@ export const createMediaLink = async (mediaLinkDto: LinkMediaDto) => {
     }
 
     const data = await response.json();
-    console.log(data);
     return data;
   } catch (error) {
     console.error('Error uploading media:', error);

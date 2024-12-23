@@ -118,7 +118,7 @@ export class EmailServerService implements MailService {
       const url = `${process.env.FRONTEND_URL}/token/${token}`;
 
       const renderedTemplate = this._confirmMailTemplate(url, email.userName);
-      const plainText = `Welcome to Arvest. To confirm the email address, click here: ${url}`;
+      const plainText = `Welcome to ${process.env.INSTANCE_NAME}. To confirm the email address, click here: ${url}`;
 
       const toReturn = await this._processSendEmail(
         email.to,
@@ -137,7 +137,7 @@ export class EmailServerService implements MailService {
     try {
       await this.mailerMain.sendMail({
         to: to,
-        subject: subject,
+        subject: `[${process.env.INSTANCE_URL}] subject`,
         text: text,
         html: body,
       });

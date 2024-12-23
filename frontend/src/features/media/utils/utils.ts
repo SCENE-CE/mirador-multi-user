@@ -73,11 +73,9 @@ export const getPeerTubeVideoID = (url: string): string | null => {
 export const getYoutubeJson = async (videoUrl: string): Promise<YoutubeVideoJson | undefined> => {
   try {
     const normalizedUrl = videoUrl.replace(/^https?:\/\//, '');
-    console.log('Normalized URL:', normalizedUrl);
 
     const videoResponse = await fetch(`https://www.youtube.com/oembed?url=https://${normalizedUrl}&format=json`);
     const toreturn = await videoResponse.json();
-    console.log('toreturn', toreturn);
     return toreturn;
   } catch (error: any) {
     console.error(`Error getYoutubeJson: ${error.message}`);

@@ -15,18 +15,13 @@ export const Impersonate = () => {
       const params = new URLSearchParams(window.location.search);
       const token = params.get("token");
       if (token) {
-        console.log("Impersonate session token", token);
         try {
-          console.log("Try");
           const userData = storage.GetImpersonateUserData();
-          console.log("Get impersonate user data", userData);
           if (userData) {
-            console.log("isUserData = true");
             await logout.mutateAsync({});
 
             // Call `mutateAsync` and handle navigation after it resolves
             await loginUser({ mail: "", password: "", isImpersonate: token });
-            console.log("Login successful, navigating...");
             navigate("/app/my-projects");
           }
         } catch (error) {

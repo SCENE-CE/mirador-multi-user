@@ -21,7 +21,6 @@ const LanguageSelector = ({userId}:LanguageSelectorProps) => {
     const selectedLanguage = event.target.value;
     setLanguage(selectedLanguage);
     await loadLanguage(selectedLanguage);
-    console.log(selectedLanguage);
     await updatePreferredLanguage(userId, selectedLanguage);
   };
 

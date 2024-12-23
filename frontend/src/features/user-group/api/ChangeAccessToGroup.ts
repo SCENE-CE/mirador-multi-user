@@ -4,8 +4,6 @@ import { changeAccessToGroupDto } from "../types/types.ts";
 export const ChangeAccessToGroup = async (groupId: number, updateData: changeAccessToGroupDto) => {
   try {
     const token = storage.getToken();
-    console.log('updateData')
-    console.log(updateData)
     const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/change-access`, {
       method: 'PATCH',
       headers: {
@@ -20,6 +18,6 @@ export const ChangeAccessToGroup = async (groupId: number, updateData: changeAcc
     });
     return await response.json();
   } catch (error) {
-    console.log(error)
+    console.error(error)
   }
 }

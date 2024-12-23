@@ -136,8 +136,6 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
   const { t } = useTranslation();
 
   const loadPreferredLanguage = async()=>{
-    console.log('user',user)
-    console.log("loadPreferredLanguage", user.preferredLanguage);
     await loadLanguage(user.preferredLanguage);
   }
   useEffect(() => {
@@ -219,7 +217,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
       setUserPersonalGroup(personalGroup)
       return personalGroup
     }catch(error){
-      console.log(error)
+      console.error(error)
     }
   }
 

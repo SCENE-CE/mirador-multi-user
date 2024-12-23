@@ -29,7 +29,7 @@ export const Landing = () => {
     }}
     >
       <Grid item>
-      <Typography variant="h2" component="h1">{t('welcome')}</Typography>
+      <Typography variant="h2" component="h1">{t('welcome', { instanceName : import.meta.env.VITE_INSTANCE_NAME})}</Typography>
       </Grid>
       <Grid
         item
