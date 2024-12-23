@@ -39,7 +39,7 @@ Now you can access :
 - Database to `http://localhost:3306` For DBeaver or other DB client
 - Caddy to [http://localhost:9000](http://localhost:9000)
 
-- ## Installation PROD (Docker)
+## Installation PROD (Docker)
 
 - `git clone git@github.com:SCENE-CE/mirador-multi-user.git`
 - `cd mirador-multi-user`
@@ -58,6 +58,13 @@ In an other terminal, run following commands to generate the database
 - `docker-compose exec backend npm run typeorm:generate-migration --name=db-init`
 - `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
 
+
+## Clean docker images
+
+Useful when changing some env variable.
+
+- `docker rmi -f mirador-multi-user-frontend`
+- `docker rmi -f mirador-multi-user-backend`
 
 ## Wiki 
 
