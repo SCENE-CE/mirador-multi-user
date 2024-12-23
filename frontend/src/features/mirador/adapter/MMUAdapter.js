@@ -22,8 +22,7 @@ export default class MMUAdapter {
       annotationPage = emptyAnnoPage;
     }
     annotationPage.items.push(annotation);
-    await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content: annotationPage})
-    return await this.all()
+    return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content: annotationPage})
   }
 
   /** */
@@ -33,8 +32,7 @@ export default class MMUAdapter {
     if (annotationPage) {
       const currentIndex = annotationPage.items.findIndex((item) => item.id === annotation.id);
       annotationPage.items.splice(currentIndex, 1, annotation);
-      await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content : annotationPage})
-      return await this.all();
+      return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content : annotationPage})
     }
     return null;
   }

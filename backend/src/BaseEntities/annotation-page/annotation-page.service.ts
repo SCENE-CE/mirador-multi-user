@@ -25,15 +25,17 @@ export class AnnotationPageService {
       );
 
       // TODO It will be better to used upsert method
-      const annotationPageToDelete = this.findAll(annotationPage.annotationPageId, annotationPage.projectId);
-      this.annotationPageRepository.delete(annotationPageToDelete);
-
+      this.annotationPageRepository.delete(
+        this.findAll(annotationPage.annotationPageId, annotationPage.projectId),
+      );
       // Save annotationPage
       await this.annotationPageRepository.save(annotationPage);
 
       // Return all annotationPage. In current workflow, only one will be matching
-      return this.findAll(annotationPage.annotationPageId, annotationPage.projectId);
-
+      return this.findAll(
+        annotationPage.annotationPageId,
+        annotationPage.projectId,
+      );
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
