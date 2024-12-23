@@ -22,7 +22,7 @@ export default class MMUAdapter {
       annotationPage = emptyAnnoPage;
     }
     annotationPage.items.push(annotation);
-    return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content:JSON.stringify(annotationPage)})
+    return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content: annotationPage})
   }
 
   /** */
@@ -32,7 +32,7 @@ export default class MMUAdapter {
     if (annotationPage) {
       const currentIndex = annotationPage.items.findIndex((item) => item.id === annotation.id);
       annotationPage.items.splice(currentIndex, 1, annotation);
-      return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content:JSON.stringify(annotationPage)})
+      return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content : annotationPage})
     }
     return null;
   }
@@ -44,7 +44,8 @@ export default class MMUAdapter {
     if (annotationPage) {
       annotationPage.items = annotationPage.items.filter((item) => item.id !== annoId);
     }
-    return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content:JSON.stringify(annotationPage)})
+    return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content : annotationPage})
+
   }
 
   /** */
@@ -60,6 +61,12 @@ export default class MMUAdapter {
   /** */
   async all() {
     console.log('MMU adapter GET ALL')
-    return await gettingAnnotationPage(this.annotationPageId, this.projectId);
+    // At this point, but I think we must have only one annotation page. For now it's not the case
+    let annotationPage =  await gettingAnnotationPage(this.annotationPageId, this.projectId);
+    if(annotationPage.length > 0){
+      return annotationPage[0].content;
+    } else {
+      return [] ;
+    }
   }
 }

@@ -23,10 +23,19 @@ export class AnnotationPageService {
       const annotationPage = this.annotationPageRepository.create(
         createAnnotationPageDto,
       );
-      const toreturn = await this.annotationPageRepository.save(annotationPage);
-      console.log('-----------toreturn-----------');
-      console.log(toreturn);
-      return toreturn;
+
+      // TODO It will be better to used upsert method
+      this.annotationPageRepository.delete(
+        this.findAll(annotationPage.annotationPageId, annotationPage.projectId),
+      );
+      // Save annotationPage
+      await this.annotationPageRepository.save(annotationPage);
+
+      // Return all annotationPage. In current workflow, only one will be matching
+      return this.findAll(
+        annotationPage.annotationPageId,
+        annotationPage.projectId,
+      );
     } catch (error) {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
