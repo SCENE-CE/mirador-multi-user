@@ -1,5 +1,5 @@
 {
-  "welcome": "Bienvenue chez Arvest",
+  "welcome": "Bienvenue sur {{instanceName}}",
   "create-account": "Créer un compte",
   "login": "Connexion",
   "loginTitle": "Connectez-vous à votre compte",
