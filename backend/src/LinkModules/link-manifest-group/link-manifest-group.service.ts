@@ -203,7 +203,7 @@ export class LinkManifestGroupService {
     try {
       if (updateManifestJsonDto.origin === manifestOrigin.LINK) {
         throw new UnsupportedMediaTypeException(
-          "Manifests linked into Arvest can't be updated",
+          "Manifests linked can't be updated",
         );
       }
 

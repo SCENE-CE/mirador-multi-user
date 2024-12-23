@@ -138,6 +138,6 @@
   "MMUTooltipAdmin": "Admin: Can Access / Modify / Delete ",
   "MMUTooltipEditor": "Editor: Can Access / Modify ",
   "MMUTooltipReader": "Reader: Can Access",
-  "messageDisconnect": "Are you sure you want to disconnect from ARVEST?",
+  "messageDisconnect": "Are you sure you want to disconnect?",
   "changeLanguage": "Change Language"
 }
