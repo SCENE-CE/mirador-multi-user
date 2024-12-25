@@ -47,13 +47,22 @@ Now you can access :
 
 VERY IMPORTANT : 
  
-You must set the JWT_SECRET and the DB_PASSWORD in the .env file.
-Take care to set a
+You must set following variables in .env :  
+_ DB_PASS
+- JWT_SECRET
+- JWT_EMAIL_VERIFICATION_TOKEN_SECRET
+- SMTP_DOMAIN
+- SMTP_PASSWORD
+- SMTP_PORT
+- SMTP_IGNORE_TLS
+- SMTP_SSL
+- SWAGGER_PASSWORD
 
+Then build :
 
 - `docker-compose up --build`
 
-In an other terminal, run following commands to generate the database
+In another terminal, run following commands to generate the database
 
 - `docker-compose exec backend npm run typeorm:generate-migration --name=db-init`
 - `docker-compose exec backend npm run typeorm migration:run -- -d ./src/config/dataSource.ts`
