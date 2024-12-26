@@ -146,7 +146,7 @@ export class EmailServerService implements MailService {
     try {
       await this.mailerMain.sendMail({
         to: to,
-        subject: `[${process.env.INSTANCE_URL}] ${subject}`,
+        subject: `[${process.env.INSTANCE_NAME}] ${subject}`,
         text: text,
         html: body,
       });
