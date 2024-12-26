@@ -8,7 +8,7 @@ export const confirmationEmailTemplate = (data: {
 <p>Welcome to ${process.env.INSTANCE_NAME} ${data.name}!<br/><br/> 
 To confirm your email address, click here: <a href="${data.url}">${data.url}</a></p>
 <br/><br/>
-Thanks
+Thanks <br/>
 The ${process.env.INSTANCE_NAME} team
 </div>
 </body>
