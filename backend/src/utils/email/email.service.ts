@@ -92,6 +92,9 @@ export class EmailServerService implements MailService {
     method: string;
     timestamp: string;
   }) {
+    if (!Boolean(process.env.SMTP_DOMAIN)) {
+      return;
+    }
     console.log('Send mail internal server error');
     const subject = `Internal Server Error: ${details.url}`;
     const body = `
@@ -107,6 +110,12 @@ export class EmailServerService implements MailService {
 
   async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<void> {
     try {
+        console.log(Boolean(process.env.SMTP_DOMAIN))
+      if (!Boolean(process.env.SMTP_DOMAIN)) {
+        console.log('mailer false');
+        return;
+      }
+      console.log('mailer true');
       const token = this.jwtService.sign(
         { email: email.to },
         {
@@ -119,7 +128,7 @@ export class EmailServerService implements MailService {
 
       const renderedTemplate = this._confirmMailTemplate(url, email.userName);
       const plainText = `Welcome to ${process.env.INSTANCE_NAME}. To confirm the email address, click here: ${url}`;
-
+      console.log('template call');
       const toReturn = await this._processSendEmail(
         email.to,
         email.subject,

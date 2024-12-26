@@ -125,7 +125,9 @@ export class LinkUserGroupService {
         userId: savedUser.id,
         user_groupId: userPersonalGroup.id,
       });
-
+      if (!Boolean(process.env.SMTP_DOMAIN)) {
+        return savedUser;
+      }
       await this.sendConfirmationLink(savedUser.mail);
 
       return savedUser;
@@ -148,11 +150,11 @@ export class LinkUserGroupService {
     if (user.isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
     }
-    await this.emailService.sendConfirmationEmail({
-      to: user.mail,
-      subject: 'Account creation',
-      userName: user.name,
-    });
+      await this.emailService.sendConfirmationEmail({
+        to: user.mail,
+        subject: 'Account creation',
+        userName: user.name,
+      });
   }
 
   async createUserGroup(
