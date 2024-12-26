@@ -139,6 +139,7 @@
   "MMUTooltipEditor": "Éditeur : Peut accéder / modifier",
   "MMUTooltipReader": "Lecteur : Peut accéder",
   "messageDisconnect": "Êtes-vous sûr de vouloir vous déconnecter ?",
-  "changeLanguage": "Changer de langage"
-
+  "changeLanguage": "Changer de langage",
+  "impersonate": "USURPER",
+  "emailConfirmed": "e-mail confirmé"
 }

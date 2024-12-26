@@ -47,8 +47,8 @@ import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-
       transport: {
         host: String(process.env.SMTP_DOMAIN),
         port: Number(process.env.SMTP_PORT),
-        ignoreTLS: Boolean(process.env.SMTP_IGNORE_TLS),
-        secure: Boolean(process.env.SMTP_SSL),
+        ignoreTLS: process.env.SMTP_IGNORE_TLS === 'true',
+        secure: process.env.SMTP_SSL === 'true',
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASSWORD,

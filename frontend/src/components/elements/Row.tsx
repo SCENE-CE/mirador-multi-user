@@ -7,6 +7,7 @@ import {
   Box, Button
 } from "@mui/material";
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
+import { useTranslation } from "react-i18next";
 
 
 interface RowData {
@@ -28,6 +29,7 @@ interface SingleRowProps {
 
 export function Row({ row, renderExpandableContent, onActionClick }: SingleRowProps) {
   const [open, setOpen] = React.useState(false);
+  const { t } = useTranslation();
 
   return (
     <>
@@ -48,7 +50,7 @@ export function Row({ row, renderExpandableContent, onActionClick }: SingleRowPr
         ))}
         <TableCell align="center">
           <Button variant="contained" color="primary" onClick={() => onActionClick?.(row)}>
-            Action
+            {t('impersonate')}
           </Button>
         </TableCell>
       </TableRow>
