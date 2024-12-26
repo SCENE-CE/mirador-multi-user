@@ -1,5 +1,3 @@
-import Process from "process";
-
 export const confirmationEmailTemplate = (data: {
   url: string;
   name: string;
@@ -7,11 +5,11 @@ export const confirmationEmailTemplate = (data: {
 <!DOCTYPE html>
 <html>
 <div>
-<p>Welcome to ${Process.env.INSTANCE_NAME} ${data.name}!<br/><br/> 
+<p>Welcome to ${process.env.INSTANCE_NAME} ${data.name}!<br/><br/> 
 To confirm your email address, click here: <a href="${data.url}">${data.url}</a></p>
 <br/><br/>
 Thanks
-The ${Process.env.INSTANCE_NAME} team
+The ${process.env.INSTANCE_NAME} team
 </div>
 </body>
 </html>
