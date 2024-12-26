@@ -19,7 +19,7 @@ services:
       context: frontend
       dockerfile: Dockerfile
       args:
-        VITE_BACKEND_URL: ${BACKEND_URL}
+        VITE_BACKEND_URL: ${HTTP_PROTOCOL}//${BACKEND_HOST}
         VITE_CADDY_URL: ${CADDY_HTTP_PROTOCOL}://${CADDY_HOST}
         VITE_INSTANCE_SHORT_NAME: ${INSTANCE_SHORT_NAME}
         VITE_INSTANCE_NAME: ${INSTANCE_NAME}
