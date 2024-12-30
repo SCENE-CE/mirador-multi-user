@@ -176,7 +176,6 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   const handleLookingForUserGroups = async (partialString: string): Promise<UserGroup[]> => {
     if (partialString.length > 0) {
       const linkUserGroups: LinkUserGroup[] = await lookingForUserGroups(partialString);
-      console.log('linkUserGroups',linkUserGroups)
       const uniqueUserGroups: UserGroup[] = linkUserGroups
         .map((linkUserGroup) => linkUserGroup.user_group)
         .filter(

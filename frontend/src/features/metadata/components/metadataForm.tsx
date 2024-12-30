@@ -85,6 +85,7 @@ export const MetadataForm = <T extends { id:number },>({handleFileChange,selecte
   }
 
   useEffect(() => {},[selectedMetadataFormat])
+  console.log('selectedMetadataFormat',selectedMetadataFormat)
   return (
     <>
       {loading ? (

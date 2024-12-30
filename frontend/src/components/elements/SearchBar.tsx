@@ -39,7 +39,6 @@ export const SearchBar = <T,>(
     try{
       const data = await fetchFunction(partialDataName);
       if(data){
-        console.log('data',data)
         setSuggestions(data);
       }
     } catch (error) {
@@ -51,7 +50,6 @@ export const SearchBar = <T,>(
   }, 500);
 
   const handleInputChange= async (_event: SyntheticEvent, value: string) => {
-    console.log(value)
     if(!value){
       setSuggestions([]);
     }
