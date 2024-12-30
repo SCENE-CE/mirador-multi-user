@@ -4,7 +4,10 @@ Mirador Multi user is a project that aims to create a multi-user environment for
 
 # Demo 
 
-You can test the application at the following address : TODO
+[https://mirador-multi-user.tetras-libre.fr/](https://mirador-multi-user.tetras-libre.fr/).
+Contributions, issues report and feedback are welcomed.
+
+If you want custom demo (like specific Mirador plugins or config) please contact us at mirador-multi-user@tetras-libre.fr
 
 # Features
 
@@ -64,3 +67,4 @@ https://github.com/SCENE-CE/mirador-multi-user/wiki
 ## Maintainers
 
 - Tetras Libre SARL (https://tetraslibre.com)
+- mirador-multi-user@tetras-libre.fr
