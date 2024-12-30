@@ -138,8 +138,6 @@ export class LinkUserGroupService {
           metadata: dublinCoreSample,
         });
 
-      console.log('metadata creation ');
-      console.log(metadata);
       await this.sendConfirmationLink(savedUser.mail);
 
       return savedUser;
