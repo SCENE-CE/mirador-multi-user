@@ -50,6 +50,6 @@ export class User {
   impersonations: Impersonation[];
 
   @Index()
-  @Column({ default: 'en' })
+  @Column({ nullable: true })
   preferredLanguage: string;
 }
