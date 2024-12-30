@@ -46,6 +46,8 @@ export class LinkMetadataFormatGroupService {
   async createMetadataFormat(
     createLinkMetadataFormatGroupDto: CreateLinkMetadataFormatGroupDto,
   ) {
+    console.log('create Metadata')
+    console.log(createLinkMetadataFormatGroupDto.title);
     try {
       const userGroup = await this.groupService.findUserPersonalGroup(
         createLinkMetadataFormatGroupDto.creatorId,
