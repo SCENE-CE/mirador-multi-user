@@ -129,12 +129,7 @@ export async function isImage(url: string): Promise<boolean | ArrayBuffer> {
       );
     }
     const contentType = response.headers.get('Content-Type');
-
-    if (contentType && contentType.startsWith('image')) {
-      return true;
-    } else {
-      return false;
-    }
+    return contentType && contentType.startsWith('image');
   } catch (error) {
     console.error(`Error gettingImage: ${error.message}`);
   }

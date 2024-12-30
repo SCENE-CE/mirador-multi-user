@@ -10,13 +10,14 @@ import { Observable } from 'rxjs';
 import * as sharp from 'sharp';
 import {
   getPeerTubeVideoDetails,
-  getPeerTubeVideoID, getVideoDuration,
+  getPeerTubeVideoID,
+  getVideoDuration,
   getYoutubeJson,
   getYouTubeVideoID,
   isImage,
   isPeerTubeVideo,
-  isYouTubeVideo
-} from "./utils";
+  isYouTubeVideo,
+} from './utils';
 
 @Injectable()
 export class MediaInterceptor implements NestInterceptor {
@@ -73,8 +74,6 @@ export class MediaInterceptor implements NestInterceptor {
               const height = youtubeJson.height;
               const width = youtubeJson.width;
               const duration = videoDuration;
-              console.log('youtubeJson');
-              console.log(youtubeJson);
               manifestToCreate.items.push({
                 id: `https://example.org/${timeStamp}/canvas/${timeStamp2}`,
                 type: 'Canvas',
@@ -201,6 +200,7 @@ export class MediaInterceptor implements NestInterceptor {
                 },
               ],
             });
+            break;
           default:
             throw new UnsupportedMediaTypeException(
               'media type is not supported',
