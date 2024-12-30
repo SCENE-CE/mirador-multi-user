@@ -34,7 +34,7 @@ export class LinkUserGroupService {
     private readonly groupService: UserGroupService,
     private readonly userService: UsersService,
     private readonly emailService: EmailServerService,
-    private readonly metadataFormatGroupService: LinkMetadataFormatGroupService
+    private readonly metadataFormatGroupService: LinkMetadataFormatGroupService,
   ) {}
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
@@ -131,11 +131,13 @@ export class LinkUserGroupService {
       if (!Boolean(process.env.SMTP_DOMAIN)) {
         return savedUser;
       }
-      await this.metadataFormatGroupService.createMetadataFormat({
-        title: 'Dublin Core',
-        creatorId: savedUser.id,
-        metadata: dublinCoreSample,
-      });
+      const metadata =
+        await this.metadataFormatGroupService.createMetadataFormat({
+          title: 'Dublin Core',
+          creatorId: savedUser.id,
+          metadata: dublinCoreSample,
+        });
+
       await this.sendConfirmationLink(savedUser.mail);
 
       return savedUser;
@@ -158,11 +160,11 @@ export class LinkUserGroupService {
     if (user.isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
     }
-      await this.emailService.sendConfirmationEmail({
-        to: user.mail,
-        subject: 'Account creation',
-        userName: user.name,
-      });
+    await this.emailService.sendConfirmationEmail({
+      to: user.mail,
+      subject: 'Account creation',
+      userName: user.name,
+    });
   }
 
   async createUserGroup(
@@ -394,8 +396,8 @@ export class LinkUserGroupService {
 
   async searchForGroups(partialGroupName: string) {
     try {
-      console.log('-------------partialGroupName-------------')
-      console.log(partialGroupName)
+      console.log('-------------partialGroupName-------------');
+      console.log(partialGroupName);
       return await this.linkUserGroupRepository
         .createQueryBuilder('linkUserGroup')
         .leftJoinAndSelect('linkUserGroup.user_group', 'userGroup')
