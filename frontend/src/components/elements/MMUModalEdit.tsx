@@ -173,7 +173,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
       title: newItemTitle,
       description: newItemDescription,
     }
-    if (objectTypes !== ObjectTypes.GROUP) {
+    if (objectTypes !== ObjectTypes.GROUP&&objectTypes&&selectedMetadataFormat?.title) {
       await createMetadataForItem( objectTypes! ,item.id, selectedMetadataFormat!.title,selectedMetadataData  );
     }
     if (updateItem) {
