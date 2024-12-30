@@ -371,7 +371,7 @@ export class LinkGroupProjectService {
       }
       const project = await this.projectService.create({
         ...dto,
-        metadata: { creator: userPersonalGroup.title },
+        metadata: { ...dto.metadata, creator: userPersonalGroup.title },
       });
       await this.addProjectToGroup({
         groupId: userPersonalGroup.id,

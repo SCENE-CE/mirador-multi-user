@@ -37,7 +37,7 @@ import { getUserNameWithId } from "../../auth/api/getUserNameWithId.ts";
 import { isProjectLocked } from "../api/isProjectLocked.ts";
 import { handleLock } from "../api/handleLock.ts";
 import { useTranslation } from "react-i18next";
-
+import { dublinCoreMetadata } from "../../../utils/dublinCoreMetadata.ts";
 interface AllProjectsProps {
   user: User;
   setSelectedProjectId: (id: number) => void;
@@ -155,7 +155,7 @@ export const AllProjects = ({ setMedias, medias, user, selectedProjectId, setSel
         title: projectName,
         ownerId: user.id,
         userWorkspace: undefined,
-        metadata: {},
+        metadata: {...dublinCoreMetadata},
       }
     )
     HandleOpenModal(response.id)

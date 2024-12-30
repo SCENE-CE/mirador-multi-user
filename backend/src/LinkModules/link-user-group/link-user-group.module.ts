@@ -7,12 +7,14 @@ import { UserGroupModule } from '../../BaseEntities/user-group/user-group.module
 import { UsersModule } from '../../BaseEntities/users/users.module';
 import { EmailServerController } from '../../utils/email/email.controller';
 import { EmailServerService } from '../../utils/email/email.service';
+import { LinkMetadataFormatGroupModule } from '../link-metadata-format-group/link-metadata-format-group.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([LinkUserGroup]),
     UserGroupModule,
     UsersModule,
+    LinkMetadataFormatGroupModule,
   ],
   providers: [LinkUserGroupService, EmailServerService],
   controllers: [LinkUserGroupController, EmailServerController],

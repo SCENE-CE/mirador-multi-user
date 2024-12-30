@@ -22,6 +22,8 @@ import * as bcrypt from 'bcrypt';
 import { ActionType } from '../../enum/actions';
 import { EmailServerService } from '../../utils/email/email.service';
 import * as process from 'process';
+import { LinkMetadataFormatGroupService } from '../link-metadata-format-group/link-metadata-format-group.service';
+import { dublinCoreSample } from '../../utils/metadataSample/dublinCoreSample';
 
 @Injectable()
 export class LinkUserGroupService {
@@ -32,6 +34,7 @@ export class LinkUserGroupService {
     private readonly groupService: UserGroupService,
     private readonly userService: UsersService,
     private readonly emailService: EmailServerService,
+    private readonly metadataFormatGroupService: LinkMetadataFormatGroupService
   ) {}
 
   async create(linkUserGroupDto: CreateLinkUserGroupDto) {
@@ -128,6 +131,11 @@ export class LinkUserGroupService {
       if (!Boolean(process.env.SMTP_DOMAIN)) {
         return savedUser;
       }
+      await this.metadataFormatGroupService.createMetadataFormat({
+        title: 'Dublin Core',
+        creatorId: savedUser.id,
+        metadata: dublinCoreSample,
+      });
       await this.sendConfirmationLink(savedUser.mail);
 
       return savedUser;
