@@ -56,7 +56,10 @@ export class LinkMediaGroupController {
         },
       }),
       fileFilter: fileFilterMedia,
-      limits: { fileSize: parseInt(process.env.MAX_UPLOAD_SIZE, 10) || 5 * 1024 * 1024 },
+      limits: {
+        fileSize:
+          (parseInt(process.env.MAX_UPLOAD_SIZE, 10) || 1000) * 1024 * 1024,
+      },
     }),
     SharpPipeInterceptor,
   )
@@ -65,6 +68,8 @@ export class LinkMediaGroupController {
     @Body() CreateMediaDto,
     @Req() req,
   ) {
+    console.log('process.env.MAX_UPLOAD_SIZE');
+    console.log(parseInt(process.env.MAX_UPLOAD_SIZE, 10) );
     const userGroup = JSON.parse(CreateMediaDto.user_group);
     const mediaToCreate = {
       ...CreateMediaDto,
