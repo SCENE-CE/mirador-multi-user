@@ -386,6 +386,8 @@ export class LinkUserGroupService {
 
   async searchForGroups(partialGroupName: string) {
     try {
+      console.log('-------------partialGroupName-------------')
+      console.log(partialGroupName)
       return await this.linkUserGroupRepository
         .createQueryBuilder('linkUserGroup')
         .leftJoinAndSelect('linkUserGroup.user_group', 'userGroup')
@@ -407,7 +409,6 @@ export class LinkUserGroupService {
         .orWhere('user.mail LIKE :partialString', {
           partialString: `%${partialGroupName}%`,
         })
-        .limit(3)
         .getMany();
     } catch (error) {
       this.logger.error(error.message, error.stack);

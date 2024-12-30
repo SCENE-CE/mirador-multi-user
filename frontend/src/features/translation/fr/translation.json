@@ -141,5 +141,6 @@
   "messageDisconnect": "Êtes-vous sûr de vouloir vous déconnecter ?",
   "changeLanguage": "Changer de langage",
   "impersonate": "USURPER",
-  "emailConfirmed": "e-mail confirmé"
+  "emailConfirmed": "e-mail confirmé",
+  "accountCreated": "Votre compte a été créé avec succès"
 }

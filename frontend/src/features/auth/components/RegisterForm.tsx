@@ -8,6 +8,7 @@ import { RegisterCredentialsDTO } from "../api/register.ts";
 import { useNavigate } from "react-router-dom";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import toast from "react-hot-toast";
 
 export const RegisterForm = () => {
   const navigate = useNavigate(); // Use hooks at the top level
@@ -29,7 +30,10 @@ export const RegisterForm = () => {
   const onSubmit = async (data: RegisterCredentialsDTO) => {
     try {
       await createUser(data, {
-        onSuccess: () => navigate("/")
+        onSuccess: () => {
+          toast.success(t('accountCreated'))
+          navigate("/");
+        }
       });
     } catch (error : any) {
       console.error("error", error);

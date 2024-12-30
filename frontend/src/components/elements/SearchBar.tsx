@@ -39,6 +39,7 @@ export const SearchBar = <T,>(
     try{
       const data = await fetchFunction(partialDataName);
       if(data){
+        console.log('data',data)
         setSuggestions(data);
       }
     } catch (error) {
@@ -50,6 +51,10 @@ export const SearchBar = <T,>(
   }, 500);
 
   const handleInputChange= async (_event: SyntheticEvent, value: string) => {
+    console.log(value)
+    if(!value){
+      setSuggestions([]);
+    }
     if(setUserInput){
       setUserInput(value)
     }
@@ -67,6 +72,7 @@ export const SearchBar = <T,>(
     }
     if(!value && setFilter){
       setFilter([]);
+      setSuggestions([]);
     }
   }
 
@@ -77,6 +83,7 @@ export const SearchBar = <T,>(
       setSearchedData(value);
     }
   };
+
   return(
     <Grid item container flexDirection="column" spacing={1}>
       <Grid item container spacing={2}>

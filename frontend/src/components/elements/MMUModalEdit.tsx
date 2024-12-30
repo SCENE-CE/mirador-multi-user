@@ -320,6 +320,8 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
     await updateManifestJson(newManifest)
   }
 
+  console.log('newItemMetadataCreator',newItemMetadataCreator)
+
   return (
     <Grid container sx={{overflow:'scroll', maxHeight:600}}>
       <Tabs value={tabValue} onChange={handleChangeTab} aria-label="basic tabs">
@@ -394,7 +396,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
                 label={t('creator')}
                 onChange={handleChangeCreator}
                 variant="outlined"
-                defaultValue={newItemMetadataCreator}
+                defaultValue={newItemMetadataCreator ? newItemMetadataCreator : user.data?.name}
                 multiline
                 fullWidth
                 disabled

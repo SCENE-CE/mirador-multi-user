@@ -108,7 +108,7 @@
   "newGroup": "New group",
   "createGroup": "Create Group",
   "groupTitleLabel": "Group's title :",
-  "crateGroupMAJ": "CREATE GROUP",
+  "createGroupMAJ": "CREATE GROUP",
   "tokenCopiedToast": "token copied to clipboard",
   "labelApiToken": "API Token",
   "helperTextApiToken": "this is for advanced users",
@@ -141,5 +141,6 @@
   "messageDisconnect": "Are you sure you want to disconnect?",
   "changeLanguage": "Change Language",
   "impersonate" : "IMPERSONATE",
-  "emailConfirmed": "email confirmed"
+  "emailConfirmed": "email confirmed",
+  "accountCreated": "your account was successfully created"
 }

@@ -141,5 +141,7 @@
   "messageDisconnect": "¿Estás seguro de que deseas desconectarte?",
   "changeLanguage": "Cambiar idioma",
   "impersonate": "SUPLANTAR",
-  "emailConfirmed": "correo confirmado"
+  "emailConfirmed": "correo confirmado",
+  "accountCreated": "Tu cuenta ha sido creada con éxito"
+
 }
