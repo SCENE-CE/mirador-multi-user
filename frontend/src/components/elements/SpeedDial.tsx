@@ -4,7 +4,7 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import { ReactNode } from "react";
-import { Backdrop, Typography } from "@mui/material";
+import { Backdrop } from "@mui/material";
 
 type Action = {
   icon: ReactNode,
@@ -16,8 +16,6 @@ type Action = {
 interface ISpeedDialTooltipOpen {
   actions:Action[],
 }
-const spacingMultiplier = 90;
-const labelSpacing = -90;
 
 export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
   const [open, setOpen] = React.useState(false);
@@ -25,7 +23,7 @@ export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
   const handleToggle = () => setOpen((prevOpen) => !prevOpen);
 
   return (
-    <Box sx={{ height: 330, transform: 'translateZ(0px)', flexGrow: 1 }}>
+    <Box sx={{ height: 330, transform: 'translateZ(0px)', flexGrow: 1}}>
       <Backdrop open={open} />
       <SpeedDial
         ariaLabel="SpeedDial tooltip"
@@ -33,9 +31,6 @@ export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
           position: 'absolute',
           bottom: 16,
           right: 16,
-          '& .MuiSpeedDial-actions': {
-            gap: `${spacingMultiplier}px`,
-          }
         }}
         icon={<SpeedDialIcon />}
         onClick={handleToggle}
@@ -46,22 +41,9 @@ export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
           <SpeedDialAction
             key={action.name}
             icon={action.icon}
-            tooltipTitle={
-              <Typography noWrap style={{ maxWidth: 100 }}>
-                {action.name}
-              </Typography>
-            }
-            tooltipOpen
+            tooltipTitle={action.name}
             onClick={action.onClick}
-            sx={{
-              '& .MuiSpeedDialAction-staticTooltipLabel': {
-                marginLeft: `${labelSpacing}px`,
-                padding: '4px 8px',
-                minWidth: '60px',
-                textAlign: 'center',
-                fontFamily: 'monospace',
-              },
-            }}
+            tooltipPlacement={'top'}
           />
         ))}
       </SpeedDial>
