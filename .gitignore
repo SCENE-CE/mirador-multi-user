@@ -1,4 +1,4 @@
-.env
+.env.old
 .idea/
 frontend/src/config/config.ts
 backend/upload/

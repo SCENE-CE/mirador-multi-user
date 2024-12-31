@@ -15,4 +15,6 @@ export class CreateUserDto {
   @Type(() => CreateProjectDto)
   @IsOptional()
   Projects: CreateProjectDto[];
+
+  preferredLanguage: string;
 }

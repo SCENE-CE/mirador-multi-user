@@ -5,11 +5,13 @@ import { CreateEmailServerDto } from './Dto/createEmailServerDto';
 import { accountCreationTemplate } from './templates/accountCreation';
 import { CustomLogger } from '../Logger/CustomLogger.service';
 import { ConfirmationEmailDto } from './Dto/ConfirmationEmailDto';
-import { confirmationEmailTemplate } from './templates/confirmationEMail';
+import { confirmationEmailTemplateEnglish } from './templates/confirmationMail/English';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import { resetPassword } from './templates/resetPassword';
 import { ResetPasswordEmailDto } from './Dto/resetPasswordEmailDto';
+import { confirmationEmailTemplateFrench } from './templates/confirmationMail/French';
+import { confirmationEmailTemplateSpanish } from "./templates/confirmationMail/Spanish";
 @Injectable()
 export class EmailServerService implements MailService {
   private readonly logger = new CustomLogger();
@@ -43,12 +45,29 @@ export class EmailServerService implements MailService {
       userName: userName,
     });
   }
-  private _confirmMailTemplate(url: string, name: string): string {
-    // Use the template function to generate the HTML content
-    return confirmationEmailTemplate({
-      url: url,
-      name: name,
-    });
+  private _confirmMailTemplate(
+    url: string,
+    name: string,
+    language: string,
+  ): string {
+    if (language === 'en') {
+      return confirmationEmailTemplateEnglish({
+        url: url,
+        name: name,
+      });
+    }
+    if (language === 'fr') {
+      return confirmationEmailTemplateFrench({
+        url: url,
+        name: name,
+      });
+    }
+    if (language === 'es') {
+      return confirmationEmailTemplateSpanish({
+        url: url,
+        name: name,
+      });
+    }
   }
 
   private _passwordResetTemplate(url: string, name: string): string {
@@ -110,12 +129,9 @@ export class EmailServerService implements MailService {
 
   async sendConfirmationEmail(email: ConfirmationEmailDto): Promise<void> {
     try {
-        console.log(Boolean(process.env.SMTP_DOMAIN))
       if (!Boolean(process.env.SMTP_DOMAIN)) {
-        console.log('mailer false');
         return;
       }
-      console.log('mailer true');
       const token = this.jwtService.sign(
         { email: email.to },
         {
@@ -126,9 +142,12 @@ export class EmailServerService implements MailService {
 
       const url = `${process.env.FRONTEND_URL}/token/${token}`;
 
-      const renderedTemplate = this._confirmMailTemplate(url, email.userName);
+      const renderedTemplate = this._confirmMailTemplate(
+        url,
+        email.userName,
+        email.language,
+      );
       const plainText = `Welcome to ${process.env.INSTANCE_NAME}. To confirm the email address, click here: ${url}`;
-      console.log('template call');
       const toReturn = await this._processSendEmail(
         email.to,
         email.subject,

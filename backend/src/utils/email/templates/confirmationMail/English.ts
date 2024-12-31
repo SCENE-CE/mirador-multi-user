@@ -1,4 +1,4 @@
-export const confirmationEmailTemplate = (data: {
+export const confirmationEmailTemplateEnglish = (data: {
   url: string;
   name: string;
 }) => `

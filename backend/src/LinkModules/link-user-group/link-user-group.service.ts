@@ -138,7 +138,10 @@ export class LinkUserGroupService {
           metadata: dublinCoreSample,
         });
 
-      await this.sendConfirmationLink(savedUser.mail);
+      await this.sendConfirmationLink(
+        savedUser.mail,
+        savedUser.preferredLanguage,
+      );
 
       return savedUser;
     } catch (error) {
@@ -155,7 +158,7 @@ export class LinkUserGroupService {
     }
   }
 
-  public async sendConfirmationLink(email: string) {
+  public async sendConfirmationLink(email: string, language: string) {
     const user = await this.userService.findOneByMail(email);
     if (user.isEmailConfirmed) {
       throw new BadRequestException('Email already confirmed');
@@ -164,6 +167,7 @@ export class LinkUserGroupService {
       to: user.mail,
       subject: 'Account creation',
       userName: user.name,
+      language: language,
     });
   }
 

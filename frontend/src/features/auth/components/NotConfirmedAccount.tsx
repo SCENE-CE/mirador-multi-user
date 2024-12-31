@@ -19,7 +19,7 @@ export const NotConfirmedAccount = () => {
     setError(null);
 
     try {
-      await ResendConfirmationMail(email);
+      await ResendConfirmationMail(email,navigator.language.split('-')[0]);
       setSuccess(true);
       setTimeout(() => navigate('/'), 2000);
     } catch (err) {

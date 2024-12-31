@@ -1,6 +1,6 @@
-export const ResendConfirmationMail = async (email: string) => {
+export const ResendConfirmationMail = async (email: string, language:string) => {
   try {
-    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/resend-confirmation-link/${email}`, {
+    const response = await fetch(`${import.meta.env.VITE_BACKEND_URL}/link-user-group/resend-confirmation-link/${email}/${language}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
