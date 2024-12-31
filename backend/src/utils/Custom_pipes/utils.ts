@@ -159,9 +159,14 @@ export async function getVideoDuration(videoUrl: string): Promise<number> {
 
     const response = await fetch(videoUrl, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101 Firefox/91.0',
         'Accept-Language': 'en-US,en;q=0.5',
-        'Accept-Encoding': 'gzip, deflate, br',
+        Accept:
+          'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        Referer: 'https://www.youtube.com/',
+        Connection: 'keep-alive',
+        Cookie: 'VISITOR_INFO1_LIVE=your_cookie_value; YSC=your_cookie_value;',
       },
     });
 
