@@ -4,7 +4,7 @@ import SpeedDial from '@mui/material/SpeedDial';
 import SpeedDialIcon from '@mui/material/SpeedDialIcon';
 import SpeedDialAction from '@mui/material/SpeedDialAction';
 import { ReactNode } from "react";
-import { Backdrop } from "@mui/material";
+import { Backdrop, Typography } from "@mui/material";
 
 type Action = {
   icon: ReactNode,
@@ -17,7 +17,7 @@ interface ISpeedDialTooltipOpen {
   actions:Action[],
 }
 const spacingMultiplier = 90;
-const labelSpacing = -80;
+const labelSpacing = -90;
 
 export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
   const [open, setOpen] = React.useState(false);
@@ -46,7 +46,11 @@ export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
           <SpeedDialAction
             key={action.name}
             icon={action.icon}
-            tooltipTitle={action.name}
+            tooltipTitle={
+              <Typography noWrap style={{ maxWidth: 100 }}>
+                {action.name}
+              </Typography>
+            }
             tooltipOpen
             onClick={action.onClick}
             sx={{

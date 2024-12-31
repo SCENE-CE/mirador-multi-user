@@ -149,5 +149,11 @@
     "ADMIN": "Admin",
     "EDITOR": "Editor",
     "READER": "Reader"
+  },
+  "noOptions": "No options",
+  "actionsDial": {
+    "link": "Link",
+    "upload": "Upload",
+    "create": "Create"
   }
 }
