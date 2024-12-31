@@ -449,7 +449,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
             <AdminPanel/>
           )
         }
-        {user && user.id && selectedContent === CONTENT.PROJECTS && (
+        {user && user.id && selectedContent === CONTENT.PROJECTS && !selectedProjectId && (
           <AllProjects
             selectedProjectId={selectedProjectId}
             setSelectedProjectId={setSelectedProjectId}
