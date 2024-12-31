@@ -142,5 +142,12 @@
   "changeLanguage": "Change Language",
   "impersonate" : "IMPERSONATE",
   "emailConfirmed": "email confirmed",
-  "accountCreated": "your account was successfully created"
+  "accountCreated": "your account was successfully created",
+  "deleteConfirmation": "Are you sure you want to delete <b>{{itemName}}</b>? This action is <b>irreversible</b>.",
+  "deleteDefinitely": "DELETE DEFINITELY",
+  "rights": {
+    "ADMIN": "Admin",
+    "EDITOR": "Editor",
+    "READER": "Reader"
+  }
 }

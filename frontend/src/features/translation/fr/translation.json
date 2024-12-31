@@ -142,5 +142,12 @@
   "changeLanguage": "Changer de langage",
   "impersonate": "USURPER",
   "emailConfirmed": "e-mail confirmé",
-  "accountCreated": "Votre compte a été créé avec succès"
+  "accountCreated": "Votre compte a été créé avec succès",
+  "deleteConfirmation": "Êtes-vous sûr de vouloir supprimer <b>{{itemName}}</b>? Cette action est <b>irréversible</b>.",
+  "deleteDefinitely": "SUPPRIMER DÉFINITIVEMENT",
+  "rights": {
+    "ADMIN": "Administrateur",
+    "EDITOR": "Éditeur",
+    "READER": "Lecteur"
+  }
 }

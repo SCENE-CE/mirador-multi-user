@@ -5,7 +5,7 @@ import { ItemList } from "./ItemList.tsx";
 import { MMUModal } from "./modal.tsx";
 import { ModalConfirmDelete } from "../../features/projects/components/ModalConfirmDelete.tsx";
 import { ItemsRights } from "../../features/user-group/types/types.ts";
-import { ListItem, SelectorItem } from "../types.ts";
+import { ListItem } from "../types.ts";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { MediaGroupRights, mediaOrigin } from "../../features/media/types/types.ts";
 import { ManifestGroupRights, manifestOrigin } from "../../features/manifest/types/types.ts";
@@ -257,9 +257,15 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
     }
   }, []);
 
-  const rightsSelectorItems: SelectorItem[] = Object.values(ItemsRights).map((right) => ({
-    id: right as unknown as "ADMIN" | "EDITOR" | "READER",
-    name: right as unknown as "ADMIN" | "EDITOR" | "READER"
+  const SelectorItemsRights = {
+    ADMIN: "rights.ADMIN",
+    EDITOR: "rights.EDITOR",
+    READER: "rights.READER",
+  } as const;
+
+  const selectorItems = Object.entries(SelectorItemsRights).map(([id, name]) => ({
+    id,
+    name,
   }));
 
   const handleGetOtpionLabel = (option : G) =>{
@@ -462,7 +468,7 @@ export const MMUModalEdit = <T extends { id: number, origin?: manifestOrigin | m
               >
                 {(accessListItem) => (
                   <Selector
-                    selectorItems={rightsSelectorItems}
+                    selectorItems={selectorItems}
                     value={accessListItem.rights!}
                     onChange={handleSelectorChange(accessListItem)}
                   />
