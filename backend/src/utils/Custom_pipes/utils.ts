@@ -165,7 +165,7 @@ export async function getVideoDuration(videoUrl: string): Promise<number> {
     });
 
     const html = await response.text();
-    console.log('Fetched HTML:', html.slice(0, 1000)); // Log first 1000 characters for debugging
+    console.log('Fetched HTML:', html);
 
     // Normalize HTML
     const normalizedHtml = html.replace(/\s+/g, ' ');
