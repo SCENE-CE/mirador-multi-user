@@ -156,11 +156,17 @@ function iso8601DurationToSeconds(isoDuration: string): number {
 export async function getVideoDuration(videoUrl: string): Promise<number> {
   try {
     // Fetch the YouTube video page
+    console.log('--------------------videourl--------------------');
+    console.log(videoUrl);
     const response = await fetch(videoUrl);
     const html = await response.text();
+    console.log('---------------------html---------------------')
+    console.log(html)
 
     // Extract the ISO 8601 duration from the HTML
     const match = html.match(/itemprop="duration" content="([^"]+)"/);
+    console.log('---------------------match[1]---------------------');
+    console.log(match[1]);
     if (match && match[1]) {
       return iso8601DurationToSeconds(match[1]);
     } else {
