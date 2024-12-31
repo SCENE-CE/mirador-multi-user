@@ -16,8 +16,6 @@ type Action = {
 interface ISpeedDialTooltipOpen {
   actions:Action[],
 }
-const spacingMultiplier = 90;
-const labelSpacing = -80;
 
 export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
   const [open, setOpen] = React.useState(false);
@@ -25,7 +23,7 @@ export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
   const handleToggle = () => setOpen((prevOpen) => !prevOpen);
 
   return (
-    <Box sx={{ height: 330, transform: 'translateZ(0px)', flexGrow: 1 }}>
+    <Box sx={{ height: 330, transform: 'translateZ(0px)', flexGrow: 1}}>
       <Backdrop open={open} />
       <SpeedDial
         ariaLabel="SpeedDial tooltip"
@@ -33,9 +31,6 @@ export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
           position: 'absolute',
           bottom: 16,
           right: 16,
-          '& .MuiSpeedDial-actions': {
-            gap: `${spacingMultiplier}px`,
-          }
         }}
         icon={<SpeedDialIcon />}
         onClick={handleToggle}
@@ -47,17 +42,8 @@ export default function SpeedDialTooltipOpen({actions}:ISpeedDialTooltipOpen) {
             key={action.name}
             icon={action.icon}
             tooltipTitle={action.name}
-            tooltipOpen
             onClick={action.onClick}
-            sx={{
-              '& .MuiSpeedDialAction-staticTooltipLabel': {
-                marginLeft: `${labelSpacing}px`,
-                padding: '4px 8px',
-                minWidth: '60px',
-                textAlign: 'center',
-                fontFamily: 'monospace',
-              },
-            }}
+            tooltipPlacement={'top'}
           />
         ))}
       </SpeedDial>

@@ -142,6 +142,18 @@
   "changeLanguage": "Cambiar idioma",
   "impersonate": "SUPLANTAR",
   "emailConfirmed": "correo confirmado",
-  "accountCreated": "Tu cuenta ha sido creada con éxito"
-
+  "accountCreated": "Tu cuenta ha sido creada con éxito",
+  "deleteConfirmation": "¿Estás seguro de que deseas eliminar <b>{{itemName}}</b>? Esta acción es <b>irreversible</b>.",
+  "deleteDefinitely": "ELIMINAR DEFINITIVAMENTE",
+  "rights": {
+    "ADMIN": "Administrador",
+    "EDITOR": "Editor",
+    "READER": "Lector"
+  },
+  "noOptions": "Sin opciones",
+  "actionsDial": {
+    "link": "Enlace",
+    "upload": "Subir",
+    "create": "Crear"
+  }
 }

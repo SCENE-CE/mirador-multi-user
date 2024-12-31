@@ -216,12 +216,20 @@ export const AllMedias = ({user,userPersonalGroup,medias,fetchMediaForUser,setMe
   }
 
   const actions = [
-    { icon: <AddLinkIcon /> as ReactNode, name: 'link' ,onClick:()=> {
+    {
+      icon: <AddLinkIcon /> as ReactNode,
+      name: t('actionsDial.link'),
+      onClick: () => {
         setModalLinkMediaIsOpen(!modalLinkMediaIsOpen);
-      }},
-    { icon: <UploadFileIcon /> as ReactNode, name: 'Upload' , onClick: () => {
-        handleButtonClick()
-      }},
+      },
+    },
+    {
+      icon: <UploadFileIcon /> as ReactNode,
+      name: t('actionsDial.upload'),
+      onClick: () => {
+        handleButtonClick();
+      },
+    },
   ];
   const createMediaWithLink = async (link: string) => {
     try {
