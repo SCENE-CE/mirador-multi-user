@@ -10,7 +10,7 @@ import { ImpersonationModule } from "../impersonation/impersonation.module";
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: './src/config/.env.dev',
+      envFilePath: './src/config/.env.old.dev',
     }),
     JwtModule.register({
       global: true,

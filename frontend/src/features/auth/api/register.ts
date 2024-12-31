@@ -13,7 +13,7 @@ export const register = async (data: RegisterCredentialsDTO): Promise<UserRespon
       headers: {
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(data)
+      body: JSON.stringify({ ...data,preferredLanguage:navigator.language.split('-')[0] })
     });
     if (!response.ok) {
       if (response.status === 409) {

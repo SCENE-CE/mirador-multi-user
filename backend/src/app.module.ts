@@ -33,7 +33,7 @@ import { AnnotationPageModule } from './BaseEntities/annotation-page/annotation-
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: './src/config/.env.dev',
+      envFilePath: './src/config/.env.old.dev',
       load: [dbConfiguration],
     }),
     TypeOrmModule.forRootAsync({
