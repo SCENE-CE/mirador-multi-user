@@ -182,7 +182,19 @@ export async function getVideoDuration(videoUrl: string): Promise<number> {
     if (match && match[1]) {
       return iso8601DurationToSeconds(match[1]);
     } else {
-      throw new Error('Duration not found in the HTML.');
+      // Check for ytInitialPlayerResponse fallback
+      const ytMatch = html.match(/ytInitialPlayerResponse\s*=\s*(\{.*?\});/);
+      if (ytMatch && ytMatch[1]) {
+        const playerResponse = JSON.parse(ytMatch[1]);
+        const durationSeconds = playerResponse?.videoDetails?.lengthSeconds;
+        if (durationSeconds) {
+          return parseInt(durationSeconds, 10); // Duration in seconds
+        } else {
+          throw new Error('Duration not found in ytInitialPlayerResponse.');
+        }
+      } else {
+        throw new Error('Duration not found in the HTML.');
+      }
     }
   } catch (error) {
     console.error(`Error fetching video duration: ${error.message}`);
