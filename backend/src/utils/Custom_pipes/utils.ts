@@ -155,21 +155,31 @@ function iso8601DurationToSeconds(isoDuration: string): number {
 
 export async function getVideoDuration(videoUrl: string): Promise<number> {
   try {
-    // Fetch the YouTube video page
-    console.log('--------------------videourl--------------------');
-    console.log(videoUrl);
-    const response = await fetch(videoUrl);
+    console.log('Fetching video URL:', videoUrl);
+
+    const response = await fetch(videoUrl, {
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+      },
+    });
+
     const html = await response.text();
-    // Extract the ISO 8601 duration from the HTML
-    const match = html.match(/itemprop="duration" content="([^"]+)"/);
-    console.log('---------------------match---------------------');
-    console.log(match);
+    console.log('Fetched HTML:', html.slice(0, 1000)); // Log first 1000 characters for debugging
+
+    // Normalize HTML
+    const normalizedHtml = html.replace(/\s+/g, ' ');
+    const match = normalizedHtml.match(/itemprop="duration" content="([^"]+)"/);
+
+    console.log('Regex match:', match);
+
     if (match && match[1]) {
       return iso8601DurationToSeconds(match[1]);
     } else {
       throw new Error('Duration not found in the HTML.');
     }
   } catch (error) {
+    console.error(`Error fetching video duration: ${error.message}`);
     throw new Error(`Failed to fetch video duration: ${error.message}`);
   }
 }
