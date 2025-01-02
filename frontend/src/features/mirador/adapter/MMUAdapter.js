@@ -1,5 +1,6 @@
 import { upsertAnnotationPage } from "../api/upsertAnnotationPage.ts";
 import { gettingAnnotationPage } from "../api/gettingAnnotationPage.ts";
+import { deleteAnnotationPage } from "../api/deleteAnnotationPage.js";
 
 export default class MMUAdapter {
   /** */
@@ -39,13 +40,14 @@ export default class MMUAdapter {
 
   /** */
   async delete(annoId) {
-    console.log('MMU adapter DELETE')
+    if(!annoId) {
+      return await deleteAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId})
+    }
     const annotationPage = await this.all();
     if (annotationPage) {
       annotationPage.items = annotationPage.items.filter((item) => item.id !== annoId);
     }
     return await upsertAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId, content : annotationPage})
-
   }
 
   /** */

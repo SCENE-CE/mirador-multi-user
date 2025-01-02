@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from "@nestjs/common";
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { AnnotationPage } from './entities/annotation-page.entity';
@@ -16,10 +16,6 @@ export class AnnotationPageService {
 
   async create(createAnnotationPageDto: CreateAnnotationPageDto) {
     try {
-      console.log(
-        '-------------------createAnnotationPageDto-------------------',
-      );
-      console.log(createAnnotationPageDto);
       const annotationPage = this.annotationPageRepository.create(
         createAnnotationPageDto,
       );
@@ -67,6 +63,30 @@ export class AnnotationPageService {
       this.logger.error(error.message, error.stack);
       throw new InternalServerErrorException(
         `an error occurred while finding annotationPage with id :${annotationPageId}, ${error.message}`,
+      );
+    }
+  }
+
+  async deleteAnnotationPage(annotationPageId: string, projectId: number) {
+    try {
+      const result = await this.annotationPageRepository.delete({
+        annotationPageId,
+        projectId,
+      });
+      if (result.affected === 0) {
+        throw new NotFoundException(
+          `AnnotationPage with ID "${annotationPageId}" in project "${projectId}" not found.`,
+        );
+      }
+      return result;
+    } catch (error) {
+      this.logger.error(
+        `Failed to delete AnnotationPage with ID "${annotationPageId}" in project "${projectId}": ${error.message}`,
+        error.stack,
+      );
+
+      throw new InternalServerErrorException(
+        `An error occurred while deleting the annotationPage. Please try again later.`,
       );
     }
   }

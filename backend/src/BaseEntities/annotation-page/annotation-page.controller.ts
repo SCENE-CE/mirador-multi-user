@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  UseGuards,
+  Delete,
+} from '@nestjs/common';
 import { AnnotationPageService } from './annotation-page.service';
 import { CreateAnnotationPageDto } from './dto/create-annotation-page.dto';
 import { AuthGuard } from '../../auth/auth.guard';
@@ -12,7 +20,6 @@ export class AnnotationPageController {
   @UseGuards(AuthGuard)
   @Post()
   create(@Body() createAnnotationPageDto: CreateAnnotationPageDto) {
-    console.log('post');
     return this.annotationPageService.create(createAnnotationPageDto);
   }
   @ApiOperation({ summary: 'finding all annotation page' })
@@ -32,13 +39,21 @@ export class AnnotationPageController {
     @Param('annotationPageId') annotationPageId: string,
     @Param('projectId') projectId: number,
   ) {
-    console.log('findOne');
-    console.log('annotationPageId');
-    console.log(annotationPageId);
-    console.log('projectId');
-    console.log(projectId);
     const decodedURI = decodeURIComponent(annotationPageId);
-    console.log(decodedURI);
     return this.annotationPageService.findOne(decodedURI, projectId);
+  }
+
+  @ApiOperation({ summary: 'delete annotation page' })
+  @UseGuards(AuthGuard)
+  @Delete(':annotationPageId/:projectId')
+  delete(
+    @Param('annotationPageId') annotationPageId: string,
+    @Param('projectId') projectId: number,
+  ) {
+    const decodedURI = decodeURIComponent(annotationPageId);
+    return this.annotationPageService.deleteAnnotationPage(
+      decodedURI,
+      projectId,
+    );
   }
 }
