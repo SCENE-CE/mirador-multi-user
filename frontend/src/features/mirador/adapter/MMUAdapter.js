@@ -1,18 +1,16 @@
 import { upsertAnnotationPage } from "../api/upsertAnnotationPage.ts";
 import { gettingAnnotationPage } from "../api/gettingAnnotationPage.ts";
-import { deleteAnnotationPage } from "../api/deleteAnnotationPage.js";
+import { deleteAnnotationPage } from "../api/deleteAnnotationPage.ts";
 
 export default class MMUAdapter {
   /** */
   constructor(projectId,annotationPageId) {
-    console.log("MMU Storage adapter")
     this.projectId = projectId;
     this.annotationPageId = annotationPageId;
   }
 
   /** */
   async create(annotation) {
-    console.log('MMU adapter CREATE')
     const emptyAnnoPage = {
       id: this.annotationPageId,
       items: [],
@@ -28,7 +26,6 @@ export default class MMUAdapter {
 
   /** */
   async update(annotation) {
-    console.log('MMU adapter UPDATE')
     const annotationPage = await this.all();
     if (annotationPage) {
       const currentIndex = annotationPage.items.findIndex((item) => item.id === annotation.id);
@@ -41,7 +38,7 @@ export default class MMUAdapter {
   /** */
   async delete(annoId) {
     if(!annoId) {
-      return await deleteAnnotationPage({projectId:this.projectId, annotationPageId: this.annotationPageId})
+      return await deleteAnnotationPage( this.annotationPageId,this.projectId)
     }
     const annotationPage = await this.all();
     if (annotationPage) {
@@ -52,7 +49,6 @@ export default class MMUAdapter {
 
   /** */
   async get(annoId) {
-    console.log('MMU adapter GET')
     const annotationPage = await this.all();
     if (annotationPage) {
       return annotationPage.items.find((item) => item.id === annoId);
@@ -62,7 +58,6 @@ export default class MMUAdapter {
 
   /** */
   async all() {
-    console.log('MMU adapter GET ALL')
     // At this point, but I think we must have only one annotation page. For now it's not the case
     let annotationPage =  await gettingAnnotationPage(this.annotationPageId, this.projectId);
     if(annotationPage.length > 0){

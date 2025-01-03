@@ -10,6 +10,7 @@ import './style/mirador.css'
 import { Project } from "../projects/types/types.ts";
 import IState from "./interface/IState.ts";
 import MMUAdapter from "./adapter/MMUAdapter";
+import ManifestListTools from "mirador-mltools-plugin-mmu/es/index.js";
 
 interface MiradorViewerHandle {
   setViewer:()=>IState;
@@ -49,7 +50,13 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
           adapter: (canvasId : string) => new MMUAdapter( project.id, `${canvasId}/annotationPage`),
           // adapter: (canvasId : string) => new LocalStorageAdapter(`localStorage://?canvasId=${canvasId}`),
           exportLocalStorageAnnotations: false,
-        }
+        },
+        workspace:{
+          isWorkspaceAddVisible: true,
+          addCheckBox:true,
+          removeResourceButton: true,
+        },
+        projectId:project.id,
       };
 
 
@@ -57,7 +64,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
       // First displaying of the viewer
       if(!miradorViewer){
         loadingMiradorViewer = Mirador.viewer(config, [
-          ...miradorAnnotationEditorVideo]);
+          ...miradorAnnotationEditorVideo,...ManifestListTools]);
       }
       if(!miradorState){
         saveMiradorState(loadingMiradorViewer.store.getState(),project.title);
