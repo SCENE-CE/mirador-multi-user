@@ -74,7 +74,8 @@ export class AnnotationPageService {
         projectId,
       });
       if (result.affected === 0) {
-        throw new NotFoundException(
+        console.log('not found')
+        return new NotFoundException(
           `AnnotationPage with ID "${annotationPageId}" in project "${projectId}" not found.`,
         );
       }
