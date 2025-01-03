@@ -19,3 +19,8 @@ declare module 'mirador-annotation-editor-video/src/plugin/MiradorAnnotationEdit
   export default miradorAnnotationEditorVideo;
 }
 
+declare module 'mirador-mltools-plugin-mmu/es/index.js' {
+  const ManifestListTools: any;
+  export default ManifestListTools;
+}
+
