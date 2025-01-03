@@ -25,9 +25,10 @@ interface MiradorViewerProps {
   setViewer: Dispatch<any>
   viewer:any
   HandleSetIsRunning:()=>void
+  language:string
 }
 const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props, ref) => {
-  const { miradorState, saveMiradorState, project, setMiradorState, setViewer,HandleSetIsRunning } = props;
+  const { miradorState, saveMiradorState, project, setMiradorState, setViewer,HandleSetIsRunning,language } = props;
   const viewerRef = useRef<HTMLDivElement | null>(null);
   const [miradorViewer, setMiradorViewer] = useState<any>(undefined);
   useImperativeHandle(ref, () => ({
@@ -56,6 +57,7 @@ const MiradorViewer = forwardRef<MiradorViewerHandle, MiradorViewerProps>((props
           addCheckBox:true,
           removeResourceButton: true,
         },
+        language:language,
         projectId:project.id,
       };
 

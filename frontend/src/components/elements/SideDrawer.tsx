@@ -431,6 +431,7 @@ export const SideDrawer = ({user,handleDisconnect, selectedProjectId,setSelected
           <SidePanelManifest manifest={manifests} userPersonalGroup={userPersonalGroup!} user={user} fetchManifestForUser={fetchManifestForUser} display={true}>
             <Grid sx={{paddingRight:5}}>
               <MiradorViewer
+                language={user.preferredLanguage ? user.preferredLanguage : navigator.language.split('-')[0]}
                 miradorState={miradorState!}
                 setMiradorState={handleSetMiradorState}
                 project={projectSelected}
